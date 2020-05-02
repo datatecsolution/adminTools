@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.datatecsolution.admin_tools.controllerFx.ctlTablaCategoria">
+   <top>
+      <HBox id="container" prefHeight="86.0" prefWidth="753.0" BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar depthTest="DISABLE" prefHeight="73.0" prefWidth="149.0" styleClass="toolbarContainer">
+              <items>
+                    <fx:define>
+                            <Image fx:id="btnImage" url="@/plus72.png" />
+                    </fx:define>
+                <Button mnemonicParsing="false">
+                            <graphic>
+                  <ImageView styleClass="rightToggleButton">
+                           <image>
+                             <Image url="@/plus72.png" />
+                           </image></ImageView>
+               </graphic>
+                </Button>
+                  <Button mnemonicParsing="false">
+                     <graphic>
+                        <ImageView>
+                           <image>
+                              <Image url="@/recycle43.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+                  <Button mnemonicParsing="false">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@/shopping156(1).png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+              </items>
+               <opaqueInsets>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+               </opaqueInsets>
+               <padding>
+                  <Insets right="3.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="1.0" left="1.0" right="2.0" top="1.0" />
+               </HBox.margin>
+            </ToolBar>
+            <ToolBar prefHeight="75.0" prefWidth="558.0" styleClass="toolbarContainer">
+              <items>
+                  <RadioButton mnemonicParsing="false" text="Todos" />
+                  <RadioButton mnemonicParsing="false" text="ID" />
+                  <RadioButton mnemonicParsing="false" text="Nombre" />
+                  <RadioButton mnemonicParsing="false" text="Observaciones" />
+                  <TextField />
+                  <Button mnemonicParsing="false" text="Buscar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@/database4.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Button>
+              </items>
+               <HBox.margin>
+                  <Insets right="2.0" />
+               </HBox.margin>
+            </ToolBar>
+         </children>
+      </HBox>
+   </top>
+   <center>
+      <ScrollPane prefHeight="400.0" prefWidth="790.0" BorderPane.alignment="CENTER">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tDatos" prefHeight="474.0" prefWidth="789.0">
+                    <columns>
+                      <TableColumn fx:id="tcCodigo" prefWidth="50" text="Codigo" />
+                      <TableColumn fx:id="tcDescripcion" prefWidth="408.0" text="Descripcion" />
+                        <TableColumn fx:id="tcObservacion" prefWidth="105.0" text="Observaciones" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <effect>
+                        <Blend />
+                     </effect>
+                  </TableView>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+   </center>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</BorderPane>
