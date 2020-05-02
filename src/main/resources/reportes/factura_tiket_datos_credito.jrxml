@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="datos_credito" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="625"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT config_app.dia_vencimiento_factura, 
+	config_app.interes_para_facturas_venc
+FROM $P!{bD_admin}.config_app]]>
+	</queryString>
+	<field name="dia_vencimiento_factura" class="java.lang.Integer"/>
+	<field name="interes_para_facturas_venc" class="java.lang.Integer"/>
+	<variable name="dato1" class="java.lang.String"/>
+	<title>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="3" width="178" height="36" uuid="732f1081-9c43-4770-a456-3ec4bf3a6fc4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box topPadding="2">
+					<topPen lineWidth="1.0" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Toda factura vencida, tendra un recargo "+$F{interes_para_facturas_venc}+"% mensual."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

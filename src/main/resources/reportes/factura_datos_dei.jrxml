@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="datos_dei" pageWidth="208" pageHeight="720" whenNoDataType="NoDataSection" columnWidth="183" leftMargin="18" rightMargin="7" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="625"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
+	<parameter name="cod_rango" class="java.lang.Integer"/>
+	<parameter name="bD_facturacion" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT datos_factura.codigo_rango, 
+	datos_factura.CAI, 
+	datos_factura.factura_inicial, 
+	datos_factura.factura_final, 
+	datos_factura.codigo_tipo_facturacion, 
+	datos_factura.cantida_solicitada, 
+	datos_factura.fecha_limite_emision
+FROM $P!{bD_facturacion}.datos_factura where codigo_rango= $P{cod_rango}]]>
+	</queryString>
+	<field name="codigo_rango" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="codigo_rango"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="CAI" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CAI"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="factura_inicial" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="factura_inicial"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="factura_final" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="factura_final"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="codigo_tipo_facturacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="codigo_tipo_facturacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="cantida_solicitada" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="cantida_solicitada"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<field name="fecha_limite_emision" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_limite_emision"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="datos_factura"/>
+	</field>
+	<variable name="dato1" class="java.lang.String">
+		<variableExpression><![CDATA[$F{codigo_tipo_facturacion}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="60">
+			<staticText>
+				<reportElement x="1" y="1" width="159" height="12" uuid="0de9c8fc-4af1-4677-97ca-e1f082a6a3f4"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Fecha Limite de Emision:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="19" width="89" height="12" uuid="c1a601b0-bf4f-4f46-a4aa-a3a37c719c5e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Rango Autorizado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="37" width="109" height="12" uuid="f8830005-bbec-4183-b041-feb64333305a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Codigo C.A.I:]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="1" y="59" width="178" height="1" uuid="a28cc0bd-1968-4572-a2c2-bd864f1a52c3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5" lineStyle="Dashed" lineColor="#000000"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="47" width="184" height="12" uuid="d4d1a625-c351-4d3f-9085-5bf789796952"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="28" width="184" height="12" uuid="b40a283c-3176-4e80-99ef-6334b89d4e79">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_tipo_facturacion}+"-"+$F{factura_inicial}+" al "+$F{codigo_tipo_facturacion}+"-"+$F{factura_final}]]></textFieldExpression>
+			</textField>
+			<textField pattern="d/M/yyy">
+				<reportElement x="1" y="10" width="69" height="12" uuid="bb8bb172-8083-4b62-b109-1c1167766460">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_limite_emision}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

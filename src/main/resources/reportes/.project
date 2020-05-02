@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>reportes</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>ReporteDEI_1.jasper</name>
+			<type>1</type>
+			<location>/Users/jdmayorga/git/posNewTexaco/texacoPos/src/reportes/ReporteDEI.jasper</location>
+		</link>
+		<link>
+			<name>ReporteDEI_1.jrxml</name>
+			<type>1</type>
+			<location>/Users/jdmayorga/git/posNewTexaco/texacoPos/src/reportes/ReporteDEI.jrxml</location>
+		</link>
+		<link>
+			<name>orden_carta.jasper</name>
+			<type>1</type>
+			<location>/Users/jdmayorga/Documents/workspace/posAutoService/src/reportes/orden_carta.jasper</location>
+		</link>
+		<link>
+			<name>orden_carta.jrxml</name>
+			<type>1</type>
+			<location>/Users/jdmayorga/Documents/workspace/posAutoService/src/reportes/orden_carta.jrxml</location>
+		</link>
+	</linkedResources>
+</projectDescription>

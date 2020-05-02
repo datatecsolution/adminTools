@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="devolucion" pageWidth="216" pageHeight="720" columnWidth="188" leftMargin="18" rightMargin="10" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="27"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="376"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="615"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="numero_factura" class="java.lang.Integer"/>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<parameter name="bD_facturacion" class="java.lang.String"/>
+	<parameter name="cod_caja" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	`articulo`.`articulo` AS `articulo`,
+	detalle_devoluciones.precio AS precio_detalle,
+	detalle_devoluciones.cantidad AS cantidad_detalle,
+	detalle_devoluciones.impuesto AS impuesto_detalle,
+	detalle_devoluciones.descuento AS descuento_detalle,
+	detalle_devoluciones.subtotal AS subtotal_detalle,
+	detalle_devoluciones.total AS total_detalle,
+	detalle_devoluciones.fecha AS fecha_devolucion,
+	`articulo`.`codigo_articulo` AS `codigo_articulo`,
+	`encabezado_factura`.`fecha` AS `fecha1`,
+	`encabezado_factura`.`fecha` AS `fecha2`,
+	lpad(
+		`encabezado_factura`.`numero_factura`,
+		8,
+		'0'
+	)AS `numero_factura`,
+	lpad(
+		
+			encabezado_factura.numero_factura
+		,
+		8,
+		'0'
+	)AS `numero_factura2`,
+	date_format(
+		`encabezado_factura`.`fecha`,
+		'%d/%m/%Y'
+	)AS `fecha`,
+	`cliente`.`codigo_cliente` AS `codigo_cliente`,
+	`cliente`.`nombre_cliente` AS `nombre_cliente`,
+	`cliente`.`direccion` AS `direccion`,
+	`cliente`.`telefono` AS `telefono`,
+	`cliente`.`movil` AS `movil`,
+	`cliente`.`rtn` AS `rtn`,
+	`encabezado_factura`.`subtotal` AS `subtotal`,
+	`encabezado_factura`.`impuesto` AS `impuesto`,
+	`encabezado_factura`.`total` AS `total`,
+	`encabezado_factura`.`codigo` AS `codigo`,
+	`encabezado_factura`.`estado_factura` AS `estado_factura`,
+	`encabezado_factura`.`isv18` AS `isv18`,
+	`encabezado_factura`.`usuario` AS `usuario`,
+	`encabezado_factura`.`pago` AS `pago`,
+	`encabezado_factura`.`descuento` AS `descuento`,
+	`tipo_factura`.`tipo_factura` AS `tipo_factura`,
+	(
+		`encabezado_factura`.`pago` - `encabezado_factura`.`total`
+	)AS `cambio`,
+	`encabezado_factura`.`total_letras` AS `total_letras`,
+	`tipo_pago`.`descripcion` AS `tipo_pago`,
+	concat(
+		`empleados`.`nombre`,
+		' ',
+		`empleados`.`apellido`
+	)AS `vendedor`,
+	`tipo_factura`.`id_tipo_factura` AS `id_tipo_factura`,
+	`encabezado_factura`.`agrega_kardex` AS `agrega_kardex`,
+	`encabezado_factura`.`subtotal_excento` AS `subtotal_excento`,
+	`encabezado_factura`.`subtotal15` AS `subtotal15`,
+	`encabezado_factura`.`subtotal18` AS `subtotal18`,
+	`encabezado_factura`.`isvOtros` AS `isvOtros`,
+	`encabezado_factura`.`cod_rango` AS `cod_rango`,
+	`empleados`.`nombre` AS `nombre_vendedor`,
+	`empleados`.`apellido` AS `apellido_vendedor`,
+	`encabezado_factura`.`codigo_vendedor` AS `codigo_vendedor`,
+	`encabezado_factura`.`cobro_tarjeta` AS `cobro_tarjeta`,
+	`encabezado_factura`.`cobro_efectivo` AS `cobro_efectivo`
+FROM
+	$P!{bD_facturacion}.encabezado_factura
+INNER JOIN $P!{bD_admin}.detalle_devoluciones ON encabezado_factura.numero_factura = detalle_devoluciones.numero_factura
+
+inner Join $P!{bD_admin}.articulo on detalle_devoluciones.codigo_articulo=articulo.codigo_articulo
+inner join $P!{bD_admin}.cliente on `cliente`.`codigo_cliente` = `encabezado_factura`.`codigo_cliente`
+inner join $P!{bD_admin}.tipo_factura on `tipo_factura`.`id_tipo_factura` = `encabezado_factura`.`tipo_factura`
+inner join $P!{bD_admin}.tipo_pago on `encabezado_factura`.`tipo_pago` = `tipo_pago`.`codigo_tipo_pago`
+inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `empleados`.`codigo_empleado`
+where 
+encabezado_factura.numero_factura =  $P{numero_factura}
+and 
+detalle_devoluciones.codigo_caja= $P{cod_caja} ]]>
+	</queryString>
+	<field name="numero_factura" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo_cliente" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre_cliente" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="movil" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rtn" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="subtotal" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="impuesto" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="estado_factura" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="isv18" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="usuario" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pago" class="java.lang.Float">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="descuento" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tipo_factura" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cambio" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_letras" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tipo_pago" class="java.lang.String"/>
+	<field name="id_tipo_factura" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="agrega_kardex" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="vendedor" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="articulo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="precio_detalle" class="java.lang.Float"/>
+	<field name="cantidad_detalle" class="java.lang.Float"/>
+	<field name="impuesto_detalle" class="java.lang.Float"/>
+	<field name="descuento_detalle" class="java.lang.Float"/>
+	<field name="subtotal_detalle" class="java.lang.Float"/>
+	<field name="total_detalle" class="java.lang.Float"/>
+	<field name="fecha_devolucion" class="java.sql.Date"/>
+	<variable name="total_dev" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_detalle}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="195" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="1" y="71" width="187" height="22" uuid="bc1ce1da-8232-46ea-be55-cec4abb986dd"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Devolucion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="132" width="80" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Nombre Cliente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="81" y="132" width="107" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="118" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[No Factura:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="118" width="100" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_factura}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="39" y="105" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_devolucion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="105" width="38" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Facha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="29" y="145" width="92" height="13" uuid="4e2756b3-e44a-4f2a-a483-f57881d284e6"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="145" width="28" height="13" uuid="eeb28120-a349-44ef-8c26-9689bd60ca23"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[RTN:]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="180" width="185" height="1" uuid="8039a7c9-2f56-4904-b8fc-d244f0b02f7f"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="1" y="158" width="42" height="13" uuid="adb8cb65-146a-4aaf-8925-b536b6722ea9"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Vendido:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="43" y="158" width="92" height="13" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="-18" y="0" width="216" height="60" uuid="d0873e4f-378a-4289-afb7-82ca15471fc2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="bD_admin">
+					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reportes/factura_datos_empresa.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="186" height="1" uuid="e9d2002a-c8ee-4649-a258-640dad29110c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="35" y="0" width="100" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="3" y="0" width="32" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Cant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="133" y="0" width="53" height="15" forecolor="#030303" uuid="3e2a378b-fd1a-4d1f-b6e4-4b80ab2a9568"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="Detail" mode="Opaque" x="0" y="0" width="188" height="15" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="35" y="0" width="100" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" x="3" y="0" width="32" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cantidad_detalle}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+					<reportElement style="Detail" x="135" y="0" width="51" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{total_detalle}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<summary>
+		<band height="138">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="12" width="188" height="111" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
+				<staticText>
+					<reportElement x="7" y="16" width="74" height="15" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="60" width="188" height="15" uuid="af7f8f6e-6ef9-4e34-bd56-44841283a089"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[EXIJA SU FACTURA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="87" width="188" height="15" uuid="cdd24937-5046-4d2f-a608-fcc3c254f5fd"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[es beneficio de todos]]></text>
+				</staticText>
+				<textField pattern="¤#,##0.##;¤-#,##0.##">
+					<reportElement x="96" y="14" width="92" height="20" uuid="680cbb32-fc83-4717-8781-0cad60b4d25a"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_dev}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="92" width="186" height="1" uuid="d892f4f1-d50d-4214-af91-9413231b5a7a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="3" y="6" width="183" height="1" uuid="058af450-81fc-412d-b317-427d5813c04a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

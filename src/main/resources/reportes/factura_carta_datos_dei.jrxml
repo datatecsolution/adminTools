@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta_datos_dei" pageWidth="306" pageHeight="396" columnWidth="306" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="15"/>
+	<property name="ireport.y" value="96"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Title" fontName="SansSerif" fontSize="50" isBold="true"/>
+	<style name="SubTitle" forecolor="#736343" fontName="SansSerif" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="SansSerif" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="cod_rango" class="java.lang.Integer"/>
+	<parameter name="bD_facturacion" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT datos_factura.codigo_rango, 
+	datos_factura.CAI, 
+	datos_factura.factura_inicial, 
+	datos_factura.factura_final, 
+	datos_factura.codigo_tipo_facturacion, 
+	datos_factura.cantida_solicitada, 
+	datos_factura.fecha_limite_emision
+FROM $P!{bD_facturacion}.datos_factura where codigo_rango= $P{cod_rango}]]>
+	</queryString>
+	<field name="codigo_rango" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CAI" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="factura_inicial" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="factura_final" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo_tipo_facturacion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cantida_solicitada" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha_limite_emision" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="dato1" class="java.lang.String">
+		<variableExpression><![CDATA[$F{codigo_tipo_facturacion}]]></variableExpression>
+	</variable>
+	<variable name="CAI" class="java.lang.String">
+		<variableExpression><![CDATA[$F{CAI}]]></variableExpression>
+	</variable>
+	<variable name="fecha_limite_emision" class="java.sql.Date">
+		<variableExpression><![CDATA[$F{fecha_limite_emision}]]></variableExpression>
+	</variable>
+	<variable name="codigo_tipo_facturacion" class="java.lang.String">
+		<variableExpression><![CDATA[$F{codigo_tipo_facturacion}]]></variableExpression>
+	</variable>
+	<variable name="factura_inicial" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{factura_inicial}]]></variableExpression>
+	</variable>
+	<variable name="factura_final" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{factura_final}]]></variableExpression>
+	</variable>
+	<pageFooter>
+		<band height="46">
+			<textField>
+				<reportElement x="103" y="17" width="203" height="14" uuid="3ae2d18c-9f3d-4f13-84a0-9d7d321d26b2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_tipo_facturacion}+"-"+$F{factura_inicial}+" al "+$F{codigo_tipo_facturacion}+"-"+$F{factura_final}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="29" width="63" height="13" uuid="6aa0d615-e1dc-46fa-b189-b625ec7ae276"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Codigo C.A.I:]]></text>
+			</staticText>
+			<textField pattern="M/d/yy">
+				<reportElement x="118" y="5" width="179" height="14" uuid="3207bda1-575b-4316-bd3b-f49c245f215b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_limite_emision}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="5" width="113" height="14" uuid="07ef34c2-a34c-4337-8366-2680243508ec"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Fecha Limite de Emision:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="17" width="99" height="14" uuid="7af33387-7fd7-41e8-beec-860c62cd44a8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Rango Autorizado:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="66" y="29" width="240" height="13" uuid="b4d1bb47-ecbc-4ae0-9734-131fb0ab8aab"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAI}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="datos_empresa" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="625"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT datos_empresa.nombre, 
+	datos_empresa.rtn, 
+	datos_empresa.telefono, 
+	datos_empresa.correo, 
+	datos_empresa.propietario, 
+	datos_empresa.direccion
+FROM $P!{bD_admin}.datos_empresa]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="rtn" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="correo" class="java.lang.String"/>
+	<field name="propietario" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<variable name="dato1" class="java.lang.String"/>
+	<title>
+		<band height="69" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="178" height="13" uuid="26025472-71fe-408c-bbe8-b106cd474dd4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="21" y="11" width="137" height="20" uuid="0a3d1fde-1d67-49ff-b05b-de85fcfae3e0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="26" width="178" height="12" uuid="b7345547-3a50-4bf8-b707-5b63e6cdd867">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["R.N.T "+$F{rtn}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="34" width="178" height="12" uuid="732f1081-9c43-4770-a456-3ec4bf3a6fc4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono "+$F{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="43" width="178" height="12" uuid="d531031f-4c83-46e5-9e83-780771b11649">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{correo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="52" width="178" height="12" uuid="1291ffb1-cf42-4e6c-bc37-daa83bfb97b7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

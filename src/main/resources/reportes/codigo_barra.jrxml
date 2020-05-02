@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="codigoBarra" pageWidth="143" pageHeight="53" columnWidth="143" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a22f8285-ccf9-4405-81f8-e821d4d6d899">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id_articulo" class="java.lang.Integer"/>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     v_articulo_codigo_barra.`articulo`,
+     v_articulo_codigo_barra.`codigo_barra`
+FROM
+     $P!{bD_admin}.`v_articulo_codigo_barra`
+
+where
+	`v_articulo_codigo_barra`.codigo_articulo=$P{id_articulo}]]>
+	</queryString>
+	<field name="articulo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo_barra" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<title>
+		<band height="53">
+			<textField>
+				<reportElement x="33" y="39" width="110" height="10" uuid="bef4e355-d74e-4bb1-83d4-9e697970bb19"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="33" y="3" width="110" height="36" uuid="897f2b03-6437-4e5b-8902-3027f3e2bf44"/>
+				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="none">
+					<jr:codeExpression><![CDATA[$F{codigo_barra}]]></jr:codeExpression>
+				</jr:Code128>
+			</componentElement>
+		</band>
+	</title>
+</jasperReport>
