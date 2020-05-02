@@ -1,18 +1,12 @@
 package net.datatecsolution.admin_tools;
 
-import net.datatecsolution.admin_tools.controlador.CtlLogin;
-import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
-import net.datatecsolution.admin_tools.controlador.CtlOrdenVenta;
 import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.ConfigUserFacturacion;
 import net.datatecsolution.admin_tools.modelo.Usuario;
 import net.datatecsolution.admin_tools.modelo.dao.ConfigUserFactDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
-import net.datatecsolution.admin_tools.view.ViewLogin;
-import net.datatecsolution.admin_tools.view.ViewMenuPrincipal;
-import net.datatecsolution.admin_tools.view.ViewModuloFacturar;
-import net.datatecsolution.admin_tools.view.ViewOrdeneVenta;
+
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -58,13 +52,15 @@ public class Principal {
 
 
 
-
+        /*
         ViewLogin viewLogin =new ViewLogin();
         CtlLogin ctlLogin=new CtlLogin(viewLogin);
 
         boolean login=ctlLogin.login();
 
-        if(login){
+         */
+
+        if(true){
             Usuario user=ConexionStatic.getUsuarioLogin();
 
             //se recogen las configuraciones para el usuario
@@ -87,6 +83,8 @@ public class Principal {
 		}*/
             if(ConexionStatic.getUsuarioLogin().getTipoPermiso()==3){
 
+                /*
+
                 ViewOrdeneVenta vistaOrdenes=new ViewOrdeneVenta(null);
                 CtlOrdenVenta ctlOrdenes=new CtlOrdenVenta(vistaOrdenes );
 
@@ -95,8 +93,11 @@ public class Principal {
                 vistaOrdenes.setVisible(true);
                 System.exit(0);
                 //boolean resul=ctlFacturas.buscarCotizaciones(null);
+
+                 */
             }
             if(ConexionStatic.getUsuarioLogin().getTipoPermiso()==1){
+                /*
                 //este manejador de subprocesos el cual permite ejecutar el metodo run de l ctl cada cierta cantida de tiempo
                 ScheduledExecutorService scheduler= Executors.newSingleThreadScheduledExecutor();
 
@@ -128,15 +129,20 @@ public class Principal {
 
                 if(user.getCajas()!=null){
 
-
+                    /*
                     ViewModuloFacturar marcoEscritorio = new ViewModuloFacturar();
                     //CtlModuloFacturar ctlMarcoEscritorio=new CtlModuloFacturar(marcoEscritorio,conexion);
                     marcoEscritorio.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
                     //marcoEscritorio.setSize( 1000, 800 ); // establece el tamaño del marco
                     marcoEscritorio.setVisible( true ); // muestra el marco
+
+                     */
                 }else{
+                    /*
                     JOptionPane.showMessageDialog(viewLogin, "No tiene cajas asignadas para poder facturar.","Error",JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
+
+                     */
                 }
             }
 
