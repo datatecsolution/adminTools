@@ -1,8 +1,7 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
 
 public class BotonCobrarSmall extends BotonesApp {
 	private ImageIcon imgGuardar;
@@ -12,7 +11,7 @@ public class BotonCobrarSmall extends BotonesApp {
 	public BotonCobrarSmall(){
 		//super("F3 Cobrar");
 		
-		imgGuardar=new ImageIcon(BotonCancelar.class.getResource("/Facturacion.png"));
+		imgGuardar=new ImageIcon(BotonCancelar.class.getResource("/drawable/Facturacion.png"));
 		
 		 Image image = imgGuardar.getImage();
 		    // reduce by 50%

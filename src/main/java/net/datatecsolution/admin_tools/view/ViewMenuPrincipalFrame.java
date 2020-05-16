@@ -42,7 +42,7 @@ public class ViewMenuPrincipalFrame extends JFrame{
 	
 	public ViewMenuPrincipalFrame() {
 		setTitle("Admin Tools");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewMenuPrincipalFrame.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewMenuPrincipalFrame.class.getResource("/drawable/logo-admin-tool1.png")));
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);

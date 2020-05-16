@@ -1,7 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class BotonCierreCaja extends BotonesApp {
 
@@ -10,7 +9,7 @@ public class BotonCierreCaja extends BotonesApp {
 		super("Cierre de caja");
 		
 		//this.setIcon(new ImageIcon(BotonCierreCaja.class.getResource("/view/recursos/cierre.png")));
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/cierre.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/cierre.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);
 		this.setHorizontalTextPosition(SwingConstants.CENTER);

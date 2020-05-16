@@ -1,4 +1,4 @@
-package net.datatecsolution.admin_tools;
+package net.datatecsolution;
 
 import net.datatecsolution.admin_tools.controlador.CtlLogin;
 import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;

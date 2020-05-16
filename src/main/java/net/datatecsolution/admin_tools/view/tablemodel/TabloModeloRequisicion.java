@@ -1,14 +1,13 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
-
 import net.datatecsolution.admin_tools.modelo.Articulo;
 import net.datatecsolution.admin_tools.modelo.CodBarra;
 import net.datatecsolution.admin_tools.modelo.DetalleFacturaProveedor;
+
+import javax.swing.table.AbstractTableModel;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TabloModeloRequisicion extends AbstractTableModel  {
 	

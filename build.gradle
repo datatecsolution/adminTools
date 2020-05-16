@@ -10,17 +10,32 @@ repositories {
     mavenCentral()
     google()
 }
+
+
 java{
+    manifest {
+        attributes(  'Main-Class': "net.datatecsolution.Principal")
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+
     sourceCompatibility=JavaVersion.VERSION_1_8
     targetCompatibility==JavaVersion.VERSION_1_8
+
 }
 jar {
-    manifest {
-        attributes("Manifest-Version": "1.0", "Main-Class": "Principal")
-    }
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
+    manifest {
+        attributes 'Main-Class': 'net.datatecsolution.Principal'
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
 dependencies {

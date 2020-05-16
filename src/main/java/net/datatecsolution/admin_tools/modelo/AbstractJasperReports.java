@@ -9,7 +9,6 @@ import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
-
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.attribute.AttributeSet;
@@ -23,9 +22,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -153,7 +149,7 @@ public abstract class AbstractJasperReports implements Runnable
 
 		factura= AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
 		factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
-		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/factura_carta.jasper");
+		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");
 
 		facturaTiketCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_credito.jasper");
 		facturaCartaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_credito.jasper");

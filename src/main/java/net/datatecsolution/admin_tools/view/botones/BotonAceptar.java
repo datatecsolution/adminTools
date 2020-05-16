@@ -26,7 +26,7 @@ public class BotonAceptar extends BotonesApp {
 		
 		//this.setIcon(new ImageIcon(BotonGuardar.class.getResource("/view/recursos/guardar.png")));
 		
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/aceptar.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/aceptar.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);

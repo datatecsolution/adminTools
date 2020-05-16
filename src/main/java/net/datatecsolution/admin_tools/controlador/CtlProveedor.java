@@ -4,12 +4,11 @@ import net.datatecsolution.admin_tools.modelo.Proveedor;
 import net.datatecsolution.admin_tools.modelo.dao.ProveedorDao;
 import net.datatecsolution.admin_tools.view.ViewCrearProveedor;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import javax.swing.JOptionPane;
 
 public class CtlProveedor implements ActionListener, WindowListener {
 	

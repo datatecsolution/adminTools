@@ -135,7 +135,7 @@ public abstract class ConexionStatic implements Runnable{
 		//InputStream fis=null;
 
 		//fis=new FileInputStream(file);
-		file = net.datatecsolution.admin_tools.Principal.class.getResourceAsStream("/config/db.config");
+		file = net.datatecsolution.Principal.class.getResourceAsStream("/config/db.config");
 
 		try {
 			props.load(file);

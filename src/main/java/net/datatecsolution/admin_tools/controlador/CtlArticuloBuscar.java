@@ -2,6 +2,8 @@ package net.datatecsolution.admin_tools.controlador;
 
 
 import net.datatecsolution.admin_tools.modelo.Articulo;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Departamento;
 import net.datatecsolution.admin_tools.modelo.dao.ArticuloDao;
 import net.datatecsolution.admin_tools.modelo.dao.DepartamentoDao;
 import net.datatecsolution.admin_tools.view.ViewListaArticulo;
@@ -49,12 +51,12 @@ public class CtlArticuloBuscar implements ActionListener,MouseListener, WindowLi
 	
 		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
 		this.view.getModeloCbxDepartamento().setLista(this.deptDao.todos());
-		
-		
+
 		//se remueve la lista por defecto
 		this.view.getCbxDepart().removeAllItems();
-	
-		this.view.getCbxDepart().setSelectedIndex(0);
+
+		int departamento=view.getModeloCbxDepartamento().buscarDepartamento(ConexionStatic.getUsuarioLogin().getConfig().getDepartEnBusqueda());
+		this.view.getCbxDepart().setSelectedIndex(departamento);
 	}
 	
 	public void cargarTabla(List<Articulo> articulos){
@@ -166,6 +168,20 @@ public class CtlArticuloBuscar implements ActionListener,MouseListener, WindowLi
 				myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
 				
 				switch(comando){
+
+					case "CAMBIOCOMBOBOX":
+						//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
+
+						Departamento departamento=(Departamento) view.getCbxDepart().getSelectedItem();
+
+						if(departamento!=null){
+							ConexionStatic.getUsuarioLogin().getConfig().setDepartEnBusqueda(departamento);
+						}
+
+
+
+
+						break;
 				case "ESCRIBIR":
 					view.setTamanioVentana(1);
 					break;

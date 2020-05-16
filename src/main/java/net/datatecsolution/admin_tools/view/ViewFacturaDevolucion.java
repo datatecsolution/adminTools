@@ -77,7 +77,7 @@ public class ViewFacturaDevolucion extends JDialog {
 		Color color3 =Color.decode("#d4f4ff");
 		Color color4 =Color.decode("#f4fbfe");
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
 		panelAcciones=new JPanel();
 		panelAcciones.setBackground(color3);
 		panelAcciones.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Opciones", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -145,7 +145,7 @@ public class ViewFacturaDevolucion extends JDialog {
 		btnPendientes = new JButton("F5 Pendientes");
 		btnPendientes.setEnabled(false);
 		btnPendientes.setVisible(false);
-		btnPendientes.setIcon(new ImageIcon(ViewFacturar.class.getResource("/lista.png")));
+		btnPendientes.setIcon(new ImageIcon(ViewFacturar.class.getResource("/drawable/lista.png")));
 		btnPendientes.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPendientes.setBounds(10, 272, 158, 67);
 		panelAcciones.add(btnPendientes);

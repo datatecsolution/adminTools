@@ -1,9 +1,9 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import net.datatecsolution.admin_tools.modelo.Banco;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class TmBanco extends TablaModelo {

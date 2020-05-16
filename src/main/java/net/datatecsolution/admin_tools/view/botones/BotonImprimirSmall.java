@@ -1,8 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class BotonImprimirSmall extends BotonesApp  {
 	private ImageIcon imgGuardar;
@@ -14,7 +12,7 @@ public class BotonImprimirSmall extends BotonesApp  {
 		
 		
 		
-		setIcon(new ImageIcon(BotonAgregar.class.getResource("/imprimir3.png"))); // NOI18N
+		setIcon(new ImageIcon(BotonAgregar.class.getResource("/drawable/imprimir3.png"))); // NOI18N
 		//this.setSize(200, 100);.
 		setToolTipText("Imprimir");
 		

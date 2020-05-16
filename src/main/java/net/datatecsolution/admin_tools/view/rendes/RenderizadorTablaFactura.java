@@ -1,13 +1,8 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 public class RenderizadorTablaFactura implements TableCellRenderer{
 

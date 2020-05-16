@@ -85,7 +85,7 @@ public class ViewFacturar extends JDialog {
 	public ViewFacturar(Window view) {
 		
 		super(view,"Facturar", ModalityType.DOCUMENT_MODAL);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
 		//getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		
@@ -167,7 +167,7 @@ public class ViewFacturar extends JDialog {
 		panelNorte.add(panel_2, BorderLayout.WEST);
 		
 		lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(ViewFacturar.class.getResource("/logo_facturar.png")));
+		lblLogo.setIcon(new ImageIcon(ViewFacturar.class.getResource("/drawable/logo_facturar.png")));
 		panel_2.add(lblLogo);
 		
 		panel_1 = new JPanel();

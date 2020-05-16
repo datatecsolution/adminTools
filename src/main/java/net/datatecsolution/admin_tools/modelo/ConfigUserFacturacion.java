@@ -20,11 +20,24 @@ public class ConfigUserFacturacion {
 	private boolean agregarClienteCredito=false;
 	private String formatoFacturaCredito="tiket";
 	private Usuario usuario2=null;
-	private Empleado vendedorBusqueda;
+	private Empleado vendedorEnBusqueda;
+
+	public Departamento getDepartEnBusqueda() {
+		return departEnBusqueda;
+	}
+
+	public void setDepartEnBusqueda(Departamento departEnBusqueda) {
+		this.departEnBusqueda = departEnBusqueda;
+	}
+
+	private Departamento departEnBusqueda;
 	
 	public ConfigUserFacturacion(){
-		vendedorBusqueda=new Empleado();
-		vendedorBusqueda.setCodigo(1);
+		vendedorEnBusqueda =new Empleado();
+		vendedorEnBusqueda.setCodigo(1);
+
+		departEnBusqueda=new Departamento();
+		departEnBusqueda.setId(1);
 	}
 	/**
 	 * @return the id
@@ -241,14 +254,14 @@ public class ConfigUserFacturacion {
 	/**
 	 * @return the vendedorBusqueda
 	 */
-	public Empleado getVendedorBusqueda() {
-		return vendedorBusqueda;
+	public Empleado getVendedorEnBusqueda() {
+		return vendedorEnBusqueda;
 	}
 	/**
-	 * @param vendedorBusqueda the vendedorBusqueda to set
+	 * @param vendedorEnBusqueda the vendedorBusqueda to set
 	 */
-	public void setVendedorBusqueda(Empleado vendedorBusqueda) {
-		this.vendedorBusqueda = vendedorBusqueda;
+	public void setVendedorEnBusqueda(Empleado vendedorEnBusqueda) {
+		this.vendedorEnBusqueda = vendedorEnBusqueda;
 	}
 	
 

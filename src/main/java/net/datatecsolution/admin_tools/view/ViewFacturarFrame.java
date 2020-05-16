@@ -169,7 +169,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelNorte.add(panel_2, BorderLayout.WEST);
 		
 		lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(ViewFacturarFrame.class.getResource("/logo_facturar.png")));
+		lblLogo.setIcon(new ImageIcon(ViewFacturarFrame.class.getResource("/drawable/logo_facturar.png")));
 		panel_2.add(lblLogo);
 		
 		panel_1 = new JPanel();

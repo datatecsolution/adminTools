@@ -1,10 +1,7 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Dimension;
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 
 
@@ -29,7 +26,7 @@ public class BotonGuardar extends BotonesApp {
 		
 		//this.setIcon(new ImageIcon(BotonGuardar.class.getResource("/view/recursos/guardar.png")));
 		
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/guardar.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/guardar.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);

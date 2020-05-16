@@ -75,7 +75,7 @@ public class ViewCargarVenderor extends JDialog {
 		txtApellido.setColumns(10);
 		
 		//imagen para el boton efectivo
-		ImageIcon imgEfectivo=new ImageIcon(BotonCancelar.class.getResource("/USUARIOS.png"));
+		ImageIcon imgEfectivo=new ImageIcon(BotonCancelar.class.getResource("/drawable/USUARIOS.png"));
 		
 		Image image = imgEfectivo.getImage();
 		    // reduce by 50%

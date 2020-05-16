@@ -1,17 +1,16 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.CierreFacturacion;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Usuario;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
-
-import net.datatecsolution.admin_tools.modelo.Caja;
-import net.datatecsolution.admin_tools.modelo.CierreFacturacion;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.Usuario;
 
 public class CierreFacturacionDao extends ModeloDaoBasic{
 

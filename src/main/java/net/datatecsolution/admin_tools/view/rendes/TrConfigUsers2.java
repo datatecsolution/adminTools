@@ -1,17 +1,10 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 public class TrConfigUsers2 extends JCheckBox implements TableCellRenderer {
 	

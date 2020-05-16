@@ -1,10 +1,9 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
-import java.util.Vector;
-
-import javax.swing.DefaultComboBoxModel;
-
 import net.datatecsolution.admin_tools.modelo.Banco;
+
+import javax.swing.*;
+import java.util.Vector;
 
 
 

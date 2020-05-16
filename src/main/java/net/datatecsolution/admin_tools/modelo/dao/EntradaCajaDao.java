@@ -4,14 +4,13 @@ import net.datatecsolution.admin_tools.modelo.CierreCaja;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.EntradaCaja;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 
 

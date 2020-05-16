@@ -1,11 +1,7 @@
 package net.datatecsolution.admin_tools.controlador;
-import java.io.FileNotFoundException;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
-import java.io.InputStream;
 
 
 public abstract class App {

@@ -1,12 +1,13 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
 
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.DetalleFacturaProveedor;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import javax.swing.JOptionPane;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.DetalleFacturaProveedor;
 
 
 public class DevolucionesCompraDao extends ModeloDaoBasic {

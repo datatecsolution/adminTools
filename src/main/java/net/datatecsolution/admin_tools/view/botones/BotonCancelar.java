@@ -1,11 +1,7 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Dimension;
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 public class BotonCancelar extends BotonesApp {
 	private ImageIcon imgCancelar;
@@ -23,7 +19,7 @@ public class BotonCancelar extends BotonesApp {
 	
 		this.setIcon(imgCancelar);*/
 		//this.setIcon(new ImageIcon(BotonCancelar.class.getResource("/view/recursos/cerrar.png")));
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/cerrar.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/cerrar.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);

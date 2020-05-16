@@ -1,8 +1,5 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
-import retrofit2.Retrofit;
-
-
 public class RetrofitClient {
 	
 	

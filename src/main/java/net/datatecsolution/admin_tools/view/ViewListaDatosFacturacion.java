@@ -1,17 +1,14 @@
 package net.datatecsolution.admin_tools.view;
 
-import java.awt.Window;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.ListSelectionModel;
-
 import net.datatecsolution.admin_tools.controlador.CtlDatosFacturacionLista;
 import net.datatecsolution.admin_tools.modelo.Caja;
 import net.datatecsolution.admin_tools.view.botones.BotonLimpiar;
 import net.datatecsolution.admin_tools.view.rendes.TablaRenderizadorProveedor;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmCajas;
 import net.datatecsolution.admin_tools.view.tablemodel.TmDatosFacturacion;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ViewListaDatosFacturacion extends ViewTabla {
 	

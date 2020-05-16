@@ -1,23 +1,5 @@
 package net.datatecsolution.admin_tools.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.Window;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-
-
 import net.datatecsolution.admin_tools.controlador.CtlPagoProveedor;
 import net.datatecsolution.admin_tools.modelo.Banco;
 import net.datatecsolution.admin_tools.view.botones.BotonBuscarProveedor;
@@ -26,9 +8,13 @@ import net.datatecsolution.admin_tools.view.botones.BotonCobrar;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmCuentasBancos;
 import net.datatecsolution.admin_tools.view.tablemodel.TmFacturasPago;
-import javax.swing.JComboBox;
-import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ViewPagoProveedor extends JDialog {
 	private TmFacturasPago modelo;
@@ -55,7 +41,7 @@ public class ViewPagoProveedor extends JDialog {
 	private JComboBox<Banco> cbFormaPago;
 
 	public ViewPagoProveedor(Window view) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewPagoProveedor.class.getResource("/logo_2.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewPagoProveedor.class.getResource("/drawable/logo_2.png")));
 		
 		
 		this.setTitle("Pago a proveedor");

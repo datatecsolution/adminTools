@@ -1,5 +1,10 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.DatosFacturacion;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.swing.JOptionPane;
-
-import net.datatecsolution.admin_tools.modelo.Caja;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.DatosFacturacion;
 
 public class DatosFacturacionDao extends ModeloDaoBasic {
 

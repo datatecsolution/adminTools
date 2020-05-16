@@ -1,9 +1,8 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.*;
-
 import javax.swing.*;
 import javax.swing.text.Document;
+import java.awt.*;
 
 @SuppressWarnings("serial")
 public class PlaceholderTextField extends JTextField {

@@ -1,9 +1,9 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
+import net.datatecsolution.admin_tools.modelo.EntradaCaja;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.datatecsolution.admin_tools.modelo.EntradaCaja;
 
 
 public class TmEntradas extends TablaModelo {

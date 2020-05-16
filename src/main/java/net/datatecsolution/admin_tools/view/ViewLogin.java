@@ -21,7 +21,7 @@ public class ViewLogin extends JDialog{
 		{
 		super(null,"LOGIN", ModalityType.DOCUMENT_MODAL);
 
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewLogin.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewLogin.class.getResource("/drawable/logo-admin-tool1.png")));
 
 		Container contenedor = getContentPane();
 		getContentPane().setLayout(null);
@@ -41,7 +41,7 @@ public class ViewLogin extends JDialog{
 		panel.add(lblLogin);
 
 
-		ImageIcon imgLogo=new ImageIcon(BotonCancelar.class.getResource("/logo-admin-tool1.png"));
+		ImageIcon imgLogo=new ImageIcon(BotonCancelar.class.getResource("/drawable/logo-admin-tool1.png"));
 		Image image = imgLogo.getImage();
 
 		image = image.getScaledInstance(image.getWidth(null)/22, image.getHeight(null)/22, Image.SCALE_SMOOTH);
@@ -136,7 +136,7 @@ public class ViewLogin extends JDialog{
 		   public void paintComponent(Graphics g){
 		      Dimension tamanio = getSize();
 		      ImageIcon imagenFondo = new ImageIcon(getClass().
-		      getResource("/login.jpg"));
+		      getResource("/drawable/login.jpg"));
 		      g.drawImage(imagenFondo.getImage(), 0, 0,
 		      tamanio.width, tamanio.height, null);
 		      setOpaque(false);

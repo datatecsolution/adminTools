@@ -11,6 +11,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Vector;
 
 public class CtlRequisicion implements ActionListener, MouseListener, TableModelListener, KeyListener, ItemListener   {
 	private ViewRequisicion view=null;
@@ -436,27 +437,38 @@ public void calcularTotales(){
 	private void guardar(){
 		
 		if(view.getModelo().getRowCount()>1){
-			setRequisicion();
-			boolean resul=myRequiDao.registrar(myRequisicion);
-			//myRequisicion.setNoRequisicion(myRequiDao.idRequiReguistrado);
-			
-			if(resul){
-				try {
-    				//this.view.setVisible(false);
-    				//this.view.dispose();
-    				AbstractJasperReports.createReportRequisicion( ConexionStatic.getPoolConexion().getConnection(), "requisiciones.jasper",myRequisicion.getNoRequisicion() );
-    				//AbstractJasperReports.showViewer();
-    				AbstractJasperReports.showViewer(view);
 
-    			} catch (SQLException ee) {
-    				// TODO Auto-generated catch block
-    				ee.printStackTrace();
-    			}
-				view.setVisible(false);
+			if(view.getCbxDepartDestino().getSelectedIndex()!=0) {
+
+				setRequisicion();
+				boolean resul = myRequiDao.registrar(myRequisicion);
+				if (resul) {
+					try {
+						//this.view.setVisible(false);
+						//this.view.dispose();
+						AbstractJasperReports.createReportRequisicion(ConexionStatic.getPoolConexion().getConnection(), "requisiciones_carta.jasper", myRequisicion.getNoRequisicion());
+						//AbstractJasperReports.showViewer();
+						AbstractJasperReports.showViewer(view);
+
+					} catch (SQLException ee) {
+						// TODO Auto-generated catch block
+						ee.printStackTrace();
+					}
+					view.setVisible(false);
+				} else {
+					JOptionPane.showMessageDialog(view, "No se guardo correctamente.");
+				}
+			}else {
+				JOptionPane.showMessageDialog(view, "Debe seleccionar una bodega de destino.","Error de validacion",JOptionPane.ERROR_MESSAGE);
 			}
-			else{
-				JOptionPane.showMessageDialog(view, "No se guardo correctamente.");
-			}
+
+
+
+
+
+
+
+
 		}else
 		{
 			JOptionPane.showMessageDialog(view, "Se debe tener articulos para crear la requision. Agrege Articulos primero.");
@@ -620,10 +632,24 @@ private void selectRowInset(){
 			view.getModelo().setEmptyDetalles();
 			
 			Departamento depart= (Departamento) this.view.getCbxDepatOrigen().getSelectedItem();
-			
-			
+
+			//se extra de la base de datos
+			Vector<Departamento> departBD=this.deptDao.todosExecto(depart.getId());
+			//se crea el vector para mostrar
+			Vector<Departamento> departamentos=new Vector<Departamento>();
+			//se agregar un selecion por defecto
+			Departamento unDept=new Departamento();
+			unDept.setId(0);
+			unDept.setDescripcion("Seleccione una opcion");
+			departamentos.add(unDept);
+
+			for (Departamento dep:departBD
+			) {
+				departamentos.add(dep);
+			}
+
 			//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
-			this.view.getCbxModeloDestino().setLista(this.deptDao.todosExecto(depart.getId()));
+			this.view.getCbxModeloDestino().setLista(departamentos);
 			//se remueve la lista por defecto
 			this.view.getCbxDepartDestino().removeAllItems();
 			this.view.getCbxDepartDestino().setSelectedIndex(0);

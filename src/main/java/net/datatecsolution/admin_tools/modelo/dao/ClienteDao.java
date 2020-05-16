@@ -1,19 +1,16 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.Cliente;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Empleado;
+
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-
-import javax.swing.JOptionPane;
-
-import net.datatecsolution.admin_tools.modelo.Cliente;
-
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.Empleado;
 
 public class ClienteDao extends ModeloDaoBasic {
 	
@@ -73,7 +70,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			
 			psConsultas = conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente", "="));
 			
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			
 			psConsultas.setInt(2, 2);
 			psConsultas.setInt(3, limSupe);
@@ -141,7 +138,7 @@ public class ClienteDao extends ModeloDaoBasic {
 		
 			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and rtn", "LIKE"));
 			
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 		
 			psConsultas.setString(2, "%" + busqueda + "%");
 			psConsultas.setInt(3, limitInferio);
@@ -202,7 +199,7 @@ public class ClienteDao extends ModeloDaoBasic {
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and nombre_cliente", "LIKE"));
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			psConsultas.setString(2, "%" + busqueda + "%");
 			psConsultas.setInt(3, limitInferio);
 			psConsultas.setInt(4, canItemPag);
@@ -274,7 +271,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 		
 			psConsultas=con.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and codigo_cliente", "="));
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			psConsultas.setInt(2, id);
 			psConsultas.setInt(3, 0);
 			psConsultas.setInt(4, 1);

@@ -46,7 +46,7 @@ public class CtlCaja implements ActionListener, KeyListener {
 		// TODO Auto-generated method stub
 		view.getTxtAreaDescripcion().setText(this.myCaja.getDescripcion());
 		
-		view.getCbxDepart().setSelectedIndex(view.getModeloCbx().buscarImpuesto(myCaja.getDetartamento()));
+		view.getCbxDepart().setSelectedIndex(view.getModeloCbx().buscarDepartamento(myCaja.getDetartamento()));
 	}
 
 	private void cargarComboBox(){

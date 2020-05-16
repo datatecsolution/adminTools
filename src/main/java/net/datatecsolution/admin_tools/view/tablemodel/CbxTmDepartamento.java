@@ -1,10 +1,9 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
-import java.util.Vector;
-
-import javax.swing.DefaultComboBoxModel;
-
 import net.datatecsolution.admin_tools.modelo.Departamento;
+
+import javax.swing.*;
+import java.util.Vector;
 public class CbxTmDepartamento extends DefaultComboBoxModel {
 	
 	private Vector<Departamento> depts=new Vector<Departamento>();
@@ -32,7 +31,7 @@ public class CbxTmDepartamento extends DefaultComboBoxModel {
 		depts=im;
 	}
 	
-	public int buscarImpuesto(Departamento m){
+	public int buscarDepartamento(Departamento m){
 		int index=-1;
 		
 		for(int c=0;c<depts.size();c++){

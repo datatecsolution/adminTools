@@ -11,13 +11,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewSalidaCaja extends JDialog {
-	private JTextField txtCantidad;
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCancelar;
-	private JTextArea txtrConcepto;
-	private JTextField txtEmpleado;
-	private CbxTmCuentasBancos modeloCuentasBancos;
-	private JComboBox<Banco> cbFormaPago;
+	private final JTextField txtCantidad;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
+	private final JTextArea txtrConcepto;
+	private final JTextField txtEmpleado;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
+	private final JComboBox<Banco> cbFormaPago;
 
 	public ViewSalidaCaja(Window view) {
 		// TODO Auto-generated constructor stub

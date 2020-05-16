@@ -1,16 +1,15 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.Banco;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.JOptionPane;
-
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.Banco;
 
 public class BancosDao extends ModeloDaoBasic{
 	

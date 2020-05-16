@@ -85,7 +85,7 @@ public class ViewOrdeneVenta extends JDialog {
 	public ViewOrdeneVenta(Window view) {
 		
 		super(view,"Ordenes de ventas", ModalityType.DOCUMENT_MODAL);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewOrdeneVenta.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewOrdeneVenta.class.getResource("/drawable/logo-admin-tool1.png")));
 		//getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		
@@ -167,7 +167,7 @@ public class ViewOrdeneVenta extends JDialog {
 		panelNorte.add(panel_2, BorderLayout.WEST);
 		
 		lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(ViewOrdeneVenta.class.getResource("/logo_facturar.png")));
+		lblLogo.setIcon(new ImageIcon(ViewOrdeneVenta.class.getResource("/drawable/logo_facturar.png")));
 		panel_2.add(lblLogo);
 		
 		panel_1 = new JPanel();

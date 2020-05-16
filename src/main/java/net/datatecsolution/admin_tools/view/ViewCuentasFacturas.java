@@ -1,13 +1,12 @@
 package net.datatecsolution.admin_tools.view;
 
-import java.awt.FlowLayout;
-import javax.swing.JFrame;
-import javax.swing.JRadioButton;
-import javax.swing.ListSelectionModel;
 import net.datatecsolution.admin_tools.controlador.CtlCuentasFacturas;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturas;
 import net.datatecsolution.admin_tools.view.tablemodel.TmCuentasFacturas;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ViewCuentasFacturas extends ViewTabla {
 	

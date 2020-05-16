@@ -1,10 +1,8 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.Robot;
-
 import javax.swing.*;
-
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 public class SoloLetras extends JFrame {
      
     private JTextField caja = new JTextField();

@@ -1,12 +1,5 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
-
-
-
 public class PruebaRetroFitJavaRx {
 	private static ApiService mAPIService;
 	

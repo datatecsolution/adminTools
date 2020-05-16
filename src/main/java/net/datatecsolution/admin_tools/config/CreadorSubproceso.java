@@ -1,5 +1,5 @@
 package net.datatecsolution.admin_tools.config;
-import java.lang.Thread;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 public class CreadorSubproceso {

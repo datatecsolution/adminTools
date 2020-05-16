@@ -1,8 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Color;
-
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class BotonBarcode extends BotonesApp {
 
@@ -10,7 +8,7 @@ public class BotonBarcode extends BotonesApp {
 		// TODO Auto-generated constructor stub
 		
 		
-		setIcon(new ImageIcon(BotonBarcode.class.getResource("/shopping156(1).png")));
+		setIcon(new ImageIcon(BotonBarcode.class.getResource("/drawable/shopping156(1).png")));
 		setToolTipText("Codigo Barra");
 		
 	}

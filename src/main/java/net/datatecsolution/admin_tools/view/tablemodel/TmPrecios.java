@@ -1,10 +1,11 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
+import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
+
+import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
-import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 
 public class TmPrecios extends AbstractTableModel {
 	

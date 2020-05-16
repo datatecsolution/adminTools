@@ -50,7 +50,7 @@ public class CtlClienteLista implements ActionListener, MouseListener {
 		this.view.getCbxEmpleados().removeAllItems();
 	
 		//
-		int vendedor=view.getModeloListaEmpleados().buscarImpuesto(ConexionStatic.getUsuarioLogin().getConfig().getVendedorBusqueda());
+		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
 		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
 	}
 
@@ -69,7 +69,7 @@ public class CtlClienteLista implements ActionListener, MouseListener {
 			Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 			
 			if(miEmpleado!=null){
-				ConexionStatic.getUsuarioLogin().getConfig().setVendedorBusqueda(miEmpleado);
+				ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
 			}
 			
 			

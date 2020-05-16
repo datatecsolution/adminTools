@@ -1,10 +1,8 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.Graphics;
-import java.awt.Shape;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-
-import javax.swing.JTextField;
 
 public class RoundJTextField extends JTextField {
     private Shape shape;

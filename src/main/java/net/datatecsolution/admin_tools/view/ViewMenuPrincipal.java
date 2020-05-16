@@ -1,24 +1,11 @@
 package net.datatecsolution.admin_tools.view;
 
+import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Toolkit;
-
-import javax.swing.JLabel;
-
-import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
 
 public class ViewMenuPrincipal extends JFrame {
 	/**
@@ -70,7 +57,7 @@ public class ViewMenuPrincipal extends JFrame {
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewMenuPrincipal.class.getResource("/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewMenuPrincipal.class.getResource("/drawable/logo-admin-tool1.png")));
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -341,7 +328,7 @@ public class ViewMenuPrincipal extends JFrame {
 		   public void paintComponent(Graphics g){
 		      Dimension tamanio = getSize();
 		      ImageIcon imagenFondo = new ImageIcon(getClass().
-		      getResource("/fondo-sistema.jpg"));
+		      getResource("/drawable/fondo-sistema.jpg"));
 		      g.drawImage(imagenFondo.getImage(), 0, 0,
 		      tamanio.width, tamanio.height, null);
 		      setOpaque(false);

@@ -1,11 +1,11 @@
 package net.datatecsolution.admin_tools.controlador;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import net.datatecsolution.admin_tools.modelo.Conexion;
 import net.datatecsolution.admin_tools.view.ViewFacturarFrame;
 import net.datatecsolution.admin_tools.view.ViewModuloFacturar;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CtlModuloFacturar  implements ActionListener{
 	

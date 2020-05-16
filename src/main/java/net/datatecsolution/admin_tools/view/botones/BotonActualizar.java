@@ -1,9 +1,7 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 public class BotonActualizar extends BotonesApp {
 
@@ -15,7 +13,7 @@ public class BotonActualizar extends BotonesApp {
 		// TODO Auto-generated constructor stub
 		//this.setIcon(new ImageIcon(BotonActualizar.class.getResource("/view/recursos/actualizar.png")));
 		
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/actualizar.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/actualizar.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);

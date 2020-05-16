@@ -1,12 +1,8 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 
 public class TablaRenderizadorArticulos implements TableCellRenderer {
 

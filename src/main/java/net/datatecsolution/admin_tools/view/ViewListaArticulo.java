@@ -216,6 +216,9 @@ public class ViewListaArticulo extends ViewTabla {
 public void conectarControladorBuscar(CtlArticuloBuscar c){
 	
 		this.addWindowListener(c);
+
+		cbxDepart.addActionListener(c);
+		cbxDepart.setActionCommand("CAMBIOCOMBOBOX");
 	
 	
 		rdbtnTodos.addKeyListener(c);

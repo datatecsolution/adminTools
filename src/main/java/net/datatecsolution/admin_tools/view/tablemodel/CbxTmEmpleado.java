@@ -41,7 +41,7 @@ public class CbxTmEmpleado extends DefaultComboBoxModel{
 		
 	}
 	
-	public int buscarImpuesto(Empleado m){
+	public int buscarEmpleado(Empleado m){
 		int index=-1;
 		
 		for(int c=0;c<empleados.size();c++){

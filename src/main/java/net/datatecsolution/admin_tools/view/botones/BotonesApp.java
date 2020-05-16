@@ -1,13 +1,7 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.*;
+import java.awt.*;
 
 public class BotonesApp extends JButton {
 	private static final int ancho=128;

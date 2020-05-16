@@ -1,13 +1,12 @@
 package net.datatecsolution.admin_tools.controlador;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JOptionPane;
-
 import net.datatecsolution.admin_tools.modelo.Categoria;
 import net.datatecsolution.admin_tools.modelo.dao.CategoriaDao;
 import net.datatecsolution.admin_tools.view.ViewCrearCategoria;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CtlCategoria implements ActionListener {
 	

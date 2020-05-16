@@ -1,9 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import java.awt.Image;
-
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class BotonCobrar extends BotonesApp {
 private ImageIcon imgGuardar;
@@ -20,7 +17,7 @@ private ImageIcon imgGuardar;
 			 imgGuardar.setImage(image);
 		
 			this.setIcon(imgGuardar);*/
-			ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/cobrar.png"));
+			ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/cobrar.png"));
 			
 			setIcon(resizeIcon(icon, 25, 25));
 			

@@ -7,7 +7,6 @@ import net.datatecsolution.admin_tools.modelo.dao.CierreCajaDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
 import net.datatecsolution.admin_tools.view.*;
 
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

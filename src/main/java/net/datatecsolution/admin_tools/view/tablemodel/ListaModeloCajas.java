@@ -1,18 +1,10 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
+import net.datatecsolution.admin_tools.modelo.Caja;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
-
-
-
-
-
-
-import javax.swing.AbstractListModel;
-import net.datatecsolution.admin_tools.modelo.Caja;
 
 
 

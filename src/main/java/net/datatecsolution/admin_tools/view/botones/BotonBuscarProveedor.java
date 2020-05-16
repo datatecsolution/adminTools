@@ -1,7 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class BotonBuscarProveedor extends BotonesApp{
 	private ImageIcon imgGuardar;
@@ -18,7 +17,7 @@ public class BotonBuscarProveedor extends BotonesApp{
 	
 		this.setIcon(imgGuardar);*/
 		
-		this.setIcon(new ImageIcon(BotonBuscarClientes.class.getResource("/proveedor.png")));
+		this.setIcon(new ImageIcon(BotonBuscarClientes.class.getResource("/drawable/proveedor.png")));
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);
 		this.setHorizontalTextPosition(SwingConstants.CENTER);
 	}

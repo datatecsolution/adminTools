@@ -1,5 +1,11 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Departamento;
+import net.datatecsolution.admin_tools.modelo.Usuario;
+
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,13 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.JOptionPane;
-
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.Departamento;
-import net.datatecsolution.admin_tools.modelo.Usuario;
-import net.datatecsolution.admin_tools.modelo.Caja;
 
 public class CajaDao extends ModeloDaoBasic {
 	private String sqlBaseJoin=null;

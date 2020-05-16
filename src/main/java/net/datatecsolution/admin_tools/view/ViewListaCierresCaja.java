@@ -1,17 +1,13 @@
 package net.datatecsolution.admin_tools.view;
 
-import java.awt.Window;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.ListSelectionModel;
 import net.datatecsolution.admin_tools.controlador.CtlCierresCajaLista;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
 import net.datatecsolution.admin_tools.view.botones.BotonReporte;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturaCompra;
 import net.datatecsolution.admin_tools.view.tablemodel.TmCierres;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ViewListaCierresCaja extends ViewTabla {
 	

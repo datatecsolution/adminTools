@@ -1,11 +1,10 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.datatecsolution.admin_tools.modelo.Articulo;
 
 import javax.swing.table.AbstractTableModel;
-
-import net.datatecsolution.admin_tools.modelo.Articulo;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TmProgramarPrecio extends AbstractTableModel {
 	

@@ -1,7 +1,6 @@
 package net.datatecsolution.admin_tools.view.botones;
 
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class BotonPendientes extends BotonesApp {
 
@@ -11,7 +10,7 @@ public class BotonPendientes extends BotonesApp {
 		
 		//this.setIcon(new ImageIcon(BotonPendientes.class.getResource("/view/recursos/cotizaciones.png")));
 		
-		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/cotizaciones.png"));
+		ImageIcon icon =  new ImageIcon(BotonCierreCaja.class.getResource("/drawable/cotizaciones.png"));
 		setIcon(resizeIcon(icon, 25, 25));
 		
 		this.setVerticalTextPosition(SwingConstants.BOTTOM);
