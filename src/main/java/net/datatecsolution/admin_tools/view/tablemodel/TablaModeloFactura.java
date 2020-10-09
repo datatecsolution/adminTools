@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.view.tablemodel;
 
 import net.datatecsolution.admin_tools.modelo.Articulo;
 import net.datatecsolution.admin_tools.modelo.DetalleFactura;
+import net.datatecsolution.admin_tools.modelo.DetalleFacturaProveedor;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
@@ -219,4 +220,30 @@ public class TablaModeloFactura extends AbstractTableModel {
 		return resul;
 	}
 
+	public double buscarCantidadPorArticulo(Articulo articulo) {
+
+		double encontrado=0;
+
+		/*
+
+		this.detallesFactura.forEach(
+				System.out::println
+		);
+
+		 */
+
+		for (DetalleFactura ar:detallesFactura
+		) {
+			if(articulo.getId()==ar.getArticulo().getId()){
+
+				encontrado=encontrado+ar.getCantidad().doubleValue();
+
+			}
+
+		}
+
+		return encontrado;
+
+
+	}
 }

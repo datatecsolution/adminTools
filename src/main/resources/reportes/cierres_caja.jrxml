@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-23T10:26:41 -->
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cierres_caja_expreso" pageWidth="612" pageHeight="396" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -75,7 +74,7 @@ order by idCierre DESC]]>
 			<staticText>
 				<reportElement style="Title" x="186" y="52" width="210" height="22" uuid="bc1ce1da-8232-46ea-be55-cec4abb986dd"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="16"/>
+					<font fontName="SansSerif" size="16"/>
 				</textElement>
 				<text><![CDATA[CIERRES DE CAJA]]></text>
 			</staticText>
@@ -103,7 +102,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Fact Inicio]]></text>
 			</staticText>
@@ -116,7 +115,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Fact Final]]></text>
 			</staticText>
@@ -129,7 +128,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[T Efectivo]]></text>
 			</staticText>
@@ -142,7 +141,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[T Tarjeta]]></text>
 			</staticText>
@@ -155,7 +154,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
@@ -168,7 +167,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[T Credito]]></text>
 			</staticText>
@@ -181,7 +180,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[ISV15]]></text>
 			</staticText>
@@ -194,7 +193,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[ISV18]]></text>
 			</staticText>
@@ -207,7 +206,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Cajero]]></text>
 			</staticText>
@@ -220,7 +219,7 @@ order by idCierre DESC]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
@@ -230,7 +229,7 @@ order by idCierre DESC]]>
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="0" y="0" width="566" height="15" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="80" y="0" width="61" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -239,11 +238,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" "+$F{factura_inicial}+" "]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="141" y="0" width="57" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -252,11 +251,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[""+$F{factura_final}+"  "]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.##;¤ -#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.##;¤ -#,##0.##">
 					<reportElement style="Detail" x="198" y="0" width="60" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -267,11 +266,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{efectivo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="258" y="0" width="42" height="15" uuid="45d0dae0-efac-48a4-a309-bce4312d0881"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -280,11 +279,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tarjeta}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="480" y="0" width="86" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -293,11 +292,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{totalventa}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="301" y="0" width="49" height="15" uuid="5cfca79a-2df7-406e-84a3-09b88c8acad4"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -306,11 +305,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{creditos}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="350" y="0" width="62" height="15" uuid="8b5236bf-0245-4909-a9fe-c2e170573ebf"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -319,11 +318,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{isv15}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="412" y="0" width="68" height="15" uuid="937cc3df-19a7-4db4-bba5-4ca9239ff8c4"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -332,11 +331,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{isv18}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="41" y="0" width="39" height="15" uuid="db318c5e-acee-4c11-ac28-c3c55e18f305"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -345,11 +344,11 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="M/d/yy">
+				<textField textAdjust="StretchHeight" pattern="M/d/yy">
 					<reportElement style="Detail" x="2" y="0" width="39" height="15" uuid="6a699a74-2819-4a5b-bea9-0d9ae53b0e2d"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -358,7 +357,7 @@ order by idCierre DESC]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 				</textField>
@@ -370,25 +369,28 @@ order by idCierre DESC]]>
 			<textField evaluationTime="Report">
 				<reportElement style="Column header" x="54" y="0" width="40" height="17" forecolor="#736343" uuid="bbd3b315-c6b6-4593-be0f-3ea68478bfe3"/>
 				<textElement verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
+					<font fontName="SansSerif" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="390" y="1" width="61" height="14" uuid="22262749-2f9e-4671-983d-2f53693eec4a"/>
 				<textElement>
-					<font size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[Usuario:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="451" y="1" width="119" height="15" uuid="2661bc1b-8ed1-468b-a6f4-6b1a9d8e7501"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Column header" x="2" y="0" width="51" height="17" forecolor="#736343" uuid="f6953e48-c066-4cfa-b7e5-ae4b207b2cb7"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
+					<font fontName="SansSerif" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>

@@ -500,7 +500,7 @@ super.setSqlQuerySelectJoin(sqlBaseJoin);
 				else return null;
 		}
 	@Override
-	public Object buscarPorId(int id) {
+	public CuentaBanco buscarPorId(int id) {
 		// TODO Auto-generated method stub
 		return null;
 	}

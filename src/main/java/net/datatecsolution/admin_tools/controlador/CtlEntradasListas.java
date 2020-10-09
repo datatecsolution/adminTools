@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.EntradaCaja;
 import net.datatecsolution.admin_tools.modelo.dao.EntradaCajaDao;
 import net.datatecsolution.admin_tools.modelo.dao.UsuarioDao;
+import net.datatecsolution.admin_tools.view.ViewFiltroEntrada;
 import net.datatecsolution.admin_tools.view.ViewFiltroSalidas;
 import net.datatecsolution.admin_tools.view.ViewListaEntradas;
 
@@ -197,8 +198,8 @@ public class CtlEntradasListas implements ActionListener, MouseListener {
 					cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 				break;
 				case "REPORTE":
-						ViewFiltroSalidas vFiltroSalidas=new ViewFiltroSalidas(null);
-						CtlFiltroRepSalidas cFiltroSalidas=new CtlFiltroRepSalidas(vFiltroSalidas);
+						ViewFiltroEntrada vFiltroEntradas=new ViewFiltroEntrada(null);
+					CtlFiltroRepEntradas ctlFiltroRepEntradas=new CtlFiltroRepEntradas(vFiltroEntradas);
 						
 					break;
 					

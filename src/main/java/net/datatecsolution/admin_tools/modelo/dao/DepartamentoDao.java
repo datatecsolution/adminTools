@@ -13,7 +13,7 @@ public class DepartamentoDao extends ModeloDaoBasic {
 	
 
 	public DepartamentoDao(){
-		super("bodega","codigo_bodega");
+		super(" bodega ","codigo_bodega");
 	}
 	
 	
@@ -73,9 +73,9 @@ public class DepartamentoDao extends ModeloDaoBasic {
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			psConsultas=conn.prepareStatement(super.getQuerySelect());
-			
-			
-			
+
+
+			System.out.println(psConsultas);
 			res=psConsultas.executeQuery();
 			while(res.next()){
 				Departamento unDept=new Departamento();

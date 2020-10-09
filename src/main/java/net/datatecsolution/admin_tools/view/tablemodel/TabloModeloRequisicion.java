@@ -248,7 +248,58 @@ public class TabloModeloRequisicion extends AbstractTableModel  {
 		detallesRequi.get(index).setPrecioCompra(precioCompra);
 		fireTableCellUpdated(index, 3);
 	}
-	
-	
 
+
+	public DetalleFacturaProveedor buscarDetallePorArticulo(Articulo articulo) {
+		boolean existe=false;
+		DetalleFacturaProveedor encontrado=null;
+
+		this.detallesRequi.forEach(
+				System.out::println
+		);
+
+		for (DetalleFacturaProveedor ar:detallesRequi
+			 ) {
+			if(articulo.getId()==ar.getArticulo().getId()){
+				encontrado=ar;
+				existe=true;
+
+			}
+			
+		}
+		
+		
+		
+		if(existe)
+			return encontrado;
+		else 
+			return null;
+			
+	}
+
+	public double buscarCantidadPorArticulo(Articulo articulo) {
+
+		double encontrado=0;
+
+		/*
+		this.detallesRequi.forEach(
+				System.out::println
+		);
+
+		 */
+
+		for (DetalleFacturaProveedor ar:detallesRequi
+		) {
+			if(articulo.getId()==ar.getArticulo().getId()){
+
+				encontrado=encontrado+ar.getCantidad().doubleValue();
+
+			}
+
+		}
+
+		return encontrado;
+
+
+	}
 }

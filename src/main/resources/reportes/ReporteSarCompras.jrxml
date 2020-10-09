@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDei" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -303,7 +303,7 @@ WHERE
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="2" y="0" width="570" height="15" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="274" y="0" width="55" height="15" uuid="8b5236bf-0245-4909-a9fe-c2e170573ebf">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -318,7 +318,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{isv15}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="42" y="0" width="98" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -331,7 +331,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{no_factura_compra}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="214" y="0" width="60" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
 					<box rightPadding="3">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -344,7 +344,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{t_exectos}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="d/M/yy">
+				<textField textAdjust="StretchHeight" pattern="d/M/yy">
 					<reportElement style="Detail" x="0" y="0" width="42" height="15" uuid="8b2d71e6-2571-41d7-8c89-91657dab1d31"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -357,7 +357,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="329" y="0" width="60" height="15" uuid="095faa2f-56e1-4dd4-94e0-b2dd13624fef">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -372,7 +372,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_isv15}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="389" y="0" width="55" height="15" uuid="937cc3df-19a7-4db4-bba5-4ca9239ff8c4">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
@@ -387,7 +387,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{isv18}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="504" y="0" width="65" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
 					<box rightPadding="3">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -400,7 +400,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_venta_dia}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="444" y="0" width="60" height="15" uuid="7afbd5b2-92ff-4955-bba1-12f42dd8b768"/>
 					<box rightPadding="3">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -423,7 +423,7 @@ WHERE
 						<rightPen lineWidth="0.2"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font size="6"/>
+						<font fontName="SansSerif" size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nombre_proveedor}]]></textFieldExpression>
 				</textField>
@@ -446,7 +446,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement style="Detail" x="340" y="3" width="182" height="12" uuid="dc37535f-db7a-4858-a6a1-220f6a862b8d"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -473,7 +473,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{t_exectos_2}]]></textFieldExpression>
 			</textField>
@@ -487,7 +487,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{isv15_1}]]></textFieldExpression>
 			</textField>
@@ -501,7 +501,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_isv15_2}]]></textFieldExpression>
 			</textField>
@@ -515,7 +515,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{isv18_1}]]></textFieldExpression>
 			</textField>
@@ -529,7 +529,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_isv18_1}]]></textFieldExpression>
 			</textField>
@@ -543,7 +543,7 @@ WHERE
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7" isBold="true"/>
+					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_venta_dia_1}]]></textFieldExpression>
 			</textField>

@@ -81,6 +81,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream cuentaFactura=null;
 	private static InputStream ruta=null;
 	private static InputStream articulosPrecios=null;
+	private static InputStream entradasBanco=null;
 
 	
 	
@@ -127,6 +128,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport	reportCuentaFactura;
 	private static JasperReport reportRuta;
 	private static JasperReport reportArticulosPrecios;
+	private static JasperReport reportEntradasBanco;
 	
 	
 	private static final Pattern numberPattern=Pattern.compile("-?\\d+");
@@ -154,9 +156,7 @@ public abstract class AbstractJasperReports implements Runnable
 		facturaTiketCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_credito.jasper");
 		facturaCartaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_credito.jasper");
 		//factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");
-		
-		//facturaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_credito_wendy1.jasper");
-		//facturaCredito2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_credito_wendy2.jasper");
+
 		facturaCompra=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_compra.jasper");
 		facturaReimpresion=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_la_copia.jasper");
 		cierreCaja=AbstractJasperReports.class.getResourceAsStream("/reportes/cierre_caja.jasper");
@@ -207,7 +207,10 @@ public abstract class AbstractJasperReports implements Runnable
 		cuentaFactura=AbstractJasperReports.class.getResourceAsStream("/reportes/cliente_cuenta_factura.jasper");
 		
 		ruta=AbstractJasperReports.class.getResourceAsStream("/reportes/reporte_rutas.jasper");
+
 		articulosPrecios=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteArticuloPrecio.jasper");
+
+		entradasBanco=AbstractJasperReports.class.getResourceAsStream("/reportes/entradas_bancos.jasper");
 		
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject( factura );
@@ -263,7 +266,10 @@ public abstract class AbstractJasperReports implements Runnable
 			reportCuentaFactura=(JasperReport) JRLoader.loadObject(cuentaFactura  );
 			
 			reportRuta=(JasperReport) JRLoader.loadObject(ruta  );
+
 			reportArticulosPrecios=(JasperReport) JRLoader.loadObject(articulosPrecios  );
+
+			reportEntradasBanco=(JasperReport) JRLoader.loadObject(entradasBanco);
 			
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -666,6 +672,28 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 			}
+	}
+
+	public static void createReportEntradasBanco(Connection conn,Date fechaMin,Date fechaMax,int codigoCuenta ){
+		Map parametros = new HashMap();
+		parametros.put("fecha_min",fechaMin);
+		parametros.put("fecha_max", fechaMax);
+		parametros.put("codigo_cuenta", codigoCuenta);
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportEntradasBanco, parametros, conn );
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	public static void createReportSaldoBancos(Connection conn,Date fechaMin,Date fechaMax,int codigoBanco ){

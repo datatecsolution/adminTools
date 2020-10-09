@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_comisiones" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -82,7 +82,7 @@
 			<staticText>
 				<reportElement x="2" y="60" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[VENTAS POR USUARIOS]]></text>
 			</staticText>
@@ -101,28 +101,28 @@
 			<staticText>
 				<reportElement x="187" y="5" width="33" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Desde:]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
 				<reportElement x="221" y="5" width="90" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_min}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
 				<reportElement x="362" y="5" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_max}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="324" y="5" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Hasta:]]></text>
 			</staticText>
@@ -149,7 +149,9 @@
 						<jr:tableHeader style="Table_TH" height="30" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="220" height="30" uuid="9d007dec-ab0a-40f5-94ef-cc3f44175f6d"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Usuario]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -158,7 +160,9 @@
 							<textField>
 								<reportElement x="0" y="0" width="220" height="30" uuid="87e611ed-5560-48e5-9c62-5e8c09d6cded"/>
 								<box leftPadding="3"/>
-								<textElement textAlignment="Left" verticalAlignment="Middle"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{vendedorNombre}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -169,6 +173,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="140" height="30" uuid="70f2e17e-3753-40c3-bde3-832d1a85b7e2"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
 									<paragraph lineSpacing="Double"/>
 								</textElement>
 								<text><![CDATA[No Clientes Atendidos]]></text>
@@ -177,14 +182,18 @@
 						<jr:tableFooter style="Table_TH" height="30" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="140" height="30" uuid="fb4fac7a-f3d1-4dd8-813c-a8d29710414c"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$V{totalClientesAtendidos}]]></textFieldExpression>
 							</textField>
 						</jr:tableFooter>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
 								<reportElement x="0" y="0" width="140" height="30" uuid="226f622f-f45e-4e92-ae9e-eaf7ecc3e82d"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{clienteAtendidos}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -194,7 +203,9 @@
 						<jr:tableHeader style="Table_TH" height="30" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="110" height="30" uuid="2f5a4d39-9067-48a9-9d6b-509cd3813138"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Total Ventas]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -202,7 +213,9 @@
 							<textField pattern="¤#,#00.00;¤-#,#00.00">
 								<reportElement x="0" y="0" width="110" height="30" uuid="e086d70c-786e-4ef1-95b1-10404759220d"/>
 								<box rightPadding="3"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$V{totalVentas}]]></textFieldExpression>
 							</textField>
 						</jr:tableFooter>
@@ -210,7 +223,9 @@
 							<textField pattern="¤#,#00.00##;¤-#,#00.00##">
 								<reportElement x="0" y="0" width="110" height="30" uuid="69001ae5-14c6-4053-8d68-11f21ebd714c"/>
 								<box rightPadding="3"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{totalVentas}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -220,7 +235,9 @@
 						<jr:tableHeader style="Table_TH" height="30" rowSpan="1">
 							<textField>
 								<reportElement x="0" y="0" width="98" height="30" uuid="8b246d17-3789-4a6e-9ee6-eb9120fb4b35"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA["Comision "+$P{porcentajeTable}+"%"]]></textFieldExpression>
 							</textField>
 						</jr:tableHeader>
@@ -228,7 +245,9 @@
 							<textField pattern="¤#,#00.00;¤-#,#00.00">
 								<reportElement x="0" y="0" width="98" height="30" uuid="31a2bca9-5db8-44af-8100-7c120229d249"/>
 								<box rightPadding="3"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$V{totalComisones}]]></textFieldExpression>
 							</textField>
 						</jr:tableFooter>
@@ -236,7 +255,9 @@
 							<textField pattern="¤#,#00.00;¤-#,#00.00">
 								<reportElement x="0" y="0" width="98" height="30" uuid="dc78dac0-59f1-4d2e-a5d7-9c2e1b06b5ab"/>
 								<box rightPadding="3"/>
-								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{comision}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>

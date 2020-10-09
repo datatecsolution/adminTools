@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="requisicion_carta" pageWidth="612" pageHeight="396" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -115,7 +115,7 @@ WHERE
 			<staticText>
 				<reportElement x="2" y="65" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[REQUISICION]]></text>
 			</staticText>
@@ -134,70 +134,70 @@ WHERE
 			<staticText>
 				<reportElement x="7" y="15" width="83" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Bodega Origen:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="90" y="15" width="172" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{b_origen}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="7" y="1" width="73" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Numero:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="80" y="1" width="182" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo_requisicion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
 				<reportElement x="300" y="1" width="131" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="263" y="1" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Facha:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="339" y="14" width="224" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{b_destino}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="263" y="14" width="76" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Bodega destino:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="431" y="-1" width="46" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10"/>
+					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Estado:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="479" y="-1" width="86" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estado_requisicion}]]></textFieldExpression>
 			</textField>
@@ -220,7 +220,7 @@ WHERE
 					<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Articulo]]></text>
 			</staticText>
@@ -233,7 +233,7 @@ WHERE
 					<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Precio]]></text>
 			</staticText>
@@ -246,7 +246,7 @@ WHERE
 					<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[SubTotal]]></text>
 			</staticText>
@@ -259,7 +259,7 @@ WHERE
 					<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Cantidad]]></text>
 			</staticText>
@@ -280,7 +280,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
 				</textField>
@@ -293,7 +293,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#666666"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precio_unidad}]]></textFieldExpression>
 				</textField>
@@ -306,7 +306,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{detalle_total}]]></textFieldExpression>
 				</textField>
@@ -319,7 +319,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Dotted" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 				</textField>
@@ -345,7 +345,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial"/>
+						<font fontName="SansSerif"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 				</textField>
@@ -358,7 +358,7 @@ WHERE
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
@@ -368,7 +368,7 @@ WHERE
 						<topPen lineWidth="0.1" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Arial" size="10"/>
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Requisicion realizada por " +$F{usuario}]]></textFieldExpression>
 				</textField>

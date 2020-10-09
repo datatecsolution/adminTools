@@ -52,12 +52,17 @@ public class ListaBotonesFacturas extends AbstractListModel {
 	}
 	public void addBoton(Factura fact){
 		facturas.add(fact);
-		
-		JToggleButton nuevo=new JToggleButton(fact.getCliente().getNombre());
+
+
+		String nombre=fact.getCliente().getNombre();
+
+
+		JToggleButton nuevo=new JToggleButton(( nombre.length() > 17 )?nombre.substring( 0 , 17 - 1 ).concat( "…" ): nombre);
 		btnGuardados.add(nuevo);
 		grupoOpciones.add(nuevo);
 		
 		nuevo.setSize(ancho, alto);
+		nuevo.setPreferredSize(new Dimension(ancho,alto));
 		myFon=new Font("Georgia", Font.PLAIN, 13);
 		nuevo.setFont(myFon);
 		Color color1 =new Color(60, 179, 113);
@@ -98,6 +103,7 @@ public class ListaBotonesFacturas extends AbstractListModel {
 			btnGuardados.add(nuevo);
 			
 			nuevo.setSize(ancho, alto);
+			nuevo.setPreferredSize(new Dimension(ancho,alto));
 			myFon=new Font("Georgia", Font.PLAIN, 13);
 			nuevo.setFont(myFon);
 			Color color1 =new Color(60, 179, 113);

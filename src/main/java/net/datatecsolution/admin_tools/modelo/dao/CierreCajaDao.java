@@ -399,7 +399,7 @@ public class CierreCajaDao extends ModeloDaoBasic {
 				 try {
 						con = ConexionStatic.getPoolConexion().getConnection();
 						psConsultas=
-								con.prepareStatement(sql);
+								con.prepareStatement(sql,java.sql.Statement.RETURN_GENERATED_KEYS);
 						
 						psConsultas.setInt(1,unCierre.getNoFacturaInicio() );
 						psConsultas.setInt(2,0 );
@@ -718,86 +718,6 @@ public CierreCaja getCierreUltimoUser(){
 				}
 				else return null;
 		}*/
-		/**
-		 * @return the total en creditos en un rago de facturas para un usuario
-		 * @param factInicial numero de factura inicial
-		 * @param factFinal numero de factura final
-		 */
-	/*
-			private BigDecimal getTotalCredito(int factInicial, int factFinal){
-				
-				BigDecimal total=null;
-				
-				String sql="select "
-		    			+ "			sum("
-		    			+ "				`encabezado_factura`.`total` "
-		    			+ "			) AS `total_efectivo` "
-		    			+ "		from "
-		    			+ super.DbName+".`encabezado_factura` "
-		    			+ "		where "
-		    			+ "					`encabezado_factura`.`tipo_factura` = 2 "
-		    			+ "				and "
-		    			+ "					`encabezado_factura`.`estado_factura` = 'ACT' "
-		    			+ "				and "
-		    			+ "					`encabezado_factura`.`numero_factura` >= ?"
-		    			+ "				and "
-		    			+ "					`encabezado_factura`.`numero_factura` <= ?"
-		    			+ "				and "
-		    			+ "					encabezado_factura.usuario =?";
-				Connection con = null;
-		        
-		        
-				
-				ResultSet res=null;
-				
-				boolean existe=false;
-				try {
-					con = ConexionStatic.getPoolConexion().getConnection();
-					
-					this.psConsultas= con.prepareStatement(sql);
-					psConsultas.setInt(1, factInicial);
-					psConsultas.setInt(2, factFinal);
-					psConsultas.setString(3, ConexionStatic.getUsuarioLogin().getUser());
-					
-					res = psConsultas.executeQuery();
-					while(res.next()){
-						
-						existe=true;
-						total=new BigDecimal(res.getDouble("total_efectivo"));
-						
-						
-						
-					
-					 }
-							
-					} catch (SQLException e) {
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
-					}
-				finally
-				{
-					try{
-						
-						if(res != null) res.close();
-		                if(psConsultas != null)psConsultas.close();
-		                if(con != null) con.close();
-		                
-						
-						} // fin de try
-						catch ( SQLException excepcionSql )
-						{
-							excepcionSql.printStackTrace();
-							//conexion.desconectar();
-						} // fin de catch
-				} // fin de finally
-				
-				
-					if (existe) {
-						return total;
-					}
-					else return null;
-			}
-	*/
 
 	public CierreCaja getCierre(){
 		

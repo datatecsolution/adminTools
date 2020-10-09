@@ -242,7 +242,10 @@ public class FacturaDao extends ModeloDaoBasic {
 			//si la factura es al credito se guarda el credito del cliente
 			if(myFactura.getTipoFactura()==2){
 				myCuentaCobrarDao.reguistrarCredito(myFactura);
-				
+
+
+				//verificar si tiene credito a fovor del cliente si tiene no debe registrar el credito de la factura
+
 				//se crea la cuenta de la factura en la bd
 				CuentaFactura unaCuentaFactura=new CuentaFactura();
 			

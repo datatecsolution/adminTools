@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_cuentas_proveedor" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -97,42 +97,42 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 			<textField pattern="d/M/yy">
 				<reportElement x="362" y="44" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="4" y="0" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="Lucida Sans" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[REPORTE DE CUENTA POR PAGAR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="315" y="44" width="47" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Telefono:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="5" y="44" width="60" height="13" uuid="81c1890e-ff65-4b34-bf25-f59006d2151f"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Proveedor:]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
 				<reportElement x="61" y="44" width="224" height="13" uuid="c6f87323-15ee-41c7-a0cd-ecadb87ee256"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo_proveedor}+" | "+$F{nombre_proveedor}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d MMMM, yyyy">
 				<reportElement x="239" y="13" width="90" height="13" uuid="4d1e2d95-c9f8-44e3-a8ab-28f582d1153b"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
@@ -155,7 +155,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Descripcion]]></text>
 			</staticText>
@@ -168,7 +168,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
@@ -181,7 +181,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Debito]]></text>
 			</staticText>
@@ -194,7 +194,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Credito]]></text>
 			</staticText>
@@ -207,7 +207,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[No]]></text>
 			</staticText>
@@ -220,7 +220,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Saldo]]></text>
 			</staticText>
@@ -232,7 +232,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<reportElement x="2" y="0" width="568" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="136" y="0" width="189" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box leftPadding="3" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -241,11 +241,11 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="dd/MM/yy">
+				<textField textAdjust="StretchHeight" pattern="dd/MM/yy">
 					<reportElement style="Detail" x="54" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -254,11 +254,11 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="406" y="0" width="81" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -267,11 +267,11 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="487" y="0" width="80" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -280,11 +280,11 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="0" y="0" width="54" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -293,11 +293,11 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo_reguistro}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="325" y="0" width="81" height="15" uuid="61565d88-6cfd-4004-9694-4c7c05844da2"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +306,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{debito}]]></textFieldExpression>
 				</textField>

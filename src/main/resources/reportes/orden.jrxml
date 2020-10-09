@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Orden_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="7" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="3.0"/>
@@ -411,7 +411,7 @@ WHERE
 			<staticText>
 				<reportElement x="1" y="82" width="178" height="10" uuid="093a9342-6988-4c9f-a6dd-cfe0ce95805f"/>
 				<textElement verticalAlignment="Bottom">
-					<font size="8"/>
+					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<text><![CDATA[_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _]]></text>
 			</staticText>
@@ -459,7 +459,7 @@ WHERE
 		<band height="12" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="180" height="12" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement x="18" y="0" width="161" height="12" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -468,11 +468,11 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="DejaVu Sans Mono" size="7"/>
+						<font fontName="SansSerif" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" "+$F{articulo}+" "]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement x="1" y="0" width="18" height="12" isPrintWhenDetailOverflows="true" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -481,7 +481,7 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="DejaVu Sans" size="7"/>
+						<font fontName="SansSerif" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad_detalle}]]></textFieldExpression>
 				</textField>

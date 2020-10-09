@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pagos_cliente" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_entradas_bancos" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
@@ -9,57 +9,61 @@
 	<property name="ireport.x" value="15"/>
 	<property name="ireport.y" value="96"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="local_datatec"/>
 	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
 	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
 	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" fontName="Arial" fontSize="12"/>
 	<style name="Row" mode="Transparent">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style backcolor="#E6DAC3"/>
+			<conditionExpression><![CDATA[$V{numero_salida}%2 == 0]]></conditionExpression>
+			<style backcolor="#F7E5BE"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="fecha_min" class="java.util.Date">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="fecha_max" class="java.util.Date"/>
-	<parameter name="codigo_cliente" class="java.lang.Integer"/>
+	<parameter name="codigo_cuenta" class="java.lang.Integer"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
-	`recibo_pago`.`no_recibo` AS `no_recibo`,
-	`recibo_pago`.`fecha` AS `fecha`,
-	`recibo_pago`.`codigo_cliente` AS `codigo_cliente`,
-	`recibo_pago`.`total_letras` AS `total_letras`,
-	`recibo_pago`.`total` AS `total`,
-	`recibo_pago`.`saldo_anterio` AS `saldo_anterio`,
-	`recibo_pago`.`saldo` AS `saldo`,
-	`recibo_pago`.`concepto` AS `concepto`,
-	`recibo_pago`.`usuario` AS `usuario`,
-	`cliente`.`nombre_cliente` AS `nombre_cliente`,
-	cliente.rtn
+	entradas_caja.codigo_entrada, 
+	entradas_caja.concepto, 
+	entradas_caja.cantidad, 
+	entradas_caja.usuario, 
+	date_format( entradas_caja.fecha, '%d/%m/%Y ' ) AS fecha, 
+	entradas_caja.fecha as fecha1, 
+	entradas_caja.estado, 
+	entradas_caja.codigo_cuenta, 
+	bancos.id, 
+	bancos.nombre, 
+	bancos.no_cuenta, 
+	bancos.id_tipo_cuenta, 
+	tipo_cuenta_bancos.tipo_cuenta, 
+	tipo_cuenta_bancos.observaciones
 FROM
-	
-		`recibo_pago`
-		JOIN `cliente` ON
-			(
-				`recibo_pago`.`codigo_cliente` = `cliente`.`codigo_cliente`
-			)
-		
-	
+	entradas_caja
+	JOIN
+	bancos
+	ON 
+		entradas_caja.codigo_cuenta = bancos.id
+	INNER JOIN
+	tipo_cuenta_bancos
+	ON 
+		bancos.id_tipo_cuenta = tipo_cuenta_bancos.id
 WHERE 
-	 fecha BETWEEN $P{fecha_min} AND $P{fecha_max} and `recibo_pago`.`codigo_cliente`= $P{codigo_cliente}]]>
+	 CAST(fecha AS DATE) BETWEEN $P{fecha_min} AND $P{fecha_max} and codigo_cuenta= $P{codigo_cuenta} and entradas_caja.estado='ACT']]>
 	</queryString>
-	<field name="no_recibo" class="java.lang.Integer">
+	<field name="codigo_entrada" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_salida"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="total_letras" class="java.lang.String">
+	<field name="concepto" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="concepto"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="total" class="java.lang.Float">
+	<field name="cantidad" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
@@ -67,22 +71,33 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="usuario"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="codigo_cliente" class="java.lang.Integer">
+	<field name="codigo_cuenta" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_empleado"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="nombre_cliente" class="java.lang.String">
+	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="fecha" class="java.sql.Date">
+	<field name="no_cuenta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="apellido"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
+	</field>
+	<field name="tipo_cuenta" class="java.lang.String"/>
+	<field name="fecha" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
 	</field>
-	<field name="concepto" class="java.lang.String"/>
-	<field name="rtn" class="java.lang.String"/>
-	<variable name="total" class="java.lang.Double" resetType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	<field name="fecha1" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fecha1"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_salidas"/>
+	</field>
+	<variable name="total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
+	</variable>
+	<variable name="numero_salida" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -102,35 +117,35 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PAGOS DE CLIENTES]]></text>
+				<text><![CDATA[ENTRADAS A BANCOS]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="20">
+		<band height="15">
 			<staticText>
-				<reportElement x="277" y="2" width="39" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<reportElement x="275" y="2" width="39" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Desde:]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
-				<reportElement x="316" y="2" width="90" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<reportElement x="314" y="2" width="90" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_min}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
-				<reportElement x="445" y="2" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<reportElement x="443" y="2" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_max}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="407" y="2" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<reportElement x="405" y="2" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
@@ -141,14 +156,14 @@ WHERE
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Cliente: ]]></text>
+				<text><![CDATA[Cuenta: ]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
-				<reportElement x="56" y="2" width="220" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
+				<reportElement x="56" y="2" width="219" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rtn}+ " | "+$F{nombre_cliente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo_cuenta}+ ":"+$F{nombre}+"-"+$F{no_cuenta}+ "-"+$F{tipo_cuenta}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -241,7 +256,7 @@ WHERE
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
@@ -254,12 +269,12 @@ WHERE
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" pattern="d/M/yy">
+				<textField textAdjust="StretchHeight" pattern="d/M/yy h:mm">
 					<reportElement style="Detail" x="54" y="0" width="104" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -267,10 +282,10 @@ WHERE
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center">
-						<font fontName="SansSerif" size="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{fecha1}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="431" y="0" width="92" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
@@ -280,10 +295,10 @@ WHERE
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="0" y="0" width="54" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
@@ -293,16 +308,34 @@ WHERE
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codigo_entrada}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="58">
+	<pageFooter>
+		<band height="22">
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="53" y="2" width="40" height="17" forecolor="#736343" uuid="9df7792a-36e2-4f3e-a9bf-d17f674464c6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Column header" x="0" y="2" width="51" height="17" forecolor="#736343" uuid="626a323b-2a02-4cdc-90e9-9da30b1d4499"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="50">
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
 				<reportElement x="433" y="0" width="92" height="15" uuid="7da9a0ca-8b07-4a19-9aa8-7b4e4a17f091">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -338,5 +371,5 @@ WHERE
 				<text><![CDATA[Total]]></text>
 			</staticText>
 		</band>
-	</columnFooter>
+	</summary>
 </jasperReport>

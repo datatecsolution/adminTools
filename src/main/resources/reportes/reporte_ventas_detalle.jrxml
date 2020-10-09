@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ventas_detalle_turno" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -107,7 +107,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="40" height="15" uuid="1ad7b3f6-e6a1-4d56-a6f0-386105995d42"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Fact #]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -115,7 +117,9 @@
 						<jr:detailCell style="Table_TD" height="15">
 							<textField>
 								<reportElement x="0" y="0" width="40" height="15" uuid="bb996e95-040c-4884-84de-9fe91cf6e6d0"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{idFactura}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -125,7 +129,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="216" height="15" uuid="4653dc8d-9aef-4493-8eac-eb2099832bbf"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Articulo]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -134,7 +140,9 @@
 							<textField>
 								<reportElement x="0" y="0" width="216" height="15" uuid="3e272b10-e435-4a4c-aa7f-6e8daad09dd6"/>
 								<box leftPadding="2"/>
-								<textElement verticalAlignment="Middle"/>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{codigoArt}+" | "+$F{art}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -144,7 +152,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="60" height="15" uuid="4e927e25-1092-40c3-8e48-715f3e5b0e51"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Precio U]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -153,7 +163,9 @@
 							<textField pattern="¤#,##0.00;¤-#,##0.00">
 								<reportElement x="0" y="0" width="60" height="15" uuid="cdf1b403-3e64-45e3-8068-3b4b53bee7f8"/>
 								<box rightPadding="2"/>
-								<textElement textAlignment="Right"/>
+								<textElement textAlignment="Right">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{precioVentaItem}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -163,7 +175,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="756967f5-ee31-4616-b61c-f93c2efcb12b"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Cantidad]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -171,7 +185,9 @@
 						<jr:detailCell style="Table_TD" height="15">
 							<textField pattern="#,##0.00#">
 								<reportElement x="0" y="0" width="50" height="15" uuid="3dbf8798-2edd-4043-bcd9-33b4596560f6"/>
-								<textElement textAlignment="Center"/>
+								<textElement textAlignment="Center">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -181,7 +197,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="7d8c4b28-c713-4b44-944b-a0cd3c8adc61"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Impuesto]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -190,7 +208,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="438e7d0c-46e9-47b7-8e9a-15ad39a3ffdb"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font isUnderline="true"/>
+									<font fontName="SansSerif" isUnderline="true"/>
 								</textElement>
 								<text><![CDATA[Total]]></text>
 							</staticText>
@@ -199,7 +217,9 @@
 							<textField pattern="¤#,##0.00;¤-#,##0.00">
 								<reportElement x="0" y="0" width="50" height="15" uuid="3d5762d4-dcb9-41f8-9ada-c9604c8bef85"/>
 								<box rightPadding="2"/>
-								<textElement textAlignment="Right"/>
+								<textElement textAlignment="Right">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{impuesto}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -209,7 +229,9 @@
 						<jr:tableHeader style="Table_TH" height="15" rowSpan="1">
 							<staticText>
 								<reportElement x="0" y="0" width="60" height="15" uuid="fe0f8510-ddd0-4bb1-bf3a-c9ab03365e74"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<text><![CDATA[Total]]></text>
 							</staticText>
 						</jr:tableHeader>
@@ -218,7 +240,7 @@
 								<reportElement x="0" y="0" width="60" height="15" uuid="17c77161-671a-4d88-8cab-9511335eaa93"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="9" isUnderline="true"/>
+									<font fontName="SansSerif" size="9" isUnderline="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
 							</textField>
@@ -227,7 +249,9 @@
 							<textField pattern="¤#,##0.00;¤-#,##0.00">
 								<reportElement x="0" y="0" width="60" height="15" uuid="bee0250f-69a2-4ffa-b9f9-e4fa866321e3"/>
 								<box rightPadding="2"/>
-								<textElement textAlignment="Right"/>
+								<textElement textAlignment="Right">
+									<font fontName="SansSerif"/>
+								</textElement>
 								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -239,7 +263,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="64" height="15" uuid="e1054fb4-a151-48d3-a4d6-7f50a864fcb2"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<text><![CDATA[Observaciones]]></text>
 							</staticText>

@@ -180,7 +180,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			//psConsultas = con.prepareStatement(super.getQuerySearchJoin(campo, operador, tableJoin, campoTableJoin, campoJoin)
 			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
 			psConsultas.setInt(2, 0);
-			psConsultas.setInt(3, 9);
+			psConsultas.setInt(3, 20);
 			res = psConsultas.executeQuery();
 			
 			while(res.next()){

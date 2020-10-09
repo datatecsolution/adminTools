@@ -77,29 +77,7 @@ public class CtlRequisicion implements ActionListener, MouseListener, TableModel
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		/*
-		//comprobamos si hay algo que buscar
-		if(e.getComponent()==this.view.getTxtBuscar()&&view.getTxtBuscar().getText().trim().length()!=0){
-			//JOptionPane.showMessageDialog(view, "2");
-			//se busca el articulo y se asigna el resultado en el objeto articulo
-			this.myArticulo=this.myArticuloDao.buscarArticuloNombre(view.getTxtBuscar().getText());
-			
-			//se comprueba si la busqueda devolvio un articulo
-			if(myArticulo!=null){
-				view.getTxtArticulo().setText(myArticulo.getArticulo());
-				view.getTxtPrecio().setText("L. "+myArticulo.getPrecioVenta());
-				
-			}else{//si no se encontro ningun articulo se elemina la busqueda anterior
-				myArticulo=null;
-				view.getTxtArticulo().setText("");
-				view.getTxtPrecio().setText("");
-			}
-		}else{///sino hay nada que buscar se elemina la vista y el articulo
-			myArticulo=null;
-			view.getTxtArticulo().setText("");
-			view.getTxtPrecio().setText("");
-		}*/
-		
+
 		//Recoger qu� fila se ha pulsadao en la tabla
 		filaPulsada = this.view.getTablaArticulos().getSelectedRow();
 		char caracter = e.getKeyChar();
@@ -223,27 +201,31 @@ public class CtlRequisicion implements ActionListener, MouseListener, TableModel
 					
 				}
 				if(colum==2){
-					
+
 					//Se recoge el id de la fila marcada
-			        int identificador= (int)this.view.getModelo().getValueAt(row, 0);
-			        
-			        myArticulo=this.view.getModelo().getDetalle(row).getArticulo();
-			        
+					int identificador= (int)this.view.getModelo().getValueAt(row, 0);
+
+					myArticulo=this.view.getModelo().getDetalle(row).getArticulo();
+
+					//JOptionPane.showMessageDialog(view,"Cantidad item"+this.view.getModelo().getDetalle(row).getCantidad().doubleValue());
+
 					BigDecimal cantidadSaldoKardex=myKardexDao.buscarExistencia(myArticulo.getId(), depart.getId());
-					
-					BigDecimal cantidadSaldoItem=view.getModelo().getDetalle(row).getCantidad();
-					
-					BigDecimal diferencia=cantidadSaldoKardex.subtract(cantidadSaldoItem);
-					//JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoKardex.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+depart.getDescripcion());  
-					
+
+
+
+					double buscarEnRequisicionCantidad=view.getModelo().buscarCantidadPorArticulo(myArticulo);
+
+
+					BigDecimal diferencia=cantidadSaldoKardex.subtract(new BigDecimal(buscarEnRequisicionCantidad));
+					//JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoKardex.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+depart.getDescripcion());
+
 					if(diferencia.doubleValue()>=0.00){
 						calcularTotales();
 					}else{
-						JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+depart.getDescripcion());  
+						JOptionPane.showMessageDialog(view, "El cantidad de "+ buscarEnRequisicionCantidad+" requerida del articulo no se encuentra en la "+depart.getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 						view.getModelo().eliminarDetalle(row);
+						calcularTotales();
 					}
-					
-					
 				}
 				
 			break;
@@ -352,17 +334,22 @@ public void calcularTotales(){
 								//se comprueba que exista el producto en el inventario
 								double existencia=myArticuloDao.getExistencia(myArticulo.getId(), depart.getId());
 								//boolean resul=myKardex.comprobarKardex(myArticulo.getId(), depart.getId());
+
+								//se estable la pasar de una bodega a otra por defecto es uno
+								double cantidad=1;
+
+								double buscarEnRequisicionCantidad=view.getModelo().buscarCantidadPorArticulo(myArticulo);
+								if(buscarEnRequisicionCantidad>0){
+									cantidad=cantidad+buscarEnRequisicionCantidad;
+								}
 								
-								//conseguir los precios del producto
-								//myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-								
-								if(existencia>0.0){
+								if(existencia>0.0 && cantidad<=existencia){
 									//se agrega un item a la lista con el articulo seleccionado o buscado
 									this.view.getModelo().setArticulo(myArticulo);
 									
 									//se agrega un item vacio  a la lista
 									this.view.getModelo().agregarDetalle();
-									
+
 									view.getTxtBuscar().setText("");
 									
 									
@@ -372,30 +359,10 @@ public void calcularTotales(){
 									calcularTotales();
 									selectRowInset();
 								}else{
-									JOptionPane.showMessageDialog(view, "El articulo no se encuentra en la "+depart.getDescripcion());  
+									JOptionPane.showMessageDialog(view, "El cantidad de "+ cantidad+" requerida del articulo no se encuentra en la "+depart.getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+									//se agrega una fila en blanco
+									this.view.getModelo().agregarDetalle();
 								}
-								
-								//selectRowInset();
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-			
-							/*
-							this.view.getModelo().setArticulo(myArticulo);
-							
-							calcularTotales();
-							this.view.getModelo().agregarDetalle();
-							view.getTxtBuscar().setText("");
-							selectRowInset();*/
 							
 						}else{
 							JOptionPane.showMessageDialog(view, "No se encontro el articulo");
@@ -462,25 +429,11 @@ public void calcularTotales(){
 				JOptionPane.showMessageDialog(view, "Debe seleccionar una bodega de destino.","Error de validacion",JOptionPane.ERROR_MESSAGE);
 			}
 
-
-
-
-
-
-
-
 		}else
 		{
 			JOptionPane.showMessageDialog(view, "Se debe tener articulos para crear la requision. Agrege Articulos primero.");
 		}
-		
-		/*setFactura();
-		facturaDao.registrarFacturaTemp(myFactura);
-		myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-		resultado=true;
-		//this.view.setVisible(false);
-		setEmptyView();*/
-		
+
 	}
 	private void setRequisicion() {
 		
@@ -493,31 +446,7 @@ public void calcularTotales(){
 		String total=view.getTxtTotal().getText();
 		this.myRequisicion.setTotal(new BigDecimal(total));
 		this.myRequisicion.setDetalles(view.getModelo().getDetalles());
-		//fasdf
-		/*/sino se ingreso un cliente en particular que coge el cliente por defecto
-		if(myCliente==null){
-			myCliente=new Cliente();
-			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
-			myCliente.setNombre(this.view.getTxtNombrecliente().getText());
-			
-		}
-		
-		if(this.view.getRdbtnContado().isSelected()){
-			myFactura.setTipoFactura(1);
-		}
-		
-		if(this.view.getRdbtnCredito().isSelected()){
-			myFactura.setTipoFactura(2);
-		}
-		
-		myFactura.setCliente(myCliente);
-		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
-		myFactura.setFecha(facturaDao.getFechaSistema());
-		//Se establece el vendedor seleccionado
-		Empleado emp= (Empleado) this.view .getCbxEmpleados().getSelectedItem();
-		myFactura.setVendedor(emp);*/
-		//myArticulo.setImpuestoObj(imp);
-		//JOptionPane.showMessageDialog(view, myCliente);*/
+
 		
 	}
 
@@ -540,14 +469,12 @@ public void calcularTotales(){
 		viewListaArticulo.pack();
 		ctlArticulo.view.getTxtBuscar().setText("");
 		ctlArticulo.view.getTxtBuscar().selectAll();
-		//ctlArticulo.view.getTxtBuscar().requestFocus(true);
-		//ctlArticulo.view.getTxtBuscar().selectAll();
 		view.getTxtBuscar().requestFocusInWindow();
 		viewListaArticulo.conectarControladorBuscar(ctlArticulo);
 		
 		boolean result=ctlArticulo.buscarArticulo(view);
 		
-		//JOptionPane.showMessageDialog(view, myArticulo1);
+
 		//se comprueba si le regreso un articulo valido
 		if(result){
 			Articulo myArticulo1=ctlArticulo.getArticulo();
@@ -557,11 +484,19 @@ public void calcularTotales(){
 			//se comprueba que exista el producto en el inventario
 			double existencia=myArticuloDao.getExistencia(myArticulo1.getId(), depart.getId());
 			//boolean resul=myKardex.comprobarKardex(myArticulo.getId(), depart.getId());
+
+			//se estable la pasar de una bodega a otra por defecto es uno
+			double cantidad=1;
+
+			double buscarEnRequisicionCantidad=view.getModelo().buscarCantidadPorArticulo(myArticulo1);
+			if(buscarEnRequisicionCantidad>0){
+				cantidad=cantidad+buscarEnRequisicionCantidad;
+			}
 			
-			if(existencia>0.0){
+			if(existencia>0.0 && cantidad<=existencia){
 				this.view.getModelo().setArticulo(myArticulo1);
 				
-				
+				//se agrega una fila en blanco
 				this.view.getModelo().agregarDetalle();
 				view.getTxtBuscar().setText("");
 				
@@ -574,7 +509,9 @@ public void calcularTotales(){
 				calcularTotales();
 				selectRowInset();
 			}else{
-				JOptionPane.showMessageDialog(view, "El articulo no se encuentra en la "+depart.getDescripcion());  
+				JOptionPane.showMessageDialog(view, "El cantidad de "+ cantidad+" requerida del articulo no se encuentra en la "+depart.getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+				//se agrega una fila en blanco
+				this.view.getModelo().agregarDetalle();
 			}
 			
 			selectRowInset();

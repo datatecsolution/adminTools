@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteExistencia" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -89,7 +89,7 @@
 			<textField pattern="d MMMM, yyyy">
 				<reportElement x="241" y="78" width="90" height="13" uuid="566ff73d-1cc8-4348-b25a-8f47cdb10ce8"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
@@ -221,7 +221,7 @@
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="2" y="0" width="570" height="15" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true" pattern="###0">
+				<textField textAdjust="StretchHeight" pattern="###0">
 					<reportElement style="Detail" x="231" y="0" width="97" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box>
 						<pen lineWidth="0.5"/>
@@ -235,7 +235,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{descripcion_bodega}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,##0.###">
+				<textField textAdjust="StretchHeight" pattern="#,##0.###">
 					<reportElement style="Detail" x="0" y="0" width="51" height="15" uuid="8b2d71e6-2571-41d7-8c89-91657dab1d31"/>
 					<box>
 						<pen lineWidth="0.5"/>
@@ -249,7 +249,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo_articulo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="487" y="0" width="83" height="15" uuid="b3660684-4c2f-459b-9753-e27414aa0888"/>
 					<box rightPadding="2">
 						<pen lineWidth="0.5"/>
@@ -263,7 +263,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_saldo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,##0">
+				<textField textAdjust="StretchHeight" pattern="#,##0">
 					<reportElement style="Detail" x="328" y="0" width="49" height="15" uuid="f0e53507-07d4-4a24-b2ac-7fbb51e3ce6b"/>
 					<box>
 						<pen lineWidth="0.5"/>
@@ -277,7 +277,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{can_saldo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<textField textAdjust="StretchHeight" pattern="¤ #,##0.00">
 					<reportElement style="Detail" x="377" y="0" width="110" height="15" uuid="c67636bd-aad2-4408-85db-dfdefca7792c"/>
 					<box rightPadding="2">
 						<pen lineWidth="0.5"/>
@@ -291,7 +291,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precio_saldo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
 					<reportElement style="Detail" x="51" y="0" width="180" height="15" uuid="0cb0558d-08f6-4f64-8e5a-bd3d8646f64a"/>
 					<box>
 						<pen lineWidth="0.5"/>
@@ -317,7 +317,7 @@
 				</textElement>
 				<text><![CDATA[Aprobado Por:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement style="Detail" x="390" y="0" width="182" height="16" uuid="dc37535f-db7a-4858-a6a1-220f6a862b8d"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -351,7 +351,9 @@
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
 				<reportElement x="500" y="0" width="72" height="20" uuid="cdeeca83-eee7-4ba6-b2fd-40b6aff0d227"/>
 				<box rightPadding="2"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$V{total_saldo1}]]></textFieldExpression>
 			</textField>
 		</band>

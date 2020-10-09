@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_comisiones" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -56,7 +56,7 @@
 			<staticText>
 				<reportElement x="2" y="50" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="Lucida Sans" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Comosiones Vendedor]]></text>
 			</staticText>
@@ -67,28 +67,28 @@
 			<staticText>
 				<reportElement x="187" y="5" width="33" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Desde:]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
 				<reportElement x="221" y="5" width="90" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_min}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
 				<reportElement x="362" y="5" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_max}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="324" y="5" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Hasta:]]></text>
 			</staticText>
@@ -111,7 +111,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Vendora(o)]]></text>
 			</staticText>
@@ -124,7 +124,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[No Clientes A]]></text>
 			</staticText>
@@ -137,7 +137,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Total Venta]]></text>
 			</staticText>
@@ -150,7 +150,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[Comision 1%]]></text>
 			</staticText>
@@ -163,7 +163,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Lucida Sans" size="11"/>
+					<font fontName="SansSerif" size="11"/>
 				</textElement>
 				<text><![CDATA[No]]></text>
 			</staticText>
@@ -175,7 +175,7 @@
 				<reportElement x="2" y="0" width="523" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="54" y="0" width="214" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box leftPadding="3" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -184,11 +184,11 @@
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,##0.###">
+				<textField textAdjust="StretchHeight" pattern="#,##0.###">
 					<reportElement style="Detail" x="268" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -197,11 +197,11 @@
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{no_clientes}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="350" y="0" width="81" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -210,11 +210,11 @@
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_venta}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="431" y="0" width="92" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -223,11 +223,11 @@
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{comision}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="0" y="0" width="54" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -236,7 +236,7 @@
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="Lucida Sans" size="11"/>
+						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
 				</textField>
@@ -258,7 +258,7 @@
 					<rightPen lineWidth="1.0" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total_venta1}]]></textFieldExpression>
 			</textField>
@@ -275,7 +275,7 @@
 					<rightPen lineWidth="1.0" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Right">
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{comision1}]]></textFieldExpression>
 			</textField>
@@ -292,7 +292,7 @@
 					<rightPen lineWidth="1.0" lineColor="#666666"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font fontName="Lucida Sans"/>
+					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{no_clientes1}]]></textFieldExpression>
 			</textField>

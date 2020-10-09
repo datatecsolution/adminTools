@@ -298,9 +298,56 @@ public class BancosDao extends ModeloDaoBasic{
 		} // fin de finally
 	}
 	@Override
-	public Object buscarPorId(int id) {
+	public Banco buscarPorId(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		Banco banco=new Banco();
+		ResultSet res=null;
+
+		Connection conn=null;
+
+		boolean existe=false;
+
+		try {
+
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement( super.getQuerySelect()+ "where bancos.id=?");
+
+			psConsultas.setInt(1, id);
+
+
+			res = psConsultas.executeQuery();
+			while(res.next()){
+
+				existe=true;
+				banco.setId(res.getInt("id"));
+				banco.setNombre(res.getString("nombre"));
+				banco.setNoCuenta(res.getString("no_cuenta"));
+				banco.setTipoCuenta(res.getString("tipo_cuenta"));
+				banco.setIdTipoCuenta(res.getInt("id_tipo_cuenta"));
+
+			}
+
+		}catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			System.out.println(e);
+		}finally
+		{
+			try{
+				if(res!=null)res.close();
+				if(psConsultas!=null)psConsultas.close();
+				if(conn!=null)conn.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		if (existe) {
+			return banco;
+		}
+		else return null;
 	}
 
 }

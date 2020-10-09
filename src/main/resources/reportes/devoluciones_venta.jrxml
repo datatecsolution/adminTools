@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="devolucion" pageWidth="216" pageHeight="720" columnWidth="188" leftMargin="18" rightMargin="10" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
@@ -110,7 +110,7 @@ inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `
 where 
 encabezado_factura.numero_factura =  $P{numero_factura}
 and 
-detalle_devoluciones.codigo_caja= $P{cod_caja} ]]>
+detalle_devoluciones.codigo_caja= $P{cod_caja}]]>
 	</queryString>
 	<field name="numero_factura" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -354,7 +354,7 @@ detalle_devoluciones.codigo_caja= $P{cod_caja} ]]>
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Detail" mode="Opaque" x="0" y="0" width="188" height="15" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="35" y="0" width="100" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -367,7 +367,7 @@ detalle_devoluciones.codigo_caja= $P{cod_caja} ]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="3" y="0" width="32" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -380,7 +380,7 @@ detalle_devoluciones.codigo_caja= $P{cod_caja} ]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="135" y="0" width="51" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

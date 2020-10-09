@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="codigoBarra" pageWidth="143" pageHeight="53" columnWidth="143" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a22f8285-ccf9-4405-81f8-e821d4d6d899">
 	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="local_datatec"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="id_articulo" class="java.lang.Integer"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<queryString>
@@ -17,9 +19,15 @@ where
 	`v_articulo_codigo_barra`.codigo_articulo=$P{id_articulo}]]>
 	</queryString>
 	<field name="articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_articulo_codigo_barra"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="codigo_barra" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_barra"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_barra"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_articulo_codigo_barra"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<title>
@@ -27,12 +35,12 @@ where
 			<textField>
 				<reportElement x="33" y="39" width="110" height="10" uuid="bef4e355-d74e-4bb1-83d4-9e697970bb19"/>
 				<textElement>
-					<font size="7"/>
+					<font fontName="SansSerif" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="33" y="3" width="110" height="36" uuid="897f2b03-6437-4e5b-8902-3027f3e2bf44"/>
+				<reportElement x="33" y="3" width="107" height="36" uuid="897f2b03-6437-4e5b-8902-3027f3e2bf44"/>
 				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="none">
 					<jr:codeExpression><![CDATA[$F{codigo_barra}]]></jr:codeExpression>
 				</jr:Code128>

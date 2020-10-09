@@ -4,6 +4,7 @@ package net.datatecsolution.admin_tools.modelo;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.sql.DataSource;
 import javax.swing.*;
@@ -25,13 +26,52 @@ import java.sql.SQLException;
  */
 public abstract class ConexionStatic implements Runnable{
 
+
+
 	private static String bd = "admin_tools";
+
+
+
+
+	//LOCALHOST
 	private static String login = "root";
 	private static String password = "Jdmm123.";
 	private static String server = "127.0.0.1";
 
 
-	private static String url = "jdbc:mysql://"+server+":3306/"+bd;
+
+
+/*
+
+	//NARANJAL
+	private static String login = "admin";
+	private static String password = "Jdmm123?";
+	private static String server = "192.168.2.110";
+
+
+	//FERROCENTER
+	private static String login = "user_admin";
+	private static String password = "Jdmm123.";
+	private static String server = "192.168.1.2";
+
+
+	//TEXACO OLANCHITO
+	private static String login = "admin";
+	private static String password = "Jdmm123.";
+	private static String server = "10.10.10.8";
+*/
+
+	/*
+	//LA GRANJA
+	private static String login = "admin_tools_user";
+	private static String password = "Jdmm123.";
+	private static String server = "192.168.0.110";
+
+	 */
+
+
+
+	private static String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
 	private static String driver="com.mysql.cj.jdbc.Driver";
 
 

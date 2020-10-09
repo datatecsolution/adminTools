@@ -49,7 +49,7 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 		myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
 		
 		cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-		
+
 		view.setVisible(true);
 		//this.view.setVisible(true);
 		
@@ -75,6 +75,8 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 		
 		//se recoge el comando programado en el boton que se hizo click
 		String comando=e.getActionCommand();
+		filaPulsada = this.view.getTabla().getSelectedRow();
+
 		//se establece la bodega para todas las busqueda
 		myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
 		
@@ -108,29 +110,6 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 					e1.printStackTrace();
 				}
 			}
-			
-			/*
-			if(this.view.getTabla().getSelectedRow()>=0){
-				
-				ViewArticuloExistencias viewExistencias=new ViewArticuloExistencias(view);
-				CtlArticuloExistencias ctlExistencia=new CtlArticuloExistencias(viewExistencias);
-				boolean result=ctlExistencia.actualizar(view.getModelo().getArticulo(this.view.getTabla().getSelectedRow()), view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
-	
-				if(result){
-					
-						view.getRdbtnId().setSelected(true);
-						this.view.getTxtBuscar().setText(view.getModelo().getArticulo(this.view.getTabla().getSelectedRow()).getId()+"");
-						
-						myArticulo=myArticuloDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText()));
-						this.view.getModelo().limpiarArticulos();
-						if(myArticulo!=null){												
-							this.view.getModelo().agregarArticulo(myArticulo);
-						}
-					
-					
-				}
-		}*/
-			
 			
 		
 			break;
@@ -213,9 +192,6 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 	        
 	        //si seleccion una fila
 	        if(filaPulsada>=0){
-	        	
-	        	//Se recoge el id de la fila marcada
-	          //  int identificador= (int)this.view.getModelo().getValueAt(filaPulsada, 0);
 	            
 	          //se consigue el proveedore de la fila seleccionada
 	            myArticulo=this.view.getModelo().getArticulo(filaPulsada);
@@ -228,54 +204,35 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 					if(myArticuloDao.actualizarEstado(myArticulo));{
 						JOptionPane.showMessageDialog(view, "Se dio de "+(myArticulo.isEstado() ?" ALTA ":" BAJA ")  +" al articulo!!!", "Resultado eliminar articulo.", JOptionPane.INFORMATION_MESSAGE);
 						this.actionPerformed(new ActionEvent(this, resul, "UPDATE"));
-						//JOptionPane.showMessageDialog(view, "ELIMINAR ARTICULO "+view.getModelo().getCanItemPag()+"-"+view.getModelo().getLimiteSuperior());
-						//view.getModelo().lastPag();
 					}
 					
 				}
 	           
 	            
 	        }
-			
-			
-			/*
-			
-			int resul=JOptionPane.showConfirmDialog(view, "Desea eleminar el articulo \""+myArticulo.getArticulo()+"\"?");
-			
-			if(resul==0){
-				
-					//se comprueba que el artiulo no tenga registro en facturas
-					Conexion conexion=null;
-					DetalleFacturaDao detalleFactura=new DetalleFacturaDao();
-					if(detalleFactura.verificarArticuloEnDetalle(myArticulo.getId())){
-						
-								//se elemina el articulo de la BD y se procesa el resultado
-							boolean resulEliminar=myArticuloDao.eliminar(myArticulo);
-							if(resulEliminar){
-								this.view.getModelo().eliminarArticulos(filaPulsada);
-								this.view.getModelo().fireTableDataChanged();
-								this.view.getBtnEliminar().setEnabled(false);
-								this.view.getBtnLimpiar().setEnabled(false);
-								JOptionPane.showMessageDialog(view, "Se elimino el articulo");
-								
-							}
-					}else
-						JOptionPane.showMessageDialog(view, "El Articulo ya esta facturado no lo puede elimimnar!!!", "Error al eliminar articulo", JOptionPane.ERROR_MESSAGE);
-				
-			}*/
+			else {
+				JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
+			}
+
 			break;
 			
 		case "LIMPIAR":
-			try {
-				AbstractJasperReports.createReportCodBarra(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId());
-				//AbstractJasperReports.ImprimirCodigo();
-				AbstractJasperReports.showViewer(view);
-				
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			this.view.getBtnLimpiar().setEnabled(false);
+			//validar que este selecciona una fila
+			if(filaPulsada>=0) {
+				//se consigue el proveedore de la fila seleccionada
+				myArticulo=this.view.getModelo().getArticulo(filaPulsada);
+				try {
+					AbstractJasperReports.createReportCodBarra(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId());
+					AbstractJasperReports.showViewer(view);
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else {
+				JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
+		}
+
 			break;
 			
 			
@@ -344,6 +301,8 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 			
 		case "KARDEX":
 			if(this.filaPulsada>=0){
+				//se consigue el proveedore de la fila seleccionada
+				myArticulo=this.view.getModelo().getArticulo(filaPulsada);
 				
 				Departamento depart3= (Departamento) this.view.getCbxDepart().getSelectedItem();
 				try {
@@ -359,7 +318,7 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 				}
 			}
 			else{
-				JOptionPane.showMessageDialog(view, "Selecione un articulo!!!", "Informacion", JOptionPane.NO_OPTION);
+				JOptionPane.showMessageDialog(view, "Selecione un articulo!!!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
 			
@@ -473,14 +432,17 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 				
 				
 	        }//fin del if del doble click
+			/*
         	else{//si solo seleccion la fila se guarda el id de proveedor para accion de eliminar
         		
         		this.view.getBtnEliminar().setEnabled(true);
         		this.view.getBtnLimpiar().setEnabled(true);
-        		/*idProveedor=identificador;
-        		filaTabla=filaPulsada;*/
+
         		
         	}
+
+			 */
+
 		}
 		
 	}

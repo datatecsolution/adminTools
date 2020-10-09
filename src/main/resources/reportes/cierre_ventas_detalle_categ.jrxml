@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ventas_detalle_cierre" pageWidth="612" pageHeight="792" columnWidth="587" leftMargin="15" rightMargin="10" topMargin="5" bottomMargin="5" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -183,7 +183,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="40" height="15" uuid="de87e6d5-d08e-48c0-9b05-3d4e310a7cef"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Fact #]]></text>
 							</staticText>
@@ -193,7 +193,7 @@
 							<textField>
 								<reportElement x="0" y="0" width="40" height="15" uuid="ee17ef15-f0ec-4abe-936c-b7ac70538db9"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{idFactura}]]></textFieldExpression>
 							</textField>
@@ -205,7 +205,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="270" height="15" uuid="90b9201a-bfba-4dfb-a4d3-150081330b93"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="10" isBold="true"/>
+									<font fontName="SansSerif" size="10" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Articulo]]></text>
 							</staticText>
@@ -216,7 +216,7 @@
 								<reportElement x="0" y="0" width="270" height="15" uuid="51cc4fb3-bff0-4b44-90ec-7e26eac5501c"/>
 								<box leftPadding="2"/>
 								<textElement verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{codigoArt}+" | "+$F{art}]]></textFieldExpression>
 							</textField>
@@ -228,7 +228,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="d59e6080-921a-4386-bc59-c9c4da00ec70"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Precio U]]></text>
 							</staticText>
@@ -239,7 +239,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="1eb80d4c-a39b-4fa0-9f55-4a8aba66f597"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{precioVentaItem}]]></textFieldExpression>
 							</textField>
@@ -251,7 +251,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="9ecfb139-8096-4d4c-a218-18ab910e6eed"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Cantidad]]></text>
 							</staticText>
@@ -261,7 +261,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="8c866e8d-fdea-4286-a9f2-1c0ca1a28907"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8" isBold="true"/>
+									<font fontName="SansSerif" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Total]]></text>
 							</staticText>
@@ -270,7 +270,7 @@
 							<textField pattern="#,##0.00#">
 								<reportElement x="0" y="0" width="50" height="15" uuid="2e84336d-c4e9-48f6-b87d-e7217f610424"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 							</textField>
@@ -282,7 +282,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="ad0dd030-6b40-4d92-baff-8e8283812511"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[T/Venta]]></text>
 							</staticText>
@@ -292,7 +292,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="7ec151b2-2d5c-4654-bdc6-cb4ff506e27e"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="7" isUnderline="true"/>
+									<font fontName="SansSerif" size="7" isUnderline="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{total_v}]]></textFieldExpression>
 							</textField>
@@ -302,7 +302,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="abf6e250-2183-4baa-a70f-40b0fc9bcdb6"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 							</textField>
@@ -314,7 +314,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="60" height="15" uuid="10841224-459b-42c4-a91f-d9eb0ed34d80"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[T/Costo]]></text>
 							</staticText>
@@ -324,7 +324,7 @@
 								<reportElement x="0" y="0" width="60" height="15" uuid="b0284dfe-cb07-45ae-bc5b-9b667c35eb94"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="7" isUnderline="true"/>
+									<font fontName="SansSerif" size="7" isUnderline="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{total_c}]]></textFieldExpression>
 							</textField>
@@ -334,7 +334,7 @@
 								<reportElement x="0" y="0" width="60" height="15" uuid="c8bd2ced-fab8-481c-b5b7-1ddf21d2b0b0"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{totalVentasCosto}]]></textFieldExpression>
 							</textField>
@@ -346,7 +346,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="50" height="15" uuid="b6256efb-6016-4ba1-a726-5561879979af"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font isBold="true"/>
+									<font fontName="SansSerif" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Ganancia]]></text>
 							</staticText>
@@ -356,7 +356,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="16d5309d-ec6d-41e5-b1c8-4ac1763bf3bc"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="7" isUnderline="true"/>
+									<font fontName="SansSerif" size="7" isUnderline="true"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{total_g}]]></textFieldExpression>
 							</textField>
@@ -366,7 +366,7 @@
 								<reportElement x="0" y="0" width="50" height="15" uuid="febee671-16cc-4291-9698-0793dc613263"/>
 								<box rightPadding="2"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
-									<font size="8"/>
+									<font fontName="SansSerif" size="8"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{ganancia}]]></textFieldExpression>
 							</textField>

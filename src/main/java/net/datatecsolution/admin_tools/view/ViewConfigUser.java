@@ -25,11 +25,12 @@ public class ViewConfigUser extends JDialog {
 	private JToggleButton tglbtnObservarEntrada;
 	private JLabel lblUsuairo;
 	private JTextField txtUsuario;
-	private JButton btnAtras;
+
+
 	private JButton btnSig;
 
 	public ViewConfigUser(Window view) {
-		this.setTitle("Crear Cuentas de Bancos");
+		this.setTitle("Configuracion de usuarios");
 		this.setLocationRelativeTo(view);
 		this.setModal(true);
 		
@@ -49,7 +50,7 @@ public class ViewConfigUser extends JDialog {
 		lblFormatoFacturaContado.setBounds(6, 6, 188, 16);
 		panel.add(lblFormatoFacturaContado);
 		
-		 cbFacturaContado = new JComboBox();
+		cbFacturaContado = new JComboBox();
 		cbFacturaContado.setModel(new DefaultComboBoxModel(new String[] {"tiket", "carta"}));
 		cbFacturaContado.setBounds(6, 22, 391, 27);
 		panel.add(cbFacturaContado);
@@ -157,60 +158,69 @@ public class ViewConfigUser extends JDialog {
 	}
 	
 	public void conectarCtl(CtlConfigUser c){
-		
-		btnAtras.addActionListener(c);
-		btnAtras.setActionCommand("NEXT");
-		
+
 		btnSig.addActionListener(c);
-		btnSig.setActionCommand("BEFORE");
-		
+		btnSig.setActionCommand("NEXT");
+
+		btnAtras.addActionListener(c);
+		btnAtras.setActionCommand("BEFORE");
+
+		/*
 		cbFacturaContado.addActionListener(c);
-		cbFacturaContado.setActionCommand("ELIMINAR_INSUMO");
+		cbFacturaContado.setActionCommand("ACTUALIZAR");
 		
 		cbFormatoCredito.addActionListener(c);
-		cbFormatoCredito.setActionCommand("ELIMINAR_INSUMO");
+		cbFormatoCredito.setActionCommand("ACTUALIZAR");
+
+		 */
 		
 		tglbtnVentVendedor.addActionListener(c);
-		tglbtnVentVendedor.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnVentVendedor.setActionCommand("ACTUALIZAR");
 		
 		tglbtnPwdDescuento.addActionListener(c);
-		tglbtnPwdDescuento.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnPwdDescuento.setActionCommand("ACTUALIZAR");
 		
 		tglbtnPwdPrecio.addActionListener(c);
-		tglbtnPwdPrecio.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnPwdPrecio.setActionCommand("ACTUALIZAR");
 		
 		tglbtnVentObrs.addActionListener(c);
-		tglbtnVentObrs.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnVentObrs.setActionCommand("ACTUALIZAR");
 		
 		tglbtnVenBusq.addActionListener(c);
-		tglbtnVenBusq.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnVenBusq.setActionCommand("ACTUALIZAR");
 		
 		tglbtnRedPrecioVenta.addActionListener(c);
-		tglbtnRedPrecioVenta.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnRedPrecioVenta.setActionCommand("ACTUALIZAR");
 		
 		tglbtnDescPorcentaje.addActionListener(c);
-		tglbtnDescPorcentaje.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnDescPorcentaje.setActionCommand("ACTUALIZAR");
 		
 		tglbtnFactSinInven.addActionListener(c);
-		tglbtnFactSinInven.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnFactSinInven.setActionCommand("ACTUALIZAR");
 		
 		tglbtnAddClienteCredito.addActionListener(c);
-		tglbtnAddClienteCredito.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnAddClienteCredito.setActionCommand("ACTUALIZAR");
 		
 		tglbtnCategoriaEnCierre.addActionListener(c);
-		tglbtnCategoriaEnCierre.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnCategoriaEnCierre.setActionCommand("ACTUALIZAR");
 		
 		tglbtnImprimirSalida.addActionListener(c);
-		tglbtnImprimirSalida.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnImprimirSalida.setActionCommand("ACTUALIZAR");
 		
 		tglbtnObservarSalida.addActionListener(c);
-		tglbtnObservarSalida.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnObservarSalida.setActionCommand("ACTUALIZAR");
 		
 		tglbtnImprimirEntrada.addActionListener(c);
-		tglbtnImprimirEntrada.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnImprimirEntrada.setActionCommand("ACTUALIZAR");
 		
 		tglbtnObservarEntrada.addActionListener(c);
-		tglbtnObservarEntrada.setActionCommand("ELIMINAR_INSUMO");
+		tglbtnObservarEntrada.setActionCommand("ACTUALIZAR");
+
+		cbFacturaContado.addItemListener(c);
+		//cbFacturaContado.setActionCommand("ACTUALIZAR");
+
+		cbFormatoCredito.addItemListener(c);
+		//cbFormatoCredito.setActionCommand("ACTUALIZAR");
 	}
 
 	/**
@@ -463,5 +473,15 @@ public class ViewConfigUser extends JDialog {
 	 */
 	public void setTxtUsuario(JTextField txtUsuario) {
 		this.txtUsuario = txtUsuario;
+	}
+
+	public JButton getBtnAtras() {
+		return btnAtras;
+	}
+
+	private JButton btnAtras;
+
+	public JButton getBtnSig() {
+		return btnSig;
 	}
 }

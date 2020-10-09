@@ -31,7 +31,7 @@ public abstract class ModeloDaoBasic {
 	abstract public Object buscarPorId(int id);
 	
 	protected String getQuerySelect(){
-		return (sqlQuerySelectJoin== null) ? "SELECT * FROM "+DbName+ "."+tableName+"  " : this.sqlQuerySelectJoin;
+		return (sqlQuerySelectJoin== null) ? "SELECT * FROM "+DbName+ " . "+tableName+"  " : this.sqlQuerySelectJoin;
 	}
 	protected String getQueryUpdate(){
 		return "UPDATE "+DbName+ "."+tableName+" ";

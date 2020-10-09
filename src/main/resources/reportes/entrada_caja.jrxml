@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Entrada_Caja" pageWidth="208" pageHeight="720" columnWidth="183" leftMargin="15" rightMargin="10" topMargin="5" bottomMargin="5" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -151,7 +151,7 @@ INNER JOIN tipo_cuenta_bancos ON bancos.id_tipo_cuenta = tipo_cuenta_bancos.id
 				<text><![CDATA[CAJERO:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="43" y="228" width="92" height="13" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
+				<reportElement x="43" y="228" width="135" height="13" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>

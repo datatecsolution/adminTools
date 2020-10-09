@@ -129,7 +129,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							
 							//conseguir los precios del producto
 							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-							//dfsd
+
 							//facturar sin tomar en cuenta el inventario
 							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
 							{
@@ -182,8 +182,16 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 											//se comprueba que exista el producto en el inventario
 											existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-											
-											if(existencia>0.0){
+
+										double cantidad=1;
+
+										double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+										if(buscarEnRequisicionCantidad>0){
+											cantidad=cantidad+buscarEnRequisicionCantidad;
+										}
+
+										if(existencia>0.0 && cantidad<=existencia){
 													
 													//activar para redondiar el precio de venta final
 													if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
@@ -346,7 +354,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			guardarCotizacion();
 			break;
 		case "GET_COTIZACIONES":
-			showPendientes();
+			buscarCotizaciones();
 			break;
 		case "ELIMINARPENDIENTE":
 			//JOptionPane.showMessageDialog(view, "se eliminara la factura pendiente");
@@ -622,9 +630,31 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				
 				//se cambia la cantidad en la tabla
 				if(colum==2){
-					
-					calcularTotales();
-					view.getTxtBuscar().requestFocusInWindow();
+
+					identificador=(int)this.view.getModeloTabla().getValueAt(row, 0);
+					myArticulo=this.view.getModeloTabla().getDetalle(row).getArticulo();
+
+
+					//se comprueba que exista el producto en el inventario
+					double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+					double cantidad=1;
+
+					double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+					if(buscarEnRequisicionCantidad>0){
+						cantidad=cantidad+buscarEnRequisicionCantidad;
+					}
+
+					if(existencia>0.0 && cantidad<=existencia) {
+
+						calcularTotales();
+						view.getTxtBuscar().requestFocusInWindow();
+					}else{
+						JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+						view.getModeloTabla().eliminarDetalle(row);
+						calcularTotales();
+					}
 				}
 				
 				//se agrego un descuento a la tabla
@@ -1077,21 +1107,6 @@ public void calcularTotales(){
 								
 						
 						}
-						
-						
-						
-						
-					
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
 						break;
 						
 					case KeyEvent.VK_F8:
@@ -1156,27 +1171,30 @@ public void calcularTotales(){
 								this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
 								this.calcularTotales();
 								
-							}else{
-							
-								
-								//dsfas
+							}else{//se verfica en la configuracion si se puede facturar con inventario
+
 								if(AbstractJasperReports.isNumberReal(entrada)){
 										//si es un bien se procede de esta manera
 										if(myArticulo.getTipoArticulo()==1){
 												//se extre la exista del producto en el inventario
 												double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-												//se pasa a bigdecimal
-												BigDecimal cantidadSaldoKardex=new BigDecimal(existencia);
-												
+
+
 												//se registra la cantida en la entrada del usuario
 												BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
-												
-												//se calcula de diferencia 
-												BigDecimal diferencia=cantidadSaldoKardex.subtract(cantidadSaldoItem);
-												
-												//si la direncia es mayor o igual a 0 se procede a establecer
-												if(diferencia.doubleValue()>=0.00){
-													this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+
+												//se recoge la nueva cantidad a colocar en el item
+												double cantidad=cantidadSaldoItem.doubleValue();
+
+												//se establece la nueva cantidad
+												this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+
+
+												//se busca el articulo en la factura las cantidades del mismo articulo
+												double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+
+												if(existencia>0.0 && cantidad<=existencia) {
 													this.calcularTotales();
 												}else{
 													JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());  
@@ -1374,16 +1392,15 @@ public void calcularTotales(){
 		if(facturas!=null){
 			for(int c=0;c<facturas.size();c++){
 				view.addBotonPendiente(facturas.get(c),this);
-			
-				
 			}
+			view.getPanelGuardados().revalidate();
 		}else{
 			view.eliminarBotones();
 		}
 		
 		
 	}
-	private void showPendientes() {
+	private void buscarCotizaciones() {
 		// TODO Auto-generated method stub
 		ViewListaCotizacion vistaFacturars=new ViewListaCotizacion(null);
 		CtlCotizacionLista ctlFacturas=new CtlCotizacionLista(vistaFacturars );
@@ -1397,6 +1414,8 @@ public void calcularTotales(){
 			
 			this.myFactura=ctlFacturas.getMyFactura();
 			cargarFacturaView();
+
+			this.view.getModeloTabla().agregarDetalle();
 			
 			/*myArticulo=ctlArticulo.getArticulo();
 			//myArticulo=myArticulo1;
@@ -2189,8 +2208,16 @@ public void calcularTotales(){
 
 						//se comprueba que exista el producto en el inventario
 						existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+						double cantidad=1;
+
+						double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+						if(buscarEnRequisicionCantidad>0){
+							cantidad=cantidad+buscarEnRequisicionCantidad;
+						}
 						
-						if(existencia>0.0){
+						if(existencia>0.0 && cantidad<=existencia){
 								
 								//activar para redondiar el precio de venta final
 								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
@@ -2207,9 +2234,10 @@ public void calcularTotales(){
 								selectRowInset();
 									
 						}else{//fin se la comprobacion de la existencia
-							
-							JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
-							
+
+							JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidad+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+
+
 						}
 				}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos 
 					

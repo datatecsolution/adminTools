@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cierre_categorias" pageWidth="208" pageHeight="720" columnWidth="193" leftMargin="5" rightMargin="10" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -113,7 +113,7 @@ GROUP BY marcas.codigo_marca]]>
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Detail" mode="Opaque" x="0" y="0" width="189" height="15" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="23" y="0" width="117" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#DBDBDB"/>
@@ -126,7 +126,7 @@ GROUP BY marcas.codigo_marca]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo_marca}+"-"+$F{descripcion}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="1" y="0" width="22" height="15" isPrintWhenDetailOverflows="true" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box leftPadding="2">
 						<pen lineColor="#C9C9C9"/>
@@ -140,7 +140,7 @@ GROUP BY marcas.codigo_marca]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="140" y="0" width="49" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
 					<box rightPadding="4">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#C7C7C7"/>

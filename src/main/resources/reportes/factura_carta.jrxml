@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -66,9 +66,9 @@
 	`cliente`.`telefono` AS `telefono`,
 	`cliente`.`movil` AS `movil`,
 	`cliente`.`rtn` AS `rtn`,
-	`encabezado_factura`.`subtotal` AS `subtotal`,
-	`encabezado_factura`.`impuesto` AS `impuesto`,
-	`encabezado_factura`.`total` AS `total`,
+	`encabezado_factura`.`subtotal` AS `subtotal_fact`,
+	`encabezado_factura`.`impuesto` AS `impuesto_15_fact`,
+	`encabezado_factura`.`total` AS `total_fact`,
 	`encabezado_factura`.`codigo` AS `codigo`,
 	`encabezado_factura`.`estado_factura` AS `estado_factura`,
 	`encabezado_factura`.`isv18` AS `isv18`,
@@ -223,17 +223,17 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="subtotal" class="java.lang.Float">
+	<field name="subtotal_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="impuesto" class="java.lang.Float">
+	<field name="impuesto_15_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="impuesto"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="total" class="java.lang.Float">
+	<field name="total_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="total"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -386,14 +386,14 @@ WHERE
 			<staticText>
 				<reportElement x="0" y="71" width="554" height="18" uuid="d0e188af-db58-4839-b458-52760f7e0db2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FACTURA]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="451" y="0" width="105" height="20" uuid="8602c01b-420f-46e5-8a5a-16d7957029d5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{observacion}]]></textFieldExpression>
 			</textField>
@@ -601,7 +601,7 @@ WHERE
 				<reportElement x="2" y="0" width="552" height="12" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="54" y="0" width="214" height="12" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562">
 						<property name="com.jaspersoft.studio.unit.y" value="cm"/>
 					</reportElement>
@@ -613,7 +613,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="268" y="0" width="82" height="12" uuid="dda20ac8-36df-4619-b0db-4ed038010d62">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
@@ -625,7 +625,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precio_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Detail" x="350" y="0" width="56" height="12" uuid="b2428750-75ab-425e-b459-59bcf05df4e8">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
@@ -637,7 +637,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{subtotal_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="406" y="0" width="68" height="12" uuid="5c0d2497-de15-4ec8-a184-841874865b6b">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
@@ -649,7 +649,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{impuesto_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="¤#,##0.##;¤-#,##0.##">
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
 					<reportElement style="Detail" x="474" y="0" width="76" height="12" uuid="0f66a5b9-b9f1-4202-a3f6-1420551749d1">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
@@ -661,7 +661,7 @@ WHERE
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,###.###">
+				<textField textAdjust="StretchHeight" pattern="#,###.###">
 					<reportElement style="Detail" x="0" y="0" width="54" height="12" uuid="e483dce5-a317-474f-bc22-8da95cd240d3">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
@@ -697,7 +697,7 @@ WHERE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{impuesto}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{impuesto_15_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="349" y="47" width="124" height="12" uuid="39ffe5d0-7ace-498e-b1b4-2f4f71d99e75"/>
@@ -723,7 +723,7 @@ WHERE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{total_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="349" y="71" width="124" height="12" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>

@@ -64,6 +64,9 @@ public class ViewListaArticulo extends ViewTabla {
 		
 		
 		super.panelEstadoRegistro.setVisible(true);
+
+
+
 		
 		menuContextual = new JPopupMenu(); // crea el men� contextual
 		
@@ -74,7 +77,7 @@ public class ViewListaArticulo extends ViewTabla {
         
         btnLimpiar = new BotonBarcode();
         panelAccion.add(btnLimpiar);
-        btnLimpiar.setEnabled(false);
+        //btnLimpiar.setEnabled(false);
         
         btnKardex=new BotonKardex();
         panelAccion.add(btnKardex);
@@ -117,6 +120,7 @@ public class ViewListaArticulo extends ViewTabla {
 		
 		
 		//this.setSize(1000, 442);
+		btnEliminar.setEnabled(true);
 
 		
 	}

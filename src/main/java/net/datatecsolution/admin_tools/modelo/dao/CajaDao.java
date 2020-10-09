@@ -18,7 +18,7 @@ public class CajaDao extends ModeloDaoBasic {
 	private String sqlBaseJoin=null;
 
 	public CajaDao() {
-		super("cajas", "codigo");
+		super(" cajas ", "codigo");
 		
 		sqlBaseJoin="SELECT "
 							+ " cajas.codigo, "

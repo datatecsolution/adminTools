@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="7" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -51,9 +51,9 @@
 	`cliente`.`telefono` AS `telefono`,
 	`cliente`.`movil` AS `movil`,
 	`cliente`.`rtn` AS `rtn`,
-	`encabezado_factura`.`subtotal` AS `subtotal`,
-	`encabezado_factura`.`impuesto` AS `impuesto`,
-	`encabezado_factura`.`total` AS `total`,
+	`encabezado_factura`.`subtotal` AS `subtotal_fact`,
+	`encabezado_factura`.`impuesto` AS `impuesto_15_fact`,
+	`encabezado_factura`.`total` AS `total_fact`,
 	`encabezado_factura`.`codigo` AS `codigo`,
 	`encabezado_factura`.`estado_factura` AS `estado_factura`,
 	`encabezado_factura`.`isv18` AS `isv18`,
@@ -208,17 +208,17 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="subtotal" class="java.lang.Float">
+	<field name="subtotal_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="impuesto" class="java.lang.Float">
+	<field name="impuesto_15_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="impuesto"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="total" class="java.lang.Float">
+	<field name="total_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="total"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -282,10 +282,6 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="id_tipo_factura"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tipo_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="COLUMN_39" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.label" value="agrega_kardex"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 	</field>
 	<field name="subtotal_excento" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal_excento"/>
@@ -561,7 +557,7 @@ WHERE
 		<band height="12" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="180" height="12" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement x="18" y="0" width="96" height="12" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -570,11 +566,11 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement>
-						<font fontName="DejaVu Sans Mono" size="7"/>
+						<font fontName="SansSerif" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" "+$F{articulo}+" "]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement x="1" y="0" width="18" height="12" isPrintWhenDetailOverflows="true" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -583,11 +579,11 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="DejaVu Sans" size="7"/>
+						<font fontName="SansSerif" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="">
+				<textField textAdjust="StretchHeight" pattern="">
 					<reportElement x="145" y="0" width="35" height="12" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -596,11 +592,11 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Mono" size="7"/>
+						<font fontName="SansSerif" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_detalle}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="">
+				<textField textAdjust="StretchHeight" pattern="">
 					<reportElement x="113" y="0" width="33" height="12" uuid="699948bf-2e27-442b-8d38-a9af67433b13"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -609,7 +605,7 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="DejaVu Sans Mono" size="7"/>
+						<font fontName="SansSerif" size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precio_detalle}]]></textFieldExpression>
 				</textField>
@@ -630,7 +626,7 @@ WHERE
 					<textElement textAlignment="Right">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{impuesto}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{impuesto_15_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="52" width="75" height="12" uuid="39ffe5d0-7ace-498e-b1b4-2f4f71d99e75"/>
@@ -645,7 +641,7 @@ WHERE
 					<textElement textAlignment="Right">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{total_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="11" width="75" height="12" uuid="15a2f42b-d8ee-44c3-8f88-8448614561a0"/>
@@ -668,7 +664,7 @@ WHERE
 					<textElement textAlignment="Right">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{subtotal_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="0" width="95" height="12" uuid="c7d78f80-c0c4-4b5d-a56c-f71f21a86111"/>

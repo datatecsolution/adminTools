@@ -14,7 +14,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ViewFacturarFrame extends JInternalFrame {
-	
+
 	protected BorderLayout miEsquema;
 	private JTable tableDetalle;
 	private TablaModeloFactura modeloTabla;
@@ -82,7 +82,11 @@ public class ViewFacturarFrame extends JInternalFrame {
 	//menu contextual para eliminar las facturas pendientess
 	private JMenuItem mntmEliminar;
 	private JPopupMenu menuContextual;
-	
+
+	public JPanel getPanelGuardados() {
+		return panelGuardados;
+	}
+
 	public ViewFacturarFrame(String string, boolean b, boolean c, boolean d, boolean e) {
 		super( string,  b,  c,  d,  e );
 		
@@ -333,15 +337,26 @@ public class ViewFacturarFrame extends JInternalFrame {
 		btnCerrar.setBackground(color1);
 		btnCerrar.setText("Esc Cerrar");
 		panelAcciones.add(btnCerrar);
-		
-		
-		
+
+
+
+
+
 		panelGuardados = new JPanel();
 		panelGuardados.setBackground(color3);
-		panelGuardados.setSize(100, 0);
-		getContentPane().add(panelGuardados, BorderLayout.EAST);
-		panelGuardados.setLayout(new GridLayout(10, 1, 0, 0));
-		
+		panelGuardados.setSize(160, 0);
+		panelGuardados.setLayout(new GridLayout(0, 1, 0, 0));
+		//panelGuardados.setLayout(new BoxLayout(panelGuardados, BoxLayout.Y_AXIS));
+
+
+		JScrollPane scrollPane2 = new JScrollPane(panelGuardados, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		scrollPane2.setSize(160, 0);
+		scrollPane2.setPreferredSize(new Dimension(160,0));
+		scrollPane2.setBackground(color3);
+		getContentPane().add(scrollPane2, BorderLayout.EAST);
+
+
 		
 		//getContentPane().setLayout(null);
 		

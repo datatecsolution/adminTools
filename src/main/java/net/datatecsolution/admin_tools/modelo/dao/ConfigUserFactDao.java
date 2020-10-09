@@ -135,6 +135,83 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 					} // fin de catch
 		}
 	}
+	public boolean actualizarFormatoContado(String formato,String usuario) {
+		// TODO Auto-generated method stub
+
+
+		//int resultado=0;
+		Connection conn=null;
+
+		try {
+
+			//JOptionPane.showMessageDialog(null, "Datos Caja en modelo dao:"+caja.toString(),"Exito",JOptionPane.INFORMATION_MESSAGE);
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET formato_factura=? WHERE usuario=?");
+			super.psConsultas.setString(1, formato);
+			super.psConsultas.setString(2, usuario);
+			psConsultas.executeUpdate();
+			return true;
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			return false;
+		}
+		finally{
+			try{
+
+				//if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(conn != null) conn.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//Sconexion.desconectar();
+			} // fin de catch
+		}
+	}
+
+	public boolean actualizarFormatoCredito(String formato,String usuario) {
+		// TODO Auto-generated method stub
+
+
+		//int resultado=0;
+		Connection conn=null;
+
+		try {
+
+			//JOptionPane.showMessageDialog(null, "Datos Caja en modelo dao:"+caja.toString(),"Exito",JOptionPane.INFORMATION_MESSAGE);
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET formato_factura_credito=? WHERE usuario=?");
+			super.psConsultas.setString(1, formato);
+			super.psConsultas.setString(2, usuario);
+			psConsultas.executeUpdate();
+			return true;
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			return false;
+		}
+		finally{
+			try{
+
+				//if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(conn != null) conn.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//Sconexion.desconectar();
+			} // fin de catch
+		}
+	}
 
 	@Override
 	public boolean actualizar(Object c) {
@@ -148,23 +225,24 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			
 			//JOptionPane.showMessageDialog(null, "Datos Caja en modelo dao:"+caja.toString(),"Exito",JOptionPane.INFORMATION_MESSAGE);
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET formato_factura=?,ventana_vendedor=?,pwd_descuento=?,pwd_precio=?,descuento_porcentaje=?,ventana_observaciones=?, precio_redondiar=? ,facturar_sin_inventario=?,impr_report_categ_cierre=?,impr_report_salida=?,show_report_salida=?,impr_report_entrada=?,show_report_entrada=?,activar_busqueda_facturacion=? WHERE usuario=?");
-			super.psConsultas.setString(1, config.getFormatoFactura());
-			super.psConsultas.setBoolean( 2, config.isVentanaVendedor());
-			super.psConsultas.setBoolean( 3, config.isPwdDescuento());
-			super.psConsultas.setBoolean( 4, config.isPwdPrecio());
-			super.psConsultas.setBoolean( 5, config.isDescPorcentaje());
-			super.psConsultas.setBoolean( 6, config.isVentanaObservaciones());
+			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET ventana_vendedor=?,pwd_descuento=?,pwd_precio=?,descuento_porcentaje=?,ventana_observaciones=?, precio_redondiar=? ,facturar_sin_inventario=?,impr_report_categ_cierre=?,impr_report_salida=?,show_report_salida=?,impr_report_entrada=?,show_report_entrada=?,activar_busqueda_facturacion=?, agregar_cliente_credito=? WHERE usuario=?");
+			super.psConsultas.setBoolean( 1, config.isVentanaVendedor());
+			super.psConsultas.setBoolean( 2, config.isPwdDescuento());
+			super.psConsultas.setBoolean( 3, config.isPwdPrecio());
+			super.psConsultas.setBoolean( 4, config.isDescPorcentaje());
+			super.psConsultas.setBoolean( 5, config.isVentanaObservaciones());
 			
-			super.psConsultas.setBoolean(7, config.isPrecioRedondear());
+			super.psConsultas.setBoolean(6, config.isPrecioRedondear());
 			
-			super.psConsultas.setBoolean(8, config.isFacturarSinInventario());
-			super.psConsultas.setBoolean(9, config.isImprReportCategCierre());
-			super.psConsultas.setBoolean(10, config.isImprReportSalida());
-			super.psConsultas.setBoolean(11, config.isShowReportSalida());
-			super.psConsultas.setBoolean(12, config.isImprReportEntrada());
-			super.psConsultas.setBoolean(13, config.isShowReportEntrada());
-			super.psConsultas.setBoolean(14, config.isActivarBusquedaFacturacion());
+			super.psConsultas.setBoolean(7, config.isFacturarSinInventario());
+			super.psConsultas.setBoolean(8, config.isImprReportCategCierre());
+			super.psConsultas.setBoolean(9, config.isImprReportSalida());
+			super.psConsultas.setBoolean(10, config.isShowReportSalida());
+			super.psConsultas.setBoolean(11, config.isImprReportEntrada());
+			super.psConsultas.setBoolean(12, config.isShowReportEntrada());
+			super.psConsultas.setBoolean(13, config.isActivarBusquedaFacturacion());
+
+			super.psConsultas.setBoolean(14, config.isAgregarClienteCredito());
 			
 			super.psConsultas.setString(15, config.getUsuario());
 			psConsultas.executeUpdate();
@@ -312,6 +390,8 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setImprReportEntrada(res.getBoolean("impr_report_entrada"));
 				config.setShowReportEntrada(res.getBoolean("show_report_entrada"));
 				config.setActivarBusquedaFacturacion(res.getBoolean("activar_busqueda_facturacion"));
+				config.setAgregarClienteCredito(res.getBoolean("agregar_cliente_credito"));
+				config.setFormatoFacturaCredito(res.getString("formato_factura_credito"));
 				
 				configs.add(config);
 				existe=true;

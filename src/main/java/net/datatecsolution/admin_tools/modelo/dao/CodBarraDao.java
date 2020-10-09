@@ -192,7 +192,7 @@ public class CodBarraDao extends ModeloDaoBasic {
 		
 		try{
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement( super.getQueryInsert()+" (codigo_articulo,codigo_barra) VALUES (?,?)");
+			psConsultas=conn.prepareStatement( super.getQueryInsert()+" (codigo_articulo,codigo_barra) VALUES (?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			for(int x=0;x<codsBarras.size();x++){
 				psConsultas.setInt(1, codsBarras.get(x).getCodArticulo());
 				psConsultas.setString(2,codsBarras.get(x).getCodigoBarra() );
@@ -231,7 +231,7 @@ public class CodBarraDao extends ModeloDaoBasic {
 		Connection conn=null;
 		try{
 				conn=ConexionStatic.getPoolConexion().getConnection();
-				psConsultas=conn.prepareStatement(super.getQueryInsert()+ " (codigo_articulo,codigo_barra) VALUES (?,?)");
+				psConsultas=conn.prepareStatement(super.getQueryInsert()+ " (codigo_articulo,codigo_barra) VALUES (?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			
 				psConsultas.setInt(1, codBarra.getCodArticulo());
 				psConsultas.setString(2,codBarra.getCodigoBarra() );
