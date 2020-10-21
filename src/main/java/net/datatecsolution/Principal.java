@@ -1,5 +1,7 @@
 package net.datatecsolution;
 
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import net.datatecsolution.admin_tools.controlador.CtlLogin;
 import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenVenta;
@@ -18,6 +20,7 @@ import net.datatecsolution.admin_tools.view.ViewOrdeneVenta;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +34,31 @@ public class Principal {
     public static void main(String[] args) {
         // TODO Auto-generated method stub
 
+
+        /*
+        SerialPort serialPort = new SerialPort("/dev/tty.usbmodem1435");
+        try {
+            serialPort.openPort();//Open serial port
+            serialPort.setParams(4800, 8, 1, 0);//Set params.
+            while(true) {
+                byte[] buffer = serialPort.readBytes(10);
+                if(buffer!=null) {
+                    for(byte b:buffer) {
+                        System.out.print(b);
+                    }
+                }
+            }
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
+
+         */
+
+
+
         //se cargan todos los reportes
         AbstractJasperReports.loadFileReport();
+
 
         //se establece la conecion a la base de datos
         ConexionStatic.conectarBD();
@@ -129,6 +155,19 @@ public class Principal {
 				System.exit(0);*/
 
                 if(user.getCajas()!=null){
+
+                    //se imprime un tike de salida para prueba
+                    try {
+                        //AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
+                        AbstractJasperReports.createReportSalidaCaja(ConexionStatic.getPoolConexion().getConnection(),1);
+
+                        AbstractJasperReports.imprimierFactura();
+
+
+                    } catch (SQLException ee) {
+                        // TODO Auto-generated catch block
+                        ee.printStackTrace();
+                    }
 
 
                     ViewModuloFacturar marcoEscritorio = new ViewModuloFacturar();

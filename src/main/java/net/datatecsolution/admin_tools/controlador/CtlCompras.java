@@ -100,7 +100,7 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				}
 				break;
 			case "GUARDARCOMPRA":
-				//JOptionPane.showMessageDialog(view, "Filas de la tabla: "+view.getModelo().getDetalles().size());
+				int indexDep=view.getCbxDepart().getSelectedIndex();
 				//se valida la compra
 				if(this.view.getDateCompra().isValid()==true){
 					JOptionPane.showMessageDialog(view,"Ingrese la fecha de la compra","Error",JOptionPane.ERROR_MESSAGE);
@@ -113,10 +113,13 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				}else if(view.getModelo().getDetalles().size()==1){
 					JOptionPane.showMessageDialog(view,"Debe ingresar articulos en la compra","Error",JOptionPane.ERROR_MESSAGE);
 					break;
+				}else if(view.getCbxDepart().getSelectedIndex()==0){
+					JOptionPane.showMessageDialog(view, "Debe seleccionar una departamento donde se asignara la compra.","Error de validacion",JOptionPane.ERROR_MESSAGE);
+					break;
 				}
-				
-				
-				//se crear el formato para la fecha
+
+
+					//se crear el formato para la fecha
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				//se recoge la fecha de compra de la view
 				String date = sdf.format(this.view.getDateCompra().getDate());
@@ -207,15 +210,13 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 	
 	
 	private void cargarComboBox(){
-		//se crea el objeto para obtener de la bd los impuestos
-		//myImpuestoDao=new ImpuestoDao(conexion);
 	
-		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
+		//se obtiene la lista de los departamentos y se le pasa al modelo de la lista
 		this.view.getModeloCbx().setLista(this.deptDao.todos());
 		
 		
 		//se remueve la lista por defecto
-		this.view.getCbxDepart().removeAllItems();
+		//this.view.getCbxDepart().removeAllItems();
 	
 		this.view.getCbxDepart().setSelectedIndex(0);
 	}

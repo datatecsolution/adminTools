@@ -572,8 +572,10 @@ private void selectRowInset(){
 
 			//se extra de la base de datos
 			Vector<Departamento> departBD=this.deptDao.todosExecto(depart.getId());
+
 			//se crea el vector para mostrar
 			Vector<Departamento> departamentos=new Vector<Departamento>();
+
 			//se agregar un selecion por defecto
 			Departamento unDept=new Departamento();
 			unDept.setId(0);

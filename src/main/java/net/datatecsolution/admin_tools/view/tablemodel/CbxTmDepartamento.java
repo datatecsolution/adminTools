@@ -28,7 +28,23 @@ public class CbxTmDepartamento extends DefaultComboBoxModel {
 		 }
 	
 	public void setLista(Vector<Departamento> im){
-		depts=im;
+
+		depts.clear();
+
+
+		//se agregar un selecion por defecto
+		Departamento unDept=new Departamento();
+		unDept.setId(0);
+		unDept.setDescripcion("Seleccione una opcion");
+
+		depts.add(unDept);
+
+		for (Departamento dep:im
+			 ) {
+			depts.add(dep);
+
+		}
+		//depts=im;
 	}
 	
 	public int buscarDepartamento(Departamento m){

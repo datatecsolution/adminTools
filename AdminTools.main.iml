@@ -22,6 +22,7 @@
     <orderEntry type="library" name="Gradle: org.apache.xmlgraphics:batik-bridge:1.9" level="project" />
     <orderEntry type="library" name="Gradle: net.sf.barcode4j:barcode4j:2.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-collections4:4.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.scream3r:jssc:2.8.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:28.1-jre" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-pool2:2.7.0" level="project" />
     <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.2" level="project" />

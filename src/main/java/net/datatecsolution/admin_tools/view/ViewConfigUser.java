@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewConfigUser extends JDialog {
+
+
+	private final JToggleButton tglbtnPwdEntrePrecio;
 	private JComboBox<String> cbFacturaContado;
 	private JComboBox<String> cbFormatoCredito;
 	private JToggleButton tglbtnVentVendedor;
@@ -69,23 +72,23 @@ public class ViewConfigUser extends JDialog {
 		tabbedPane.addTab("Opciones de facturacion", null, panel_1, null);
 		panel_1.setLayout(null);
 		
-		tglbtnVentVendedor = new JToggleButton("Ventana vendedor");
+		tglbtnVentVendedor = new JToggleButton("Ventana de vendedor");
 		tglbtnVentVendedor.setBounds(6, 6, 180, 29);
 		panel_1.add(tglbtnVentVendedor);
 		
-		tglbtnPwdDescuento = new JToggleButton("Password descuento");
+		tglbtnPwdDescuento = new JToggleButton("Password para descuento");
 		tglbtnPwdDescuento.setBounds(6, 41, 180, 29);
 		panel_1.add(tglbtnPwdDescuento);
 		
-		tglbtnPwdPrecio = new JToggleButton("Password Precio");
+		tglbtnPwdPrecio = new JToggleButton("Password para precio");
 		tglbtnPwdPrecio.setBounds(6, 76, 180, 29);
 		panel_1.add(tglbtnPwdPrecio);
 		
-		tglbtnVentObrs = new JToggleButton("Ventana observaciones");
+		tglbtnVentObrs = new JToggleButton("Ventana de observaciones");
 		tglbtnVentObrs.setBounds(6, 111, 180, 29);
 		panel_1.add(tglbtnVentObrs);
 		
-		tglbtnVenBusq = new JToggleButton("Ventana busqueda");
+		tglbtnVenBusq = new JToggleButton("Ventana de busqueda");
 		tglbtnVenBusq.setBounds(6, 146, 180, 29);
 		panel_1.add(tglbtnVenBusq);
 		
@@ -104,6 +107,10 @@ public class ViewConfigUser extends JDialog {
 		tglbtnAddClienteCredito = new JToggleButton("Agregar cliente a credito");
 		tglbtnAddClienteCredito.setBounds(210, 111, 187, 29);
 		panel_1.add(tglbtnAddClienteCredito);
+
+		tglbtnPwdEntrePrecio = new JToggleButton("Password entre precios");
+		tglbtnPwdEntrePrecio.setBounds(210, 146, 187, 29);
+		panel_1.add(tglbtnPwdEntrePrecio);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setForeground(Color.LIGHT_GRAY);
@@ -215,6 +222,9 @@ public class ViewConfigUser extends JDialog {
 		
 		tglbtnObservarEntrada.addActionListener(c);
 		tglbtnObservarEntrada.setActionCommand("ACTUALIZAR");
+
+		tglbtnPwdEntrePrecio.addActionListener(c);
+		tglbtnPwdEntrePrecio.setActionCommand("ACTUALIZAR");
 
 		cbFacturaContado.addItemListener(c);
 		//cbFacturaContado.setActionCommand("ACTUALIZAR");
@@ -483,5 +493,9 @@ public class ViewConfigUser extends JDialog {
 
 	public JButton getBtnSig() {
 		return btnSig;
+	}
+
+	public JToggleButton getTglbtnPwdEntrePrecio() {
+		return tglbtnPwdEntrePrecio;
 	}
 }

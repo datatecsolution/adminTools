@@ -92,6 +92,7 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		view.getTglbtnFactSinInven().setSelected(configEnPantalla.isFacturarSinInventario());
 		view.getTglbtnAddClienteCredito().setSelected(configEnPantalla.isAgregarClienteCredito());
 		view.getTglbtnCategoriaEnCierre().setSelected(configEnPantalla.isImprReportCategCierre());
+		view.getTglbtnPwdEntrePrecio().setSelected(configEnPantalla.isPwdEntrePrecio());
 
 		for(int x=0;x<view.getCbFormatoCredito().getItemCount();x++){
 			String formato=view.getCbFormatoCredito().getModel().getElementAt(x);
@@ -154,6 +155,7 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		configEnPantalla.setFacturarSinInventario(view.getTglbtnFactSinInven().isSelected());
 		configEnPantalla.setAgregarClienteCredito(view.getTglbtnAddClienteCredito().isSelected());
 		configEnPantalla.setImprReportCategCierre(view.getTglbtnCategoriaEnCierre().isSelected());
+		configEnPantalla.setPwdEntrePrecio(view.getTglbtnPwdEntrePrecio().isSelected());
 
 	}
 

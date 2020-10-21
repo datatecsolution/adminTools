@@ -1321,7 +1321,7 @@ public void calcularTotales(){
 						break;
 					case KeyEvent.VK_LEFT:
 						
-						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdPrecio()){
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()){
 								JPasswordField pf2 = new JPasswordField();
 								int action2 = JOptionPane.showConfirmDialog(view, pf2,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
 								if(action2 < 0){
@@ -1350,7 +1350,7 @@ public void calcularTotales(){
 					case KeyEvent.VK_RIGHT:
 						
 						
-						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdPrecio()){
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()){
 						
 								JPasswordField pf3 = new JPasswordField();
 								int action3 = JOptionPane.showConfirmDialog(view, pf3,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
@@ -1827,7 +1827,7 @@ public void calcularTotales(){
 			if(filaPulsada>=0){
 				//JOptionPane.showMessageDialog(view,e.getKeyChar()+" FIla:"+filaPulsada);
 				this.view.getModeloTabla().restarCantidad(filaPulsada);
-				//JOptionPane.showMessageDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
+				//JOptionPane.showMessaconfigEnPantalla.setImprReportCategCierre(view.getTglbtnCategoriaEnCierre().isSelected());geDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
 				this.calcularTotales();
 			}
 		}

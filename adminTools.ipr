@@ -814,6 +814,16 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jfreechart/1.0.19/5aae69aa497ce4ea82b59317102a09c5abc91ba1/jfreechart-1.0.19-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Gradle: org.scream3r:jssc:2.8.0">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scream3r/jssc/2.8.0/7e8d93052a8743a7937a6d46854057ac1ce876c1/jssc-2.8.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scream3r/jssc/2.8.0/d3e51b3dec3f4b4b76895c236a1ab1cdf6176bd9/jssc-2.8.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scream3r/jssc/2.8.0/d3e51b3dec3f4b4b76895c236a1ab1cdf6176bd9/jssc-2.8.0-sources.jar!/src" />
+      </SOURCES>
+    </library>
     <library name="Gradle: xalan:serializer:2.7.2">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/24247f3bb052ee068971393bdb83e04512bb1c3c/serializer-2.7.2.jar!/" />

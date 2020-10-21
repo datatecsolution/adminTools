@@ -6,6 +6,7 @@ public class ConfigUserFacturacion {
 	private String formatoFactura="tiket";
 	private boolean pwdDescuento=false;
 	private boolean pwdPrecio=false;
+	private boolean pwdEntrePrecio=false;
 	private boolean ventanaVendedor=false;
 	private boolean descPorcentaje=false;
 	private boolean ventanaObservaciones=false;
@@ -262,6 +263,15 @@ public class ConfigUserFacturacion {
 	 */
 	public void setVendedorEnBusqueda(Empleado vendedorEnBusqueda) {
 		this.vendedorEnBusqueda = vendedorEnBusqueda;
+	}
+
+
+	public boolean isPwdEntrePrecio() {
+		return pwdEntrePrecio;
+	}
+
+	public void setPwdEntrePrecio(boolean pwdEntrePrecio) {
+		this.pwdEntrePrecio = pwdEntrePrecio;
 	}
 	
 

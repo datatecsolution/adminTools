@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="7" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="28" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
 	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="625"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="numero_factura" class="java.lang.Integer"/>
 	<parameter name="bD_facturacion" class="java.lang.String"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
@@ -350,7 +353,7 @@ WHERE
 				<subreportExpression><![CDATA["reportes/factura_datos_dei.jasper"]]></subreportExpression>
 			</subreport>
 			<subreport>
-				<reportElement x="-18" y="0" width="208" height="51" uuid="58121520-40b2-4c53-a7f3-d026f760d82a">
+				<reportElement x="-18" y="0" width="208" height="77" uuid="58121520-40b2-4c53-a7f3-d026f760d82a">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<subreportParameter name="bD_admin">
