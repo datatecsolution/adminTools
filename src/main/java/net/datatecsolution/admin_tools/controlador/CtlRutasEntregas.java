@@ -229,11 +229,17 @@ public class CtlRutasEntregas implements ActionListener, MouseListener, ChangeLi
 	        if(filaPulsada>=0){
 	        	//se crea el informe de ventas por categorias
 				List<DetalleFactura> reportArticuloRuta= new ArrayList<DetalleFactura>();
+
+				reportArticuloRuta.clear();
 				
 				//se recoge la ruta selecionada 
 				RutaEntrega unRuta =view.getModelo().getRuta(filaPulsada);
 				
 				unRuta.setVendedor(empleadoDao.buscarPorId(unRuta.getIdVendedor()));
+
+				//se reinician las facturas
+				unRuta.getFacturas().clear();
+
 				//se recoge las facturas de la ruta
 				myRutasDao.getFacturas(unRuta);
 				

@@ -91,7 +91,9 @@ public class ListaBotonesFacturas extends AbstractListModel {
 	public void deleteAll(){
 		
 			this.facturas.removeAll(facturas);
+			this.facturas.clear();
 			this.btnGuardados.removeAll(btnGuardados);
+			this.btnGuardados.clear();
 			
 
 			Factura nueva=new Factura();

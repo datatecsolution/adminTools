@@ -356,27 +356,59 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		case "GET_COTIZACIONES":
 			buscarCotizaciones();
 			break;
-		case "ELIMINARPENDIENTE":
-			//JOptionPane.showMessageDialog(view, "se eliminara la factura pendiente");
+
+		case "IMPRIMIRPENDIENTE":
+
 			int idFacturaTemporal=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-			
+
+			//se imprime un tike de salida para prueba
+			try {
+				AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(),idFacturaTemporal);
+
+				//AbstractJasperReports.imprimierFactura();
+				AbstractJasperReports.showViewer(view);
+
+
+			} catch (SQLException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+			}
+
+
+
+
+			break;
+		case "ELIMINARPENDIENTE":
+
+			int idFacturaTemporal2=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
+
 			Factura eliminarTem=new Factura();
-			eliminarTem.setIdFactura(idFacturaTemporal);
-			
-			this.facturaOrdenesDao.eliminar(eliminarTem);
-			
-			this.tipoView=1;
-			this.view.getBtnGuardar().setEnabled(true);
-			this.view.getBtnActualizar().setEnabled(false);
-			
-			//view.getBtnsGuardador().setFactura(myFactura);
-			
-			//setEmptyView();
-			setEmptyView();
-			
-			view.getBtnsGuardador().deleteAll();
-			
-			cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+			eliminarTem.setIdFactura(idFacturaTemporal2);
+
+
+			JPasswordField pf = new JPasswordField();
+			int action =JOptionPane.showConfirmDialog(view,"Desea eliminar la orden de "+view.getBtnsGuardador().getFacturaSeleted().getCliente().getNombre()+" ?","Confirmacion",JOptionPane.OK_CANCEL_OPTION);
+			//JOptionPane.showMessageDialog(view,"La accion es: "+action);
+			if(action == 0){
+
+
+
+					this.facturaOrdenesDao.eliminar(eliminarTem);
+
+					this.tipoView=1;
+					this.view.getBtnGuardar().setEnabled(true);
+					this.view.getBtnActualizar().setEnabled(false);
+
+					//view.getBtnsGuardador().setFactura(myFactura);
+
+					//setEmptyView();
+					setEmptyView();
+
+					view.getBtnsGuardador().deleteAll();
+
+					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+
+			}
 			
 			break;
 		
@@ -548,7 +580,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			
 			
 		}
-	} // fin del m�todo checkForTriggerEvent
+	} // fin del metodo checkForTriggerEvent
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
@@ -2056,18 +2088,7 @@ public void calcularTotales(){
 										"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
 										JOptionPane.ERROR_MESSAGE);
 							}
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
+
 						}//fin de la ventana en cobro
 					
 					}//fin de la factura al credito
@@ -2158,8 +2179,8 @@ public void calcularTotales(){
 			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 			
 			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
-			
-			
+
+
 			//se verfica en la configuracion si se puede facturar sin inventario
 			if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
 			{
@@ -2920,7 +2941,9 @@ public void guardarRemotoCredito(){
 		
 		//se captura el id de la factura por si la factura es temporal
 		int idFacturaTemporal=myFactura.getIdFactura();
-		
+
+
+
 		//se registra la factura	
 		boolean resul=facturaDao.registrar(myFactura);
 		
@@ -2929,7 +2952,7 @@ public void guardarRemotoCredito(){
 		//se porcesa el resultado de ristrar la factura
 		if(resul){
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-			
+
 			//erwqrq
 			
 				try {
@@ -2987,15 +3010,22 @@ public void guardarRemotoCredito(){
 						
 					}
 					*/
-					
+					String cambioEfectivo=myFactura.getCambio().toString();
+					String pago=myFactura.getPago().toString();
+
+
+					setEmptyView();
+
+
+
 					//muestra en la pantalla el cambio y lo mantiene permanente
 					ViewCambio cambio=new ViewCambio(null);
-					cambio.getTxtCambio().setText(myFactura.getCambio().toString());
-					cambio.getTxtEfectivo().setText(myFactura.getPago().toString());
+					cambio.getTxtCambio().setText(cambioEfectivo);
+					cambio.getTxtEfectivo().setText(pago);
 					cambio.setVisible(true);
 					
 					//myFactura=null;
-					setEmptyView();
+
 					
 					//si la view es de actualizacion al cobrar se cierra la view
 					if(this.tipoView==2){//dfsfda

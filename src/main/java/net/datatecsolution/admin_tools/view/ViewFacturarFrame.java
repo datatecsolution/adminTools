@@ -81,6 +81,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 	
 	//menu contextual para eliminar las facturas pendientess
 	private JMenuItem mntmEliminar;
+	private JMenuItem mntmImprimir;
 	private JPopupMenu menuContextual;
 
 	public JPanel getPanelGuardados() {
@@ -99,7 +100,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		menuContextual = new JPopupMenu(); 
 		//opcion del menu flotante
 		mntmEliminar = new JMenuItem("Eliminar");
+		mntmImprimir = new JMenuItem("Imprimir");
 		menuContextual.add(mntmEliminar);
+		menuContextual.add(mntmImprimir);
 		
 		
 		
@@ -657,6 +660,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		mntmEliminar.addActionListener(c);
 		mntmEliminar.setActionCommand("ELIMINARPENDIENTE");
+
+		mntmImprimir.addActionListener(c);
+		mntmImprimir.setActionCommand("IMPRIMIRPENDIENTE");
 		
 		this.rdbtnContado.addKeyListener(c);
 		this.rdbtnCredito.addKeyListener(c);

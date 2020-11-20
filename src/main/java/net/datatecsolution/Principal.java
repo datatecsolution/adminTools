@@ -156,6 +156,9 @@ public class Principal {
 
                 if(user.getCajas()!=null){
 
+
+                    /*
+
                     //se imprime un tike de salida para prueba
                     try {
                         //AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
@@ -168,6 +171,8 @@ public class Principal {
                         // TODO Auto-generated catch block
                         ee.printStackTrace();
                     }
+
+                     */
 
 
                     ViewModuloFacturar marcoEscritorio = new ViewModuloFacturar();

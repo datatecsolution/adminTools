@@ -82,6 +82,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream ruta=null;
 	private static InputStream articulosPrecios=null;
 	private static InputStream entradasBanco=null;
+	private static InputStream ordenCarta=null;
 
 	
 	
@@ -129,6 +130,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport reportRuta;
 	private static JasperReport reportArticulosPrecios;
 	private static JasperReport reportEntradasBanco;
+	private static JasperReport reportOrdenCarta;
 	
 	
 	private static final Pattern numberPattern=Pattern.compile("-?\\d+");
@@ -211,6 +213,8 @@ public abstract class AbstractJasperReports implements Runnable
 		articulosPrecios=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteArticuloPrecio.jasper");
 
 		entradasBanco=AbstractJasperReports.class.getResourceAsStream("/reportes/entradas_bancos.jasper");
+
+		ordenCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/orden_carta.jasper");
 		
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject( factura );
@@ -270,6 +274,8 @@ public abstract class AbstractJasperReports implements Runnable
 			reportArticulosPrecios=(JasperReport) JRLoader.loadObject(articulosPrecios  );
 
 			reportEntradasBanco=(JasperReport) JRLoader.loadObject(entradasBanco);
+
+			reportOrdenCarta=(JasperReport) JRLoader.loadObject(ordenCarta);
 			
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -314,6 +320,27 @@ public abstract class AbstractJasperReports implements Runnable
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 			}
+	}
+
+	public static void createReportOrdenCarta(Connection conn,int codigo){
+
+		Map parametros = new HashMap();
+		parametros.put("numero_factura",codigo);
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportOrdenCarta, parametros, conn );
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	public static void createReportSalidaCaja(Connection conn,int codigo){

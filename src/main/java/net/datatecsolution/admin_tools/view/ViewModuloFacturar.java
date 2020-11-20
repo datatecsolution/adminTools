@@ -23,6 +23,7 @@ public class ViewModuloFacturar extends JFrame {
 	private BotonCliente btnClientes;
 	private BotonProveedor btnProveedores;
 	public BotonesApp btnCaja;
+	public BotonesApp btnUsuario;
 
 	private BotonDescuento btnDescuento;
 
@@ -130,8 +131,12 @@ public class ViewModuloFacturar extends JFrame {
 		
 		
 		btnCaja=new BotonesApp();
-		btnCaja.setText(ConexionStatic.getUsuarioLogin().getCajaActiva().getDescripcion());
+		btnCaja.setText("caja: "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDescripcion());
 		barra.add(btnCaja);
+
+		btnUsuario=new BotonesApp();
+		btnUsuario.setText("User: "+ConexionStatic.getUsuarioLogin().getUser());
+		barra.add(btnUsuario);
 		
 		
 		// establece componente de escucha para el elemento de menú nuevoMarco

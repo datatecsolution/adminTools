@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -67,9 +67,9 @@
 	`cliente`.`telefono` AS `telefono`,
 	`cliente`.`movil` AS `movil`,
 	`cliente`.`rtn` AS `rtn`,
-	`encabezado_factura`.`subtotal` AS `subtotal`,
-	`encabezado_factura`.`impuesto` AS `impuesto`,
-	`encabezado_factura`.`total` AS `total`,
+	`encabezado_factura`.`subtotal` AS `subtotal_fact`,
+	`encabezado_factura`.`impuesto` AS `impuesto_15_fact`,
+	`encabezado_factura`.`total` AS `total_fact`,
 	`encabezado_factura`.`codigo` AS `codigo`,
 	`encabezado_factura`.`estado_factura` AS `estado_factura`,
 	`encabezado_factura`.`isv18` AS `isv18`,
@@ -224,17 +224,17 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="subtotal" class="java.lang.Float">
+	<field name="subtotal_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="impuesto" class="java.lang.Float">
+	<field name="impuesto_15_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="impuesto"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="total" class="java.lang.Float">
+	<field name="total_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="total"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -714,7 +714,7 @@ WHERE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{impuesto}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{impuesto_15_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="349" y="47" width="124" height="12" uuid="39ffe5d0-7ace-498e-b1b4-2f4f71d99e75"/>
@@ -740,7 +740,7 @@ WHERE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{total_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="349" y="71" width="124" height="12" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>

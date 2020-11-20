@@ -204,7 +204,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			psConsultas.setInt(3, limitInferio);
 			psConsultas.setInt(4, canItemPag);
 			res = psConsultas.executeQuery();
-			//System.out.println(buscarProveedorNombre);
+			//System.out.println(buscarProveedorNombre); Tampa fl, Houston  //// Washinton internal
 			while(res.next()){
 				Cliente unCliente=new Cliente();
 				existe=true;

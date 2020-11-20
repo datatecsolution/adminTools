@@ -290,173 +290,89 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 			
 			//se verifica que se haya selecciona una fila
 			if(verificarSelecion()){
-							this.myFactura=this.view.getModelo().getFactura(this.view.getTabla().getSelectedRow());
-							
-							int resul=JOptionPane.showConfirmDialog(view, "Desea anular la factura no "+myFactura.getIdFactura()+"?");
-							//sin confirmo la anulacion
-							if(resul==0){
-								JPasswordField pf = new JPasswordField();
-								int action = JOptionPane.showConfirmDialog(view, pf,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
-								//String pwd=JOptionPane.showInputDialog(view, "Escriba la contrase�a admin", "Seguridad", JOptionPane.INFORMATION_MESSAGE);
-								if(action < 0){
-									
-									
-								}else{
-									String pwd=new String(pf.getPassword());
-									//comprabacion del permiso administrativo
-									if(this.myUsuarioDao.comprobarAdmin(pwd)){
-										
-										
-										
-										myFactura.setDetalles(detallesDao.getDetallesFactura(myFactura.getIdFactura()));
-										
-			
-										
-										//se anula la factura en la bd
-										if(myFacturaDao.anularFactura(myFactura)){
-								
-											
-											
-							
-											//si tiene detalles la factura se realizan operaciones con los detalles
-											if(!myFactura.getDetalles().isEmpty() && myFactura.getDetalles()!=null)
-											{
-												//se busca la cuenta de la factura
-												CuentaFactura cuentaFactura=new CuentaFactura();
-												CuentaFacturaDao cuentaFacturaDao=new CuentaFacturaDao();
-												CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=new CuentaXCobrarFacturaDao();
-												
-												//se busca la factura en la base de datos
-												cuentaFactura=cuentaFacturaDao.buscarPorId(myFactura.getCliente().getId(),caja.getCodigo(),myFactura.getIdFactura());
-												
-												if(cuentaFactura!=null){
-													CuentaXCobrarFactura cuenta=new CuentaXCobrarFactura();
-													
-													cuenta.setCodigoCuenta(cuentaFactura.getCodigoCuenta());
-													cuenta.setDebito(new BigDecimal(cuentaFactura.getSaldo().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-													cuenta.setSaldo(new BigDecimal(0));
-													cuenta.setDescripcion("Anulacion de factura ");
-													
-													cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
-												}
-												
-												
-												//si la factura que se anulo es al credito se hace un pago a farvor del cliente para rebajar el saldo y lo mismo con la factura
-												if(myFactura.getTipoFactura()==2){
-													
-													ReciboPago myRecibo=new ReciboPago();
-													
-													myRecibo.setCliente(myFactura.getCliente());
-													
-													//se estable el concepto de pago del recibo
-													String concepto="Anulacion de factura # "+myFactura.getIdFactura();
-													
-													myRecibo.setTotal(myFactura.getTotal());
-													myRecibo.setConcepto(concepto);
-													//se establece la cantidad en letras
-													myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
-													
-													
-													//se manda aguardar el recibo con los pagos realizados
-													boolean resulta=this.myReciboDao.registrar(myRecibo);
-													
-													if(resulta){
-														
-														myRecibo.setNoRecibo(myReciboDao.idUltimoRecibo);
-														
-														//JOptionPane.showMessageDialog(view, "El recibo se guardo correctamente.");
-														//this.view.setVisible(false);
-														
-														//resul=true;
-														try {
-														
-															//AbstractJasperReports.createReport(conexion.getPoolConexion().getConnection(), 5, myRecibo.getNoRecibo());
-															AbstractJasperReports.createReportReciboCobroCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
-															//AbstractJasperReports.showViewer(view);
-															AbstractJasperReports.imprimierFactura();
-															AbstractJasperReports.showViewer(view);
-															
-															//myFactura.
-														} catch (SQLException ee) {
-															// TODO Auto-generated catch block
-															ee.printStackTrace();
-														}
-														
-													}else{//
-														JOptionPane.showMessageDialog(view, "El recibo no se guardo correctamente.");
-													}//fin del if que verefica la acccion de guardar el recibo
-													
-													
-												
-												}
-												
-												
-												//bandera para verificar si se realizo una devolucion
-												boolean resultado=false;
-												
-												
-												
-													//se registrar los detalles de la factura anulada como una devolucion
-													//se recorre los detalles de la factura
-													for(int x=0;x<myFactura.getDetalles().size();x++){
-															
-															//se verifica la existencia de una devolucion precia
-															DetalleFactura unDetalle=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), myFactura.getDetalles().get(x).getArticulo().getId());
-														
-															if(unDetalle==null){//sino hay una devolucion previa se devuelve toda la cantidad
-																
-																//se registra la devolucion
-																this.devolucionDao.agregarDetalle(myFactura.getDetalles().get(x), myFactura.getIdFactura());
-																
-																resultado=true;
-															
-															}else{//si existe una devolucion previa se resta la devolucion previa y se registra solo el restante
-																	
-																	//se verifica que al resta la devolucion existente sea mayor que cero
-																	if(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad()).floatValue()>0){
-																		
-																		//se cambia la cantidad en el modelo 
-																		myFactura.getDetalles().get(x).setCantidad(new BigDecimal(unDetalle.getCantidad().subtract(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad())).floatValue()));
-																		
-																		//se manda a guardar la devolucion 
-																		devolucionDao.agregarDetalle(myFactura.getDetalles().get(x), myFactura.getIdFactura());
-																		resultado=true;
-																		
-																	}
-															}
-				
-													}
-													
-													//se verifica que se realizo una devolucion para poder imprimir el reporte
-													if(resultado){
-													
-														//se imprime el reporte
-														try {
-															AbstractJasperReports.createReportDevolucionVenta(ConexionStatic.getPoolConexion().getConnection(),myFactura.getIdFactura());
-															
-															AbstractJasperReports.showViewer(view);
-															
-															
-														} catch (SQLException ee) {
-															// TODO Auto-generated catch block
-															ee.printStackTrace();
-														}
-													}
-													
-											}//fin de la comprovacion de la existencia de detalles de la factura
-										
-											//se cargan la facturas en la view 
-											cargarTabla(myFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior(),view.getCbxCajas().getSelectedItem()));
-									
-										}//fin de la verificacion de la  anulacion del encabezado de la facrura
-										
-										
-									}else{
-										JOptionPane.showMessageDialog(view, "Usuario Invalido","Error de validacion!!",JOptionPane.ERROR_MESSAGE);
+				this.myFactura=this.view.getModelo().getFactura(this.view.getTabla().getSelectedRow());
+				int resul=JOptionPane.showConfirmDialog(view, "Desea anular la factura no "+myFactura.getIdFactura()+"?");
+
+				//sin confirmo la anulacion
+				if(resul==0){
+
+					JPasswordField pf = new JPasswordField();
+					int action = JOptionPane.showConfirmDialog(view, pf,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
+
+					if(action == 0){
+
+						String pwd=new String(pf.getPassword());
+
+						//comprabacion del permiso administrador
+						if(this.myUsuarioDao.comprobarAdmin(pwd)){
+
+							//se extraen los detalles de la factura de la base de datos
+							myFactura.setDetalles(detallesDao.getDetallesFactura(myFactura.getIdFactura()));
+
+							//se anula la factura en la bd
+							if(myFacturaDao.anularFactura(myFactura)){
+
+								//si tiene detalles la factura se realizan operaciones con los detalles
+								if(!myFactura.getDetalles().isEmpty() && myFactura.getDetalles()!=null)
+								{
+									//si la factura que se anulo es al credito se hace un pago a farvor del cliente para rebajar el saldo y lo mismo con la factura
+									if(myFactura.getTipoFactura()==2){
+										createCreditoToCliente(caja);
 									}
-								}
-								
-							}
+
+									//bandera para verificar si se realizo una devolucion
+									boolean resultado=false;
+
+									//se registrar los detalles de la factura anulada como una devolucion
+									//se recorre los detalles de la factura
+									for(int x=0;x<myFactura.getDetalles().size();x++){
+										//se verifica la existencia de una devolucion previa
+										DetalleFactura unDetalle=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), myFactura.getDetalles().get(x).getArticulo().getId());
+
+										if(unDetalle==null){//sino hay una devolucion previa se devuelve toda la cantidad
+											//se registra la devolucion
+											this.devolucionDao.agregarDetalle(myFactura.getDetalles().get(x), myFactura.getIdFactura());
+											resultado=true;
+
+										}else{//si existe una devolucion previa se resta la devolucion previa y se registra solo el restante
+											//se verifica que al resta la devolucion existente sea mayor que cero
+											if(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad()).floatValue()>0){
+												//se cambia la cantidad en el modelo
+												myFactura.getDetalles().get(x).setCantidad(new BigDecimal(unDetalle.getCantidad().subtract(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad())).floatValue()));
+												//se manda a guardar la devolucion
+												devolucionDao.agregarDetalle(myFactura.getDetalles().get(x), myFactura.getIdFactura());
+												resultado=true;
+
+											}
+										}
+
+									}
+
+									//se verifica que se realizo una devolucion para poder imprimir el reporte
+									if(resultado){
+										//se imprime el reporte
+										try {
+											AbstractJasperReports.createReportDevolucionVenta(ConexionStatic.getPoolConexion().getConnection(),myFactura.getIdFactura());
+											AbstractJasperReports.showViewer(view);
+										} catch (SQLException ee) {
+												ee.printStackTrace();
+											}
+										}
+
+								}//fin de la comprovacion de la existencia de detalles de la factura
+
+								//se cargan la facturas en la view
+								cargarTabla(myFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior(),view.getCbxCajas().getSelectedItem()));
+
+							}//fin de la verificacion de la  anulacion del encabezado de la facrura
+
+
+						}else{
+							JOptionPane.showMessageDialog(view, "Usuario Invalido","Error de validacion!!",JOptionPane.ERROR_MESSAGE);
+						}
+					}
+
+				}
 					
 			}
 			break;
@@ -482,9 +398,12 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 			
 		case "DEVOLUCION":
 			if(verificarSelecion()){
-				
-        		
+
+				//Recoger qu� fila se ha pulsadao en la tabla
+				filaPulsada = this.view.getTabla().getSelectedRow();
+				myFactura=this.view.getModelo().getFactura(filaPulsada);
 				myFactura.setDetalles(detallesDao.getDetallesFactura(myFactura.getIdFactura()));
+
 				ViewFacturaDevolucion viewDevolucion=new ViewFacturaDevolucion(view);
 				CtlDevoluciones ctlDevolucion=new CtlDevoluciones(viewDevolucion);
 				ctlDevolucion.actualizarFactura(myFactura);
@@ -571,7 +490,65 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 		ConexionStatic.getUsuarioLogin().getCajas().clear();
 
 	}
-	
+
+	private void createCreditoToCliente(Caja caja) {
+
+
+		/**** se establece la cuenta de la factura a cero por anulacion *****/
+
+		//se busca la cuenta de la factura
+		CuentaFactura cuentaFactura=new CuentaFactura();
+		CuentaFacturaDao cuentaFacturaDao=new CuentaFacturaDao();
+		CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=new CuentaXCobrarFacturaDao();
+
+		//se busca la factura en la base de datos
+		cuentaFactura=cuentaFacturaDao.buscarPorId(myFactura.getCliente().getId(),caja.getCodigo(),myFactura.getIdFactura());
+
+		if(cuentaFactura!=null){
+			CuentaXCobrarFactura cuenta=new CuentaXCobrarFactura();
+
+			cuenta.setCodigoCuenta(cuentaFactura.getCodigoCuenta());
+			cuenta.setDebito(new BigDecimal(cuentaFactura.getSaldo().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+			cuenta.setSaldo(new BigDecimal(0));
+			cuenta.setDescripcion("Anulacion de factura ");
+
+			cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+		}
+
+
+		/**** para la cuenta general del cliente se estable un credito
+		 *  para rebajar la factura anulada ****/
+
+		//se crea un recibo con los datos del cliente y de la factura
+		ReciboPago myRecibo=new ReciboPago();
+		myRecibo.setCliente(myFactura.getCliente());
+		String concepto="Anulacion de factura # "+myFactura.getIdFactura();
+		myRecibo.setTotal(myFactura.getTotal());
+		myRecibo.setConcepto(concepto);
+		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+
+
+		//se manda aguardar el recibo con los pagos realizados
+		boolean resulta=this.myReciboDao.registrar(myRecibo);
+
+		if(resulta){
+
+			myRecibo.setNoRecibo(myReciboDao.idUltimoRecibo);
+			try {
+				AbstractJasperReports.createReportReciboCobroCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
+				AbstractJasperReports.imprimierFactura();
+				AbstractJasperReports.showViewer(view);
+			} catch (SQLException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+			}
+
+		}else{//
+			JOptionPane.showMessageDialog(view, "El recibo no se guardo correctamente.");
+		}//fin del if que verefica la acccion de guardar el recibo
+
+	}
+
 	public boolean verificarSelecion(){
 		//fsdf
 		boolean resul=false;

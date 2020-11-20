@@ -57,24 +57,55 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 						
 						if(unDetalle!=null){
 							//se verifica que la cantidad nueva a devolver no exceda lo facturado y ya devolvido
-							if(unDetalle.getCantidad().add(new BigDecimal(entrada)).doubleValue()<=view.getModeloTabla().getDetalles().get(x).getCantidad().doubleValue()){
-								
-								//se cambia la cantidad en el modelo 
-								view.getModeloTabla().getDetalles().get(x).setCantidad(new BigDecimal(entrada));
-								
-								//se manda a guardar la devolucion 
-								devolucionDao.agregarDetalle(view.getModeloTabla().getDetalles().get(x), myFactura.getIdFactura());
+							if(unDetalle.getCantidad().add(new BigDecimal(entrada)).doubleValue() <= view.getModeloTabla().getDetalles().get(x).getCantidad().doubleValue()){
+
+
+								//se recoge la row de la factura
+								unDetalle=view.getModeloTabla().getDetalles().get(x);
+
+								//se cambia la cantidad en la row
+								unDetalle.setCantidad(new BigDecimal(entrada));
+
+
+								//get cantidad de la row para calcular el total
+								BigDecimal cantidad=view.getModeloTabla().getDetalles().get(x).getCantidad();
+								//get precio venta de la row para calcular el total
+								BigDecimal precioVenta= new BigDecimal(unDetalle.getArticulo().getPrecioVenta());
+
+								//se calcula el total del item
+								BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+								//se establece el nuevo total
+								unDetalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 								
 								resultado=true;
 							}else{
-								JOptionPane.showMessageDialog(view, "No puede devolver "+entrada+" "+view.getModeloTabla().getDetalles().get(x).getArticulo().getArticulo(),"Error de validacion!!",JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(view, "No puede devolver la cantidad de "+entrada+" del articulo "+view.getModeloTabla().getDetalles().get(x).getArticulo().getArticulo(),"Error de validacion!!",JOptionPane.ERROR_MESSAGE);
+								resultado=false;
 							}
 						}else{
 							
 							if(new BigDecimal(entrada).floatValue()<=view.getModeloTabla().getDetalles().get(x).getCantidad().doubleValue()){
+
+
+								//se recoge la row de la factura
+								unDetalle=view.getModeloTabla().getDetalles().get(x);
 								
-								//se cambia la cantidad en el modelo 
-								view.getModeloTabla().getDetalles().get(x).setCantidad(new BigDecimal(entrada));
+								//se cambia la cantidad en la row
+								unDetalle.setCantidad(new BigDecimal(entrada));
+
+
+								//get cantidad de la row para calcular el total
+								BigDecimal cantidad=view.getModeloTabla().getDetalles().get(x).getCantidad();
+								//get precio venta de la row para calcular el total
+								BigDecimal precioVenta= new BigDecimal(unDetalle.getArticulo().getPrecioVenta());
+
+								//se calcula el total del item
+								BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+								//se establece el nuevo total
+								unDetalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
 								
 								//se manda a guardar la devolucion 
 								devolucionDao.agregarDetalle(view.getModeloTabla().getDetalles().get(x), myFactura.getIdFactura());
@@ -82,6 +113,7 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 								resultado=true;
 							}else{
 								JOptionPane.showMessageDialog(view, "No puede devolver "+entrada+" "+view.getModeloTabla().getDetalles().get(x).getArticulo().getArticulo(),"Error de validacion!!",JOptionPane.ERROR_MESSAGE);
+								resultado=false;
 							}
 							
 						}
@@ -90,24 +122,125 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 				
 				
 				
-				if(resultado)
+				if(resultado==true) {
+
 					this.view.setVisible(false);
 					try {
-						
-						AbstractJasperReports.createReportDevolucionVenta(ConexionStatic.getPoolConexion().getConnection(),myFactura.getIdFactura());
-						
+
+						AbstractJasperReports.createReportDevolucionVenta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
+
 						AbstractJasperReports.showViewer(view);
-						
+
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				}
 				
 			
 		}else{
 			JOptionPane.showMessageDialog(view, "Seleccione por lo menos un articulo de la factura");
 		}
 		
+	}
+
+	public void calcularTotales(){
+
+		//se establecen los totales en cero
+		this.myFactura.resetTotales();
+
+		for(int x=0; x<view.getModeloTabla().getDetalles().size();x++){
+
+			DetalleFactura detalle=view.getModeloTabla().getDetalle(x);
+
+
+			if(detalle.getArticulo().getId()!=-1)
+				if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
+
+
+					//dfs
+					//se obtien la cantidad y el precio de compra por unidad
+					BigDecimal cantidad=detalle.getCantidad();
+					BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
+
+					//se calcula el total del item
+					BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+					BigDecimal des =detalle.getDescuentoItem();
+
+
+
+					totalItem=totalItem.subtract(des.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+
+
+					//se obtiene el impuesto del articulo
+					BigDecimal porcentaImpuesto =new BigDecimal(detalle.getArticulo().getImpuestoObj().getPorcentaje());
+					BigDecimal porImpuesto=new BigDecimal(0);
+					porImpuesto=porcentaImpuesto.divide(new BigDecimal(100));
+					porImpuesto=porImpuesto.add(new BigDecimal(1));
+
+					BigDecimal totalsiniva= new BigDecimal("0.0");
+					totalsiniva=totalItem.divide(porImpuesto,2,BigDecimal.ROUND_HALF_EVEN);//.divide(porImpuesto);// (totalItem)/(porcentaImpuesto);
+
+
+					//se calcula el total de impuesto del item
+					BigDecimal impuestoItem=totalItem.subtract(totalsiniva);//-totalsiniva;
+
+
+
+					//se estable el total y impuesto en el modelo
+					myFactura.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+					if(porcentaImpuesto.intValue()==0){
+						myFactura.setSubTotalExcento(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					}else
+					if(porcentaImpuesto.intValue()==15){
+						myFactura.setTotalImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						myFactura.setSubTotal15(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					}else
+					if(porcentaImpuesto.intValue()==18){
+						myFactura.setTotalImpuesto18(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						myFactura.setSubTotal18(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					}
+
+					//se calcuala el total del impuesto de los articulo que son servicios de turismo
+					if(detalle.getArticulo().getTipoArticulo()==3){
+						BigDecimal totalOtrosImp= new BigDecimal("0.0");
+
+						totalOtrosImp=totalsiniva.multiply(new BigDecimal(0.04));
+
+						myFactura.setTotalOtrosImpuesto(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						myFactura.setTotal(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+					}
+
+					myFactura.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					//myFactura.getDetalles().add(detalle);
+					myFactura.setTotalDescuento(detalle.getDescuentoItem().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+					detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					//myFactura.getDetalles()
+
+					//se establece en la y el impuesto en el item de la vista
+					//detalle.setImpuesto(impuesto2.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+					//se establece el total e impuesto en el vista
+					this.view.getTxtTotal().setText(""+myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					this.view.getTxtImpuesto().setText(""+myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					this.view.getTxtImpuesto18().setText(""+myFactura.getTotalImpuesto18().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					this.view.getTxtSubtotal().setText(""+myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+					this.view.getTxtDescuento().setText(""+myFactura.getTotalDescuento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+					view.getModeloTabla().fireTableDataChanged();
+
+
+					//this.view.getModelo().fireTableDataChanged();
+				}//fin del if
+
+		}//fin del for
 	}
 
 	@Override
@@ -221,7 +354,7 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 public void cargarFacturaView(){
 		
 		this.view.getTxtIdcliente().setText(""+myFactura.getCliente().getId());
-    this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
+    	this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
 		
 		
 		view.getModeloEmpleados().addEmpleado(myFactura.getVendedor());
