@@ -4,21 +4,19 @@ import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.CuentaFactura;
 import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
+import net.datatecsolution.admin_tools.view.ViewCobroFactura;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class CtlCuentasFacturas implements ActionListener, MouseListener, ChangeListener {
-	private ViewCuentasFacturas view;
+public class CtlCuentasFacturas implements ActionListener, MouseListener, ChangeListener, KeyListener {
+	public ViewCuentasFacturas view;
 	
 	private CuentaFacturaDao cuentaFacturaDao;
 	
@@ -32,9 +30,13 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		cuentaFacturaDao=new CuentaFacturaDao();
 		
 		
-		cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-		
-		
+		//cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+
+		view.pack();
+		view.getTxtBuscar().setText("");
+		view.getTxtBuscar().selectAll();
+		view.getRdbtnCliente().setSelected(true);
+		view.getTxtBuscar().requestFocusInWindow();
 		view.setVisible(true);
 	}
 	
@@ -126,44 +128,75 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		String comando=e.getActionCommand();
 		
 		switch (comando){
-		
-		
-		case "ESCRIBIR":
-			view.setTamanioVentana(1);
-			break;
 
-		case "BUSCAR":
-			 filaPulsada = this.view.getTabla().getSelectedRow();
-			view.getModelo().setPaginacion();
-			//si la busqueda es por id
-			if(this.view.getRdbtnId().isSelected()){
-				
-				cargarTabla(cuentaFacturaDao.buscarConSaldoXidCliente(Integer.parseInt(view.getTxtBuscar().getText())));
-				
-			}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){ 
-				
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String date1 = sdf.format(this.view.getDcFecha1().getDate());
-				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
-				
+			case "PAGOS":
+
+				filaPulsada = this.view.getTabla().getSelectedRow();
+				//JOptionPane.showMessageDialog(view, "click en la tabla"+filaPulsada);
+
+				//si seleccion una fila
+				if(filaPulsada>=0) {
+
+					CuentaFactura cuentaSelected=view.getModelo().getCuenta(filaPulsada);
+
+					ViewCobroFactura viewCobroFactura = new ViewCobroFactura(view);
+					CtlCobroFactura ctlCobroFactura = new CtlCobroFactura(viewCobroFactura);
+
+					ctlCobroFactura.setDatos(cuentaSelected);
+
+					if(ctlCobroFactura.getResultado()){
+						viewCobroFactura.dispose();
+						ctlCobroFactura = null;
+
+						view.setVisible(false);
+
+					}
+
+
+				}else{
+					JOptionPane.showMessageDialog(view,"Debe seleccionar una factura!!!","Error",JOptionPane.ERROR_MESSAGE);
 				}
-			
-			
-			//si la busqueda son tadas
-			if(this.view.getRdbtnTodos().isSelected()){
-				
-				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-			}
-			if(view.getRdbtnCliente().isSelected()){
-				cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
-			}
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
+				break;
+
+
+		
+		
+			case "ESCRIBIR":
+				view.setTamanioVentana(1);
+				break;
+
+			case "BUSCAR":
+				 filaPulsada = this.view.getTabla().getSelectedRow();
+				view.getModelo().setPaginacion();
+				//si la busqueda es por id
+				if(this.view.getRdbtnId().isSelected()){
+
+					cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
+
+				}
+				//si la busqueda es por fecha
+				if(this.view.getRdbtnFecha().isSelected()){
+
+
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date1 = sdf.format(this.view.getDcFecha1().getDate());
+					String date2 = sdf.format(this.view.getDcFecha2().getDate());
+
+					cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
+
+					}
+
+
+				//si la busqueda son tadas
+				if(this.view.getRdbtnTodos().isSelected()){
+
+					cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+				}
+				if(view.getRdbtnCliente().isSelected()){
+					cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
+				}
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
 		
 			
 		case "IMPRIMIR":
@@ -278,6 +311,110 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	public void stateChanged(ChangeEvent e) {
 		// TODO Auto-generated method stub facturasPorId
 		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		switch(e.getKeyCode()){
+
+			case KeyEvent.VK_F1:
+
+				break;
+
+			case KeyEvent.VK_F2:
+				break;
+
+			case KeyEvent.VK_F3:
+
+				break;
+
+			case KeyEvent.VK_F4:
+
+				break;
+
+			case KeyEvent.VK_F5:
+
+				break;
+
+			case KeyEvent.VK_F6:
+
+				break;
+
+			case KeyEvent.VK_F7:
+
+				break;
+
+			case KeyEvent.VK_F8:
+
+				break;
+			case KeyEvent.VK_F9:
+
+				break;
+
+			case KeyEvent.VK_F10:
+
+
+				break;
+
+			case KeyEvent.VK_F11:
+
+				break;
+
+			case KeyEvent.VK_F12:
+
+				break;
+
+			case  KeyEvent.VK_ESCAPE:
+				view.setVisible(false);
+				break;
+
+			case KeyEvent.VK_DELETE:
+
+				break;
+
+			case KeyEvent.VK_DOWN:
+
+			case KeyEvent.VK_UP:
+
+				break;
+			case KeyEvent.VK_LEFT:
+
+				break;
+			case KeyEvent.VK_RIGHT:
+
+				break;
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+
+		//si escribe en la busque un cliente
+		if(e.getComponent()==this.view.getTxtBuscar()&&view.getTxtBuscar().getText().trim().length()>=3&&e.getKeyCode()!=KeyEvent.VK_UP&&e.getKeyCode()!=KeyEvent.VK_DOWN&&e.getKeyCode()!=KeyEvent.VK_ENTER){
+
+			//Se establece el departamento seleccionado
+			//myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
+			view.getModelo().setPaginacion();
+
+			//si esta activado la busqueda por articulo
+			if(this.view.getRdbtnCliente().isSelected()){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
+			}
+
+			//se establece el numero de pagina en la view
+			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+		}
+
 	}
 
 }

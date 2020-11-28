@@ -91,12 +91,22 @@ public class ViewModuloFacturar extends JFrame {
 		btnClientes = new BotonCliente();
 		btnClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(null);
+				CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
+
+
+				viewCuentasFacturas.dispose();
+				ctlCuentasFacturas=null;
+				/*
 				ViewCobro viewCobro=new ViewCobro(null);
 				CtlCobro ctlCobro=new CtlCobro(viewCobro);
 				
 				viewCobro.dispose();
 				viewCobro=null;
 				ctlCobro=null;
+
+				 */
 			}
 		});
 		barra.add(btnClientes);

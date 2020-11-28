@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TmCuentasFacturas  extends TablaModelo {
 	final private String []columnNames= {
-			"No Factura","Fecha Venc","Fecha Ultimo Pago","Cliente", "Telefono", "Saldo Factura"
+			"Cuenta No","No Factura","Cliente", "Telefono","Ultimo Pago", "Saldo Factura"
 		};
 	private List<CuentaFactura> cuentas=new ArrayList<CuentaFactura>();
 	
@@ -49,17 +49,17 @@ public class TmCuentasFacturas  extends TablaModelo {
 		
 		switch (columnIndex) {
 		case 0:
-			return cuentas.get(rowIndex).getNoFactura();
+			return cuentas.get(rowIndex).getCodigoCuenta();
 		case 1:
-			return sdf.format(cuentas.get(rowIndex).getFechaVenc());
+			return cuentas.get(rowIndex).getNoFactura();
 		case 2:
-			if(cuentas.get(rowIndex).getUltimoPago()!=null) return sdf.format(cuentas.get(rowIndex).getUltimoPago().getFecha()); else return "No tiene pago";
-		case 3:
 			return cuentas.get(rowIndex).getCliente().getNombre();
-		case 4:
+		case 3:
 			return cuentas.get(rowIndex).getCliente().getTelefono();
-		case 5:
-			return cuentas.get(rowIndex).getSaldo();
+		case 4:
+			if(cuentas.get(rowIndex).getUltimoPago()!=null) return sdf.format(cuentas.get(rowIndex).getUltimoPago().getFecha()); else return "No tiene pago";
+
+			case 5: return cuentas.get(rowIndex).getSaldo();
 		
 		default:
 				return null;

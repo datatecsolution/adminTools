@@ -1,9 +1,6 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
-import net.datatecsolution.admin_tools.modelo.CierreCaja;
-import net.datatecsolution.admin_tools.modelo.Cliente;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.ReciboPago;
+import net.datatecsolution.admin_tools.modelo.*;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -17,6 +14,7 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 	
 	
 	private CuentaPorCobrarDao myCuentaCobrarDao=null;
+	private CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=null;
 	private ClienteDao myClienteDao=null;
 	public int idUltimoRecibo=0;
 	private String sqlBaseJoin;
@@ -28,6 +26,7 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 		
 		myClienteDao=new ClienteDao();
 		myCuentaCobrarDao=new CuentaPorCobrarDao();
+		cuentaXCobrarFacturaDao=new CuentaXCobrarFacturaDao();
 		
 		sqlBaseJoin="SELECT recibo_pago.no_recibo, "
 							+ " DATE_FORMAT(recibo_pago.fecha,'%d/%m/%Y')  AS fecha , "
@@ -125,7 +124,91 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 			} // fin de catch
 		} // fin de finally
 	}
-	
+
+
+
+	public boolean registrar(Object c, CuentaFactura cuenta)
+	{
+		ReciboPago myRecibo=(ReciboPago)c;
+
+
+		int resultado=0;
+		ResultSet rs=null;
+		Connection con = null;
+
+		try
+		{
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+
+			//se establece los saldo en 0
+			myRecibo.setSaldos0();
+
+
+			//el salado anterio
+			myRecibo.setSaldoAnterior(cuentaXCobrarFacturaDao.getSaldoFactura(cuenta).getSaldo());
+
+			//el saldo actural
+			myRecibo.setSaldo(myRecibo.getSaldoAnterior().subtract(myRecibo.getTotal()));
+
+
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,total_letras,total,concepto,usuario,saldo_anterio,saldo) VALUES (now(),?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+
+			psConsultas.setInt(1, cuenta.getCodigoCuenta());
+			psConsultas.setString(2, myRecibo.getTotalLetras());
+			psConsultas.setBigDecimal(3, myRecibo.getTotal());
+			psConsultas.setString(4, myRecibo.getConcepto());
+			psConsultas.setString(5, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setBigDecimal(6, myRecibo.getSaldoAnterior().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+			psConsultas.setBigDecimal(7, myRecibo.getSaldo().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
+			resultado=psConsultas.executeUpdate();
+
+			rs=psConsultas.getGeneratedKeys(); //obtengo las ultimas llaves generadas
+			while(rs.next()){
+				//this.setIdClienteRegistrado(rs.getInt(1));
+				myRecibo.setNoRecibo(rs.getInt(1));
+				this.idUltimoRecibo=rs.getInt(1);
+			}
+
+			/*** se crea el registro el debito de la cuenta del cliente con el recibo generado ***/
+			String concepto=myRecibo.getConcepto();
+			concepto=concepto+" con recibo no. "+myRecibo.getNoRecibo();
+			myRecibo.setConcepto(concepto);
+			myCuentaCobrarDao.reguistrarDebito(myRecibo);
+
+
+			/*** se crea el registro el debito de la cuentaXcobrarFactura con el recibo generado ***/
+			CuentaXCobrarFactura cuentaAregisrar=new CuentaXCobrarFactura();
+			cuentaAregisrar.setCodigoCuenta(cuenta.getCodigoCuenta());
+			cuentaAregisrar.setDebito(myRecibo.getTotal());
+			cuentaAregisrar.setDescripcion("Pago con recibo # "+myRecibo.getNoRecibo());
+			cuentaXCobrarFacturaDao.reguistrarDebito(cuentaAregisrar);
+
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		finally
+		{
+			try{
+				if(rs!=null)rs.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+	}
+
+
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para agreagar Articulo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public boolean registrarFacturasPagadas(int idFactura, int idRecibo)
 	{

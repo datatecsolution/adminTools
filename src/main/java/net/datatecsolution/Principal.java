@@ -2,6 +2,7 @@ package net.datatecsolution;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import net.datatecsolution.admin_tools.controlador.CtlFactCredito;
 import net.datatecsolution.admin_tools.controlador.CtlLogin;
 import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenVenta;
@@ -11,10 +12,7 @@ import net.datatecsolution.admin_tools.modelo.ConfigUserFacturacion;
 import net.datatecsolution.admin_tools.modelo.Usuario;
 import net.datatecsolution.admin_tools.modelo.dao.ConfigUserFactDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
-import net.datatecsolution.admin_tools.view.ViewLogin;
-import net.datatecsolution.admin_tools.view.ViewMenuPrincipal;
-import net.datatecsolution.admin_tools.view.ViewModuloFacturar;
-import net.datatecsolution.admin_tools.view.ViewOrdeneVenta;
+import net.datatecsolution.admin_tools.view.*;
 
 
 import javax.swing.*;
@@ -156,23 +154,14 @@ public class Principal {
 
                 if(user.getCajas()!=null){
 
-
                     /*
+                    ViewFactCredito viewFactCredito=new ViewFactCredito(null);
+                    CtlFactCredito ctlFactCredito =new CtlFactCredito(viewFactCredito);
 
-                    //se imprime un tike de salida para prueba
-                    try {
-                        //AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
-                        AbstractJasperReports.createReportSalidaCaja(ConexionStatic.getPoolConexion().getConnection(),1);
-
-                        AbstractJasperReports.imprimierFactura();
-
-
-                    } catch (SQLException ee) {
-                        // TODO Auto-generated catch block
-                        ee.printStackTrace();
-                    }
+                    viewFactCredito.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); //.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
 
                      */
+
 
 
                     ViewModuloFacturar marcoEscritorio = new ViewModuloFacturar();
@@ -180,6 +169,7 @@ public class Principal {
                     marcoEscritorio.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
                     //marcoEscritorio.setSize( 1000, 800 ); // establece el tamaño del marco
                     marcoEscritorio.setVisible( true ); // muestra el marco
+
                 }else{
                     JOptionPane.showMessageDialog(viewLogin, "No tiene cajas asignadas para poder facturar.","Error",JOptionPane.ERROR_MESSAGE);
                     System.exit(0);

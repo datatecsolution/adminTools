@@ -58,6 +58,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream comisiones;
 	private static InputStream salidaCaja=null;
 	private static InputStream cobroCaja=null;
+	private static InputStream cobroCajaFactura=null;
 	private static InputStream salidasEmpleados=null;
 	private static InputStream cuentaCliente=null;
 	private static InputStream saldosClientes=null;
@@ -106,6 +107,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport reportComisiones;
 	private static JasperReport	reportSalidaCaja;
 	private static JasperReport	reportCobroCaja;
+	private static JasperReport	reportCobroCajaFactura;
 	private static JasperReport	reportSalidasEmpleados;
 	private static JasperReport	reportCuentaCliente;
 	private static JasperReport	reportSaldosClientes;
@@ -173,6 +175,7 @@ public abstract class AbstractJasperReports implements Runnable
 		comisiones=AbstractJasperReports.class.getResourceAsStream("/reportes/comisiones2.jasper");
 		salidaCaja=AbstractJasperReports.class.getResourceAsStream("/reportes/salida_caja.jasper");
 		cobroCaja=AbstractJasperReports.class.getResourceAsStream("/reportes/cobro_caja.jasper");
+		cobroCajaFactura=AbstractJasperReports.class.getResourceAsStream("/reportes/cobro_caja_factura.jasper");
 		
 		salidasEmpleados=AbstractJasperReports.class.getResourceAsStream("/reportes/salidas_empleados.jasper");
 		
@@ -237,6 +240,7 @@ public abstract class AbstractJasperReports implements Runnable
 			reportCotizacion= (JasperReport) JRLoader.loadObject( cotizacion );
 			reportComisiones= (JasperReport) JRLoader.loadObject( comisiones );
 			reportCobroCaja= (JasperReport) JRLoader.loadObject( cobroCaja );
+			reportCobroCajaFactura= (JasperReport) JRLoader.loadObject( cobroCajaFactura );
 			reportSalidasEmpleados= (JasperReport) JRLoader.loadObject( salidasEmpleados );
 			//Dei=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteDEI.jasper");
 			
@@ -958,6 +962,26 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 			}
+	}
+
+	public static void createReportReciboCobroCajaFactura(Connection conn,int id){
+		Map parametros = new HashMap();
+		parametros.put("no_recibo",id);
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportCobroCajaFactura, parametros, conn );
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	

@@ -135,6 +135,57 @@ public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 		} // fin de finally
 		return un;
 	}
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<      se obtiene el ultimo registro        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public CuentaXCobrarFactura getSaldoFactura(CuentaXCobrarFactura cuentaFactura){
+		CuentaXCobrarFactura un=new CuentaXCobrarFactura();
+
+		Connection con = null;
+
+		String sql2=super.getQuerySelect()+" WHERE cuentas_por_cobrar_facturas.codigo_cuenta = ? ORDER BY cuentas_por_cobrar_facturas.codigo_reguistro DESC LIMIT 1";
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas = con.prepareStatement(sql2);
+
+			psConsultas.setInt(1, cuentaFactura.getCodigoCuenta());
+			res = psConsultas.executeQuery();
+			while(res.next()){
+
+				existe=true;
+				un.setNoReguistro(res.getInt("codigo_reguistro"));
+				un.setDescripcion(res.getString("descripcion"));
+				un.setFecha(res.getDate("fecha"));
+				un.setCredito(res.getBigDecimal("credito"));
+				un.setDebito(res.getBigDecimal("debito"));
+				un.setSaldo(res.getBigDecimal("saldo"));
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+		return un;
+	}
 	
 	public List<CuentaXCobrarFactura> getFacturasClienteSaldo(Cliente cliente) {
 		// TODO Auto-generated method stub
@@ -201,17 +252,11 @@ public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 	
 	public boolean reguistrarDebito(CuentaXCobrarFactura aRegistrar) {
 		// TODO Auto-generated method stub
-		//CuentaXCobrarFactura aRegistrar=new CuentaXCobrarFactura();
-		//CuentaXCobrarFactura ultima=null;//this.getSaldoFactura(myRecibo);
-		//hay que modificar aqui para poder hacer el registro
-		
-		//aRegistrar.setFactura(myRecibo);
-		
-		//aRegistrar.setDebito(myRecibo.getTotal());//.setCredito(myFactura.getTotal());
-		//BigDecimal newSaldo=ultima.getSaldo().subtract(myRecibo.getTotal());//.add(myFactura.getTotal());
-		//aRegistrar.setSaldo(newSaldo);
-		
-		//JOptionPane.showConfirmDialog(null, myCliente);
+
+		CuentaXCobrarFactura ultima=this.getSaldoFactura(aRegistrar);
+		BigDecimal newSaldo=ultima.getSaldo().subtract(aRegistrar.getDebito());//.add(myFactura.getTotal());
+		aRegistrar.setSaldo(newSaldo);
+
 				int resultado=0;
 				ResultSet rs=null;
 				Connection con = null;

@@ -206,7 +206,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 	}
 
 	@Override
-	public List<CuentaFactura> buscarPorId(int codigoCliente) {
+	public List<CuentaFactura> buscarPorId(int codigo) {
 		// TODO Auto-generated method stub
 		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
 		
@@ -220,8 +220,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			
 			
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cliente=? and cuenta2.saldo2<>0 order by cuentas_facturas.codigo_cuenta asc");
-			super.psConsultas.setInt(1, codigoCliente);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=? and cuenta2.saldo2<>0 order by cuentas_facturas.codigo_cuenta asc");
+			super.psConsultas.setInt(1, codigo);
 			
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
@@ -245,14 +245,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setRtn(res.getString("rtn"));
 				
 				unaCuenta.setCliente(cliente);
+				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
 				
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
 			//res.close();
 			//conexion.desconectar();
-					
-					
+
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
