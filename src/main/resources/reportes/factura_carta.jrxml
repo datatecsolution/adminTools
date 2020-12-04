@@ -169,7 +169,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="codigo_barra"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_factura"/>
 	</field>
-	<field name="fecha1" class="java.sql.Date">
+	<field name="fecha1" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="fecha1"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -447,19 +447,19 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura}]]></textFieldExpression>
 			</textField>
-			<textField pattern="d MMM, yyyy">
-				<reportElement x="336" y="1" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+			<textField pattern="d/M/yyy h:mm a">
+				<reportElement x="290" y="1" width="136" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha1}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="1" width="75" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<reportElement x="259" y="1" width="44" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<text><![CDATA[Facha Factura:]]></text>
+				<text><![CDATA[Facha:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="307" y="14" width="118" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
@@ -471,7 +471,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="14" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
+				<reportElement x="259" y="14" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
