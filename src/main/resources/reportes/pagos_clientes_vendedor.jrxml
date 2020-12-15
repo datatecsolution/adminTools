@@ -24,23 +24,27 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="fecha_max" class="java.util.Date"/>
-	<parameter name="codigo_cliente" class="java.lang.Integer"/>
+	<parameter name="codigo_vendedor" class="java.lang.Integer"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
-	`recibo_pago`.`no_recibo` AS `no_recibo`,
-	`recibo_pago`.`fecha` AS `fecha`,
-	`recibo_pago`.`codigo_cliente` AS `codigo_cliente`,
-	`recibo_pago`.`total_letras` AS `total_letras`,
-	`recibo_pago`.`total` AS `total`,
-	`recibo_pago`.`saldo_anterio` AS `saldo_anterio`,
-	`recibo_pago`.`saldo` AS `saldo`,
-	`recibo_pago`.`concepto` AS `concepto`,
-	`recibo_pago`.`usuario` AS `usuario`,
-	`cliente`.`nombre_cliente` AS `nombre_cliente`,
-	cliente.rtn
+	recibo_pago.no_recibo AS no_recibo, 
+	recibo_pago.fecha AS fecha, 
+	recibo_pago.codigo_cliente AS codigo_cliente, 
+	recibo_pago.total_letras AS total_letras, 
+	recibo_pago.total AS total, 
+	recibo_pago.saldo_anterio AS saldo_anterio, 
+	recibo_pago.saldo AS saldo, 
+	recibo_pago.concepto AS concepto, 
+	recibo_pago.usuario AS usuario, 
+	cliente.nombre_cliente AS nombre_cliente, 
+	cliente.rtn, 
+	empleados.codigo_empleado, 
+	empleados.nombre as nombre_cobrador, 
+	empleados.apellido as apellido_cobrador, 
+	empleados.telefono as telefono_cobrador
 FROM
-	`recibo_pago`
+	recibo_pago
 	INNER JOIN
 	cuentas_facturas
 	ON 
@@ -49,10 +53,12 @@ FROM
 	cliente
 	ON 
 		cuentas_facturas.codigo_cliente = cliente.codigo_cliente
-	
-	
+	INNER JOIN
+	empleados
+	ON 
+		cliente.id_vendedor = empleados.codigo_empleado
 WHERE 
-	 `recibo_pago`.`fecha` BETWEEN $P{fecha_min} AND $P{fecha_max} and cliente.codigo_cliente= $P{codigo_cliente}]]>
+	 `recibo_pago`.`fecha` BETWEEN $P{fecha_min} AND $P{fecha_max} and empleados.codigo_empleado= $P{codigo_vendedor}]]>
 	</queryString>
 	<field name="no_recibo" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_salida"/>
@@ -84,6 +90,10 @@ WHERE
 	</field>
 	<field name="concepto" class="java.lang.String"/>
 	<field name="rtn" class="java.lang.String"/>
+	<field name="codigo_empleado" class="java.lang.Integer"/>
+	<field name="nombre_cobrador" class="java.lang.String"/>
+	<field name="apellido_cobrador" class="java.lang.String"/>
+	<field name="telefono_cobrador" class="java.lang.String"/>
 	<variable name="total" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
@@ -112,32 +122,32 @@ WHERE
 				<textFieldExpression><![CDATA[$P{fecha_min}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="6" y="44" width="48" height="13" uuid="99e6870b-1aa8-41a8-8fde-5792a1dba9fd"/>
+				<reportElement x="6" y="44" width="54" height="13" uuid="99e6870b-1aa8-41a8-8fde-5792a1dba9fd"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Cliente: ]]></text>
+				<text><![CDATA[Cobrador: ]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
-				<reportElement x="48" y="44" width="220" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
+				<reportElement x="60" y="44" width="220" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo_empleado}+" | "+$F{nombre_cobrador}+" "+$F{apellido_cobrador}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="274" y="44" width="30" height="13" uuid="e36d5a6e-1b43-4630-8173-07f62de705a3"/>
+				<reportElement x="274" y="44" width="56" height="13" uuid="e36d5a6e-1b43-4630-8173-07f62de705a3"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
-				<text><![CDATA[RTN: ]]></text>
+				<text><![CDATA[Telefono: ]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
-				<reportElement x="304" y="44" width="120" height="13" uuid="79493621-8a52-4194-a8fe-a8d515f3982b"/>
+				<reportElement x="330" y="44" width="120" height="13" uuid="79493621-8a52-4194-a8fe-a8d515f3982b"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{telefono_cobrador}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="0" width="568" height="15" uuid="6c196262-82da-485d-a603-6c4337dba8e6">
@@ -146,7 +156,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PAGOS DE CLIENTES]]></text>
+				<text><![CDATA[PAGOS DE CLIENTES X COBRADOR]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
 				<reportElement x="296" y="17" width="74" height="13" uuid="536a9638-4531-49ce-8df7-7e0115b05d89"/>
@@ -183,7 +193,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11"/>
 				</textElement>
-				<text><![CDATA[Descripcion]]></text>
+				<text><![CDATA[Cliente]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="395" y="0" width="82" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
@@ -256,7 +266,7 @@ WHERE
 					<textElement>
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codigo_cliente}+" | "+$F{nombre_cliente}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="#,##0.###">
 					<reportElement style="Detail" x="393" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>

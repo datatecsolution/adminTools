@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.controlador;
 
+import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
@@ -9,6 +10,7 @@ import net.datatecsolution.admin_tools.view.ViewListaEmpleados;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	
@@ -63,33 +65,51 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		String comando=e.getActionCommand();
+
+		//se filtra el comando para verificar que la accion se genero desde los botones de las facturas pendientes.
+		if(AbstractJasperReports.isNumber(comando)){
+			int codigoCliente=Integer.parseInt(comando);
+
+			Cliente cliente=myClienteDao.buscarPorId(codigoCliente);
+
+			actualizarCliente(cliente);
+
+		}
 		
 		switch(comando){
-		case "GUARDAR":
-			getCliente();
-			//se ejecuta la accion de guardar
-			if(myClienteDao.registrar(myCliente)){
-				JOptionPane.showMessageDialog(this.view, "Se ha registrado Exitosamente","Informacion",JOptionPane.INFORMATION_MESSAGE);
-				myCliente.setId(myClienteDao.getIdClienteRegistrado());//se completa el proveedor guardado con el ID asignado por la BD
-				resultaOperacion=true;
-				this.view.setVisible(false);
-			}else{
-				JOptionPane.showMessageDialog(this.view, "No se Registro");
-				resultaOperacion=false;
-				this.view.setVisible(false);
-			}
-			break;
-		case "CANCELAR":
-			this.view.setVisible(false);
-			break;
-		case "ACTUALIZAR":
-			getCliente();
-				if(myClienteDao.actualizar(myCliente)){//se manda actualizar el cliente en la bd
-					JOptionPane.showMessageDialog(view, "Se Actualizo el articulo");
-					resultaOperacion=true;
-					this.view.dispose();
+			case "BUSCAR_VENDEDOR":
+				if(AbstractJasperReports.isNumber(view.getTxtIdVendedor().getText())){
+					myVendedor=myEmpleadoDao.buscarPorId(Integer.parseInt(view.getTxtIdVendedor().getText()));
+					view.getTxtVendedor().setText(myVendedor.toString());
 				}
-			break;
+				break;
+
+
+			case "GUARDAR":
+				getCliente();
+				//se ejecuta la accion de guardar
+				if(myClienteDao.registrar(myCliente)){
+					JOptionPane.showMessageDialog(this.view, "Se ha registrado Exitosamente","Informacion",JOptionPane.INFORMATION_MESSAGE);
+					myCliente.setId(myClienteDao.getIdClienteRegistrado());//se completa el proveedor guardado con el ID asignado por la BD
+					resultaOperacion=true;
+					this.view.setVisible(false);
+				}else{
+					JOptionPane.showMessageDialog(this.view, "No se Registro");
+					resultaOperacion=false;
+					this.view.setVisible(false);
+				}
+				break;
+			case "CANCELAR":
+				this.view.setVisible(false);
+				break;
+			case "ACTUALIZAR":
+				getCliente();
+					if(myClienteDao.actualizar(myCliente)){//se manda actualizar el cliente en la bd
+						JOptionPane.showMessageDialog(view, "Se Actualizo el articulo");
+						resultaOperacion=true;
+						this.view.dispose();
+					}
+				break;
 		}
 	}
 	
@@ -133,11 +153,18 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		this.view.setVisible(false);
+		resultaOperacion=false;
+		view.setVisible(false);
+		view.dispose();
 	}
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
+
+		resultaOperacion=false;
+		view.setVisible(false);
+		view.dispose();
+
 		
 	}
 	@Override
@@ -180,6 +207,34 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+
+		view.getMcBusqueda().setVisible(false);
+		//si escribe en la busque un cliente
+		if(e.getComponent()==this.view.getTxtNombre()&&view.getTxtNombre().getText().trim().length()>=7&&e.getKeyCode()!=KeyEvent.VK_UP&&e.getKeyCode()!=KeyEvent.VK_DOWN&&e.getKeyCode()!=KeyEvent.VK_ENTER){
+
+			List<Cliente> clientes=myClienteDao.buscarPorNombre(this.view.getTxtNombre().getText(),0,10);
+
+			view.getMntmItemBusqueda().clear();
+			view.getMcBusqueda().removeAll();
+			if(clientes!=null){
+				for(int c=0;c<clientes.size();c++){
+					JMenuItem mntmItem=new JMenuItem();
+					mntmItem.setText(clientes.get(c).getId()+" | "+clientes.get(c).getNombre()+", "+clientes.get(c).getDereccion());
+					mntmItem.setActionCommand(clientes.get(c).getId()+"");
+					mntmItem.addActionListener(this);
+					view.getMntmItemBusqueda().add(mntmItem);
+				}
+			}
+			view.setMcBusqueda();
+			view.getMcBusqueda().setFocusable(false);
+			view.getMcBusqueda().show(view.getTxtNombre(),0,32);
+
+
+
+		}else{
+			view.getMcBusqueda().setVisible(false);
+		}
+
 		
 	}
 	

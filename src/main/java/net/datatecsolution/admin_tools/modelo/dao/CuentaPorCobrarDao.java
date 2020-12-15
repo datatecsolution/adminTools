@@ -141,10 +141,21 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 		// TODO Auto-generated method stub
 		CuentaPorCobrar aRegistrar=new CuentaPorCobrar();
 		CuentaPorCobrar ultima=this.getSaldoCliente(myFactura.getCliente());
-		
-		
+
+		String fecha= myFactura.getFecha()==null? " now(), ":"'"+myFactura.getFecha()+" 00:00:00', ";
+
+		/** se construlle la descripcion de la cuenta segun la factura ***/
+		String descripcion="venta de ";
+		for(int x=0;x<myFactura.getDetalles().size();x++){
+
+			if(myFactura.getDetalles().get(x).getArticulo().getId()!=-1)
+				descripcion=descripcion+myFactura.getDetalles().get(x).getArticulo().getArticulo()+" , ";
+		}
+		descripcion=descripcion+" fact # "+ myFactura.getIdFactura();
+
+
+		aRegistrar.setDescripcion(descripcion);
 		aRegistrar.setCliente(myFactura.getCliente());
-		aRegistrar.setDescripcion("venta segun factura no. "+myFactura.getIdFactura());
 		aRegistrar.setCredito(myFactura.getTotal());
 		BigDecimal newSaldo=ultima.getSaldo().add(myFactura.getTotal());
 		aRegistrar.setSaldo(newSaldo);
@@ -158,7 +169,7 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 				{
 					con = ConexionStatic.getPoolConexion().getConnection();
 					
-					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES (now(),?,?,?,?)");
+					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES ("+fecha+" ?,?,?,?)");
 					psConsultas.setInt(1, aRegistrar.getCliente().getId());
 					psConsultas.setString(2, aRegistrar.getDescripcion());
 					psConsultas.setBigDecimal(3, aRegistrar.getCredito());

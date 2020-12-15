@@ -140,6 +140,8 @@ public class FacturaDao extends ModeloDaoBasic {
 		//int idFactura=0;
 		//se cambia la base de datos para las facturas de la caja seleccionada
 		super.DbName=ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd();
+
+		String fecha= myFactura.getFecha()==null? " now(), ":"'"+myFactura.getFecha()+" 00:00:00', ";
 		
 		//se coloca la base de datos donde se guardara la factura, 
 		String sql=super.getQueryInsert()+" ("
@@ -169,10 +171,12 @@ public class FacturaDao extends ModeloDaoBasic {
 				+ "cobro_tarjeta,"
 				+ "cobro_efectivo) "
 				+ " VALUES ("
-								+ " now(), "
+					//			+ " now(), "
+				+fecha
 								+ " DATE_ADD(now(), INTERVAL (SELECT dia_vencimiento_factura from config_app LIMIT 1) DAY), "
 								+ " ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? "
 						+ ")";
+
 		
 		
 		
@@ -244,12 +248,14 @@ public class FacturaDao extends ModeloDaoBasic {
 				myCuentaCobrarDao.reguistrarCredito(myFactura);
 
 
-				//verificar si tiene credito a fovor del cliente si tiene no debe registrar el credito de la factura
+
+
+
 
 				//se crea la cuenta de la factura en la bd
 				CuentaFactura unaCuentaFactura=new CuentaFactura();
-			
 				unaCuentaFactura.setCaja(ConexionStatic.getUsuarioLogin().getCajaActiva());
+				myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
 				unaCuentaFactura.setCliente(myFactura.getCliente());
 				unaCuentaFactura.setFactura(myFactura);
 				

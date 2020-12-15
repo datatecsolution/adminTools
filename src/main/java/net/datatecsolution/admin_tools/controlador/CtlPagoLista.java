@@ -1,11 +1,9 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
-import net.datatecsolution.admin_tools.modelo.Conexion;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.ReciboPago;
 import net.datatecsolution.admin_tools.modelo.dao.ReciboPagoDao;
-import net.datatecsolution.admin_tools.view.ViewCobro;
 import net.datatecsolution.admin_tools.view.ViewFiltroPagos;
 import net.datatecsolution.admin_tools.view.ViewListaPagos;
 
@@ -65,62 +63,25 @@ public class CtlPagoLista implements ActionListener, MouseListener, ChangeListen
         
         //si seleccion una fila
         if(filaPulsada>=0){
-        	
-        	//Se recoge el id de la fila marcada
-            //int idFactura= (int)this.view.getModelo().getValueAt(filaPulsada, 0);
-            
-           // this.view.getBtnEliminar().setEnabled(true);
-           // this.view.getBtnImprimir().setEnabled(true);
+
             this.myRecibo=this.view.getModelo().getRecibo(filaPulsada);
-            //se consigue el proveedore de la fila seleccionada
-            //myArticulo=this.view.getModelo().getArticulo(filaPulsada);
-        
-            
         	//si fue doble click mostrar modificar
         	if (e.getClickCount() == 2) {
         		
         		
         		
         		try {
-    				
-    				
-        			
-        			
-        			//AbstractJasperReports.createReport(conexion.getPoolConexion().getConnection(), 5, myRecibo.getNoRecibo());
-					AbstractJasperReports.createReportReciboCobroCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
-					//AbstractJasperReports.showViewer(view);
-					//AbstractJasperReports.imprimierFactura();
+
+					AbstractJasperReports.createReportReciboCobroCajaFactura(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
 					AbstractJasperReports.showViewer(view);
-					
-    				//AbstractJasperReports.imprimierFactura();
-    				this.view.getBtnImprimir().setEnabled(false);
+					//AbstractJasperReports.imprimierFactura();
+
+    				this.view.getBtnCobrador().setEnabled(false);
     				myRecibo=null;
     			} catch (SQLException ee) {
     				// TODO Auto-generated catch block
     				ee.printStackTrace();
     			}
-        	
-        		/*ViewFacturar viewFacturar=new ViewFacturar(this.view);
-        		CtlFacturar ctlFacturar=new CtlFacturar(viewFacturar,conexion);
-        		
-        		//si se cobro la factura se debe eleminiar el temp por eso se guarda el id
-        		int idFactura=myFactura.getIdFactura();
-        		
-        		//se llama al controlador de la factura para que la muestre 
-        		ctlFacturar.viewFactura(myFactura);//actualizarFactura(myFactura);
-        		
-        		//si la factura se cobro se regresara null sino modificamos la factura en la lista
-        		if(myFactura==null){
-        			this.view.getModelo().eliminarFactura(filaPulsada);
-        			myFacturaDao.EliminarTemp(idFactura);
-        		}else{
-        			this.view.getModelo().cambiarArticulo(filaPulsada, myFactura);
-        			this.view.getTablaFacturas().getSelectionModel().setSelectionInterval(filaPulsada,filaPulsada);//se seleciona lo cambiado
-        		}
-        		viewFacturar.dispose();
-        		ctlFacturar=null;*/
-        		
-	        	
 			
 				
 				
@@ -166,149 +127,116 @@ public class CtlPagoLista implements ActionListener, MouseListener, ChangeListen
 		String comando=e.getActionCommand();
 		
 		switch (comando){
+
+			case "IMPRIMIR":
+				ViewFiltroPagos vFiltroPagos2=new ViewFiltroPagos(null);
+				CtlFiltroRepPagosVendedor ctlFiltroRepPagosVendedor=new CtlFiltroRepPagosVendedor(vFiltroPagos2);
+
+				break;
 		
 		
-		case "REPORTE":
-			ViewFiltroPagos vFiltroPagos=new ViewFiltroPagos(null);
-			CtlFiltroRepPagos cFiltroPagos=new CtlFiltroRepPagos(vFiltroPagos);
-			
-		break;
+			case "REPORTE":
+				ViewFiltroPagos vFiltroPagos=new ViewFiltroPagos(null);
+				CtlFiltroRepPagos cFiltroPagos=new CtlFiltroRepPagos(vFiltroPagos);
+
+			break;
+
+			case "ESCRIBIR":
+				view.setTamanioVentana(1);
+				break;
 		
-		case "INSERTAR":
-			ViewCobro viewCobro=new ViewCobro(view);
-			Conexion conexion=null;
-			CtlCobro ctlCobro=new CtlCobro(viewCobro);
-			
-			viewCobro.dispose();
-			viewCobro=null;
-			ctlCobro=null;
-			view.getModelo().setPaginacion();
-			cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-			break;
-		case "FECHA":
-			
-			break;
-			
-		case "TODAS":
-			
-			
-			break;
-		case "ID":
-			
-			break;
-		case "BUSCAR":
-			
-			//si la busqueda es por id
-			if(this.view.getRdbtnId().isSelected()){
-				myRecibo=reciboDao.buscarPorId(Integer.parseInt(this.view.getTxtBuscar().getText()));
-				if(myRecibo!=null){												
-					this.view.getModelo().limpiar();
-					this.view.getModelo().agregarPago(myRecibo); 
-				}else{
-					JOptionPane.showMessageDialog(view, "No se encuentro la factura");
-				}
-				
-			}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){  
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String date1 = sdf.format(this.view.getDcFecha1().getDate());
-				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				
-				}
-			
-			
-			//si la busqueda son tadas
-			if(this.view.getRdbtnTodos().isSelected()){  
+			case "INSERTAR":
+				/*
+				ViewCobro viewCobro=new ViewCobro(view);
+				Conexion conexion=null;
+				CtlCobro ctlCobro=new CtlCobro(viewCobro);
+
+				viewCobro.dispose();
+				viewCobro=null;
+				ctlCobro=null;
+				view.getModelo().setPaginacion();
 				cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				this.view.getTxtBuscar().setText("");
-				}
-			break;
-		/*case "ANULARFACTURA":
+
+				 */
+				break;
+			case "BUSCAR":
 			
-			//se verifica si la factura ya esta agregada al kardex
-			if (myFactura.getAgregadoAkardex()==0){
-				
-					int resul=JOptionPane.showConfirmDialog(view, "�Desea anular la factura no "+myFactura.getIdFactura()+"?");
-					//sin confirmo la anulacion
-					if(resul==0){
-						JPasswordField pf = new JPasswordField();
-						int action = JOptionPane.showConfirmDialog(view, pf,"Escriba la contrase�a admin",JOptionPane.OK_CANCEL_OPTION);
-						//String pwd=JOptionPane.showInputDialog(view, "Escriba la contrase�a admin", "Seguridad", JOptionPane.INFORMATION_MESSAGE);
-						if(action < 0){
-							
-							
-						}else{
-							String pwd=new String(pf.getPassword());
-							//comprabacion del permiso administrativo
-							if(this.myUsuarioDao.comprobarAdmin(pwd)){
-								//se anula la factura en la bd
-								if(myFacturaDao.anularFactura(myFactura))
-									myFactura.setEstado("NULA");
-								//JOptionPane.showMessageDialog(view, "Usuario Valido");
-							}else{
-								JOptionPane.showMessageDialog(view, "Usuario Invalido");
-							}
-						}
-						
+				//si la busqueda es por id
+				if(this.view.getRdbtnId().isSelected()){
+					myRecibo=reciboDao.buscarPorId(Integer.parseInt(this.view.getTxtBuscar().getText()));
+					if(myRecibo!=null){
+						this.view.getModelo().limpiar();
+						this.view.getModelo().agregarPago(myRecibo);
+					}else{
+						JOptionPane.showMessageDialog(view, "No se encuentro la factura");
 					}
-			}else{
-				JOptionPane.showMessageDialog(view, "No se puede anular la compra porque ya esta en el Kardex!!!");
-				this.view.getBtnEliminar().setEnabled(false);
-			}
-			break;
+
+				}
+				//si la busqueda es por fecha
+				if(this.view.getRdbtnFecha().isSelected()){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date1 = sdf.format(this.view.getDcFecha1().getDate());
+					String date2 = sdf.format(this.view.getDcFecha2().getDate());
+
+					cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+
+					}
+
+				//si la busqueda son tadas
+				if(this.view.getRdbtnRef().isSelected()){
+					cargarTabla(reciboDao.buscarPorRef(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				}
+
+
+				//si la busqueda son tadas
+				if(this.view.getRdbtnTodos().isSelected()){
+					cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+					this.view.getTxtBuscar().setText("");
+					}
+				break;
 			
-		case "IMPRIMIR":
-			try {
-				//this.view.setVisible(false);
-				//this.view.dispose();
-				AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul_Reimpresion.jasper",myFactura.getIdFactura() );
-				//AbstractJasperReports.showViewer();
-				AbstractJasperReports.showViewer(view);
-				this.view.getBtnImprimir().setEnabled(false);
-				myFactura=null;
-			} catch (SQLException ee) {
-				// TODO Auto-generated catch block
-				ee.printStackTrace();
-			}
-			break;*/
-			
-		case "NEXT":
-			view.getModelo().netPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				this.view.getTxtBuscar().setText("");
+			case "NEXT":
+				view.getModelo().netPag();
+				if(this.view.getRdbtnTodos().isSelected()){
+					cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+					this.view.getTxtBuscar().setText("");
+					}
+				//si la busqueda es por fecha
+				if(this.view.getRdbtnFecha().isSelected()){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date1 = sdf.format(this.view.getDcFecha1().getDate());
+					String date2 = sdf.format(this.view.getDcFecha2().getDate());
+
+					cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+
+					}
+				//si la busqueda son tadas
+				if(this.view.getRdbtnRef().isSelected()){
+					cargarTabla(reciboDao.buscarPorRef(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 				}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){  
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String date1 = sdf.format(this.view.getDcFecha1().getDate());
-				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
+			case "LAST":
+				view.getModelo().lastPag();
+				if(this.view.getRdbtnTodos().isSelected()){
+					cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+					this.view.getTxtBuscar().setText("");
+					}
+				//si la busqueda es por fecha
+				if(this.view.getRdbtnFecha().isSelected()){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date1 = sdf.format(this.view.getDcFecha1().getDate());
+					String date2 = sdf.format(this.view.getDcFecha2().getDate());
+
+					cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+
+					}
+				//si la busqueda son tadas
+				if(this.view.getRdbtnRef().isSelected()){
+					cargarTabla(reciboDao.buscarPorRef(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 				}
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
-		case "LAST":
-			view.getModelo().lastPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(reciboDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				this.view.getTxtBuscar().setText("");
-				}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){  
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				String date1 = sdf.format(this.view.getDcFecha1().getDate());
-				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				cargarTabla(reciboDao.reciboPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				
-				}
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
 		}
 
 	}

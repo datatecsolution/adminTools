@@ -65,10 +65,19 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
+
 		try {
 			conn = ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas = conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente", "="));
+			psConsultas = conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente", "="));
 			
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			
@@ -132,11 +141,19 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		Connection conn=null;
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
+
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			//psConsultas=conn.prepareStatement("SELECT *,ifnull(f_saldo_cliente(codigo_cliente),0) as saldo2 FROM cliente where rtn LIKE ? and tipo_cliente=2;");
-		
-			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and rtn", "LIKE"));
+
+			psConsultas=conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente=2 and rtn", "LIKE"));
 			
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 		
@@ -196,9 +213,17 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		Connection conn=null;
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and nombre_cliente", "LIKE"));
+			psConsultas=conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente=2 and nombre_cliente", "LIKE"));
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			psConsultas.setString(2, "%" + busqueda + "%");
 			psConsultas.setInt(3, limitInferio);
@@ -270,11 +295,11 @@ public class ClienteDao extends ModeloDaoBasic {
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 		
-			psConsultas=con.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and codigo_cliente", "="));
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
-			psConsultas.setInt(2, id);
-			psConsultas.setInt(3, 0);
-			psConsultas.setInt(4, 1);
+			psConsultas=con.prepareStatement(super.getQuerySearch("tipo_cliente=2 and codigo_cliente", "="));
+			//psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(1, id);
+			psConsultas.setInt(2, 0);
+			psConsultas.setInt(3, 1);
 			res=psConsultas.executeQuery();
 			while(res.next()){
 				myCliente.setId(res.getInt("codigo_cliente"));

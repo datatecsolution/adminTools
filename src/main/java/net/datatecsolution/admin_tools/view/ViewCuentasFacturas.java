@@ -1,9 +1,12 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlCuentasFacturas;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.view.botones.BotonCliente;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturas;
+import net.datatecsolution.admin_tools.view.rendes.RtCuentasFacturas;
+import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.TmCuentasFacturas;
 
 import javax.swing.*;
@@ -13,22 +16,12 @@ public class ViewCuentasFacturas extends ViewTabla {
 	
 
 	protected BotonImprimirSmall btnImprimir;
-	 protected BotonCliente btnClientes;
-	
-	
-	
+	protected BotonCliente btnClientes;
 	private TmCuentasFacturas modelo;
 	private JRadioButton rdbtnCliente;
-
-	
-
-	public JRadioButton getRdbtnCliente() {
-		return rdbtnCliente;
-	}
-
-	public void setRdbtnCliente(JRadioButton rdbtnCliente) {
-		this.rdbtnCliente = rdbtnCliente;
-	}
+	private JRadioButton rdbtnRTN;
+	private JComboBox<Empleado> cbxEmpleados;
+	private CbxTmEmpleado modeloListaEmpleados;
 
 	public ViewCuentasFacturas(Window view) {
 		super(view,"CXC POR FACTURAS");
@@ -39,8 +32,10 @@ public class ViewCuentasFacturas extends ViewTabla {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		btnAgregar.setEnabled(false);
 
+		super.panelEstadoRegistro.setVisible(true);
 
-		
+
+
 
 	
 	
@@ -58,8 +53,26 @@ public class ViewCuentasFacturas extends ViewTabla {
 		rdbtnCliente = new JRadioButton("Cliente");
 		panelOpcioneBusqueda.add(rdbtnCliente);
 		grupoOpciones.add(rdbtnCliente);
+
+		rdbtnRTN =new JRadioButton("RTN",false);
+		panelOpcioneBusqueda.add(rdbtnRTN);
+		grupoOpciones.add(rdbtnRTN);
 	  
-		rdbtnFecha.setVisible(true);
+		rdbtnFecha.setVisible(false);
+
+		rdbtnInactivo.setVisible(false);
+
+		rdbtnId.setText("No Cuenta");
+
+		modeloListaEmpleados=new CbxTmEmpleado();//comentar para poder mostrar en forma de diseno la ventana
+		modeloListaEmpleados.agregar(new Empleado());
+
+		cbxEmpleados = new JComboBox<Empleado>(modeloListaEmpleados);
+		panelOpcioneBusqueda.add(cbxEmpleados);
+
+
+		panelPaginacion.setVisible(false);
+		panelTotalReg.setVisible(true);
 		
 
 		
@@ -69,15 +82,16 @@ public class ViewCuentasFacturas extends ViewTabla {
 		modelo=new TmCuentasFacturas();
 		
 		tabla.setModel(modelo);
-		RenderizadorTablaFacturas renderizador = new RenderizadorTablaFacturas();
+		RtCuentasFacturas renderizador = new RtCuentasFacturas();
 		tabla.setDefaultRenderer(String.class, renderizador);
 		
-		tabla.getColumnModel().getColumn(0).setPreferredWidth(60);     //Tama�o de las columnas de las tablas
-		tabla.getColumnModel().getColumn(1).setPreferredWidth(80);	//de las columnas
-		tabla.getColumnModel().getColumn(2).setPreferredWidth(250);	//en la tabla
-		//tabla.getColumnModel().getColumn(3).setPreferredWidth(100);	//
-		//tabla.getColumnModel().getColumn(4).setPreferredWidth(100);	//
-		//tabla.getColumnModel().getColumn(5).setPreferredWidth(100);	//
+		tabla.getColumnModel().getColumn(0).setPreferredWidth(10);     //Tama�o de las columnas de las tablas
+		tabla.getColumnModel().getColumn(1).setPreferredWidth(10);	//de las columnas
+		tabla.getColumnModel().getColumn(2).setPreferredWidth(300);	//en la tabla
+		tabla.getColumnModel().getColumn(3).setPreferredWidth(50);	//
+		tabla.getColumnModel().getColumn(4).setPreferredWidth(200);	//
+		tabla.getColumnModel().getColumn(5).setPreferredWidth(30);	//
+		tabla.getColumnModel().getColumn(6).setPreferredWidth(30);
 
 		setPreferredSize(new Dimension(1200,680));
 
@@ -85,6 +99,7 @@ public class ViewCuentasFacturas extends ViewTabla {
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+
 		
 		
 		
@@ -110,6 +125,10 @@ public void conectarControlador(CtlCuentasFacturas c){
 		rdbtnCliente.addActionListener(c);
 		rdbtnCliente.setActionCommand("ESCRIBIR");
 		rdbtnCliente.addKeyListener(c);
+
+		rdbtnRTN.addActionListener(c);
+		rdbtnRTN.setActionCommand("ESCRIBIR");
+		rdbtnRTN.addKeyListener(c);
 
 
 		
@@ -152,10 +171,43 @@ public void conectarControlador(CtlCuentasFacturas c){
 		 btnAnterior.addActionListener(c);
 		 btnAnterior.setActionCommand("LAST");
 		 btnAnterior.addKeyListener(c);
+
+		rdbtnActivos.addActionListener(c);
+		rdbtnActivos.setActionCommand("REG_ACTIVO");
+
+		rdbtnInactivo.addActionListener(c);
+		rdbtnInactivo.setActionCommand("REG_INACTIVO");
+
+		rdbtnTodosEstado.addActionListener(c);
+		rdbtnTodosEstado.setActionCommand("REG_TODOS");
 		 
 		 tabla.addMouseListener(c);
 		 tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabla.addKeyListener(c);
+
+		cbxEmpleados.addActionListener(c);
+		cbxEmpleados.setActionCommand("CAMBIOCOMBOBOX");
+		cbxEmpleados.addKeyListener(c);
+	}
+	public JComboBox<Empleado> getCbxEmpleados() {
+		return cbxEmpleados;
+	}
+
+	public void setCbxEmpleados(JComboBox<Empleado> cbxEmpleados) {
+		this.cbxEmpleados = cbxEmpleados;
+	}
+	public CbxTmEmpleado getModeloListaEmpleados() {
+		return modeloListaEmpleados;
+	}
+
+	public void setModeloListaEmpleados(CbxTmEmpleado modeloListaEmpleados) {
+		this.modeloListaEmpleados = modeloListaEmpleados;
+	}
+	public JRadioButton getRdbtnCliente() {
+		return rdbtnCliente;
+	}
+	public void setRdbtnCliente(JRadioButton rdbtnCliente) {
+		this.rdbtnCliente = rdbtnCliente;
 	}
 
 	
@@ -172,6 +224,14 @@ public void conectarControlador(CtlCuentasFacturas c){
 	public JRadioButton getRdbtnTodos(){
 		return rdbtnTodos;
 		
+	}
+
+	public JRadioButton getRdbtnRTN() {
+		return rdbtnRTN;
+	}
+
+	public void setRdbtnRTN(JRadioButton rdbtnRTN) {
+		this.rdbtnRTN = rdbtnRTN;
 	}
 
 	

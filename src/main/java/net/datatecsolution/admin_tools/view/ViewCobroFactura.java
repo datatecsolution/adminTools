@@ -1,8 +1,8 @@
 package net.datatecsolution.admin_tools.view;
 
 
+import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.controlador.CtlCobroFactura;
-import net.datatecsolution.admin_tools.view.botones.BotonBuscarClientes;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
 import net.datatecsolution.admin_tools.view.botones.BotonCobrar;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.Date;
 
 public class ViewCobroFactura extends JDialog {
 
@@ -22,7 +23,6 @@ public class ViewCobroFactura extends JDialog {
 
 
     private BotonCancelar btnCerrar;
-    //private BotonBuscarClientes btnCliente;
     private BotonCobrar btnCobrar;
     private JLabel lblNombreCliente;
     private JTextField txtLimitecredito;
@@ -35,6 +35,15 @@ public class ViewCobroFactura extends JDialog {
     private JTextField txtFechaEmision;
     private JTextField txtFechaUltimoPago;
     private JTextField txtSaldoFactura;
+
+
+
+    //private JTextField txtFecha;
+    protected JDateChooser jdcFecha;
+    private JLabel lblReferencia;
+    private JTextField txtReferencia;
+    // private JDateChooser dcFecha1;
+
 
 
     public ViewCobroFactura(Window view) {
@@ -51,27 +60,12 @@ public class ViewCobroFactura extends JDialog {
 
         panelAcciones=new PanelPadre();
         panelAcciones.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Opciones", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        panelAcciones.setBounds(20, 11, 117, 362);
+        panelAcciones.setBounds(20, 11, 117, 511);
         panelAcciones.setLayout(null);
-        //panelAcciones.setVisible(false);
 
-
-        //this.setTitle("Facturar");
         getContentPane().add(panelAcciones);
-        //btnBuscar.getInputMap().put(KeyStroke.getKeyStroke("F1"), sumar());
 
 
-        /*
-
-        btnCliente = new BotonBuscarClientes();
-        btnCliente.setSize(92, 70);
-        btnCliente.setText("F3 Clientes");
-        btnCliente.setHorizontalAlignment(SwingConstants.LEFT);
-        btnCliente.setLocation(10, 19);
-        //btnCliente.setBounds(10, 19, 158, 80);
-        panelAcciones.add(btnCliente);
-
-         */
 
         btnCobrar = new BotonCobrar();
         btnCobrar.setText("F2 Cobrar");
@@ -101,7 +95,6 @@ public class ViewCobroFactura extends JDialog {
         lblCodigoCliente.setBounds(20, 23, 237, 14);
         panelDatosFactura.add(lblCodigoCliente);
 
-        Font myFont=new Font("OCR A Extended", Font.PLAIN, 45);
 
         txtIdcliente = new JTextField();
         txtIdcliente.setBounds(20, 35, 237, 29);
@@ -148,14 +141,14 @@ public class ViewCobroFactura extends JDialog {
         txtTotal = new JTextField();
         //txtTotal.setForeground(Color.RED);
         txtTotal.setHorizontalAlignment(SwingConstants.LEFT);
-        txtTotal.setFont(myFont);
+        txtTotal.setFont(new Font("OCR A Extended", Font.PLAIN, 20));
         txtTotal.setText("00");
-        txtTotal.setBounds(161, 315, 604, 58);
+        txtTotal.setBounds(161, 303, 604, 58);
         getContentPane().add(txtTotal);
         txtTotal.setColumns(10);
 
         lblTotal = new JLabel("Pago");
-        lblTotal.setBounds(165, 295, 46, 14);
+        lblTotal.setBounds(165, 283, 46, 14);
         getContentPane().add(lblTotal);
 
         PanelPadre panelPadre = new PanelPadre();
@@ -204,13 +197,35 @@ public class ViewCobroFactura extends JDialog {
         txtSaldoFactura.setBounds(269, 84, 313, 29);
         panelPadre.add(txtSaldoFactura);
 
-        setSize(800, 430);
+        JLabel lblFecha = new JLabel("Fecha");
+        lblFecha.setBounds(165, 373, 46, 14);
+        getContentPane().add(lblFecha);
+
+        jdcFecha = new JDateChooser();
+        jdcFecha.setFont(new Font("Dialog", Font.PLAIN, 17));
+        jdcFecha.setBounds(161, 389, 604, 43);
+        jdcFecha.setDate(new Date());
+        jdcFecha.setDateFormatString("dd-MM-yyyy");
+        getContentPane().add(jdcFecha);
+
+        lblReferencia = new JLabel("Referencia");
+        lblReferencia.setBounds(161, 444, 88, 14);
+        getContentPane().add(lblReferencia);
+
+        txtReferencia = new JTextField();
+        txtReferencia.setHorizontalAlignment(SwingConstants.LEFT);
+        txtReferencia.setFont(new Font("Dialog", Font.PLAIN, 17));
+        txtReferencia.setColumns(10);
+        txtReferencia.setBounds(161, 464, 604, 58);
+        getContentPane().add(txtReferencia);
+
+        setSize(800, 560);
 
         //this.setPreferredSize(new Dimension(660, 330));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        this.setPreferredSize(new Dimension(800, 430));
+        this.setPreferredSize(new Dimension(800, 560));
         this.pack();
     }
 
@@ -252,6 +267,21 @@ public class ViewCobroFactura extends JDialog {
     public JTextField getTxtSaldo(){
         return this.txtSaldocliente;
     }
+    public JTextField getTxtReferencia() {
+        return txtReferencia;
+    }
+
+    public void setTxtReferencia(JTextField txtReferencia) {
+        this.txtReferencia = txtReferencia;
+    }
+
+    public JDateChooser getJdcFecha() {
+        return jdcFecha;
+    }
+
+    public void setJdcFecha(JDateChooser jdcFecha) {
+        this.jdcFecha = jdcFecha;
+    }
     public void conectarContralador(CtlCobroFactura c){
 
 
@@ -272,6 +302,15 @@ public class ViewCobroFactura extends JDialog {
         this.btnCobrar.setActionCommand("COBRAR");
 
         txtTotal.addKeyListener(c);
+        txtReferencia.addKeyListener(c);
+        this.jdcFecha.addKeyListener(c);
+        //jdcFecha.getDateEditor().get
+
+        this.txtTotal.addActionListener(c);
+        this.txtTotal.setActionCommand("TOTAL");
+
+        this.txtReferencia.addActionListener(c);
+        this.txtReferencia.setActionCommand("REFERENCIA");
 
 
 

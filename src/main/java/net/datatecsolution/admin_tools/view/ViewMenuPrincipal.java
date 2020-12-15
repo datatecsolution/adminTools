@@ -135,10 +135,10 @@ public class ViewMenuPrincipal extends JFrame {
 		JMenu mnCuentasPorCobrar = new JMenu("Cuentas por cobrar");
 		menuBar.add(mnCuentasPorCobrar);
 		
-		mntmListaPagos = new JMenuItem("Ver pagos");
+		mntmListaPagos = new JMenuItem("Pagos");
 		mnCuentasPorCobrar.add(mntmListaPagos);
 		
-		mntmFacturasVencidas = new JMenuItem("Facturas Vencidas");
+		mntmFacturasVencidas = new JMenuItem("CXC por facturas");
 		mnCuentasPorCobrar.add(mntmFacturasVencidas);
 		
 		

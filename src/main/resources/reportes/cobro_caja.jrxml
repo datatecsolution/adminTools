@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Cobro_Caja" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -21,17 +21,24 @@
 	<parameter name="no_recibo" class="java.lang.Integer"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT v_recibo_pago_cuenta.no_recibo,
-	v_recibo_pago_cuenta.fecha,
-	v_recibo_pago_cuenta.codigo_cliente,
-	v_recibo_pago_cuenta.total_letras,
-	v_recibo_pago_cuenta.total,
-	v_recibo_pago_cuenta.saldo_anterio,
-	v_recibo_pago_cuenta.saldo,
-	v_recibo_pago_cuenta.concepto,
-	v_recibo_pago_cuenta.usuario,
-	v_recibo_pago_cuenta.nombre_cliente
-FROM v_recibo_pago_cuenta
+		<![CDATA[SELECT
+	`recibo_pago`.`no_recibo` AS `no_recibo`,
+	`recibo_pago`.`fecha` AS `fecha`,
+	`recibo_pago`.`codigo_cliente` AS `codigo_cliente`,
+	`recibo_pago`.`total_letras` AS `total_letras`,
+	`recibo_pago`.`total` AS `total`,
+	`recibo_pago`.`saldo_anterio` AS `saldo_anterio`,
+	`recibo_pago`.`saldo` AS `saldo`,
+	`recibo_pago`.`ref` AS `ref`,
+	`recibo_pago`.`concepto` AS `concepto`,
+	`recibo_pago`.`usuario` AS `usuario`,
+	`cliente`.`nombre_cliente` AS `nombre_cliente` 
+FROM
+	
+		`recibo_pago`
+		JOIN `cliente` ON (
+			`recibo_pago`.`codigo_cliente` = `cliente`.`codigo_cliente` 
+	)
 
 where 
 no_recibo= $P{no_recibo}]]>
@@ -46,11 +53,12 @@ no_recibo= $P{no_recibo}]]>
 	<field name="usuario" class="java.lang.String"/>
 	<field name="nombre_cliente" class="java.lang.String"/>
 	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="ref" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="335" splitType="Stretch">
+		<band height="351" splitType="Stretch">
 			<staticText>
 				<reportElement style="Title" x="1" y="73" width="178" height="22" uuid="bc1ce1da-8232-46ea-be55-cec4abb986dd"/>
 				<box>
@@ -65,14 +73,14 @@ no_recibo= $P{no_recibo}]]>
 				<text><![CDATA[PAGO DE CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="164" width="58" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
+				<reportElement x="1" y="180" width="58" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CANTIDA:]]></text>
 			</staticText>
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
-				<reportElement x="60" y="164" width="118" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<reportElement x="60" y="180" width="118" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
@@ -107,7 +115,7 @@ no_recibo= $P{no_recibo}]]>
 				<text><![CDATA[FECHA:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="190" width="178" height="59" uuid="4e2756b3-e44a-4f2a-a483-f57881d284e6"/>
+				<reportElement x="0" y="205" width="178" height="59" uuid="4e2756b3-e44a-4f2a-a483-f57881d284e6"/>
 				<box bottomPadding="1">
 					<bottomPen lineWidth="0.5"/>
 				</box>
@@ -117,56 +125,56 @@ no_recibo= $P{no_recibo}]]>
 				<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="177" width="58" height="13" uuid="eeb28120-a349-44ef-8c26-9689bd60ca23"/>
+				<reportElement x="1" y="192" width="58" height="13" uuid="eeb28120-a349-44ef-8c26-9689bd60ca23"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CONCEPTO:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="310" width="48" height="13" uuid="adb8cb65-146a-4aaf-8925-b536b6722ea9"/>
+				<reportElement x="1" y="325" width="48" height="13" uuid="adb8cb65-146a-4aaf-8925-b536b6722ea9"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CAJERO:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="50" y="310" width="92" height="13" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
+				<reportElement x="50" y="325" width="92" height="13" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="263" width="80" height="13" uuid="1f29c18b-60a1-41dc-9eb1-c9bbc12ff1dd"/>
+				<reportElement x="0" y="278" width="80" height="13" uuid="1f29c18b-60a1-41dc-9eb1-c9bbc12ff1dd"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PAGO:]]></text>
 			</staticText>
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
-				<reportElement x="80" y="263" width="98" height="13" uuid="0ec471a6-141b-4cd6-ad93-a29e52ced3d5"/>
+				<reportElement x="80" y="278" width="98" height="13" uuid="0ec471a6-141b-4cd6-ad93-a29e52ced3d5"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="249" width="80" height="13" uuid="dc59f7ff-0829-444b-8040-29b71c3cade8"/>
+				<reportElement x="0" y="264" width="80" height="13" uuid="dc59f7ff-0829-444b-8040-29b71c3cade8"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SALDO ANTE.:]]></text>
 			</staticText>
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
-				<reportElement x="80" y="249" width="98" height="13" uuid="415b7cdc-1f1c-4f7a-9e34-278bca455fd5"/>
+				<reportElement x="80" y="264" width="98" height="13" uuid="415b7cdc-1f1c-4f7a-9e34-278bca455fd5"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{saldo_anterio}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="277" width="79" height="13" uuid="1a55d5dd-57a3-4c9c-8e94-aaef2618e14b"/>
+				<reportElement x="1" y="292" width="79" height="13" uuid="1a55d5dd-57a3-4c9c-8e94-aaef2618e14b"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -180,7 +188,7 @@ no_recibo= $P{no_recibo}]]>
 				<text><![CDATA[SALDO NUEVO:]]></text>
 			</staticText>
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
-				<reportElement x="80" y="277" width="98" height="13" uuid="d4f6d3da-1aed-4f95-b2a0-a81f1942ddba"/>
+				<reportElement x="80" y="292" width="98" height="13" uuid="d4f6d3da-1aed-4f95-b2a0-a81f1942ddba"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -215,6 +223,20 @@ no_recibo= $P{no_recibo}]]>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["reportes/factura_datos_empresa.jasper"]]></subreportExpression>
 			</subreport>
+			<staticText>
+				<reportElement x="2" y="165" width="64" height="13" uuid="4de085e8-b6c3-4d93-8ef4-9d95e9caece5"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Referencia:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="66" y="165" width="112" height="13" uuid="0cd7a084-b74f-4c97-b8c8-e9af2177ff10"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ref}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 </jasperReport>

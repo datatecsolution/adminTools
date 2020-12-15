@@ -69,6 +69,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream existenciaBodega=null;
 	private static InputStream existenciaBodegaCategoria=null;
 	private static InputStream pagosClientes=null;
+	private static InputStream pagosClientesVendedor=null;
 	private static InputStream SarCompras=null;
 	private static InputStream ventasUsuarios=null;
 	private static InputStream ordenVenta=null;
@@ -118,6 +119,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport	reportExistenciaBodega;
 	private static JasperReport reportExistenciaBodegaCategoria;
 	private static JasperReport	reportPagosCliente;
+	private static JasperReport	reportPagosClienteVendedor;
 	private static JasperReport	reportSarCompras;
 	private static JasperReport reportVentasUsuarios;
 	private static JasperReport reportOrdenVenta;
@@ -189,6 +191,7 @@ public abstract class AbstractJasperReports implements Runnable
 		existenciaBodega=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteExistenciaBodega.jasper");
 		existenciaBodegaCategoria=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteExistenciaBodegaCategoria.jasper");
 		pagosClientes=AbstractJasperReports.class.getResourceAsStream("/reportes/pagos_clientes.jasper");
+		pagosClientesVendedor=AbstractJasperReports.class.getResourceAsStream("/reportes/pagos_clientes_vendedor.jasper");
 		SarCompras=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteSarCompras.jasper");
 		
 		ventasUsuarios=AbstractJasperReports.class.getResourceAsStream("/reportes/ventas_usuarios.jasper");
@@ -254,6 +257,7 @@ public abstract class AbstractJasperReports implements Runnable
 			reportExistenciaBodega= (JasperReport) JRLoader.loadObject( existenciaBodega );
 			reportExistenciaBodegaCategoria= (JasperReport) JRLoader.loadObject( existenciaBodegaCategoria );
 			reportPagosCliente= (JasperReport) JRLoader.loadObject( pagosClientes );
+			reportPagosClienteVendedor= (JasperReport) JRLoader.loadObject( pagosClientesVendedor );
 			reportSarCompras= (JasperReport) JRLoader.loadObject( SarCompras );
 			
 			reportVentasUsuarios= (JasperReport) JRLoader.loadObject( ventasUsuarios );
@@ -771,7 +775,28 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 						e1.printStackTrace();
 			}
 	}
-	
+
+	public static void createReportPagoClienteVendedor(Connection conn,Date fechaMin,Date fechaMax,int codigoCliente ){
+		Map parametros = new HashMap();
+		parametros.put("fecha_min",fechaMin);
+		parametros.put("fecha_max", fechaMax);
+		parametros.put("codigo_vendedor", codigoCliente);
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportPagosClienteVendedor, parametros, conn );
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 	
 	public static void createReportSarVentas(Connection conn,int mes,int anio,String usuario, String bD_facturacion){
 		 

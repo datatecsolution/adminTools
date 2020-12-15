@@ -1,14 +1,21 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlCliente;
+import net.datatecsolution.admin_tools.modelo.Cliente;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.view.botones.BotonActualizar;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
 import net.datatecsolution.admin_tools.view.botones.BotonGuardar;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public class ViewCrearCliente extends JDialog{
+
+	private JTextField txtIdVendedor;
 	private JTextField txtNombre;
 	private JTextField txtDireccion;
 	private JTextField txtTelefono;
@@ -19,6 +26,11 @@ public class ViewCrearCliente extends JDialog{
 	private BotonActualizar btnActualizar;
 	private BotonGuardar btnGuardar;
 	private JTextField txtVendedor;
+
+	private JPopupMenu mcBusqueda;
+
+
+	private List<JMenuItem> mntmItemBusqueda= new ArrayList<JMenuItem>();;
 	
 	public ViewCrearCliente() {
 		
@@ -93,15 +105,23 @@ public class ViewCrearCliente extends JDialog{
 		btnActualizar.setLocation(19, 345);
 		JplPrincipal.add(btnActualizar);
 		
-		JLabel lblVendedor = new JLabel("F1 Vendedor");
+		JLabel lblVendedor = new JLabel("F1 Cobrador");
 		lblVendedor.setBounds(19, 275, 119, 14);
 		JplPrincipal.add(lblVendedor);
+
+		txtIdVendedor = new JTextField();
+		txtIdVendedor.setBounds(19, 290, 30, 32);
+		txtIdVendedor.setToolTipText("Codigo vendedor");
+		JplPrincipal.add(txtIdVendedor);
+
 		
 		txtVendedor = new JTextField();
 		txtVendedor.setColumns(10);
-		txtVendedor.setBounds(19, 290, 311, 32);
+		txtVendedor.setBounds(60, 290, 270, 32);
 		JplPrincipal.add(txtVendedor);
 		btnActualizar.setVisible(false);
+
+		mcBusqueda = new JPopupMenu(); // crea el men� contextual
 		
 		
 	}
@@ -127,6 +147,9 @@ public class ViewCrearCliente extends JDialog{
 		return btnGuardar;
 	}
 	public void conectarControlador(CtlCliente c){
+
+		txtIdVendedor.addActionListener(c);
+		txtIdVendedor.setActionCommand("BUSCAR_VENDEDOR");
 		
 		btnCancelar.addActionListener(c);
 		btnCancelar.setActionCommand("CANCELAR");
@@ -158,5 +181,37 @@ public class ViewCrearCliente extends JDialog{
 	 */
 	public JTextField getTxtVendedor() {
 		return txtVendedor;
+	}
+
+	public JPopupMenu getMcBusqueda() {
+		return mcBusqueda;
+	}
+
+	public void setMcBusqueda(JPopupMenu mcBusqueda) {
+		this.mcBusqueda = mcBusqueda;
+	}
+	public List<JMenuItem> getMntmItemBusqueda() {
+		return mntmItemBusqueda;
+	}
+
+	public void setMntmItemBusqueda(List<JMenuItem> mntmItemBusqueda) {
+		this.mntmItemBusqueda = mntmItemBusqueda;
+	}
+
+	public void setMcBusqueda() {
+		for (JMenuItem itm:mntmItemBusqueda
+			 ) {
+
+			mcBusqueda.add(itm);
+
+		}
+
+	}
+	public JTextField getTxtIdVendedor() {
+		return txtIdVendedor;
+	}
+
+	public void setTxtIdVendedor(JTextField txtIdVendedor) {
+		this.txtIdVendedor = txtIdVendedor;
 	}
 }

@@ -3,7 +3,9 @@ package net.datatecsolution.admin_tools.controlador;
 import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.CuentaFactura;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
+import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 
@@ -22,12 +24,18 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	
 	//fila selecciona enla lista
 	private int filaPulsada=-1;
+	private EmpleadoDao empleadoDao=null;
 	
 	public CtlCuentasFacturas(ViewCuentasFacturas v) {
 		
 		view =v;
 		view.conectarControlador(this);
 		cuentaFacturaDao=new CuentaFacturaDao();
+
+		cuentaFacturaDao.setTodoReg(true);
+
+		empleadoDao=new EmpleadoDao();
+		cargarComboBox();
 		
 		
 		//cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
@@ -35,9 +43,23 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		view.pack();
 		view.getTxtBuscar().setText("");
 		view.getTxtBuscar().selectAll();
-		view.getRdbtnCliente().setSelected(true);
+		//view.getRdbtnCliente().setSelected(true);
+		//view.getCbxEmpleados().setSelectedIndex(0);
 		view.getTxtBuscar().requestFocusInWindow();
 		view.setVisible(true);
+	}
+
+	private void cargarComboBox(){
+		//se crea el objeto para obtener de la bd los impuestos
+		//myImpuestoDao=new ImpuestoDao(conexion);
+
+		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
+		this.view.getModeloListaEmpleados().setLista(this.empleadoDao.todoEmpleadosVendedores());
+		//se remueve la lista por defecto
+		this.view.getCbxEmpleados().removeAllItems();
+		//
+		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
+		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
 	}
 	
 	
@@ -51,7 +73,21 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				this.view.getModelo().agregarCuenta(cuentas.get(c));
 				
 			}
+			setTotalReg();
 		}
+	}
+	void setTotalReg(){
+
+		int count =cuentaFacturaDao.getRowCount();
+		String text="";
+		if(count<10)
+			text=text+"    "+count;
+		else if(count<100)
+			text=text+"  "+count;
+		else
+			text=count+"";
+		view.getJltotalReg().setText(text);
+
 	}
 
 	@Override
@@ -60,16 +96,11 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		
 		//Recoger que fila se ha pulsadao en la tabla
         filaPulsada = this.view.getTabla().getSelectedRow();
-        //JOptionPane.showMessageDialog(view, "click en la tabla"+filaPulsada);
         
         //si seleccion una fila
         if(filaPulsada>=0){
-        	
-        	
            //this.myFactura=this.view.getModelo().getFactura(filaPulsada);
            CuentaFactura cuentaSelected=view.getModelo().getCuenta(filaPulsada);
-           
-        
             
         	//si fue doble click mostrar modificar
         	if (e.getClickCount() == 2) {
@@ -129,6 +160,32 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		
 		switch (comando){
 
+			case "CAMBIOCOMBOBOX":
+				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
+
+				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
+
+				if(miEmpleado!=null){
+					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+				}
+
+				ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+				this.actionPerformed(actionEvent);
+
+				break;
+
+			case "REG_ACTIVO":
+				cuentaFacturaDao.setTodoReg(true);
+				break;
+
+			case "REG_INACTIVO":
+				//cuentaFacturaDao.setTodoReg(true);
+				break;
+
+			case "REG_TODOS":
+				cuentaFacturaDao.setTodoReg(false);
+				break;
+
 			case "PAGOS":
 
 				filaPulsada = this.view.getTabla().getSelectedRow();
@@ -173,27 +230,20 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 
 					cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
 
-				}
-				//si la busqueda es por fecha
-				if(this.view.getRdbtnFecha().isSelected()){
-
-
+				}else if(this.view.getRdbtnFecha().isSelected()){
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String date1 = sdf.format(this.view.getDcFecha1().getDate());
 					String date2 = sdf.format(this.view.getDcFecha2().getDate());
-
 					cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
 
-					}
-
-
-				//si la busqueda son tadas
-				if(this.view.getRdbtnTodos().isSelected()){
-
+				}else if(this.view.getRdbtnRTN().isSelected()){
+					cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
+				}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
 					cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				}
-				if(view.getRdbtnCliente().isSelected()){
+				}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
 					cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
+				}else{
+					this.view.getModelo().limpiarCuentas();
 				}
 				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 				break;
@@ -223,67 +273,47 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 			
 		case "NEXT":
 			view.getModelo().netPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(cuentaFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-			}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){ 
-				
-				
+			if(this.view.getRdbtnId().isSelected()){
+
+				cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
+
+			}else if(this.view.getRdbtnFecha().isSelected()){
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				String date1 = sdf.format(this.view.getDcFecha1().getDate());
 				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				//JOptionPane.showMessageDialog(view, date1+" al  "+date2);
-				/* cargarTabla(myFacturaDao.buscarPorFecha(date1,
-														date2,
-														view.getModelo().getLimiteSuperior(),
-														view.getModelo().getCanItemPag(),
-														view.getCbxCajas().getSelectedItem()));
-				*/
-				}
-			if(view.getRdbtnCliente().isSelected()){
-				/*
-				if(view.getTxtBuscar().getText().length()!=0)
-					cargarTabla(cuentaFacturaDao.buscarPorNombreCliente(view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag(),view.getCbxCajas().getSelectedItem()));
-				else{
-					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
-					view.getTxtBuscar().requestFocusInWindow();
-				}*/
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
+			}else if(this.view.getRdbtnRTN().isSelected()){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+
+				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
+			}else{
+				this.view.getModelo().limpiarCuentas();
 			}
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
 		case "LAST":
 			view.getModelo().lastPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(cuentaFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-			}
-			//si la busqueda es por fecha
-			if(this.view.getRdbtnFecha().isSelected()){ 
-				
-				
+			if(this.view.getRdbtnId().isSelected()){
+
+				cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
+
+			}else if(this.view.getRdbtnFecha().isSelected()){
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				String date1 = sdf.format(this.view.getDcFecha1().getDate());
 				String date2 = sdf.format(this.view.getDcFecha2().getDate());
-				
-				
-				//JOptionPane.showMessageDialog(view, date1+" al  "+date2);
-				/* cargarTabla(myFacturaDao.buscarPorFecha(date1,
-														date2,
-														view.getModelo().getLimiteSuperior(),
-														view.getModelo().getCanItemPag(),
-														view.getCbxCajas().getSelectedItem()));
-					*/
-				}
-			
-			if(view.getRdbtnCliente().isSelected()){
-				/*
-				if(view.getTxtBuscar().getText().length()!=0)
-					//cargarTabla(cuentaFacturaDao.buscarPorNombreCliente(view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				else{
-					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
-					view.getTxtBuscar().requestFocusInWindow();
-				}*/
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
+			}else if(this.view.getRdbtnRTN().isSelected()){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+
+				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
+			}else{
+				this.view.getModelo().limpiarCuentas();
 			}
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
@@ -411,9 +441,15 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
 			}
 
+			//si esta activado la busqueda por articulo
+			if(this.view.getRdbtnRTN().isSelected()){
+				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
+			}
+
 			//se establece el numero de pagina en la view
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 		}
+
 
 	}
 

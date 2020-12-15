@@ -22,6 +22,7 @@ public abstract class ViewTabla extends JDialog {
 	protected JPanel panelAccion;
 	protected JPanel panelSuperior;
 	protected JPanel panelBusqueda;
+	protected JPanel panelTotalReg;
 	protected JPanel panelPaginacion;
 	
 	
@@ -44,6 +45,7 @@ public abstract class ViewTabla extends JDialog {
 	
 	protected JTable tabla;
 	protected JPanel panelOpcioneBusqueda;
+
 	
 	
 	protected PanelPadre panelFechas;
@@ -51,6 +53,9 @@ public abstract class ViewTabla extends JDialog {
 
 
 	protected JDateChooser dcFecha1;
+
+
+	protected JLabel jltotalReg;
 
 
 
@@ -87,39 +92,50 @@ public abstract class ViewTabla extends JDialog {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		getContentPane().add(panelSuperior, BorderLayout.NORTH);
 		
-				panelAccion=new PanelPadre();
-				panelAccion.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Acciones de registro", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-				FlowLayout flowLayout_1 = (FlowLayout) panelAccion.getLayout();
-				flowLayout_1.setHgap(1);
-				panelSuperior.add(panelAccion);
+		panelAccion=new PanelPadre();
+		panelAccion.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Acciones de registro", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		FlowLayout flowLayout_1 = (FlowLayout) panelAccion.getLayout();
+		flowLayout_1.setHgap(1);
+		panelSuperior.add(panelAccion);
 				
-					panelEstadoRegistro=new PanelPadre();
-					panelEstadoRegistro.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Estado", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-					panelEstadoRegistro.setVisible(false);
-					//FlowLayout flowLayout_4 = (FlowLayout) panelEstadoRegistro.getLayout();
-					//flowLayout_4.setHgap(1);
-					GridLayout gl_panelEstadoRegistro = new GridLayout(0, 1);
-					gl_panelEstadoRegistro.setHgap(10);
-					gl_panelEstadoRegistro.setVgap(-2);
-					panelEstadoRegistro.setLayout(gl_panelEstadoRegistro);
-					panelSuperior.add(panelEstadoRegistro);
-					
-					panelBusqueda=new PanelPadre();
-					panelBusqueda.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Busqueda de registros", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-					panelSuperior.add(panelBusqueda);
-						
-						panelOpcioneBusqueda = new PanelPadre();
-				        FlowLayout flowLayout_2 = (FlowLayout) panelOpcioneBusqueda.getLayout();
-				        flowLayout_2.setHgap(2);
-				        panelBusqueda.add(panelOpcioneBusqueda);
+		panelEstadoRegistro=new PanelPadre();
+		panelEstadoRegistro.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Estado", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelEstadoRegistro.setVisible(false);
+		//FlowLayout flowLayout_4 = (FlowLayout) panelEstadoRegistro.getLayout();
+		//flowLayout_4.setHgap(1);
+		GridLayout gl_panelEstadoRegistro = new GridLayout(0, 1);
+		gl_panelEstadoRegistro.setHgap(10);
+		gl_panelEstadoRegistro.setVgap(-2);
+		panelEstadoRegistro.setLayout(gl_panelEstadoRegistro);
+		panelSuperior.add(panelEstadoRegistro);
+
+		panelBusqueda=new PanelPadre();
+		panelBusqueda.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Busqueda de registros", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelSuperior.add(panelBusqueda);
+
+		panelTotalReg=new PanelPadre();
+		panelTotalReg.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "No Reg", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelTotalReg.setVisible(false);
+		panelSuperior.add(panelTotalReg);
+
+
+		jltotalReg=new JLabel("000");
+		jltotalReg.setFont(new Font("OCR A Extended", Font.PLAIN, 30));
+		panelTotalReg.add(jltotalReg);
+
+
+		panelOpcioneBusqueda = new PanelPadre();
+		FlowLayout flowLayout_2 = (FlowLayout) panelOpcioneBusqueda.getLayout();
+		flowLayout_2.setHgap(2);
+		panelBusqueda.add(panelOpcioneBusqueda);
 				        
-				        panelTxtBoxBusqueda = new PanelPadre();
-						panelBusqueda.add(panelTxtBoxBusqueda);
-						
-						panelFechas = new PanelPadre();
-						FlowLayout flowLayout_3 = (FlowLayout) panelFechas.getLayout();
-						flowLayout_3.setHgap(2);
-						panelBusqueda.add(panelFechas);
+		panelTxtBoxBusqueda = new PanelPadre();
+		panelBusqueda.add(panelTxtBoxBusqueda);
+
+		panelFechas = new PanelPadre();
+		FlowLayout flowLayout_3 = (FlowLayout) panelFechas.getLayout();
+		flowLayout_3.setHgap(2);
+		panelBusqueda.add(panelFechas);
 				        
 				        
         scrollPane = new JScrollPane();
@@ -163,7 +179,7 @@ public abstract class ViewTabla extends JDialog {
         
         //--------------------------------------agregar componentes y configuracion del panel busqueda----------------------------------///
         grupoOpciones = new ButtonGroup(); // crea ButtonGroup
-       
+
         rdbtnTodos = new JRadioButton("Todos");
         panelOpcioneBusqueda.add(rdbtnTodos);
 		rdbtnTodos.setSelected(true);
@@ -183,7 +199,7 @@ public abstract class ViewTabla extends JDialog {
 			}
 		});
 		grupoOpciones.add(rdbtnId);
-		
+
 		rdbtnFecha = new JRadioButton("Fecha",false);
 		panelOpcioneBusqueda.add(rdbtnFecha);
 		grupoOpciones.add(rdbtnFecha);
@@ -405,6 +421,13 @@ public abstract class ViewTabla extends JDialog {
 	 */
 	public PanelPadre getPanelEstadoRegistro() {
 		return panelEstadoRegistro;
+	}
+	public JLabel getJltotalReg() {
+		return jltotalReg;
+	}
+
+	public void setJltotalReg(JLabel jltotalReg) {
+		this.jltotalReg = jltotalReg;
 	}
 	
 

@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.controlador;
 
+import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.ViewCobro;
@@ -12,7 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CtlCobro implements ActionListener, KeyListener {
@@ -332,6 +335,10 @@ switch(e.getKeyCode()){
 			if(this.validar()){
 				
 				setRecibo();
+
+
+
+
 				//se manda aguardar el recibo con los pagos realizados
 				boolean resulta=this.myReciboDao.registrar(myRecibo);
 				

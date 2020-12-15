@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.modelo.dao;
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.CuentaFactura;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -15,6 +16,12 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 	private String sqlBaseJoin=null;
 	private CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=null;
 
+	private Integer rowCount=0;
+
+
+
+	private boolean todoReg=false;
+
 	public CuentaFacturaDao() {
 		super("cuentas_facturas", "codigo_cuenta");
 		
@@ -26,13 +33,20 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				+ super.tableName+".codigo_caja, "
 				+ super.tableName+ ".codigo_cliente, "
 				+ " cliente.nombre_cliente, "
-				+ " cliente.rtn,"
+				+ " cliente.telefono, "
+				+ " cliente.rtn, "
+				+ " empleados.codigo_empleado,"
+				+ " empleados.nombre as nombre_vendedor,"
+				+ " empleados.apellido as apellido_vendedor,"
 				+ " f_saldo_factura_cliente(cuentas_facturas.codigo_cuenta) as saldo ,"
+				+ " cliente.nombre_cliente, "
 				+ " cuenta2.saldo2 "
 		+ " FROM "
 				+super.DbName+ "."+super.tableName
 			+ " JOIN "+super.DbName+".cliente "
 					+ " on (cliente.codigo_cliente="+ super.tableName+".codigo_cliente) "
+			+ " JOIN "+super.DbName+".empleados "
+				+ " on (cliente.id_vendedor=empleados.codigo_empleado) "
 			+ " JOIN ( SELECT "+super.tableName+".codigo_cuenta, ifnull("+super.DbName+ "."+"f_saldo_factura_cliente("+super.tableName+".codigo_cuenta),0.00 ) saldo2 FROM "+super.DbName+ "."+super.tableName+") cuenta2 "
 				+ " on( cuenta2.codigo_cuenta="+super.tableName+".codigo_cuenta)";
 		super.setSqlQuerySelectJoin(sqlBaseJoin);
@@ -82,14 +96,13 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		// TODO Auto-generated method stub
 		CuentaFactura cuentaFactura=(CuentaFactura)c;
 		ResultSet rs=null;
-		
-		//int resultado=0;
+		String fecha= cuentaFactura.getFactura().getFecha()==null? " now(), ":"'"+cuentaFactura.getFactura().getFecha()+" 00:00:00', ";
 		Connection conn=null;
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			//fsfsf
-			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(fecha,fecha_vencimiento,codigo_cliente,no_factura,codigo_caja) VALUES (now(),DATE_ADD(now(), INTERVAL (SELECT dia_vencimiento_factura from config_app LIMIT 1) DAY),?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(fecha,fecha_vencimiento,codigo_cliente,no_factura,codigo_caja) VALUES ("+fecha+" DATE_ADD(now(), INTERVAL (SELECT dia_vencimiento_factura from config_app LIMIT 1) DAY),?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			super.psConsultas.setInt(1, cuentaFactura.getCodigoCliente());
 			super.psConsultas.setInt( 2, cuentaFactura.getNoFactura());
 			super.psConsultas.setInt(3, cuentaFactura.getCodigoCaja());
@@ -152,6 +165,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			super.psConsultas.setInt(2, limInf);
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
+
+
 			
 			while(res.next()){
 				CuentaFactura unaCuenta=new CuentaFactura();
@@ -170,6 +185,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setId(res.getInt("codigo_cliente"));
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
 				
@@ -208,25 +231,33 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 	@Override
 	public List<CuentaFactura> buscarPorId(int codigo) {
 		// TODO Auto-generated method stub
+
+		rowCount=0;
 		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
-		
 		ResultSet res=null;
-		
 		Connection conn=null;
-		
 		boolean existe=false;
 		
 		try {
+
+			String conSaldo="";
+			if(todoReg){
+				conSaldo="and  cuenta2.saldo2>0 ";
+			}
+
 			
 			
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=? and cuenta2.saldo2<>0 order by cuentas_facturas.codigo_cuenta asc");
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=? "+  conSaldo +" order by cuentas_facturas.codigo_cuenta asc");
 			super.psConsultas.setInt(1, codigo);
 			
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
+
+
 			
 			while(res.next()){
+				rowCount++;
 				CuentaFactura unaCuenta=new CuentaFactura();
 				
 				
@@ -243,6 +274,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setId(res.getInt("codigo_cliente"));
 				cliente.setNombre(res.getString("nombre_cliente"));
 				cliente.setRtn(res.getString("rtn"));
+				cliente.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente);
 				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
@@ -250,8 +289,6 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
-			//res.close();
-			//conexion.desconectar();
 
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
@@ -314,6 +351,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setId(res.getInt("codigo_cliente"));
 				cliente.setNombre(res.getString("nombre_cliente"));
 				cliente.setRtn(res.getString("rtn"));
+				cliente.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente);
 				
@@ -348,32 +393,45 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			}
 			else return null;
 	}
+
+
+
 	
 	
 	public List<CuentaFactura> buscarConSaldo(int limInf, int limSupe) {
 		// TODO Auto-generated method stub
+
+		rowCount=0;
 		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
-		
 		ResultSet res=null;
-		
 		Connection conn=null;
-		
 		boolean existe=false;
+
+
+		String conSaldo="";
+		if(todoReg){
+			conSaldo=" cuenta2.saldo2>0 ";
+		}
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_vendedor>?";
+		}else{
+			whereBusqueda=" and id_vendedor=?";
+		}
 		
 		try {
 			
 			//dsfa
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
-			//super.psConsultas = conn.prepareStatement(super.getQuerySearch("saldo",">"));//+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
-			//dd
-			//super.psConsultas.setInt(1, 0);
-			//super.psConsultas.setInt(2, limSupe);
-			//super.psConsultas.setInt(3, limInf);
-			//System.out.println(psConsultas);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda);
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+
 			res = super.psConsultas.executeQuery();
 			
 			while(res.next()){
+				rowCount++;
 				CuentaFactura unaCuenta=new CuentaFactura();
 				
 				
@@ -391,6 +449,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setId(res.getInt("codigo_cliente"));
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
 				
@@ -399,8 +465,6 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
-			//res.close();
-			//conexion.desconectar();
 					
 					
 			} catch (SQLException e) {
@@ -467,6 +531,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setId(res.getInt("codigo_cliente"));
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
 				
@@ -506,26 +578,41 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 	
 	public List<CuentaFactura> buscarConSaldoXnombreCliente(String nombre) {
 		// TODO Auto-generated method stub
+
+		rowCount=0;
 		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
-		
 		ResultSet res=null;
-		
 		Connection conn=null;
-		
 		boolean existe=false;
+
+
+		String conSaldo="";
+		if(todoReg){
+			conSaldo=" and  cuenta2.saldo2>0 ";
+		}
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_vendedor>?";
+		}else{
+			whereBusqueda=" and id_vendedor=?";
+		}
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where saldo2>0 and cliente.nombre_cliente like ? and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.nombre_cliente like ? "+conSaldo+whereBusqueda);
 			//super.psConsultas = conn.prepareStatement(super.getQuerySearch("saldo",">"));//+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
 			//dd
 			psConsultas.setString(1, "%" + nombre + "%");
+			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			//super.psConsultas.setInt(2, limSupe);
 			//super.psConsultas.setInt(3, limInf);
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
 			
 			while(res.next()){
+				rowCount++;
 				CuentaFactura unaCuenta=new CuentaFactura();
 				
 				
@@ -543,6 +630,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setId(res.getInt("codigo_cliente"));
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
 				
@@ -551,8 +646,6 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
-			//res.close();
-			//conexion.desconectar();
 					
 					
 			} catch (SQLException e) {
@@ -582,27 +675,31 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 	
 	public List<CuentaFactura> buscarConSaldoXfecha(String fecha1,String fecha2) {
 		// TODO Auto-generated method stub
+
+		rowCount=0;
 		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
-		
 		ResultSet res=null;
-		
 		Connection conn=null;
-		
 		boolean existe=false;
-		
+
+		String conSaldo="";
+		if(todoReg){
+			conSaldo=" and  cuenta2.saldo2>0 ";
+		}
+
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where saldo2>0 and fecha BETWEEN ? and ? and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
-			//super.psConsultas = conn.prepareStatement(super.getQuerySearch("saldo",">"));//+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
-			//dd
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where fecha BETWEEN ? and ? "+conSaldo);
 			psConsultas.setString(1, fecha1);
 			psConsultas.setString(2, fecha2);
 			//super.psConsultas.setInt(2, limSupe);
 			//super.psConsultas.setInt(3, limInf);
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
+
 			
 			while(res.next()){
+				rowCount++;
 				CuentaFactura unaCuenta=new CuentaFactura();
 				
 				
@@ -620,6 +717,14 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setId(res.getInt("codigo_cliente"));
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
 				
@@ -628,8 +733,6 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
-			//res.close();
-			//conexion.desconectar();
 					
 					
 			} catch (SQLException e) {
@@ -657,7 +760,126 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			else return null;
 	}
 
+	public boolean isTodoReg() {
+		return todoReg;
+	}
 
-		
+	public void setTodoReg(boolean todoReg) {
+		this.todoReg = todoReg;
+	}
 
+
+	public List<CuentaFactura> buscarConSaldoXrtnCliente(String rtn) {
+		// TODO Auto-generated method stub
+
+		rowCount=0;
+		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
+		ResultSet res=null;
+		Connection conn=null;
+		boolean existe=false;
+
+
+		String conSaldo="";
+		if(todoReg){
+			conSaldo=" and  cuenta2.saldo2>0 ";
+		}
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_vendedor>?";
+		}else{
+			whereBusqueda=" and id_vendedor=?";
+		}
+
+
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.rtn like ? "+conSaldo+whereBusqueda);
+			psConsultas.setString(1, rtn + "%");
+			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+
+			res = super.psConsultas.executeQuery();
+
+			while(res.next()){
+				rowCount++;
+
+				CuentaFactura unaCuenta=new CuentaFactura();
+
+
+				unaCuenta.setCodigoCuenta(res.getInt("codigo_cuenta"));
+				unaCuenta.setCodigoCaja(res.getInt("codigo_caja"));
+				unaCuenta.setNoFactura(res.getInt("no_factura"));
+				unaCuenta.setCodigoCliente(res.getInt("codigo_cliente"));
+				unaCuenta.setFecha(res.getDate("fecha"));
+				unaCuenta.setSaldo(res.getBigDecimal("saldo"));
+				unaCuenta.setFechaVenc(res.getDate("fecha_vencimiento"));
+
+
+				Cliente cliente2=new Cliente();
+
+				cliente2.setId(res.getInt("codigo_cliente"));
+				cliente2.setNombre(res.getString("nombre_cliente"));
+				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
+
+				unaCuenta.setCliente(cliente2);
+
+				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+
+				cajas.add(unaCuenta);
+				existe=true;
+			}
+
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+		finally
+		{
+			try{
+				if(res != null) res.close();
+				if(super.psConsultas != null)super.psConsultas.close();
+				if(conn != null) conn.close();
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		if (existe) {
+			return cajas;
+		}
+		else return null;
+	}
+
+	public int getRows(ResultSet res){
+
+		int totalRows = 0;
+		try {
+			//res.beforeFirst();
+			res.last();
+			totalRows = res.getRow();
+			rowCount=totalRows;
+			res.beforeFirst();
+		}
+		catch(Exception ex)  {
+			return 0;
+		}
+		return totalRows ;
+	}
+	public Integer getRowCount(){
+		return rowCount;
+	}
 }

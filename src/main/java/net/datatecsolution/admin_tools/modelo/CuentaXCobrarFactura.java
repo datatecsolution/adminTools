@@ -7,6 +7,10 @@ public class CuentaXCobrarFactura {
 	
 	private int noReguistro=-1;
 	private Date fecha;
+
+
+
+	private String fecha1;
 	private int codigoCuenta=-1;
 	private String descripcion="";
 	private BigDecimal saldo=new BigDecimal(0.0);
@@ -69,6 +73,14 @@ public class CuentaXCobrarFactura {
 	}
 	public void setCodigoCuenta(int codigoCuenta) {
 		this.codigoCuenta = codigoCuenta;
+	}
+
+	public String getFecha1() {
+		return fecha1;
+	}
+
+	public void setFecha1(String fecha1) {
+		this.fecha1 = fecha1;
 	}
 
 }

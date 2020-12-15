@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TmPagos extends TablaModelo {
 	final private String []columnNames= {
-			"Fecha","No Recibo", "Cliente", "Total"
+			"Fecha","No Recibo", "Cliente", "Total","ref"
 		};
 	private List<ReciboPago> pagos=new ArrayList<ReciboPago>();
 	
@@ -45,6 +45,8 @@ public class TmPagos extends TablaModelo {
 			return pagos.get(rowIndex).getCliente().getNombre();
 		case 3:
 			return pagos.get(rowIndex).getTotal();
+		case 4:
+			return pagos.get(rowIndex).getRef();
 		default:
 				return null;
 		}

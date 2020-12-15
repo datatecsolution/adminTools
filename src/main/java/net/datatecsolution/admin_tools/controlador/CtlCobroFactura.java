@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.controlador;
 
+import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
@@ -12,7 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CtlCobroFactura implements ActionListener, KeyListener {
@@ -306,19 +309,16 @@ switch(e.getKeyCode()){
 				JOptionPane.showMessageDialog(view, "El total No es un numero.","Error de validacion.",JOptionPane.ERROR_MESSAGE);
 				view.getTxtTotal().setText("");
 				view.getTxtTotal().requestFocusInWindow();
-				//view.getModeloFacturas().resetPago();
-					
 		}else
 			{
 				if(new BigDecimal(view.getTxtTotal().getText()).doubleValue()<=cuenta.getSaldo().doubleValue()) {
-
 					if (view.getTxtNombrecliente().getText().trim().length() == 0) {
-
 						JOptionPane.showMessageDialog(view, "El no existe el cliente","Error de validacion",JOptionPane.ERROR_MESSAGE);
-
+					} else if (view.getTxtReferencia().getText().trim().length() == 0) {
+						JOptionPane.showMessageDialog(view, "Coloque la referencia del pago.","Error de validacion",JOptionPane.ERROR_MESSAGE);
+						view.getTxtReferencia().requestFocusInWindow();
 					} else if (view.getTxtLimiteCredito().getText().trim().length() == 0) {
 						JOptionPane.showMessageDialog(view, "El cliente no tiene credito","Error de validacion",JOptionPane.ERROR_MESSAGE);
-						//view.getTxtCantidad().requestFocusInWindow();
 					} else if (view.getTxtTotal().getText().trim().length() == 0) {
 						JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos","Error de validacion",JOptionPane.ERROR_MESSAGE);
 						view.getTxtTotal().requestFocusInWindow();
@@ -328,8 +328,6 @@ switch(e.getKeyCode()){
 						JOptionPane.showMessageDialog(view, "Coloque la cantidad a cobrar","Error de validacion",JOptionPane.ERROR_MESSAGE);
 						view.getTxtTotal().requestFocusInWindow();
 					} else {
-
-
 						comprobado = true;
 					}
 				}else{
@@ -347,6 +345,7 @@ switch(e.getKeyCode()){
 			if(this.validar()){
 				
 				setRecibo();
+
 				//se manda aguardar el recibo con los pagos realizados
 				boolean resulta=this.myReciboDao.registrar(myRecibo,cuenta);
 				
@@ -386,11 +385,16 @@ switch(e.getKeyCode()){
 
 		myRecibo.setCliente(myCliente);
 		
-		String concepto="Pago a facturas # "+cuenta.getNoFactura();
+		String concepto="Pago a cuenta # "+cuenta.getCodigoCuenta();
 
 		
 		myRecibo.setConcepto(concepto);
 		myRecibo.setTotal(new BigDecimal(view.getTxtTotal().getText()));
+		myRecibo.setRef(view.getTxtReferencia().getText());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String date1 = sdf.format(view.getJdcFecha().getDate());
+		myRecibo.setFecha(date1);
 	
 		//se establece la cantidad en letras
 		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));

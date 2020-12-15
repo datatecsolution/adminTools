@@ -12,8 +12,10 @@ public class ReciboPago {
 	private Cliente myCliente=null;
 	private String concepto="";
 	private String totalLetras="";
-	private String fecha; 
+	private String fecha=null;
 	private int noRecibo=0;
+
+	private String ref="NA";
 	private List<Factura> facturas=new ArrayList<Factura>();
 	
 
@@ -91,6 +93,14 @@ public class ReciboPago {
 	public Proveedor getProveedor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getRef() {
+		return ref;
+	}
+
+	public void setRef(String ref) {
+		this.ref = ref;
 	}
 
 

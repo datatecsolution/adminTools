@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.controlador;
 
 
+import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.*;
@@ -12,7 +13,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
@@ -41,6 +44,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
+	private CuentaFacturaDao cuentaFacturaDao;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -60,8 +64,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		codBarraDao=new CodBarraDao();
 		detallesOrdenDao=new DetalleFacturaOrdenDao();
 		insumoDao=new InsumoDao();
-		
 		myUsuarioDao=new UsuarioDao();
+		cuentaFacturaDao=new CuentaFacturaDao();
 		
 		
 		this.setEmptyView();
@@ -71,6 +75,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		
 		this.setCierre();
 		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
+		view.getRdbtnCredito().setSelected(true);
 	
 		
 	}
@@ -2943,6 +2948,22 @@ public void guardarRemotoCredito(){
 		int idFacturaTemporal=myFactura.getIdFactura();
 
 
+		JDateChooser fechaFactura=new JDateChooser();
+		fechaFactura.setDateFormatString("dd-MM-yyyy ");
+		fechaFactura.setDate(new Date());
+
+		int confir=JOptionPane.showConfirmDialog(view,fechaFactura,"Fecha de la factura?",JOptionPane.OK_CANCEL_OPTION);
+
+		if(confir==0){
+			//2020-11-30 11:56:31
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String date1 = sdf.format(fechaFactura.getDate());
+
+			myFactura.setFecha(date1);
+
+		}
+
 
 		//se registra la factura	
 		boolean resul=facturaDao.registrar(myFactura);
@@ -3018,11 +3039,25 @@ public void guardarRemotoCredito(){
 
 
 
-					//muestra en la pantalla el cambio y lo mantiene permanente
-					ViewCambio cambio=new ViewCambio(null);
-					cambio.getTxtCambio().setText(cambioEfectivo);
-					cambio.getTxtEfectivo().setText(pago);
-					cambio.setVisible(true);
+					if(myFactura.getTipoFactura()==1) {
+						//muestra en la pantalla el cambio y lo mantiene permanente
+						ViewCambio cambio = new ViewCambio(null);
+						cambio.getTxtCambio().setText(cambioEfectivo);
+						cambio.getTxtEfectivo().setText(pago);
+						cambio.setVisible(true);
+					}
+
+					if(myFactura.getTipoFactura()==2) {
+						CuentaFactura cuentaFactura=cuentaFacturaDao.buscarPorId(myFactura.getCliente().getId(),myFactura.getCodigoCaja(),myFactura.getIdFactura());
+
+						ViewInfoCredito viewInfoCredito=new ViewInfoCredito(null);
+						viewInfoCredito.getTxtNoCuenta().setText(cuentaFactura.getCodigoCuenta()+"");
+						viewInfoCredito.getTxtCliente().setText(cuentaFactura.getCliente().getNombre());
+						viewInfoCredito.getTxtCobrador().setText(cuentaFactura.getCliente().getVendedor().getNombre()+" "+cuentaFactura.getCliente().getVendedor().getApellido());
+						viewInfoCredito.getTxtSaldo().setText(cuentaFactura.getSaldo()+"");
+						viewInfoCredito.setVisible(true);
+
+					}
 					
 					//myFactura=null;
 

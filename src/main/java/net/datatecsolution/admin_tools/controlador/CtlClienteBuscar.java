@@ -95,15 +95,12 @@ public boolean buscarCliente(Window v){
 			break;
 			
 		case "CAMBIOCOMBOBOX":
-				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
 			
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 				
 				if(miEmpleado!=null){
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
 				}
-				
-				//JOptionPane.showMessageDialog(view, "Cambio el vendedor "+miEmpleado.toString());
 				
 			break;
 			
@@ -152,6 +149,7 @@ public boolean buscarCliente(Window v){
 					cargarTabla(clienteDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 					view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 				}
+				viewNewCliente.dispose();
 				viewNewCliente=null;
 				ctlCliente=null;
 			}

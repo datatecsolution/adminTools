@@ -1,7 +1,7 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlPagoLista;
-import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
+import net.datatecsolution.admin_tools.view.botones.BotonCobrador;
 import net.datatecsolution.admin_tools.view.botones.BotonReporte;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturas;
 import net.datatecsolution.admin_tools.view.tablemodel.TmPagos;
@@ -12,28 +12,15 @@ import java.awt.*;
 public class ViewListaPagos extends ViewTabla {
 	
 	
-	protected BotonImprimirSmall btnImprimir;
-	
-	
-	
-	
-	
-	
-	
+	protected BotonCobrador btnCobrador;
 	private TmPagos modelo;
-
-
-
-
-
-
-
 	private BotonReporte btnReporte;
 
 
 
+	private JRadioButton rdbtnRef;
 
-	
+
 
 	public ViewListaPagos(Window view) {
 		super(view,"Pagos de clientes");
@@ -42,10 +29,10 @@ public class ViewListaPagos extends ViewTabla {
 		
 	
 	    
-	    btnImprimir = new BotonImprimirSmall();
-	    btnImprimir.setEnabled(false);
+	    btnCobrador = new BotonCobrador();
+	    //btnImprimir.setEnabled(false);
 	    //btnLimpiar.setIcon(new ImageIcon("recursos/clear.png")); // NOI18N
-	    panelAccion.add(btnImprimir);
+	    panelAccion.add(btnCobrador);
 	    //panelAccion.setVisible(false);
 	    
 	    btnReporte=new BotonReporte();
@@ -54,6 +41,10 @@ public class ViewListaPagos extends ViewTabla {
 	 
 		
 	    rdbtnFecha.setVisible(true);
+
+		rdbtnRef=new JRadioButton("Referecia",false);
+		panelOpcioneBusqueda.add(rdbtnRef);
+		grupoOpciones.add(rdbtnRef);
 		
 		
 				
@@ -82,12 +73,20 @@ public class ViewListaPagos extends ViewTabla {
 		return modelo;
 	}
 	
-	public BotonImprimirSmall getBtnImprimir(){
-		return btnImprimir;
+	public BotonCobrador getBtnCobrador(){
+		return btnCobrador;
+	}
+
+	public JRadioButton getRdbtnRef() {
+		return rdbtnRef;
+	}
+
+	public void setRdbtnRef(JRadioButton rdbtnRef) {
+		this.rdbtnRef = rdbtnRef;
 	}
 
 	
-public void conectarControlador(CtlPagoLista c){
+	public void conectarControlador(CtlPagoLista c){
 		this.addWindowListener(c);
 		rdbtnTodos.addActionListener(c);
 		rdbtnTodos.setActionCommand("TODAS");
@@ -98,21 +97,20 @@ public void conectarControlador(CtlPagoLista c){
 		
 		rdbtnId.addActionListener(c);
 		//rdbtnId.getActionCommand();
-		rdbtnId.setActionCommand("ID");
+		rdbtnId.setActionCommand("ESCRIBIR");
 		
 		rdbtnFecha.addActionListener(c);
-		rdbtnFecha.setActionCommand("FECHA");
-		
-		
-		 btnSiguiente.addActionListener(c);
-		 btnSiguiente.setActionCommand("NEXT");
-		 
-		 btnAnterior.addActionListener(c);
-		 btnAnterior.setActionCommand("LAST");
-		 
-		// super.bbtnLimpiar.addActionListener(c);
-		// btnLimpiar.setActionCommand("LIMPIAR");
-		
+		rdbtnFecha.setActionCommand("ESCRIBIR");
+
+		rdbtnRef.addActionListener(c);
+		rdbtnRef.setActionCommand("ESCRIBIR");
+
+		btnSiguiente.addActionListener(c);
+		btnSiguiente.setActionCommand("NEXT");
+
+		btnAnterior.addActionListener(c);
+		btnAnterior.setActionCommand("LAST");
+
 		
 		
 		
@@ -125,8 +123,8 @@ public void conectarControlador(CtlPagoLista c){
 		 btnEliminar.addActionListener(c);
 		 btnEliminar.setActionCommand("ANULARFACTURA");
 		 
-		 btnImprimir.addActionListener(c);
-		 btnImprimir.setActionCommand("IMPRIMIR");
+		 btnCobrador.addActionListener(c);
+		 btnCobrador.setActionCommand("IMPRIMIR");
 		 
 		 txtBuscar.addActionListener(c);
 		 txtBuscar.setActionCommand("BUSCAR");
