@@ -381,12 +381,12 @@ public class ViewFacturarFrame extends JInternalFrame {
 		lblDescuento.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblDescuento);
 		
-		lblImpuesto = new JLabel("Impuesto 15");
+		lblImpuesto = new JLabel("Impuesto 6");
 		lblImpuesto.setFont(new Font("Georgia", Font.BOLD, 13));
 		lblImpuesto.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblImpuesto);
 		
-		JLabel lblImpuesto_1 = new JLabel("Impuesto 18");
+		JLabel lblImpuesto_1 = new JLabel("Impuesto 10");
 		lblImpuesto_1.setFont(new Font("Georgia", Font.BOLD, 13));
 		lblImpuesto_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblImpuesto_1);

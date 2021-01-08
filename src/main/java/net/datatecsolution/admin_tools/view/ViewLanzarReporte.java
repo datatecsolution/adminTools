@@ -23,7 +23,7 @@ public class ViewLanzarReporte extends JDialog {
 		
 		JButton btnReporte = new JButton("Reporte");
 		final Conexion conexion=new Conexion();
-		btnReporte.setIcon(new ImageIcon(ViewLanzarReporte.class.getResource("/membrete2.png")));
+		btnReporte.setIcon(new ImageIcon(ViewLanzarReporte.class.getResource("/logo-datec-solutions.png")));
 		btnReporte.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
