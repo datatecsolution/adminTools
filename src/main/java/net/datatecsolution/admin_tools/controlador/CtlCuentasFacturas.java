@@ -223,7 +223,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				break;
 
 			case "BUSCAR":
-				 filaPulsada = this.view.getTabla().getSelectedRow();
+				filaPulsada = this.view.getTabla().getSelectedRow();
 				view.getModelo().setPaginacion();
 				//si la busqueda es por id
 				if(this.view.getRdbtnId().isSelected()){
@@ -238,7 +238,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 
 				}else if(this.view.getRdbtnRTN().isSelected()){
 					cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
-				}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+				}else if(this.view.getRdbtnTodos().isSelected()){
 					cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 				}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
 					cargarTabla(cuentaFacturaDao.buscarConSaldoXnombreCliente(view.getTxtBuscar().getText()));
@@ -250,23 +250,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		
 			
 		case "IMPRIMIR":
-			if(verificarSelecion()){
-				/*
-				
-				try {
-					
-					
-	    			AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 3, myFactura.getIdFactura());
-	    			AbstractJasperReports.showViewer(this.view);
-				
-					myFactura=null;
-				} catch (SQLException ee) {
-					// TODO Auto-generated catch block
-					ee.printStackTrace();
-				}
-				*/
-				
-			}
+
 			break;
 			
 			

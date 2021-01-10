@@ -212,7 +212,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		//si escribe en la busque un cliente
 		if(e.getComponent()==this.view.getTxtNombre()&&view.getTxtNombre().getText().trim().length()>=7&&e.getKeyCode()!=KeyEvent.VK_UP&&e.getKeyCode()!=KeyEvent.VK_DOWN&&e.getKeyCode()!=KeyEvent.VK_ENTER){
 
-			List<Cliente> clientes=myClienteDao.buscarPorNombre(this.view.getTxtNombre().getText(),0,10);
+			List<Cliente> clientes=myClienteDao.buscarPorNombreTodosLosCobradores(this.view.getTxtNombre().getText(),0,10);
 
 			view.getMntmItemBusqueda().clear();
 			view.getMcBusqueda().removeAll();

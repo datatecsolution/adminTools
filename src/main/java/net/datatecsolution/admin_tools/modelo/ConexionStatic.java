@@ -60,8 +60,8 @@ public abstract class ConexionStatic implements Runnable{
 	//DISTRUIDORA GENESIS
 	private static String login = "root";
 	private static String password = "Jdmm123.";
-	private static String server = "192.168.100.71";
-	//private static String server = "127.0.0.1";
+	//private static String server = "192.168.100.71";
+	private static String server = "127.0.0.1";
 
 
 

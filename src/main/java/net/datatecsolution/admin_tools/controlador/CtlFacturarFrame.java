@@ -2385,6 +2385,8 @@ public void calcularTotales(){
 		this.view.getTxtTotal().setText("0.00");
 		this.myFactura.setObservacion("");
 		this.view.getRdbtnContado().setSelected(true);
+
+		view.getRdbtnCredito().setSelected(true);
 		
 		//se estable el focus de la view en la caja de texto buscar
 		this.view.getTxtBuscar().requestFocusInWindow();

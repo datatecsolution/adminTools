@@ -205,6 +205,68 @@ public class ClienteDao extends ModeloDaoBasic {
 			else return null;
 		
 	}
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para busca los cliente  por nombre>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public List<Cliente> buscarPorNombreTodosLosCobradores(String busqueda,int limitInferio, int canItemPag){
+		List<Cliente> clientes=new ArrayList<Cliente>();
+
+		ResultSet res=null;
+		Connection conn=null;
+		boolean existe=false;
+
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(super.getQuerySearch(" tipo_cliente=2 and nombre_cliente", "LIKE"));
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setString(2, "%" + busqueda + "%");
+			psConsultas.setInt(3, limitInferio);
+			psConsultas.setInt(4, canItemPag);
+			res = psConsultas.executeQuery();
+			//System.out.println(buscarProveedorNombre); Tampa fl, Houston  //// Washinton internal
+			while(res.next()){
+				Cliente unCliente=new Cliente();
+				existe=true;
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setDireccion(res.getString("direccion"));
+				unCliente.setTelefono(res.getString("telefono"));
+				unCliente.setCelular(res.getString("movil"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+
+				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
+				unCliente.setVendedor(unVendedor);
+
+				unCliente.setLimiteCredito(res.getBigDecimal("limite_credito"));
+				unCliente.setSaldoCuenta(res.getBigDecimal("saldo2"));
+
+				clientes.add(unCliente);
+			}
+
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			System.out.println(e);
+		}finally
+		{
+			try{
+				if(res!=null)res.close();
+				if(conn!=null)conn.close();
+				if(psConsultas!=null)psConsultas.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		if (existe) {
+			return clientes;
+		}
+		else return null;
+
+	}
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para busca los cliente  por nombre>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public List<Cliente> buscarPorNombre(String busqueda,int limitInferio, int canItemPag){
