@@ -2,11 +2,13 @@ package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlCuentasFacturas;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.RutaCobro;
 import net.datatecsolution.admin_tools.view.botones.BotonCliente;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturas;
 import net.datatecsolution.admin_tools.view.rendes.RtCuentasFacturas;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
+import net.datatecsolution.admin_tools.view.tablemodel.CbxTmRutasCobro;
 import net.datatecsolution.admin_tools.view.tablemodel.TmCuentasFacturas;
 
 import javax.swing.*;
@@ -22,6 +24,9 @@ public class ViewCuentasFacturas extends ViewTabla {
 	private JRadioButton rdbtnRTN;
 	private JComboBox<Empleado> cbxEmpleados;
 	private CbxTmEmpleado modeloListaEmpleados;
+
+	private JComboBox<RutaCobro> cbxRutas;
+	private CbxTmRutasCobro modeloListaRutas;
 
 	public ViewCuentasFacturas(Window view) {
 		super(view,"CXC POR FACTURAS");
@@ -41,10 +46,11 @@ public class ViewCuentasFacturas extends ViewTabla {
 	
 		
 		btnEliminar.setToolTipText("Anular Facturas");
+		btnEliminar.setVisible(false);
 	    
 	    btnImprimir = new BotonImprimirSmall();
 	    btnImprimir.setEnabled(false);
-	    //btnLimpiar.setIcon(new ImageIcon("recursos/clear.png")); // NOI18N
+	    //btnImprimir.setVisible(false);
 	    panelAccion.add(btnImprimir);
 
 		btnClientes = new BotonCliente();
@@ -69,6 +75,13 @@ public class ViewCuentasFacturas extends ViewTabla {
 
 		cbxEmpleados = new JComboBox<Empleado>(modeloListaEmpleados);
 		panelOpcioneBusqueda.add(cbxEmpleados);
+
+		modeloListaRutas=new CbxTmRutasCobro();
+		modeloListaRutas.agregar(new RutaCobro());
+
+		cbxRutas=new JComboBox<RutaCobro>(modeloListaRutas);
+		panelOpcioneBusqueda.add(cbxRutas);
+
 
 
 		panelPaginacion.setVisible(false);
@@ -131,10 +144,7 @@ public void conectarControlador(CtlCuentasFacturas c){
 		rdbtnRTN.addKeyListener(c);
 
 
-		
-		
-		
-		
+
 		txtBuscar.addActionListener(c);
 		txtBuscar.setActionCommand("BUSCAR");
 		txtBuscar.addKeyListener(c);
@@ -188,16 +198,29 @@ public void conectarControlador(CtlCuentasFacturas c){
 		cbxEmpleados.addActionListener(c);
 		cbxEmpleados.setActionCommand("CAMBIOCOMBOBOX");
 		cbxEmpleados.addKeyListener(c);
+
+		cbxRutas.addActionListener(c);
+		cbxRutas.setActionCommand("CAMBIOCOMBOBOXRUTA");
+		cbxRutas.addKeyListener(c);
 	}
 	public JComboBox<Empleado> getCbxEmpleados() {
 		return cbxEmpleados;
+	}
+	public JComboBox<RutaCobro> getCbxRutas() {
+		return cbxRutas;
 	}
 
 	public void setCbxEmpleados(JComboBox<Empleado> cbxEmpleados) {
 		this.cbxEmpleados = cbxEmpleados;
 	}
+	public void setCbxRutas(JComboBox<RutaCobro> cbxRuta) {
+		this.cbxRutas = cbxRuta;
+	}
 	public CbxTmEmpleado getModeloListaEmpleados() {
 		return modeloListaEmpleados;
+	}
+	public CbxTmRutasCobro getModeloListaRutas() {
+		return modeloListaRutas;
 	}
 
 	public void setModeloListaEmpleados(CbxTmEmpleado modeloListaEmpleados) {

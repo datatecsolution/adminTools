@@ -54,6 +54,7 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmAplicarInteresA;
 	private JMenuItem mntmFacturasVencidas;
 	private JMenuItem mntmRutasDeEntregas;
+	private JMenuItem mntmRutasDeCobro;
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
@@ -125,6 +126,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmRutasDeEntregas = new JMenuItem("Rutas de entregas");
 		mnFacturacion.add(mntmRutasDeEntregas);
+
+		mntmRutasDeCobro= new JMenuItem("Rutas de cobros");
+		mnFacturacion.add(mntmRutasDeCobro);
 		
 		mnCompras = new JMenu("Compras");
 		menuBar.add(mnCompras);
@@ -217,6 +221,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmRutasDeEntregas.addActionListener(c);
 		mntmRutasDeEntregas.setActionCommand("RUTAS_ENTREGAS");
+
+		mntmRutasDeCobro.addActionListener(c);
+		mntmRutasDeCobro.setActionCommand("RUTAS_COBROS");
 		
 		mntmFacturasVencidas.addActionListener(c);
 		mntmFacturasVencidas.setActionCommand("FACT_VENCIDAS");

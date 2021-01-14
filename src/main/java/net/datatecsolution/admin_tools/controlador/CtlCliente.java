@@ -3,8 +3,10 @@ package net.datatecsolution.admin_tools.controlador;
 import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.RutaCobro;
 import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
+import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
 import net.datatecsolution.admin_tools.view.ViewCrearCliente;
 import net.datatecsolution.admin_tools.view.ViewListaEmpleados;
 
@@ -19,7 +21,9 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	private ClienteDao myClienteDao=null;
 	private boolean resultaOperacion=false;
 	private Empleado myVendedor=null;
+	private RutaCobro myRuta=null;
 	private EmpleadoDao myEmpleadoDao;
+	private RutaCobroDao myRutaDao;
 	
 	public CtlCliente(ViewCrearCliente v){
 		view=v;
@@ -27,11 +31,18 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		
 		
 		myEmpleadoDao=new EmpleadoDao();
+		myRutaDao=new RutaCobroDao();
 		
 		//se busca el empleado por defecto es con el id 0
 		myVendedor=myEmpleadoDao.buscarPorId(1);
 		if(myVendedor!=null){
 			view.getTxtVendedor().setText(myVendedor.toString());
+			view.getTxtIdVendedor().setText(myVendedor.getCodigo()+" ");
+		}
+		myRuta=myRutaDao.buscarPorId(1);
+		if(myRuta!=null){
+			view.getTxtRutaCobro().setText(myRuta.getDescripcion());
+			view.getTxtIdRutaCobro().setText(myRuta.getCodigo()+"");
 		}
 		myCliente=new Cliente();
 		myClienteDao=new ClienteDao();
@@ -47,6 +58,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		myCliente.setCelular(view.getTxtMovil().getText());
 		myCliente.setRtn(view.getTxtRtn().getText());
 		myCliente.setVendedor(myVendedor);
+		myCliente.setRutaCobro(myRuta);
 	}
 	
 	public boolean agregarCliente(){
@@ -77,9 +89,24 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		}
 		
 		switch(comando){
+			case "BUSCAR_RUTA":
+				if(AbstractJasperReports.isNumber(view.getTxtIdRutaCobro().getText())){
+					myRuta=myRutaDao.buscarPorId(Integer.parseInt(view.getTxtIdRutaCobro().getText()));
+					if(myRuta==null){
+						myRuta=myRutaDao.buscarPorId(1);
+						view.getTxtIdRutaCobro().setText(myRuta.getCodigo()+"");
+					}
+					view.getTxtRutaCobro().setText(myRuta.getDescripcion());
+				}
+				break;
+
 			case "BUSCAR_VENDEDOR":
 				if(AbstractJasperReports.isNumber(view.getTxtIdVendedor().getText())){
 					myVendedor=myEmpleadoDao.buscarPorId(Integer.parseInt(view.getTxtIdVendedor().getText()));
+					if(myVendedor==null){
+						myVendedor=myEmpleadoDao.buscarPorId(1);
+						view.getTxtIdVendedor().setText(myVendedor.getCodigo()+" ");
+					}
 					view.getTxtVendedor().setText(myVendedor.toString());
 				}
 				break;
@@ -128,8 +155,15 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		this.view.getTxtTelefono().setText(cliente.getTelefono());
 		this.view.getTxtMovil().setText(cliente.getCelular());
 		this.view.getTxtRtn().setText(cliente.getRtn());
-		
+
+		this.myVendedor=cliente.getVendedor();
+		this.myRuta=cliente.getRutaCobro();
+
+		view.getTxtIdVendedor().setText(cliente.getVendedor().getCodigo()+"");
 		view.getTxtVendedor().setText(cliente.getVendedor().toString());
+
+		view.getTxtIdRutaCobro().setText(cliente.getRutaCobro().getCodigo()+"");
+		view.getTxtRutaCobro().setText(cliente.getRutaCobro().getDescripcion());
 		
 		
 		
@@ -210,7 +244,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 
 		view.getMcBusqueda().setVisible(false);
 		//si escribe en la busque un cliente
-		if(e.getComponent()==this.view.getTxtNombre()&&view.getTxtNombre().getText().trim().length()>=7&&e.getKeyCode()!=KeyEvent.VK_UP&&e.getKeyCode()!=KeyEvent.VK_DOWN&&e.getKeyCode()!=KeyEvent.VK_ENTER){
+		if(e.getComponent()==this.view.getTxtNombre()&&view.getTxtNombre().getText().trim().length()>=5&&e.getKeyCode()!=KeyEvent.VK_UP&&e.getKeyCode()!=KeyEvent.VK_DOWN&&e.getKeyCode()!=KeyEvent.VK_ENTER){
 
 			List<Cliente> clientes=myClienteDao.buscarPorNombreTodosLosCobradores(this.view.getTxtNombre().getText(),0,10);
 
@@ -219,7 +253,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 			if(clientes!=null){
 				for(int c=0;c<clientes.size();c++){
 					JMenuItem mntmItem=new JMenuItem();
-					mntmItem.setText(clientes.get(c).getId()+" | "+clientes.get(c).getNombre()+", "+clientes.get(c).getDereccion());
+					mntmItem.setText(clientes.get(c).getId()+" | "+clientes.get(c).getNombre()+" => "+clientes.get(c).getRutaCobro().getDescripcion());
 					mntmItem.setActionCommand(clientes.get(c).getId()+"");
 					mntmItem.addActionListener(this);
 					view.getMntmItemBusqueda().add(mntmItem);

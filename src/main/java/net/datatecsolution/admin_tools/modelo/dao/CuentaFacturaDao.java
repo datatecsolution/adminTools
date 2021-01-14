@@ -242,14 +242,35 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 			String conSaldo="";
 			if(todoReg){
-				conSaldo="and  cuenta2.saldo2>0 ";
+				conSaldo=" cuenta2.saldo2>0 ";
+			}else {
+				conSaldo=" (cuenta2.saldo2<>0 or  cuenta2.saldo2=0 )";
 			}
 
-			
-			
+			String whereBusqueda="";
+
+			if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+				whereBusqueda=" and id_vendedor>?";
+			}else{
+				whereBusqueda=" and id_vendedor=?";
+			}
+
+			String whereBusquedaRuta="";
+
+			if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+				whereBusquedaRuta=" and id_ruta_cobro>0";
+			}else{
+				whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+			}
+
+
+
+
+
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=? "+  conSaldo +" order by cuentas_facturas.codigo_cuenta asc");
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=?  and"+  conSaldo+whereBusqueda+whereBusquedaRuta +" order by cuentas_facturas.codigo_cuenta asc");
 			super.psConsultas.setInt(1, codigo);
+			super.psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
@@ -411,6 +432,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		String conSaldo="";
 		if(todoReg){
 			conSaldo=" cuenta2.saldo2>0 ";
+		}else {
+			conSaldo=" (cuenta2.saldo2<>0 or  cuenta2.saldo2=0 )";
 		}
 
 		String whereBusqueda="";
@@ -420,12 +443,22 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		}else{
 			whereBusqueda=" and id_vendedor=?";
 		}
+
+		String whereBusquedaRuta="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+			whereBusquedaRuta=" and id_ruta_cobro>0";
+		}else{
+			whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+		}
+
+
 		
 		try {
 			
 			//dsfa
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda+whereBusquedaRuta);
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 
 			res = super.psConsultas.executeQuery();
@@ -589,6 +622,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		String conSaldo="";
 		if(todoReg){
 			conSaldo=" and  cuenta2.saldo2>0 ";
+		}else {
+			conSaldo=" and  (cuenta2.saldo2<>0 or  cuenta2.saldo2=0) ";
 		}
 
 		String whereBusqueda="";
@@ -598,10 +633,18 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		}else{
 			whereBusqueda=" and id_vendedor=?";
 		}
+
+		String whereBusquedaRuta="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+			whereBusquedaRuta=" and id_ruta_cobro>0";
+		}else{
+			whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+		}
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.nombre_cliente like ? "+conSaldo+whereBusqueda);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.nombre_cliente like ? "+conSaldo+whereBusqueda+whereBusquedaRuta);
 			//super.psConsultas = conn.prepareStatement(super.getQuerySearch("saldo",">"));//+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
 			//dd
 			psConsultas.setString(1, "%" + nombre + "%");
@@ -685,11 +728,31 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		String conSaldo="";
 		if(todoReg){
 			conSaldo=" and  cuenta2.saldo2>0 ";
+		}else {
+			conSaldo=" and  (cuenta2.saldo2<>0 or  cuenta2.saldo2=0 ) ";
 		}
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_vendedor>?";
+		}else{
+			whereBusqueda=" and id_vendedor=?";
+		}
+
+		String whereBusquedaRuta="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+			whereBusquedaRuta=" and id_ruta_cobro>0";
+		}else{
+			whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+		}
+
+
 
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where fecha BETWEEN ? and ? "+conSaldo);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where fecha BETWEEN ? and ? "+conSaldo+whereBusqueda+whereBusquedaRuta);
 			psConsultas.setString(1, fecha1);
 			psConsultas.setString(2, fecha2);
 			//super.psConsultas.setInt(2, limSupe);
@@ -782,6 +845,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		String conSaldo="";
 		if(todoReg){
 			conSaldo=" and  cuenta2.saldo2>0 ";
+		}else {
+			conSaldo=" and  cuenta2.saldo2<>0 ";
 		}
 
 		String whereBusqueda="";
@@ -792,10 +857,20 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			whereBusqueda=" and id_vendedor=?";
 		}
 
+		String whereBusquedaRuta="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+			whereBusquedaRuta=" and id_ruta_cobro>0";
+		}else{
+			whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+		}
+
+
+
 
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.rtn like ? "+conSaldo+whereBusqueda);
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.rtn like ? "+conSaldo+whereBusqueda+whereBusquedaRuta);
 			psConsultas.setString(1, rtn + "%");
 			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 

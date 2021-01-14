@@ -1,11 +1,9 @@
 package net.datatecsolution.admin_tools.controlador;
 
-import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.CuentaFactura;
-import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
+import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 
@@ -25,6 +23,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	//fila selecciona enla lista
 	private int filaPulsada=-1;
 	private EmpleadoDao empleadoDao=null;
+	private RutaCobroDao rutaCobroDao=null;
 	
 	public CtlCuentasFacturas(ViewCuentasFacturas v) {
 		
@@ -35,7 +34,9 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		cuentaFacturaDao.setTodoReg(true);
 
 		empleadoDao=new EmpleadoDao();
+		rutaCobroDao=new RutaCobroDao();
 		cargarComboBox();
+		cargarCbxRutas();
 		
 		
 		//cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
@@ -60,6 +61,17 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		//
 		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
 		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
+	}
+
+	private void cargarCbxRutas(){
+
+		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
+		this.view.getModeloListaRutas().setLista(this.rutaCobroDao.todoRutas());
+		//se remueve la lista por defecto
+		this.view.getCbxRutas().removeAllItems();
+		//
+		int idRuta=view.getModeloListaRutas().buscarRuta(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda());
+		this.view.getCbxRutas().setSelectedIndex(idRuta);
 	}
 	
 	
@@ -159,6 +171,18 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		String comando=e.getActionCommand();
 		
 		switch (comando){
+
+			case "CAMBIOCOMBOBOXRUTA":
+
+				RutaCobro miRuta=(RutaCobro) view.getCbxRutas().getSelectedItem();
+
+				if(miRuta!=null){
+					ConexionStatic.getUsuarioLogin().getConfig().setRutaCobroEnBusqueda(miRuta);
+				}
+
+				ActionEvent actionEvent1=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+				this.actionPerformed(actionEvent1);
+				break;
 
 			case "CAMBIOCOMBOBOX":
 				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");

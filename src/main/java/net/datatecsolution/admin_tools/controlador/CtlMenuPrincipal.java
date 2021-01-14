@@ -60,6 +60,14 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		switch(comando){
+
+			case "RUTAS_COBROS":
+				ViewListaRutasCobro viewListaRutasCobro=new ViewListaRutasCobro(view);
+				CtlRutaCobroLista ctlRutaCobroLista=new CtlRutaCobroLista(viewListaRutasCobro);
+				viewListaRutasCobro.dispose();
+				viewListaRutasCobro=null;
+				ctlRutaCobroLista=null;
+				break;
 		
 		case "RUTAS_ENTREGAS":
 			
