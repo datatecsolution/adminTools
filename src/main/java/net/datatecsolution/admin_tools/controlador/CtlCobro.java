@@ -199,16 +199,20 @@ switch(e.getKeyCode()){
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 		if(e.getComponent()==this.view.getTxtTotal()){
 			
 			if(AbstractJasperReports.isNumber(view.getTxtTotal().getText())||AbstractJasperReports.isNumberReal(view.getTxtTotal().getText())){
 					if(this.myCliente!=null && view.getTxtTotal().getText().trim().length()!=0 && new BigDecimal(view.getTxtTotal().getText()).doubleValue()!=0 ){
-						view.getModeloFacturas().setPago(new BigDecimal(view.getTxtTotal().getText()));
+						view.getModeloFacturas().setPago(new BigDecimal(view.getTxtTotal().getText()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
 					if(view.getTxtTotal().getText().trim().length()==0){
 						view.getModeloFacturas().resetPago();
 					}
+			}else {
+				if(view.getTxtTotal().getText().trim().length()==0){
+					view.getModeloFacturas().resetPago();
+				}
 			}
 			
 			
@@ -330,10 +334,14 @@ switch(e.getKeyCode()){
 			
 			
 			if(this.validar()){
-				
+				buscarSaldosFacturas();
+				view.getModeloFacturas().setPago(new BigDecimal(view.getTxtTotal().getText()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
 				setRecibo();
 				//se manda aguardar el recibo con los pagos realizados
 				boolean resulta=this.myReciboDao.registrar(myRecibo);
+
+				buscarSaldosFacturas();
 				
 				
 				if(resulta){

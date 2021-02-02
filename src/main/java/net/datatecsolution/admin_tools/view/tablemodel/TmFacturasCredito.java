@@ -50,9 +50,9 @@ public class TmFacturasCredito extends TablaModelo {
 		case 2:
 			return cuentasFacturas.get(rowIndex).getSaldo();
 		case 3:
-			return cuentasFacturas.get(rowIndex).getPago();
+			return cuentasFacturas.get(rowIndex).getPago().setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		case 4:
-			return cuentasFacturas.get(rowIndex).getNewSaldo();//cuentasFacturas.get(rowIndex).getSaldo().subtract(cuentasFacturas.get(rowIndex).getPago()).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+			return cuentasFacturas.get(rowIndex).getNewSaldo().setScale(2, BigDecimal.ROUND_HALF_EVEN);//cuentasFacturas.get(rowIndex).getSaldo().subtract(cuentasFacturas.get(rowIndex).getPago()).setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		
 		default:
 				return null;
@@ -91,32 +91,35 @@ public class TmFacturasCredito extends TablaModelo {
 			if(una.getSaldo().doubleValue()==this.pago.doubleValue()){
 				//se ser asi
 				//el pago a la factura sera el pago total
-				una.setPago(new BigDecimal(pago.doubleValue()));
+				una.setPago(new BigDecimal(pago.setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
 				//se establece en cero el pago total
 				pago= new BigDecimal(0);
 				//se establece el nuevo saldo en cero
 				una.setNewSaldo(new BigDecimal(0));
 				
 				//y se sale del ciclo porque no queda saldo para realizar mas pago
-				break;
+				//break;
 			}else if(una.getSaldo().doubleValue()<this.pago.doubleValue()){
 				//si el saldo de la factura es menos que el pago total
 				//el pago a la factura sera el total del saldo de esta
-				una.setPago(new BigDecimal(una.getSaldo().doubleValue()));
+				una.setPago(new BigDecimal(una.getSaldo().setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
 				//el nuevo saldo es cero
 				una.setNewSaldo(new BigDecimal(0));
 				//si el nuevo pago total sera la resta de este pago
-				pago=pago.subtract(una.getSaldo());
-			}else{
+				pago=new BigDecimal(pago.subtract(una.getSaldo()).setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
+			}else if(una.getSaldo().doubleValue()>this.pago.doubleValue() && pago.doubleValue()!=0 ){
 				//si el saldo es mayor al pago
 				//el pago a la factura sera el total de pago
-				una.setPago(new BigDecimal(pago.doubleValue()));
+				una.setPago(new BigDecimal(pago.doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN) );
 				//el nuevo saldo sera la resta del pago total menos el saldo
-				una.setNewSaldo(new BigDecimal(una.getSaldo().doubleValue()).subtract(pago));
+				una.setNewSaldo(new BigDecimal(una.getSaldo().doubleValue()).subtract(pago).setScale(2, BigDecimal.ROUND_HALF_EVEN)	);
 				
 				//y el pago total se estable en cero
 				pago= new BigDecimal(0);
-				break;
+				//break;
+			}else{
+				una.setPago(new BigDecimal(0));
+				una.setNewSaldo(new BigDecimal(0));
 			}
 		}
 		fireTableDataChanged();
