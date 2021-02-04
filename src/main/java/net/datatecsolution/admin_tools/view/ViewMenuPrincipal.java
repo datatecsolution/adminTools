@@ -55,6 +55,7 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmFacturasVencidas;
 	private JMenuItem mntmRutasDeEntregas;
 	private JMenuItem mntmRutasDeCobro;
+	private JMenuItem mntmReporteCuentasFacturas;
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
@@ -144,6 +145,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmFacturasVencidas = new JMenuItem("CXC por facturas");
 		mnCuentasPorCobrar.add(mntmFacturasVencidas);
+
+		mntmReporteCuentasFacturas= new JMenuItem("Reportes CXC por facturas");
+		mnCuentasPorCobrar.add(mntmReporteCuentasFacturas);
 		
 		
 		mnReportes = new JMenu("Reportes");
@@ -316,6 +320,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		btnAlertaExistencia.addActionListener(c);
 		btnAlertaExistencia.setActionCommand("ALERTAEXISTENCIAS");
+
+		mntmReporteCuentasFacturas.addActionListener(c);
+		mntmReporteCuentasFacturas.setActionCommand("REPORTE_CXC_FACTURA");
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");

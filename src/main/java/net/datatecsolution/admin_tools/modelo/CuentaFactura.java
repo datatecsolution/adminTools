@@ -24,6 +24,9 @@ public class CuentaFactura {
 	private BigDecimal newSaldo=new BigDecimal(0.0);
 	
 	private CuentaXCobrarFactura ultimoPago;
+	private Date fechaUltimoPago;
+
+	private Integer noDiasUltimoPago=0;
 
 	public int getCodigoCuenta() {
 		
@@ -86,6 +89,13 @@ public class CuentaFactura {
 		this.setCodigoCaja(c.getCodigo());
 		this.caja = c;
 	}
+	public Date getFechaUltimoPago() {
+		return fechaUltimoPago;
+	}
+
+	public void setFechaUltimoPago(Date fechaUltimoPago) {
+		this.fechaUltimoPago = fechaUltimoPago;
+	}
 
 	public Date getFecha() {
 		return fecha;
@@ -125,6 +135,14 @@ public class CuentaFactura {
 
 	public void setFechaVenc(Date fechaVenc) {
 		this.fechaVenc = fechaVenc;
+	}
+
+	public Integer getNoDiasUltimoPago() {
+		return noDiasUltimoPago;
+	}
+
+	public void setNoDiasUltimoPago(Integer noDiasUltimoPago) {
+		this.noDiasUltimoPago = noDiasUltimoPago;
 	}
 
 	/**

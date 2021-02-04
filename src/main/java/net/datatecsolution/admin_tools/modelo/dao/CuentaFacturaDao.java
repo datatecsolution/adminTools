@@ -39,7 +39,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				+ " empleados.nombre as nombre_vendedor,"
 				+ " empleados.apellido as apellido_vendedor,"
 				+ " f_saldo_factura_cliente(cuentas_facturas.codigo_cuenta) as saldo ,"
-				+ " cliente.nombre_cliente, "
+				+ " f_fecha_ultimo_pago_factura(cuentas_facturas.codigo_cuenta) as ultimo_pago, "
+				+ " f_no_dias_del_ultimo_pago( cuentas_facturas.codigo_cuenta) as no_dias,"
 				+ " cuenta2.saldo2 "
 		+ " FROM "
 				+super.DbName+ "."+super.tableName
@@ -305,7 +306,9 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente);
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
 				
 				cajas.add(unaCuenta);
 				existe=true;
@@ -382,6 +385,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente);
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
 				
 	
 				existe=true;
@@ -492,8 +499,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
-				
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
 				
 				cajas.add(unaCuenta);
 				existe=true;
@@ -574,9 +583,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
-				
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
-				
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
@@ -683,9 +693,11 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
-				
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
-				
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
+
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
@@ -790,9 +802,11 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setVendedor(empleado);
 				
 				unaCuenta.setCliente(cliente2);
-				
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
-				
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
+
 				cajas.add(unaCuenta);
 				existe=true;
 			 }
@@ -907,7 +921,9 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 				unaCuenta.setCliente(cliente2);
 
-				unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
 
 				cajas.add(unaCuenta);
 				existe=true;
