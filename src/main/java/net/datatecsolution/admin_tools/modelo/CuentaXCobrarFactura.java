@@ -1,5 +1,7 @@
 package net.datatecsolution.admin_tools.modelo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 
@@ -48,7 +50,11 @@ public class CuentaXCobrarFactura {
 		descripcion=d;
 	}
 	public String getDescripcion(){
-		return descripcion;
+
+		if(descripcion.length()>250)
+			return StringUtils.abbreviate(descripcion,250);
+		else
+			return descripcion;
 	}
 	public void setNoReguistro(int n){
 		noReguistro=n;

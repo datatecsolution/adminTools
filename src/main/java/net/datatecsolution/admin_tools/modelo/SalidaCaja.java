@@ -1,5 +1,7 @@
 package net.datatecsolution.admin_tools.modelo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 
 public class SalidaCaja {
@@ -27,7 +29,10 @@ public class SalidaCaja {
 		concepto=c;
 	}
 	public String getConcepto(){
-		return concepto;
+		if(concepto.length()>250)
+			return StringUtils.abbreviate(concepto,250);
+		else
+			return concepto;
 	}
 	
 	public void setCantidad(BigDecimal c){
