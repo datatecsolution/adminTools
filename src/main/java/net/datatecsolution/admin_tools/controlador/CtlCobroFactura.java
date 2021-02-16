@@ -357,12 +357,14 @@ switch(e.getKeyCode()){
 
 
 					this.view.setVisible(false);
+
+
 					
 
 					try {
 					
 						AbstractJasperReports.createReportReciboCobroCajaFactura(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
-						AbstractJasperReports.imprimierFactura();
+						//AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
 						
 						//myFactura.
@@ -370,6 +372,8 @@ switch(e.getKeyCode()){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
+
 					
 				}else{//
 					JOptionPane.showMessageDialog(view, "El recibo no se guardo correctamente.");

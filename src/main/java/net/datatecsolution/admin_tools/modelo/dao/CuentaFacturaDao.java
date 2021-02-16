@@ -38,17 +38,26 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				+ " empleados.codigo_empleado,"
 				+ " empleados.nombre as nombre_vendedor,"
 				+ " empleados.apellido as apellido_vendedor,"
-				+ " f_saldo_factura_cliente(cuentas_facturas.codigo_cuenta) as saldo ,"
-				+ " f_fecha_ultimo_pago_factura(cuentas_facturas.codigo_cuenta) as ultimo_pago, "
-				+ " f_no_dias_del_ultimo_pago( cuentas_facturas.codigo_cuenta) as no_dias,"
-				+ " cuenta2.saldo2 "
+				+ " cuenta2.ultimo_pago, "
+				+ " cuenta2.saldo2, "
+				+ " cuenta2.no_dias, "
+				+ " cuenta2.detalle_venta, "
+				+ " cuenta2.saldo2 as saldo"
 		+ " FROM "
 				+super.DbName+ "."+super.tableName
 			+ " JOIN "+super.DbName+".cliente "
 					+ " on (cliente.codigo_cliente="+ super.tableName+".codigo_cliente) "
 			+ " JOIN "+super.DbName+".empleados "
 				+ " on (cliente.id_vendedor=empleados.codigo_empleado) "
-			+ " JOIN ( SELECT "+super.tableName+".codigo_cuenta, ifnull("+super.DbName+ "."+"f_saldo_factura_cliente("+super.tableName+".codigo_cuenta),0.00 ) saldo2 FROM "+super.DbName+ "."+super.tableName+") cuenta2 "
+			+ " JOIN ( " +
+						"SELECT "
+									+super.tableName+".codigo_cuenta as cod2, "
+									+" ifnull("+super.DbName+ "."+"f_saldo_factura_cliente("+super.tableName+".codigo_cuenta),0.00 ) saldo2, "
+									+super.tableName+".codigo_cuenta, "
+									+super.DbName+ "."+"f_detalle_cuenta_factura("+super.tableName+".codigo_cuenta) as detalle_venta, "
+									+super.DbName+ "."+"f_fecha_ultimo_pago_factura("+super.tableName+".codigo_cuenta) as ultimo_pago, "
+									+" ifnull("+super.DbName+ "."+"f_no_dias_del_ultimo_pago("+super.tableName+".codigo_cuenta),0.00 ) as no_dias"
+					+  " FROM "+super.DbName+ "."+super.tableName+") cuenta2 "
 				+ " on( cuenta2.codigo_cuenta="+super.tableName+".codigo_cuenta)";
 		super.setSqlQuerySelectJoin(sqlBaseJoin);
 		cuentaXCobrarFacturaDao=new CuentaXCobrarFacturaDao();
@@ -420,6 +429,116 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				return unaCuenta;
 			}
 			else return null;
+	}
+
+
+	public List<CuentaFactura> buscarConSaldoReporte(int diasRetrazados) {
+		// TODO Auto-generated method stub
+
+		rowCount=0;
+		List<CuentaFactura> cajas=new ArrayList<CuentaFactura>();
+		ResultSet res=null;
+		Connection conn=null;
+		boolean existe=false;
+
+
+		String conSaldo="";
+		if(todoReg){
+			conSaldo=" cuenta2.saldo2>0 ";
+		}else {
+			conSaldo=" (cuenta2.saldo2<>0 or  cuenta2.saldo2=0 )";
+		}
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_vendedor>?";
+		}else{
+			whereBusqueda=" and id_vendedor=?";
+		}
+
+		String whereBusquedaRuta="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo()==0){
+			whereBusquedaRuta=" and id_ruta_cobro>0";
+		}else{
+			whereBusquedaRuta=" and id_ruta_cobro="+ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo();
+		}
+
+
+
+		try {
+
+			//dsfa
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda+whereBusquedaRuta+" and  no_dias >=30 and no_dias<="+diasRetrazados);
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+
+			res = super.psConsultas.executeQuery();
+
+			while(res.next()){
+				rowCount++;
+				CuentaFactura unaCuenta=new CuentaFactura();
+
+
+				unaCuenta.setCodigoCuenta(res.getInt("codigo_cuenta"));
+				unaCuenta.setCodigoCaja(res.getInt("codigo_caja"));
+				unaCuenta.setNoFactura(res.getInt("no_factura"));
+				unaCuenta.setFecha(res.getDate("fecha"));
+				unaCuenta.setSaldo(res.getBigDecimal("saldo"));
+				unaCuenta.setFechaVenc(res.getDate("fecha_vencimiento"));
+				unaCuenta.setCodigoCliente(res.getInt("codigo_cliente"));
+
+
+				Cliente cliente2=new Cliente();
+
+				cliente2.setId(res.getInt("codigo_cliente"));
+				cliente2.setNombre(res.getString("nombre_cliente"));
+				cliente2.setRtn(res.getString("rtn"));
+				cliente2.setTelefono(res.getString("telefono"));
+
+				Empleado empleado=new Empleado();
+				empleado.setCodigo(res.getInt("codigo_empleado"));
+				empleado.setNombre(res.getString("nombre_vendedor"));
+				empleado.setApellido(res.getString("apellido_vendedor"));
+
+				cliente2.setVendedor(empleado);
+
+				unaCuenta.setCliente(cliente2);
+
+				//unaCuenta.setUltimoPago(cuentaXCobrarFacturaDao.getUltimoPago(unaCuenta));
+				unaCuenta.setFechaUltimoPago(res.getDate("ultimo_pago"));
+				unaCuenta.setNoDiasUltimoPago(res.getInt("no_dias"));
+				unaCuenta.setDetalleCredito(res.getString("detalle_venta"));
+
+				cajas.add(unaCuenta);
+				existe=true;
+			}
+
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+		finally
+		{
+			try{
+				if(res != null) res.close();
+				if(super.psConsultas != null)super.psConsultas.close();
+				if(conn != null) conn.close();
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		if (existe) {
+			return cajas;
+		}
+		else return null;
 	}
 
 

@@ -27,6 +27,7 @@ public class CuentaFactura {
 	private Date fechaUltimoPago;
 
 	private Integer noDiasUltimoPago=0;
+	private String detalleCredito="";
 
 	public int getCodigoCuenta() {
 		
@@ -158,6 +159,12 @@ public class CuentaFactura {
 	public void setUltimoPago(CuentaXCobrarFactura ultimoPago) {
 		this.ultimoPago = ultimoPago;
 	}
-	
 
+
+	public void setDetalleCredito(String d) {
+		detalleCredito=d;
+	}
+	public String getDetalleCredito(){
+		return detalleCredito;
+	}
 }

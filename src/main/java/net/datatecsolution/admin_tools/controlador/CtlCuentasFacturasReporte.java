@@ -36,8 +36,11 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 
 		empleadoDao=new EmpleadoDao();
 		rutaCobroDao=new RutaCobroDao();
+		view.getTxtBuscar().setText("10");
 		cargarComboBox();
 		cargarCbxRutas();
+
+
 		
 		
 		//cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
@@ -181,8 +184,8 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 					ConexionStatic.getUsuarioLogin().getConfig().setRutaCobroEnBusqueda(miRuta);
 				}
 
-				ActionEvent actionEvent1=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
-				this.actionPerformed(actionEvent1);
+				//ActionEvent actionEvent1=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+				//this.actionPerformed(actionEvent1);
 				break;
 
 			case "CAMBIOCOMBOBOX":
@@ -194,8 +197,8 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
 				}
 
-				ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
-				this.actionPerformed(actionEvent);
+				//ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+				//this.actionPerformed(actionEvent);
 
 				break;
 
@@ -251,6 +254,16 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				filaPulsada = this.view.getTabla().getSelectedRow();
 				view.getModelo().setPaginacion();
 				//si la busqueda es por id
+				if(AbstractJasperReports.isNumber(view.getTxtBuscar().getText())){
+					cargarTabla(cuentaFacturaDao.buscarConSaldoReporte(Integer.parseInt(view.getTxtBuscar().getText())));
+				}else{
+					JOptionPane.showMessageDialog(view,"Escriba los dias de retrazo del credito para realizar la busqueda,","Error",JOptionPane.ERROR_MESSAGE);
+				}
+
+
+
+
+				/*
 				if(this.view.getRdbtnId().isSelected()){
 
 					cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
@@ -270,6 +283,8 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				}else{
 					this.view.getModelo().limpiarCuentas();
 				}
+
+				 */
 				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 				break;
 		

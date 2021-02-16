@@ -60,7 +60,7 @@ public class TmCuentasFacturasReporte extends TablaModelo {
 			case 4:
 				return cuentas.get(rowIndex).getCliente().getTelefono();
 			case 5:
-				return "NA";
+				return cuentas.get(rowIndex).getDetalleCredito();
 			case 6:
 				return cuentas.get(rowIndex).getSaldo();
 			case 7:

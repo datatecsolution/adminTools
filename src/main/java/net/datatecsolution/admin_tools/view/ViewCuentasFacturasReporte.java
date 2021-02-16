@@ -103,12 +103,12 @@ public class ViewCuentasFacturasReporte extends ViewTabla {
 		RtCuentasFacturas renderizador = new RtCuentasFacturas();
 		tabla.setDefaultRenderer(String.class, renderizador);
 		
-		tabla.getColumnModel().getColumn(0).setPreferredWidth(10);     //Tama�o de las columnas de las tablas
-		tabla.getColumnModel().getColumn(1).setPreferredWidth(10);	//de las columnas
-		tabla.getColumnModel().getColumn(2).setPreferredWidth(300);	//en la tabla
+		tabla.getColumnModel().getColumn(0).setPreferredWidth(15);     //Tama�o de las columnas de las tablas
+		tabla.getColumnModel().getColumn(1).setPreferredWidth(15);	//de las columnas
+		tabla.getColumnModel().getColumn(2).setPreferredWidth(250);	//en la tabla
 		tabla.getColumnModel().getColumn(3).setPreferredWidth(50);	//
-		tabla.getColumnModel().getColumn(4).setPreferredWidth(200);	//
-		tabla.getColumnModel().getColumn(5).setPreferredWidth(30);	//
+		tabla.getColumnModel().getColumn(4).setPreferredWidth(50);	//
+		tabla.getColumnModel().getColumn(5).setPreferredWidth(200);	//
 		tabla.getColumnModel().getColumn(6).setPreferredWidth(30);
 
 		setPreferredSize(new Dimension(1200,680));

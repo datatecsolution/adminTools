@@ -180,8 +180,11 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 					ConexionStatic.getUsuarioLogin().getConfig().setRutaCobroEnBusqueda(miRuta);
 				}
 
+				/*
 				ActionEvent actionEvent1=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+
 				this.actionPerformed(actionEvent1);
+				*/
 				break;
 
 			case "CAMBIOCOMBOBOX":
@@ -192,9 +195,11 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				if(miEmpleado!=null){
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
 				}
-
+				/*
 				ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
 				this.actionPerformed(actionEvent);
+
+				 */
 
 				break;
 
@@ -216,7 +221,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				//JOptionPane.showMessageDialog(view, "click en la tabla"+filaPulsada);
 
 				//si seleccion una fila
-				if(filaPulsada>=0) {
+				if(filaPulsada>=0) { 
 
 					CuentaFactura cuentaSelected=view.getModelo().getCuenta(filaPulsada);
 
@@ -229,7 +234,13 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 						viewCobroFactura.dispose();
 						ctlCobroFactura = null;
 
-						view.setVisible(false);
+						this.view.getRdbtnId().setSelected(true);
+						view.getTxtBuscar().setText(cuentaSelected.getCodigoCuenta()+"");
+						ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+						this.actionPerformed(actionEvent);
+
+						view.getTxtBuscar().selectAll();
+						view.getTxtBuscar().requestFocusInWindow();
 
 					}
 

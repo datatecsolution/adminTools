@@ -46,16 +46,10 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-
 	//LOCALHOST
 	private static String login = "root";
 	private static String password = "Jdmm123.";
 	private static String server = "127.0.0.1";
-
-
-
-
-
 
 
 	//NARANJAL
