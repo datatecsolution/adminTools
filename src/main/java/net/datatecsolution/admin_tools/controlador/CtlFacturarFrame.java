@@ -2973,8 +2973,8 @@ public void guardarRemotoCredito(){
 								//AbstractJasperReports.showViewer(view);
 								AbstractJasperReports.imprimierFactura();
 								
-								AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
-								AbstractJasperReports.imprimierFactura();
+								//AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
+								//AbstractJasperReports.imprimierFactura();
 								
 						}
 					}//fin de la impresion de la factura carta al contado
@@ -2994,8 +2994,8 @@ public void guardarRemotoCredito(){
 								//AbstractJasperReports.showViewer(view);
 								AbstractJasperReports.imprimierFactura();
 								
-								AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
-								AbstractJasperReports.imprimierFactura();
+								//AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
+								//AbstractJasperReports.imprimierFactura();
 								
 						}
 					}
