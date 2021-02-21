@@ -28,6 +28,11 @@ public class ViewCuentasFacturas extends ViewTabla {
 	private JComboBox<RutaCobro> cbxRutas;
 	private CbxTmRutasCobro modeloListaRutas;
 
+
+
+	private JPopupMenu menuContextual; // permite al usuario seleccionar el color
+	private JMenuItem mntmEditarCliente;
+
 	public ViewCuentasFacturas(Window view) {
 		super(view,"CXC POR FACTURAS");
 		txtPagina.setEnabled(false);
@@ -39,11 +44,13 @@ public class ViewCuentasFacturas extends ViewTabla {
 
 		super.panelEstadoRegistro.setVisible(true);
 
+		menuContextual = new JPopupMenu(); // crea el men� contextual
+
+		//opcion del menu flotante
+		mntmEditarCliente = new JMenuItem("Editar cliente");
+		menuContextual.add(mntmEditarCliente);
 
 
-
-	
-	
 		
 		btnEliminar.setToolTipText("Anular Facturas");
 		btnEliminar.setVisible(false);
@@ -202,6 +209,20 @@ public void conectarControlador(CtlCuentasFacturas c){
 		cbxRutas.addActionListener(c);
 		cbxRutas.setActionCommand("CAMBIOCOMBOBOXRUTA");
 		cbxRutas.addKeyListener(c);
+
+		mntmEditarCliente.addActionListener(c);
+		mntmEditarCliente.setActionCommand("EDITAR_CLIENTE");
+
+		tabla.addMouseListener(c);
+		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	}
+
+	public JPopupMenu getMenuContextual() {
+		return menuContextual;
+	}
+
+	public void setMenuContextual(JPopupMenu menuContextual) {
+		this.menuContextual = menuContextual;
 	}
 	public JComboBox<Empleado> getCbxEmpleados() {
 		return cbxEmpleados;

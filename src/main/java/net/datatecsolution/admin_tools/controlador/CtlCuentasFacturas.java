@@ -1,10 +1,12 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
+import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
 import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
+import net.datatecsolution.admin_tools.view.ViewCrearCliente;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 
 import javax.swing.*;
@@ -19,6 +21,8 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	public ViewCuentasFacturas view;
 	
 	private CuentaFacturaDao cuentaFacturaDao;
+
+	private ClienteDao clienteDao=new ClienteDao();
 	
 	//fila selecciona enla lista
 	private int filaPulsada=-1;
@@ -138,14 +142,47 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent evento) {
 		// TODO Auto-generated method stub
+		check(evento);
+		checkForTriggerEvent( evento ); // comprueba el desencadenador
 
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(MouseEvent evento) {
 		// TODO Auto-generated method stub
+		int r = view.getTabla().rowAtPoint(evento.getPoint());
+		if (r >= 0 && r < view.getTabla().getRowCount()) {
+			view.getTabla().setRowSelectionInterval(r, r);
+		} else {
+			view.getTabla().clearSelection();
+		}
+
+		int rowindex = view.getTabla().getSelectedRow();
+		if (rowindex < 0)
+			return;
+
+		check(evento);
+		checkForTriggerEvent( evento ); // comprueba el desencadenador
+
+	}
+
+	// determina si el evento debe desencadenar el menu contextual
+	private void checkForTriggerEvent( MouseEvent evento )
+	{
+		if ( evento.isPopupTrigger() )
+			this.view.getMenuContextual().show(evento.getComponent(), evento.getX(), evento.getY() );
+	} // fin del metodo checkForTriggerEvent
+
+	public void check(MouseEvent e)
+	{
+		if (e.isPopupTrigger()) { //if the event shows the menu
+			//this.view.getListCodigos().setSelectedIndex(this.view.getListCodigos().locationToIndex(e.getPoint())); //select the item
+			//view.getTabla().setColumnSelectionInterval(index0, index1);
+			//JOptionPane.showMessageDialog(view, "Donde se dio clip "+e.getPoint());
+		}
+
 
 	}
 
@@ -171,6 +208,51 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		String comando=e.getActionCommand();
 		
 		switch (comando){
+
+			case "EDITAR_CLIENTE":
+
+				filaPulsada = this.view.getTabla().getSelectedRow();
+
+
+				//si seleccion una fila
+				if(filaPulsada>=0){
+					CuentaFactura cuentaSelected=view.getModelo().getCuenta(filaPulsada);
+
+					//crea la ventana para ingresar un nuevo proveedor
+					ViewCrearCliente viewCliente= new ViewCrearCliente();
+
+					//se crea el controlador de la ventana y se le pasa la view
+					CtlCliente ctlActulizarCliente=new CtlCliente(viewCliente);
+
+
+					 Cliente myCliente=clienteDao.buscarPorId(view.getModelo().getCuenta(filaPulsada).getCliente().getId());
+
+
+
+
+					//se llama del metodo actualizar marca para que se muestre la ventanda y procesa la modificacion
+					boolean resultado=ctlActulizarCliente.actualizarCliente(myCliente);
+
+					//se proceso el resultado de modificar la marca
+					if(resultado){
+
+						this.view.getRdbtnId().setSelected(true);
+						view.getTxtBuscar().setText(cuentaSelected.getCodigoCuenta()+"");
+						ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
+						this.actionPerformed(actionEvent);
+
+						view.getTxtBuscar().selectAll();
+						view.getTxtBuscar().requestFocusInWindow();
+
+					}
+
+					ctlActulizarCliente=null;
+					viewCliente=null;
+
+
+				}
+
+				break;
 
 			case "CAMBIOCOMBOBOXRUTA":
 

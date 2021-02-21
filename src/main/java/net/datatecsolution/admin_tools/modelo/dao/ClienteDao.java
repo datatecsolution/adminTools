@@ -384,7 +384,14 @@ public class ClienteDao extends ModeloDaoBasic {
 				myCliente.setTelefono(res.getString("telefono"));
 				myCliente.setCelular(res.getString("movil"));
 				myCliente.setTipoCliente(res.getInt("tipo_cliente"));
-				
+
+
+
+				myCliente.setDireccion(res.getString("direccion"));
+
+
+				myCliente.setRtn(res.getString("rtn"));
+
 				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
 				myCliente.setVendedor(unVendedor);
 
