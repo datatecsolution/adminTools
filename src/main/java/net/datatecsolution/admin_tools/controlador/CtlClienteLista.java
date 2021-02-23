@@ -212,7 +212,7 @@ public class CtlClienteLista implements ActionListener, MouseListener {
         	if (e.getClickCount() == 2) {
         		
         		myCliente=this.view.getModelo().getCliente(filaPulsada);
-        		//myArticulo=this.view.getModelo().getArticulo(filaPulsada);//se consigue el Marca de la fila seleccionada
+        		//myArticulo=this.view.getModelo().getArticulo(filaPulsada);//se onsigue el Marca de la fila seleccionada
 	           
 	        	//crea la ventana para ingresar un nuevo proveedor
 				ViewCrearCliente viewCliente= new ViewCrearCliente();
