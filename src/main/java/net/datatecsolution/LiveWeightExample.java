@@ -24,7 +24,7 @@ public class LiveWeightExample implements StatusUpdateListener {
 
    
 	private Scale scale;
-    private boolean bAsyncMode = false;
+    public boolean bAsyncMode = false;
     private boolean bUseFiveDigits = false;
     private String sUnits = "";
 

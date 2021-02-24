@@ -1,6 +1,14 @@
 package net.datatecsolution.admin_tools.controlador;
 
 
+import jpos.JposException;
+import jpos.Scale;
+import jpos.ScaleConst;
+import jpos.Scanner;
+import jpos.events.DataEvent;
+import jpos.events.DataListener;
+import jpos.events.StatusUpdateEvent;
+import jpos.events.StatusUpdateListener;
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.*;
@@ -12,10 +20,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
+public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener, StatusUpdateListener,DataListener {
 	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
@@ -41,9 +50,22 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
+
+	//clase para manejar scanner y scale por javapos
+	private Scale scale;
+	private Scanner scanner;
+	private ScannerScaleManager scannerScaleManager;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
+
+
+		//set scanne and scale with javaPos
+		scale=new Scale();
+		scanner=new Scanner();
+		scannerScaleManager=new ScannerScaleManager(scanner,scale);
+		scanner.addDataListener(this);
+		scale.addStatusUpdateListener(this);
 	
 		
 
@@ -71,6 +93,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		
 		this.setCierre();
 		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
+
+
 	
 		
 	}
@@ -2681,11 +2705,16 @@ public void guardarRemotoCredito(){
 		//this.myArticuloDao.desconectarBD();
 		//this.myFactura.setIdFactura(-1);
 		this.view.setVisible(false);
+		scannerScaleManager.disconnectScale();
+		scannerScaleManager.connectScanner();
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
+
+		scannerScaleManager.disconnectScale();
+		scannerScaleManager.connectScanner();
 		
 	}
 
@@ -3066,4 +3095,90 @@ public void guardarRemotoCredito(){
 		
 	}
 
+	@Override
+	public void dataOccurred(DataEvent dataEvent) {
+
+		//Data event handler for barcode reads from the scanner.
+		byte[] scanData = new byte[]{};
+		byte[] scanDataLabel = new byte[]{};
+		int scanDataType = -1;
+		try {
+			scanData = scanner.getScanData(); //Get raw label data
+			scanDataLabel = scanner.getScanDataLabel(); //get decoded label data
+			scanDataType = scanner.getScanDataType(); //get label symbology
+		} catch (JposException je) {
+			System.err.println("ERROR JposException during DataEvent, " + je);
+		}
+
+		//Verify the triggered event was a label read
+		if (scanDataLabel.length > 0) {
+			String sScanData = new String(scanData);
+			String sScanDataLabel = new String(scanDataLabel);
+			//String sType = getBarcodeTypeName(scanDataType);
+			//System.out.println("Raw Data: " + sScanData + ", Label Data: "
+			//		+ sScanDataLabel + ", Type: " + sType);
+
+			view.getTxtBuscar().setText(sScanDataLabel);
+
+		}
+
+		//data events are auto-disabled after event trigger, must re-enable
+		//to get future barcode reads
+		try {
+			scanner.setDataEventEnabled(true);
+		} catch (JposException je) {
+			System.err.println("ERROR: Could not enable data event after "
+					+ "trigger, will be unable to receive barcodes: " + je);
+		}
+
+	}
+
+	@Override
+	public void statusUpdateOccurred(StatusUpdateEvent sue) {
+
+		int nStatus = sue.getStatus();
+
+		switch (nStatus) {
+			case ScaleConst.SCAL_SUE_STABLE_WEIGHT:
+				int weight = 0;
+				try {
+					weight = scale.getScaleLiveWeight();
+				} catch (JposException je) {
+					System.err.println("ERROR: could not get weight data, "
+							+ je);
+					break;
+				}
+				//verify that asynchronous mode is not set since it is not
+				//currently supported
+				if (!scannerScaleManager.bAsyncMode) {
+					//format weight data from raw integer
+					DecimalFormat formatter = new DecimalFormat(
+							"Stable Weight: 0.00 " +scannerScaleManager. sUnits);
+					if (scannerScaleManager.bUseFiveDigits) {
+						formatter.setMinimumFractionDigits(3);
+					}
+					System.out.println(formatter.format((float) weight / 1000));
+				}
+				break;
+			case ScaleConst.SCAL_SUE_WEIGHT_OVERWEIGHT:
+				System.out.println("Over Weight: --.--");
+				break;
+			case ScaleConst.SCAL_SUE_WEIGHT_UNDER_ZERO:
+				System.out.println("Under Zero: --.--");
+				break;
+			case ScaleConst.SCAL_SUE_WEIGHT_UNSTABLE:
+				System.out.println("Unstable Weight: --.--");
+				break;
+			case ScaleConst.SCAL_SUE_WEIGHT_ZERO:
+				System.out.println("Zero Weight: 0");
+				break;
+			case ScaleConst.SCAL_SUE_NOT_READY:
+				System.out.println("Scale not Ready: --.--");
+				break;
+			default:
+				break;
+
+		}
+
+	}
 }

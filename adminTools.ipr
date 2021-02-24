@@ -745,15 +745,6 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.javapos:javapos:1.14.0">
-      <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javapos/javapos/1.14.0/f407b83e2f00d300c6913c41f4df3d8d8aa0e2a2/javapos-1.14.0.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javapos/javapos/1.14.0/98eb8c5a3771c7b376846a19ee15b72a487f995b/javapos-1.14.0-sources.jar!/" />
-      </SOURCES>
-    </library>
     <library name="Gradle: org.jfree:jcommon:1.0.23">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jcommon/1.0.23/a316f336ca996e0c6bec4e4fbd49be8f5e1c3968/jcommon-1.0.23.jar!/" />
