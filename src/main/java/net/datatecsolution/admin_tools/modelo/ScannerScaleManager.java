@@ -126,7 +126,7 @@ public class ScannerScaleManager {
         }
 
         //get configuration data
-       // getScaleInfo();
+        getScaleInfo();
 
         //enables status notify for the scale instance. This must be done before
         //enabling the scale for live weight to start.
@@ -236,5 +236,50 @@ public class ScannerScaleManager {
         } catch (JposException je) {
             //ignoring exception for this example
         }
+    }
+
+    /**
+     * Convenience method for this example.
+     */
+    private void getScaleInfo() {
+        try {
+            //scale asynchronous mode
+            bAsyncMode = scale.getAsyncMode();
+            //scale digit length
+            bUseFiveDigits = (Integer.toString(
+                    scale.getMaximumWeight()).length() == 5 ? true : false);
+            //scale units
+            sUnits = getUnitName(scale.getWeightUnit());
+        } catch (JposException je) {
+            System.err.println("ERROR: could not get scale info, " + je);
+        }
+    }
+
+    /**
+     * Convenience method that decodes the weight unit name from the unit code.
+     *
+     * @param code int indicating the unit code
+     * @return String containing the unit name
+     */
+    private String getUnitName(int code) {
+        String sName = "";
+        switch (code) {
+            case ScaleConst.SCAL_WU_GRAM:
+                sName = "grams";
+                break;
+            case ScaleConst.SCAL_WU_KILOGRAM:
+                sName = "kilograms";
+                break;
+            case ScaleConst.SCAL_WU_OUNCE:
+                sName = "ounces";
+                break;
+            case ScaleConst.SCAL_WU_POUND:
+                sName = "pounds";
+                break;
+            default:
+                sName = "pounds";
+                break;
+        }
+        return sName;
     }
 }

@@ -14,6 +14,8 @@ import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
@@ -24,7 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener, StatusUpdateListener,DataListener {
+public class CtlFacturarFrame  implements InternalFrameListener, ActionListener, MouseListener, TableModelListener, KeyListener, StatusUpdateListener,DataListener {
 	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
@@ -55,6 +57,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Scale scale;
 	private Scanner scanner;
 	private ScannerScaleManager scannerScaleManager;
+	private DetalleFactura itemPesado=new DetalleFactura();
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -140,58 +143,46 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 						
 						this.myArticulo=this.myArticuloDao.buscarArticuloBarraCod(busca);
 						
-						
-						
-						
-						
-						if(myArticulo!=null){
-							
-							//activar para redondiar el precio de venta final
-							if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-								myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
-							}
-							
-							//conseguir los precios del producto
-							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+
+						if(myArticulo!=null) {
+
+                            //activar para redondiar el precio de venta final
+                            if (ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()) {
+                                myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+                            }
+
+                            //conseguir los precios del producto
+                            myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 
 							//facturar sin tomar en cuenta el inventario
 							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
 							{
-
-								
 								//activar para redondiar el precio de venta final
 								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-								
 									myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 								}
-								
-								//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);  
-								
-								//si es un articulo tipo bien se puede agregar en cualquier caja
-								if(myArticulo.getTipoArticulo()==1){
-									//se agrega articulo a la tabla
-									this.view.getModeloTabla().setArticulo(myArticulo);
-									
-									calcularTotales();
-									this.view.getModeloTabla().agregarDetalle();
-									
-									selectRowInset();
-								}else{
-									
-									//se filtra para que la caja por defecto sera la unica que puede facturar servicios
-									if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
-										//se agrega articulo a la tabla
-										this.view.getModeloTabla().setArticulo(myArticulo);
-										
-										calcularTotales();
-										this.view.getModeloTabla().agregarDetalle();
-										
-										selectRowInset();
-									}else{
-										JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
-										view.getTxtBuscar().setText("");
-									}
-								}
+                                //si es un articulo tipo bien se puede agregar en cualquier caja
+                                if(myArticulo.getTipoArticulo()==1){
+                                    //se agrega articulo a la tabla
+                                    this.view.getModeloTabla().setArticulo(myArticulo);
+                                    calcularTotales();
+                                    this.view.getModeloTabla().agregarDetalle();
+                                    selectRowInset();
+									comprobarItemPesado();
+                                }else{
+                                        //se filtra para que la caja por defecto sera la unica que puede facturar servicios
+                                        if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
+                                            //se agrega articulo a la tabla
+                                            this.view.getModeloTabla().setArticulo(myArticulo);
+                                            calcularTotales();
+                                            this.view.getModeloTabla().agregarDetalle();
+                                            selectRowInset();
+											comprobarItemPesado();
+                                         }else{
+                                                 JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+                                                view.getTxtBuscar().setText("");
+                                             }
+                                    }
 								
 								
 							}else{
@@ -206,9 +197,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 											//se comprueba que exista el producto en el inventario
 											existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
 										double cantidad=1;
-
 										double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
 
 										if(buscarEnRequisicionCantidad>0){
@@ -230,6 +219,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 													this.view.getModeloTabla().agregarDetalle();
 													
 													selectRowInset();
+													comprobarItemPesado();
 														
 											}else{//fin se la comprobacion de la existencia
 												
@@ -281,7 +271,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 														calcularTotales();
 														this.view.getModeloTabla().agregarDetalle();
 														
-														selectRowInset();	
+														selectRowInset();
+														comprobarItemPesado();
 													}
 													
 												}else{//sino tiene insumos el servicio se agrega directamente a la factura
@@ -292,6 +283,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 														this.view.getModeloTabla().agregarDetalle();
 														
 														selectRowInset();
+														comprobarItemPesado();
 												}
 												
 												
@@ -2201,8 +2193,6 @@ public void calcularTotales(){
 			
 			//conseguir los precios del producto
 			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-			
-			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
 
 
 			//se verfica en la configuracion si se puede facturar sin inventario
@@ -2226,6 +2216,7 @@ public void calcularTotales(){
 					this.view.getModeloTabla().agregarDetalle();
 					
 					selectRowInset();
+					comprobarItemPesado();
 				}else{
 					
 					//se filtra para que la caja por defecto sera la unica que puede facturar servicios
@@ -2237,6 +2228,7 @@ public void calcularTotales(){
 						this.view.getModeloTabla().agregarDetalle();
 						
 						selectRowInset();
+						comprobarItemPesado();
 					}else{
 						JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
 					}
@@ -2277,6 +2269,7 @@ public void calcularTotales(){
 								this.view.getModeloTabla().agregarDetalle();
 								
 								selectRowInset();
+								comprobarItemPesado();
 									
 						}else{//fin se la comprobacion de la existencia
 
@@ -2289,33 +2282,25 @@ public void calcularTotales(){
 					
 						//se filtra para que la caja por defecto sera la unica que puede facturar servicios
 						if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
-							
 							//comprobar la existencia de los insumos
 							List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
-							
 							//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
 							if(insumos!=null && insumos.size()>0){
 								boolean exist=false;
 								//recoremos los insumos comprobando si tiene existencia
 								for(int xx=0;xx<insumos.size();xx++){
-									
 									//se comprueba que exista el insumo en el inventario
 									existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-									//insumos.get(xx).getCantidad().multiply(new BigDecimal(e))
-									
 									//se valida la existencia solo para los bienes
 									if(insumos.get(xx).getArticulo().getTipoArticulo()==1){
 										//se comprueba la existencia del articulo en la farmacia
 										if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
 											//se establece que esiste 
 											exist=true;
-											
-											
-											
 										}else if(insumos.get(xx).getArticulo().getTipoArticulo()==2){//fin se la comprobacion de la existencia
-											exist=false;
-											JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
-											break;
+											        exist=false;
+											        JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+											        break;
 										}
 									}else{//si es un servicio se pasa por alto la validacion
 										exist=true;
@@ -2336,7 +2321,8 @@ public void calcularTotales(){
 									calcularTotales();
 									this.view.getModeloTabla().agregarDetalle();
 									
-									selectRowInset();	
+									selectRowInset();
+									comprobarItemPesado();
 								}
 								
 							}else{//sino tiene insumos el servicio se agrega directamente a la factura
@@ -2353,6 +2339,7 @@ public void calcularTotales(){
 									this.view.getModeloTabla().agregarDetalle();
 									
 									selectRowInset();
+									comprobarItemPesado();
 							}
 							
 							
@@ -2371,6 +2358,33 @@ public void calcularTotales(){
 		ctlArticulo=null;
 		
 	}
+
+	private void comprobarItemPesado() {
+		filaPulsada=this.view.getTableDetalle().getSelectedRow();
+
+		if(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getMedida()==2){
+
+			view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(-1));
+
+
+				try {
+					Thread.sleep(5 * 1000);
+				} catch (Exception ee) {
+					System.out.println(ee);
+				}
+
+				if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
+					view.getModeloTabla().eliminarDetalle(filaPulsada);
+					myArticulo=null;
+					JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+
+				}else {
+
+				}
+
+		}
+	}
+
 	private void setEmptyView(){
 		//se estable la tabla de detalles vacia
 		view.getModeloTabla().setEmptyDetalles();
@@ -2675,72 +2689,8 @@ public void guardarRemotoCredito(){
 	    this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
 	    this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
 	    this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
-		
-		/*<<<<<<<<<<<<<<<selecionar la ultima fila creada>>>>>>>>>>>>>>>*/
-		/*int row =  this.view.geTableDetalle().getRowCount () - 2;
-		JOptionPane.showMessageDialog(view, row);
-		/Rectangle rect = this.view.geTableDetalle().getCellRect(row, 0, true);
-		this.view.geTableDetalle().scrollRectToVisible(rect);
-		this.view.geTableDetalle().clearSelection();*/
-		//this.view.geTableDetalle().setRowSelectionInterval(row, row);
-		//view.geTableDetalle().setRowSelectionInterval(row, row);
-		//view.geTableDetalle().clearSelection();
-		//view.geTableDetalle().addRowSelectionInterval(row,row);
-		//TablaModeloFactura modelo = (TablaModeloFactura)this.view.geTableDetalle().getModel();
-		//modelo.fireTableDataChanged();
-		//this.view.getModeloTabla().fireTableDataChanged();
 	}
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		//facturaDao.desconectarBD();
-		//this.clienteDao.desconectarBD();
-		//this.myArticuloDao.desconectarBD();
-		//this.myFactura.setIdFactura(-1);
-		this.view.setVisible(false);
-		scannerScaleManager.disconnectScale();
-		scannerScaleManager.connectScanner();
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-		scannerScaleManager.disconnectScale();
-		scannerScaleManager.connectScanner();
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public void cargarFacturaView(){
 		
@@ -3119,6 +3069,8 @@ public void guardarRemotoCredito(){
 			//		+ sScanDataLabel + ", Type: " + sType);
 
 			view.getTxtBuscar().setText(sScanDataLabel);
+			ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCARARTICULO2");
+			actionPerformed(actionEvent);
 
 		}
 
@@ -3157,28 +3109,93 @@ public void guardarRemotoCredito(){
 					if (scannerScaleManager.bUseFiveDigits) {
 						formatter.setMinimumFractionDigits(3);
 					}
+
 					System.out.println(formatter.format((float) weight / 1000));
+
+
+
+					BigDecimal cantidadSaldoItem=new BigDecimal((float) weight / 1000);
+					filaPulsada = this.view.getTableDetalle().getSelectedRow();
+					this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+					this.calcularTotales();
+
+
+
+
+
 				}
 				break;
 			case ScaleConst.SCAL_SUE_WEIGHT_OVERWEIGHT:
 				System.out.println("Over Weight: --.--");
+				//JOptionPane.showMessageDialog(view,"Exceso de peso","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
 				break;
 			case ScaleConst.SCAL_SUE_WEIGHT_UNDER_ZERO:
 				System.out.println("Under Zero: --.--");
+				//JOptionPane.showMessageDialog(view,"Peso bajo cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
 				break;
 			case ScaleConst.SCAL_SUE_WEIGHT_UNSTABLE:
 				System.out.println("Unstable Weight: --.--");
+				//JOptionPane.showMessageDialog(view,"Peso inestable","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
 				break;
 			case ScaleConst.SCAL_SUE_WEIGHT_ZERO:
 				System.out.println("Zero Weight: 0");
+				//JOptionPane.showMessageDialog(view,"Peso cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
 				break;
 			case ScaleConst.SCAL_SUE_NOT_READY:
 				System.out.println("Scale not Ready: --.--");
+				JOptionPane.showMessageDialog(view,"La pesa no esta lista","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
 				break;
 			default:
 				break;
 
 		}
+
+	}
+
+	@Override
+	public void internalFrameOpened(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameClosing(InternalFrameEvent e) {
+
+		scanner.removeDataListener(this);
+		scale.removeStatusUpdateListener(this);
+
+		scannerScaleManager.disconnectScale();
+		scannerScaleManager.disconnectScanner();
+
+	}
+
+	@Override
+	public void internalFrameClosed(InternalFrameEvent e) {
+
+		scanner.removeDataListener(this);
+		scale.removeStatusUpdateListener(this);
+
+		scannerScaleManager.disconnectScale();
+		scannerScaleManager.disconnectScanner();
+
+	}
+
+	@Override
+	public void internalFrameIconified(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameDeiconified(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameActivated(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameDeactivated(InternalFrameEvent e) {
 
 	}
 }

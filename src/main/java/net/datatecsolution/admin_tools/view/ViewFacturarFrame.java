@@ -601,6 +601,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 	}
 	public void conectarContralador(CtlFacturarFrame c){
 		ctl=c;
+
+
+		this.addInternalFrameListener(c);
 		
 		txtIdcliente.addActionListener(c);
 		txtIdcliente.setActionCommand("BUSCARCLIENTE");

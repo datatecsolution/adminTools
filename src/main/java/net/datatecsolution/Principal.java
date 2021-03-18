@@ -35,29 +35,11 @@ public class Principal {
         // TODO Auto-generated method stub
 
 
-        /*
-        SerialPort serialPort = new SerialPort("/dev/tty.usbmodem1435");
-        try {
-            serialPort.openPort();//Open serial port
-            serialPort.setParams(4800, 8, 1, 0);//Set params.
-            while(true) {
-                byte[] buffer = serialPort.readBytes(10);
-                if(buffer!=null) {
-                    for(byte b:buffer) {
-                        System.out.print(b);
-                    }
-                }
-            }
-        } catch (SerialPortException e) {
-            e.printStackTrace();
-        }
-
-         */
 
 
 
         //se cargan todos los reportes
-     //  AbstractJasperReports.loadFileReport();
+    //  AbstractJasperReports.loadFileReport();
 
 
         //se establece la conecion a la base de datos

@@ -23,6 +23,10 @@ public class Articulo {
 	private String codigoBarra="";
 	private double existencia;
 	private boolean estado=true;
+
+
+
+	private Integer medida=1; //1=unidad, 2=peso
 	public Articulo(){
 		
 	}
@@ -183,6 +187,14 @@ public class Articulo {
 	 */
 	public void setEstado(boolean estado) {
 		this.estado = estado;
+	}
+
+	public Integer getMedida() {
+		return medida;
+	}
+
+	public void setMedida(Integer medida) {
+		this.medida = medida;
 	}
 
 

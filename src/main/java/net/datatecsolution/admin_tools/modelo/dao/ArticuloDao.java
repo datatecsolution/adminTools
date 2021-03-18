@@ -42,6 +42,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 							+ "articulo.cod_articulo, "
 							+" articulo.tipo_articulo, "
 							+" articulo.estado, "
+							+" articulo.medida, "
 							+" marcas.codigo_marca, "
 							+" marcas.descripcion AS marca, "
 							+" impuesto.codigo_impuesto, "
@@ -180,6 +181,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
 				unArticulo.setEstado(res.getBoolean("estado"));
+				unArticulo.setMedida(res.getInt("medida"));
 				articulos.add(unArticulo);
 			 }
 					
@@ -253,6 +255,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				//se estable los codigos de bara encontrados al objeto myArticulo;
 				unArticulo.setCodBarras(myCodBarraDao.getCodsArticulo(unArticulo.getId()));
 				unArticulo.setEstado(res.getBoolean("estado"));
+				unArticulo.setMedida(res.getInt("medida"));
 				articulos.add(unArticulo);
 			 }
 					
@@ -318,6 +321,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setMedida(res.getInt("medida"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				
 			 }
@@ -378,6 +382,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setMedida(res.getInt("medida"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				
 				
@@ -440,6 +445,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setMedida(res.getInt("medida"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				
 			 }
@@ -499,6 +505,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setMedida(res.getInt("medida"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				
 			 }
@@ -582,6 +589,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setExistencia(res.getInt("existencia"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				unArticulo.setEstado(res.getBoolean("estado"));
+				unArticulo.setMedida(res.getInt("medida"));
 				
 			 }
 			//JOptionPane.showMessageDialog(null, unArticulo);		
@@ -664,13 +672,14 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET articulo = ?, codigo_marca = ? ,codigo_impuesto = ?, precio_articulo=?,tipo_articulo=? WHERE codigo_articulo = ?");
+			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET articulo = ?, codigo_marca = ? ,codigo_impuesto = ?, precio_articulo=?,tipo_articulo=?,medida=? WHERE codigo_articulo = ?");
 			psConsultas.setString(1,articulo.getArticulo());
 			psConsultas.setInt(2, articulo.getMarcaObj().getId());
 			psConsultas.setInt(3, articulo.getImpuestoObj().getId());
 			psConsultas.setDouble(4, articulo.getPrecioVenta());
 			psConsultas.setDouble(5, articulo.getTipoArticulo());
-			psConsultas.setInt(6, articulo.getId());
+			psConsultas.setInt(6, articulo.getMedida());
+			psConsultas.setInt(7, articulo.getId());
 			
 			resultado=psConsultas.executeUpdate();
 			//JOptionPane.showMessageDialog(null, a+","+resultado );
@@ -910,13 +919,14 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		{
 			con = ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas=con.prepareStatement( super.getQueryInsert()+" (articulo,codigo_marca,codigo_impuesto,precio_articulo,tipo_articulo) VALUES (?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (articulo,codigo_marca,codigo_impuesto,precio_articulo,tipo_articulo,medida) VALUES (?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			
 			psConsultas.setString( 1, myArticulo.getArticulo() );
 			psConsultas.setInt( 2, myArticulo.getMarcaObj().getId() );
 			psConsultas.setDouble( 3, myArticulo.getImpuestoObj().getId());
 			psConsultas.setDouble(4, myArticulo.getPrecioVenta());
 			psConsultas.setInt(5, myArticulo.getTipoArticulo());
+			psConsultas.setInt(6, myArticulo.getMedida());
 			
 			resultado=psConsultas.executeUpdate();
 			
