@@ -22,7 +22,7 @@ public class TrProveedor implements TableCellRenderer {
             cbIvaIncluido.setBackground(Color.white);
         }
         
-        if(column==9){
+        if(column==11){
         	 if(value !=null)
         	 {
 	        	Boolean uno=(Boolean)value;
@@ -53,7 +53,7 @@ public class TrProveedor implements TableCellRenderer {
             etiqueta.setBackground(new Color(254, 172, 172));
         }
         
-        if(column!=9)
+        if(column!=11)
         	return etiqueta;
         else
         	return cbIvaIncluido;

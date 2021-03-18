@@ -132,6 +132,44 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 					precioVenta.setCodigoPrecio(1);//se establece 1 porque es el codigo del precio del publico general
 					
 					this.preciosDao.actualizar(precioVenta);//se actualiza el precio
+
+
+
+					///==============================
+
+					PrecioArticulo precioVenta2=null;
+					for(int aa=0;aa<fac.getDetalles().get(x).getArticulo().getPreciosVenta().size();aa++){
+						if(fac.getDetalles().get(x).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==2){
+							precioVenta2=fac.getDetalles().get(x).getArticulo().getPreciosVenta().get(aa);
+						}
+					}
+
+					//se actualiza el precio costo en la base de datos
+					if(fac.getDetalles().get(x).getArticulo().getPreciosVenta()!=null && precioVenta2!=null){
+						//el en la tabla el codigo tres es la base de datos
+						//PrecioArticulo preciocosto=precioCosto
+						this.preciosDao.actualizar(precioVenta2);//se actualiza el precio
+					}
+
+
+
+					///==============================
+
+					PrecioArticulo precioVenta3=null;
+					for(int aa=0;aa<fac.getDetalles().get(x).getArticulo().getPreciosVenta().size();aa++){
+						if(fac.getDetalles().get(x).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==3){
+							precioVenta3=fac.getDetalles().get(x).getArticulo().getPreciosVenta().get(aa);
+						}
+					}
+
+					//se actualiza el precio costo en la base de datos
+					if(fac.getDetalles().get(x).getArticulo().getPreciosVenta()!=null && precioVenta3!=null){
+						//el en la tabla el codigo tres es la base de datos
+						//PrecioArticulo preciocosto=precioCosto
+						this.preciosDao.actualizar(precioVenta3);//se actualiza el precio
+					}
+
+					////================================
 					
 					PrecioArticulo precioCosto=null;
 					for(int aa=0;aa<fac.getDetalles().get(x).getArticulo().getPreciosVenta().size();aa++){

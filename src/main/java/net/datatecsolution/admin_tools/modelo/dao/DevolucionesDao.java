@@ -9,6 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DevolucionesDao extends ModeloDaoBasic {
@@ -48,10 +49,12 @@ public class DevolucionesDao extends ModeloDaoBasic {
 		
 		return resultado;
 	}
-	public DetalleFactura getDevolucionArticulo(int idFactura,int idArticulo){
+	public List<DetalleFactura> getDevolucionArticulo(int idFactura,int idArticulo){
+
+
+		List<DetalleFactura> detalles=new ArrayList<DetalleFactura>();
 		
-		
-		DetalleFactura unDetalle=new DetalleFactura();
+
 
         Connection con = null;
   
@@ -69,6 +72,8 @@ public class DevolucionesDao extends ModeloDaoBasic {
 			//System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
 			while(res.next()){
+
+				DetalleFactura unDetalle=new DetalleFactura();
 				
 				existe=true;
 				unDetalle.setId(res.getInt("codigo_devolucion"));
@@ -83,6 +88,8 @@ public class DevolucionesDao extends ModeloDaoBasic {
 				unDetalle.setSubTotal(res.getBigDecimal("subtotal"));
 				unDetalle.setDescuentoItem(res.getBigDecimal("descuento"));
 				unDetalle.setTotal(res.getBigDecimal("total"));
+
+				detalles.add(unDetalle);
 
 				
 				
@@ -111,7 +118,7 @@ public class DevolucionesDao extends ModeloDaoBasic {
 		
 		
 			if (existe) {
-				return unDetalle;
+				return detalles;
 			}
 			else return null;
 	}

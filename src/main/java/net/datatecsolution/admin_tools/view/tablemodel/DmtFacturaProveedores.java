@@ -15,7 +15,7 @@ import java.util.List;
 public class DmtFacturaProveedores extends AbstractTableModel {
 	
 	final private String []columnNames= {
-			"Id Articulo", "Nombre", "Cantidad", "Precio Unidad","SubTotal","Impuesto", "Total","Precio venta","Precio costo","IVA incluido?"
+			"Id Articulo", "Nombre", "Cantidad", "Precio Unidad","SubTotal","Impuesto", "Total","P/venta","P/venta 2","P/venta 3","P/costo","IVA incluido?"
 		};
 	private List<DetalleFacturaProveedor> detallesFactura=new ArrayList<DetalleFacturaProveedor>();
 	private double totalCompra=0;
@@ -140,7 +140,35 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		        			
 		        		}else
 		        			return null;
-		        case 8:
+
+				case 8:
+					PrecioArticulo precioVenta2=null;
+
+					for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
+						if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==2){
+							precioVenta2=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
+						}
+					}
+					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && precioVenta2!=null){
+
+
+						return precioVenta2.getPrecio();
+
+					}else
+						return null;
+				case 9:
+					PrecioArticulo precioVenta3=null;
+
+					for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
+						if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==3){
+							precioVenta3=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
+						}
+					}
+					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && precioVenta3!=null){
+						return precioVenta3.getPrecio();
+					}else
+						return null;
+		        case 10:
 		        	PrecioArticulo precioCosto=null;
 		        	
 		        	for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
@@ -156,7 +184,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 	        		}else
 	        			return null;
 		        	
-		        case 9:
+		        case 11:
 		        	return detallesFactura.get(rowIndex).isIvaIncludo();
 		        	
 		        default:
@@ -189,7 +217,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		
 		String v = null;
 		Boolean vv = true;
-		if(columnIndex==9)
+		if(columnIndex==11)
 			vv=(Boolean) value;
 		else
 			v=(String) value;
@@ -243,7 +271,54 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 					detallesFactura.get(rowIndex).getArticulo().setPrecioVenta(new Double(v));
 					fireTableCellUpdated(rowIndex, columnIndex);
 				break;
+
 			case 8:
+				PrecioArticulo precioVenta2=null;
+
+				for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
+					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==2){
+						precioVenta2=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
+					}
+				}
+				if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size()>=3){
+
+					precioVenta2.setPrecio(new BigDecimal(v));
+					fireTableCellUpdated(rowIndex, columnIndex);
+
+				}else{
+					PrecioArticulo precioVent2=new PrecioArticulo();
+					precioVent2.setCodigoArticulo(detallesFactura.get(rowIndex).getArticulo().getId());
+					precioVent2.setCodigoPrecio(2);
+					precioVent2.setPrecio(new BigDecimal(v));
+					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent2);
+					//JOptionPane.showMessageDialog(null,"El articulo no tiene precio de costo.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+				}
+
+				break;
+			case 9:
+				PrecioArticulo precioVenta3=null;
+
+				for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
+					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==3){
+						precioVenta3=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
+					}
+				}
+				if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size()>=3){
+
+					precioVenta3.setPrecio(new BigDecimal(v));
+					fireTableCellUpdated(rowIndex, columnIndex);
+
+				}else{
+					PrecioArticulo precioVent3=new PrecioArticulo();
+					precioVent3.setCodigoArticulo(detallesFactura.get(rowIndex).getArticulo().getId());
+					precioVent3.setCodigoPrecio(3);
+					precioVent3.setPrecio(new BigDecimal(v));
+					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent3);
+					//JOptionPane.showMessageDialog(null,"El articulo no tiene precio de costo.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+				}
+
+				break;
+			case 10:
 				PrecioArticulo precioCosto=null;
 	        	
 	        	for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
@@ -266,7 +341,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
         		}
 	        	
 				break;
-			case 9:
+			case 11:
 				detallesFactura.get(rowIndex).setIvaIncludo(vv);
 				fireTableCellUpdated(rowIndex, columnIndex);
 				break;
@@ -280,7 +355,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 @Override
 public Class getColumnClass(int columnIndex) {
 	//        return getValueAt(0, columnIndex).getClass();
-	if(columnIndex==9)
+	if(columnIndex==11)
 		return Boolean.class;
 	else
 		return String.class;
@@ -311,6 +386,10 @@ public boolean isCellEditable(int rowIndex, int columnIndex) {
 	if(columnIndex==8)
 		resul=true;
 	if(columnIndex==9)
+		resul=true;
+	if(columnIndex==10)
+		resul=true;
+	if(columnIndex==11)
 		resul=true;
 	
 	

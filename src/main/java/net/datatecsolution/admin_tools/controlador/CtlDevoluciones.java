@@ -13,6 +13,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 public class CtlDevoluciones implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener {
 	
@@ -51,17 +52,34 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 					if(view.getModeloTabla().getDetalles().get(x).getAccion()==true){
 						//se pregunta la cantidad del item que desea devolver 
 						String entrada=JOptionPane.showInputDialog(view.getModeloTabla().getDetalles().get(x).getArticulo().getArticulo()+" cantidad a devolver:");
+
+						//conseguir la cantidad total del producto en la factura
+						BigDecimal canFactura=new BigDecimal(0.0);
+						for(int cc=0;cc<view.getModeloTabla().getDetalles().size();cc++){
+							if(view.getModeloTabla().getDetalles().get(cc).getArticulo().getId()==view.getModeloTabla().getDetalles().get(x).getArticulo().getId()){
+								canFactura=canFactura.add(view.getModeloTabla().getDetalles().get(cc).getCantidad());
+							}
+						}
 						
 						//se verifica la existencia de una devolucion previa
-						DetalleFactura unDetalle=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), view.getModeloTabla().getDetalles().get(x).getArticulo().getId());
+						List<DetalleFactura> detallesDevs=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), view.getModeloTabla().getDetalles().get(x).getArticulo().getId());
 						
-						if(unDetalle!=null){
+						if(detallesDevs!=null){
+
+							//conseguir la cantidad que se devolvio en los diferentes item
+							BigDecimal can=new BigDecimal(0.0);
+							for(int c=0;c<detallesDevs.size();c++)
+							{
+								can=can.add(detallesDevs.get(c).getCantidad());
+							}
+
+
 							//se verifica que la cantidad nueva a devolver no exceda lo facturado y ya devolvido
-							if(unDetalle.getCantidad().add(new BigDecimal(entrada)).doubleValue() <= view.getModeloTabla().getDetalles().get(x).getCantidad().doubleValue()){
+							if(can.add(new BigDecimal(entrada)).doubleValue() <= canFactura.doubleValue()){
 
 
 								//se recoge la row de la factura
-								unDetalle=view.getModeloTabla().getDetalles().get(x);
+								DetalleFactura unDetalle=view.getModeloTabla().getDetalles().get(x);
 
 								//se cambia la cantidad en la row
 								unDetalle.setCantidad(new BigDecimal(entrada));
@@ -77,19 +95,20 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 
 								//se establece el nuevo total
 								unDetalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-								
+
+								//se manda a guardar la devolucion
+								devolucionDao.agregarDetalle(view.getModeloTabla().getDetalles().get(x), myFactura.getIdFactura());
+
 								resultado=true;
 							}else{
 								JOptionPane.showMessageDialog(view, "No puede devolver la cantidad de "+entrada+" del articulo "+view.getModeloTabla().getDetalles().get(x).getArticulo().getArticulo(),"Error de validacion!!",JOptionPane.ERROR_MESSAGE);
 								resultado=false;
 							}
-						}else{
-							
-							if(new BigDecimal(entrada).floatValue()<=view.getModeloTabla().getDetalles().get(x).getCantidad().doubleValue()){
+						}else if(new BigDecimal(entrada).floatValue()<=canFactura.doubleValue()){
 
 
 								//se recoge la row de la factura
-								unDetalle=view.getModeloTabla().getDetalles().get(x);
+								DetalleFactura unDetalle=view.getModeloTabla().getDetalles().get(x);
 								
 								//se cambia la cantidad en la row
 								unDetalle.setCantidad(new BigDecimal(entrada));
@@ -116,7 +135,7 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 								resultado=false;
 							}
 							
-						}
+
 					}
 				}
 				

@@ -327,7 +327,7 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 									//se recorre los detalles de la factura
 									for(int x=0;x<myFactura.getDetalles().size();x++){
 										//se verifica la existencia de una devolucion previa
-										DetalleFactura unDetalle=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), myFactura.getDetalles().get(x).getArticulo().getId());
+										List<DetalleFactura> unDetalle=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), myFactura.getDetalles().get(x).getArticulo().getId());
 
 										if(unDetalle==null){//sino hay una devolucion previa se devuelve toda la cantidad
 											//se registra la devolucion
@@ -335,10 +335,39 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 											resultado=true;
 
 										}else{//si existe una devolucion previa se resta la devolucion previa y se registra solo el restante
+
+											//conseguir la cantidad que se devolvio en los diferentes item
+											BigDecimal can=new BigDecimal(0.0);
+											for(int c=0;c<unDetalle.size();c++)
+											{
+												can=can.add(unDetalle.get(c).getCantidad());
+											}
+
+											//conseguir la cantidad total en la factura
+											BigDecimal canFactura=new BigDecimal(0.0);
+											for(int cc=0;cc<myFactura.getDetalles().size();cc++){
+												if(myFactura.getDetalles().get(cc).getArticulo().getId()==myFactura.getDetalles().get(x).getArticulo().getId()){
+													canFactura=canFactura.add(myFactura.getDetalles().get(cc).getCantidad());
+												}
+											}
+
 											//se verifica que al resta la devolucion existente sea mayor que cero
-											if(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad()).floatValue()>0){
+											if(canFactura.subtract(can).floatValue()>0){
 												//se cambia la cantidad en el modelo
-												myFactura.getDetalles().get(x).setCantidad(new BigDecimal(unDetalle.getCantidad().subtract(myFactura.getDetalles().get(x).getCantidad().subtract(unDetalle.getCantidad())).floatValue()));
+												myFactura.getDetalles().get(x).setCantidad(new BigDecimal(canFactura.subtract(can).floatValue()));
+
+
+												//get cantidad de la row para calcular el total
+												BigDecimal cantidad=myFactura.getDetalles().get(x).getCantidad();
+												//get precio venta de la row para calcular el total
+												BigDecimal precioVenta= new BigDecimal(myFactura.getDetalles().get(x).getArticulo().getPrecioVenta());
+
+												//se calcula el total del item
+												BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+												//se establece el nuevo total
+												myFactura.getDetalles().get(x).setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
 												//se manda a guardar la devolucion
 												devolucionDao.agregarDetalle(myFactura.getDetalles().get(x), myFactura.getIdFactura());
 												resultado=true;
