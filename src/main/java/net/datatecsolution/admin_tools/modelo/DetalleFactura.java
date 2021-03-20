@@ -96,7 +96,8 @@ public class DetalleFactura {
 	public int getCodigoArt() {
 		return codigoArt;
 	}
-	public void setCodigoArt(int codigoArt) {
+	public void
+	setCodigoArt(int codigoArt) {
 		this.codigoArt = codigoArt;
 	}
 	public String getArt() {

@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlFacturarFrame  implements InternalFrameListener, ActionListener, MouseListener, TableModelListener, KeyListener, StatusUpdateListener,DataListener {
+public class CtlFacturarFrame implements InternalFrameListener, ActionListener, MouseListener, TableModelListener, KeyListener, StatusUpdateListener, DataListener {
 	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
@@ -53,22 +53,26 @@ public class CtlFacturarFrame  implements InternalFrameListener, ActionListener,
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
+	/*
 	//clase para manejar scanner y scale por javapos
 	private Scale scale;
 	private Scanner scanner;
 	private ScannerScaleManager scannerScaleManager;
 	private DetalleFactura itemPesado=new DetalleFactura();
+
+	 */
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
 
-
+		/*
 		//set scanne and scale with javaPos
 		scale=new Scale();
 		scanner=new Scanner();
 		scannerScaleManager=new ScannerScaleManager(scanner,scale);
-		scanner.addDataListener(this);
-		scale.addStatusUpdateListener(this);
+		 */
+
+
 	
 		
 
@@ -2364,23 +2368,27 @@ public void calcularTotales(){
 
 		if(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getMedida()==2){
 
-			view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(-1));
 
+
+
+			view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(-1));
 
 				try {
 					Thread.sleep(5 * 1000);
+
 				} catch (Exception ee) {
 					System.out.println(ee);
 				}
 
-				if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
-					view.getModeloTabla().eliminarDetalle(filaPulsada);
-					myArticulo=null;
-					JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 
-				}else {
 
-				}
+			if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
+				view.getModeloTabla().eliminarDetalle(filaPulsada);
+				myArticulo=null;
+				JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+
+			}
+
 
 		}
 	}
@@ -2590,94 +2598,6 @@ public void guardarRemoto(){
 	}
 
 
-/*
-public void guardarRemotoCredito(){
-		
-	//dfs
-	//se registra la factura	
-	boolean resul=facturaDaoRemote.registrarFactura(myFactura);
-		
-	//se porcesa el resultado de ristrar la factura
-	if(resul){
-		myFactura.setIdFactura(facturaDaoRemote.getIdFacturaGuardada());
-		myFactura.setCodigo(this.facturaDaoRemote.getIdFacturaGuardada());
-		
-				try {
-					
-					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
-					AbstractJasperReports.createReport(conexionRemote.getPoolConexion().getConnection(), 7, myFactura.getIdFactura());
-					//AbstractJasperReports.imprimierFactura();
-					//AbstractJasperReports.imprimierFactura();
-					AbstractJasperReports.showViewer(view);
-					//myFactura=null;
-					//setEmptyView();
-					
-					//si la view es de actualizacion al cobrar se cierra la view
-					if(this.tipoView==2){
-						myFactura=null;
-						view.setVisible(false);
-					}
-					//myFactura.
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		
-		
-	}else{
-		JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
-		this.view.setVisible(false);
-		this.view.dispose();
-	}//fin el if donde se guarda la factura
-	}
-
-	public void guardarLocalCredito(){
-		
-		
-		//se registra la factura	
-		boolean resul=facturaDao.registrarFactura(myFactura);
-			
-		//se porcesa el resultado de ristrar la factura
-		if(resul){
-			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-			
-			
-			if(conexion.getNivelFact()){//nivel de facturo 2
-				
-				try {
-					
-					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
-					AbstractJasperReports.createReport(conexion.getPoolConexion().getConnection(), 8, myFactura.getIdFactura());
-					AbstractJasperReports.showViewer(view);
-					//AbstractJasperReports.imprimierFactura();
-					//myFactura=null;
-					setEmptyView();
-					
-					//si la view es de actualizacion al cobrar se cierra la view
-					if(this.tipoView==2){
-						myFactura=null;
-						view.setVisible(false);
-					}
-					//myFactura.
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}//fin del nivel de factura
-			
-			setEmptyView();
-			
-			
-		}else{
-			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
-			this.view.setVisible(false);
-			this.view.dispose();
-		}//fin el if donde se guarda la factura
-		
-	}
-
-	*/
 	
 	
 	private void selectRowInset(){
@@ -3048,6 +2968,8 @@ public void guardarRemotoCredito(){
 	@Override
 	public void dataOccurred(DataEvent dataEvent) {
 
+		Scanner scanner=ConexionStatic.getScanner();
+
 		//Data event handler for barcode reads from the scanner.
 		byte[] scanData = new byte[]{};
 		byte[] scanDataLabel = new byte[]{};
@@ -3088,66 +3010,83 @@ public void guardarRemotoCredito(){
 	@Override
 	public void statusUpdateOccurred(StatusUpdateEvent sue) {
 
-		int nStatus = sue.getStatus();
+		//verificar que el item requiere pesadolo
+		filaPulsada=this.view.getTableDetalle().getSelectedRow();
+		if(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getMedida()==2) {
 
-		switch (nStatus) {
-			case ScaleConst.SCAL_SUE_STABLE_WEIGHT:
-				int weight = 0;
-				try {
-					weight = scale.getScaleLiveWeight();
-				} catch (JposException je) {
-					System.err.println("ERROR: could not get weight data, "
-							+ je);
-					break;
-				}
-				//verify that asynchronous mode is not set since it is not
-				//currently supported
-				if (!scannerScaleManager.bAsyncMode) {
-					//format weight data from raw integer
-					DecimalFormat formatter = new DecimalFormat(
-							"Stable Weight: 0.00 " +scannerScaleManager. sUnits);
-					if (scannerScaleManager.bUseFiveDigits) {
-						formatter.setMinimumFractionDigits(3);
+			Scale scale = ConexionStatic.getScale();
+			ScannerScaleManager scannerScaleManager = ConexionStatic.getScannerScaleManager();
+
+			int nStatus = sue.getStatus();
+
+			switch (nStatus) {
+				case ScaleConst.SCAL_SUE_STABLE_WEIGHT:
+					int weight = 0;
+					try {
+						weight = scale.getScaleLiveWeight();
+					} catch (JposException je) {
+						System.err.println("ERROR: could not get weight data, "
+								+ je);
+						break;
 					}
+					//verify that asynchronous mode is not set since it is not
+					//currently supported
+					if (!scannerScaleManager.bAsyncMode) {
 
-					System.out.println(formatter.format((float) weight / 1000));
+						if (weight > 0 && view.getModeloTabla().getDetalles().size() > 0) {
+							//format weight data from raw integer
+							DecimalFormat formatter = new DecimalFormat(
+									"Stable Weight: 0.00 " + scannerScaleManager.sUnits);
+							if (scannerScaleManager.bUseFiveDigits) {
+								formatter.setMinimumFractionDigits(3);
+							}
+
+							System.out.println(formatter.format((float) weight / 1000));
 
 
+							BigDecimal cantidadSaldoItem = new BigDecimal((float) weight / 1000);
 
-					BigDecimal cantidadSaldoItem=new BigDecimal((float) weight / 1000);
-					filaPulsada = this.view.getTableDetalle().getSelectedRow();
-					this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
-					this.calcularTotales();
-
-
+							filaPulsada = this.view.getTableDetalle().getSelectedRow();
+							this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+							this.calcularTotales();
 
 
+						}
 
-				}
-				break;
-			case ScaleConst.SCAL_SUE_WEIGHT_OVERWEIGHT:
-				System.out.println("Over Weight: --.--");
-				//JOptionPane.showMessageDialog(view,"Exceso de peso","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
-				break;
-			case ScaleConst.SCAL_SUE_WEIGHT_UNDER_ZERO:
-				System.out.println("Under Zero: --.--");
-				//JOptionPane.showMessageDialog(view,"Peso bajo cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
-				break;
-			case ScaleConst.SCAL_SUE_WEIGHT_UNSTABLE:
-				System.out.println("Unstable Weight: --.--");
-				//JOptionPane.showMessageDialog(view,"Peso inestable","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
-				break;
-			case ScaleConst.SCAL_SUE_WEIGHT_ZERO:
-				System.out.println("Zero Weight: 0");
-				//JOptionPane.showMessageDialog(view,"Peso cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
-				break;
-			case ScaleConst.SCAL_SUE_NOT_READY:
-				System.out.println("Scale not Ready: --.--");
-				JOptionPane.showMessageDialog(view,"La pesa no esta lista","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
-				break;
-			default:
-				break;
 
+					}
+					break;
+				case ScaleConst.SCAL_SUE_WEIGHT_OVERWEIGHT:
+					System.out.println("Over Weight: --.--");
+					//JOptionPane.showMessageDialog(view,"Exceso de peso","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
+					break;
+				case ScaleConst.SCAL_SUE_WEIGHT_UNDER_ZERO:
+					System.out.println("Under Zero: --.--");
+					//JOptionPane.showMessageDialog(view,"Peso bajo cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
+					break;
+				case ScaleConst.SCAL_SUE_WEIGHT_UNSTABLE:
+					System.out.println("Unstable Weight: --.--");
+					//JOptionPane.showMessageDialog(view,"Peso inestable","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
+					break;
+				case ScaleConst.SCAL_SUE_WEIGHT_ZERO:
+
+					if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
+						view.getModeloTabla().eliminarDetalle(filaPulsada);
+						myArticulo=null;
+						JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+
+					}
+					System.out.println("Zero Weight: 0");
+					//JOptionPane.showMessageDialog(view,"Peso cero","Error al pesar!!!",JOptionPane.ERROR_MESSAGE);
+					break;
+				case ScaleConst.SCAL_SUE_NOT_READY:
+					System.out.println("Scale not Ready: --.--");
+					JOptionPane.showMessageDialog(view, "La pesa no esta lista", "Error al pesar!!!", JOptionPane.ERROR_MESSAGE);
+					break;
+				default:
+					break;
+
+			}
 		}
 
 	}
@@ -3160,22 +3099,20 @@ public void guardarRemotoCredito(){
 	@Override
 	public void internalFrameClosing(InternalFrameEvent e) {
 
-		scanner.removeDataListener(this);
-		scale.removeStatusUpdateListener(this);
 
-		scannerScaleManager.disconnectScale();
-		scannerScaleManager.disconnectScanner();
+
+
 
 	}
 
 	@Override
 	public void internalFrameClosed(InternalFrameEvent e) {
 
-		scanner.removeDataListener(this);
-		scale.removeStatusUpdateListener(this);
+		ConexionStatic.getScanner().removeDataListener(this);
+		ConexionStatic.getScale().removeStatusUpdateListener(this);
 
-		scannerScaleManager.disconnectScale();
-		scannerScaleManager.disconnectScanner();
+		ConexionStatic.getScannerScaleManager().disconnectScale();
+		ConexionStatic.getScannerScaleManager().disconnectScanner();
 
 	}
 
@@ -3198,4 +3135,5 @@ public void guardarRemotoCredito(){
 	public void internalFrameDeactivated(InternalFrameEvent e) {
 
 	}
+
 }

@@ -2,6 +2,8 @@
 
 package net.datatecsolution.admin_tools.modelo;
 
+import jpos.Scale;
+import jpos.Scanner;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 
@@ -109,6 +111,14 @@ public abstract class ConexionStatic implements Runnable{
 	private static boolean nivelFac = false;
 
 
+
+	private static Scale scale=null;
+	private static Scanner scanner=null;
+
+
+	private static ScannerScaleManager scannerScaleManager=null;
+
+
 	public static void setNivelFac(boolean n) {
 		nivelFac = n;
 	}
@@ -130,6 +140,31 @@ public abstract class ConexionStatic implements Runnable{
 	public static void setUsuarioLogin(Usuario u) {
 		ConexionStatic.usuarioLogin = u;
 
+	}
+
+	public static Scale getScale() {
+		return scale;
+	}
+
+	public static void setScale(Scale scale) {
+		ConexionStatic.scale = scale;
+	}
+
+
+	public static Scanner getScanner() {
+		return scanner;
+	}
+
+	public static void setScanner(Scanner scanner) {
+		ConexionStatic.scanner = scanner;
+	}
+
+	public static ScannerScaleManager getScannerScaleManager() {
+		return scannerScaleManager;
+	}
+
+	public static void setScannerScaleManager(ScannerScaleManager scannerScaleManager) {
+		ConexionStatic.scannerScaleManager = scannerScaleManager;
 	}
 
 

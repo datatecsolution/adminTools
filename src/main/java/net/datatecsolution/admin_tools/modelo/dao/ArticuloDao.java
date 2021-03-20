@@ -68,6 +68,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 							+" articulo.tipo_articulo, "
 							+" articulo.estado, "
 							+" marcas.codigo_marca, "
+							+" articulo.medida, "
 							+" marcas.descripcion AS marca, "
 							+" impuesto.codigo_impuesto, "
 							+" impuesto.porcentaje AS impuesto, "

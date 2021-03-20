@@ -9,11 +9,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewModuloFacturar extends JFrame {
+public class ViewModuloFacturar extends JFrame  {
 	
 	private JDesktopPane elEscritorio;
 	
@@ -35,6 +36,7 @@ public class ViewModuloFacturar extends JFrame {
 		super( "Facturacion" );
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
+
 		
 		JMenuBar barra = new JMenuBar();
 		setJMenuBar( barra ); // establece la barra de menús para esta aplicación
@@ -151,6 +153,10 @@ public class ViewModuloFacturar extends JFrame {
 			 ViewFacturarFrame marco = new ViewFacturarFrame(
 					 "Factura1", true, true, true, true );
 			 CtlFacturarFrame ctlMarco=new CtlFacturarFrame(marco,ventanas);
+
+			 ConexionStatic.getScale().addStatusUpdateListener(ctlMarco);
+
+			 ConexionStatic.getScannerScaleManager().conectarScaleAndScanner();
 			 
 			 elEscritorio.add( marco ); // adjunta marco interno
 			 
@@ -178,6 +184,18 @@ public class ViewModuloFacturar extends JFrame {
 		
 		
 		setSize(this.getToolkit().getScreenSize());
+
+
+		/*Some piece of code*/
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+				ConexionStatic.getScannerScaleManager().disconnectScale();
+				ConexionStatic.getScannerScaleManager().disconnectScanner();
+
+			}
+		});
 		
 		//this.setPreferredSize(new Dimension(1024, 600));
 		//this.setResizable(false);

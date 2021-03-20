@@ -20,11 +20,17 @@ public class ScannerScaleManager {
         scanner=sc;
         scale=scal;
 
+
+    }
+
+    public void conectarScaleAndScanner(){
         if (!connectScale()) {
-            System.exit(1);
+            //System.exit(1);
+            System.err.println("ERROR: no se puedo conectar a la balanza" );
         }
         if (!connectScanner()) {
-            System.exit(1);
+            // System.exit(1);
+            System.err.println("ERROR: no se puedo conectar al scanner" );
         }
     }
 

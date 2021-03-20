@@ -185,7 +185,7 @@ public class LiveWeightExample implements StatusUpdateListener {
                 if (!bAsyncMode) {
                     //format weight data from raw integer
                     DecimalFormat formatter = new DecimalFormat(
-                            "Stable Weight: 0.00 " + sUnits);
+                            "Peso estable: 0.00 " + sUnits);
                     if (bUseFiveDigits) {
                         formatter.setMinimumFractionDigits(3);
                     }
@@ -193,16 +193,17 @@ public class LiveWeightExample implements StatusUpdateListener {
                 }
                 break;
             case ScaleConst.SCAL_SUE_WEIGHT_OVERWEIGHT:
-                System.out.println("Over Weight: --.--");
+                System.out.println("Exceso de peso: --.--");
                 break;
             case ScaleConst.SCAL_SUE_WEIGHT_UNDER_ZERO:
-                System.out.println("Under Zero: --.--");
+                System.out.println("Peso bajo cero: --.--");
                 break;
             case ScaleConst.SCAL_SUE_WEIGHT_UNSTABLE:
-                System.out.println("Unstable Weight: --.--");
+                System.out.println("Peso inestable: --.--");
                 break;
             case ScaleConst.SCAL_SUE_WEIGHT_ZERO:
-                System.out.println("Zero Weight: 0");
+                System.out.println("Peso cero: 0");
+                System.out.println("--------------------------------------------------------------------------------");
                 break;
             case ScaleConst.SCAL_SUE_NOT_READY:
                 System.out.println("Scale not Ready: --.--");

@@ -1,14 +1,13 @@
 package net.datatecsolution;
 
+import jpos.Scale;
+import jpos.Scanner;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import net.datatecsolution.admin_tools.controlador.CtlLogin;
 import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenVenta;
-import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.ConfigUserFacturacion;
-import net.datatecsolution.admin_tools.modelo.Usuario;
+import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.ConfigUserFactDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
 import net.datatecsolution.admin_tools.view.ViewLogin;
@@ -35,11 +34,18 @@ public class Principal {
         // TODO Auto-generated method stub
 
 
+        Scanner myScanner=new Scanner();
+        Scale scale=new Scale();
+        ScannerScaleManager scannerScaleManager=new ScannerScaleManager(myScanner,scale);
 
+        ConexionStatic.setScale(scale);
+        ConexionStatic.setScanner(myScanner);
+        ConexionStatic.setScannerScaleManager(scannerScaleManager);
 
 
         //se cargan todos los reportes
-    //  AbstractJasperReports.loadFileReport();
+
+         //AbstractJasperReports.loadFileReport();
 
 
         //se establece la conecion a la base de datos
