@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlFacturarFrame implements InternalFrameListener, ActionListener, MouseListener, TableModelListener, KeyListener, StatusUpdateListener, DataListener {
+public class CtlFacturarFrame implements InternalFrameListener, ActionListener, MouseListener, TableModelListener, KeyListener, DataListener {
 	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
@@ -53,28 +53,9 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	/*
-	//clase para manejar scanner y scale por javapos
-	private Scale scale;
-	private Scanner scanner;
-	private ScannerScaleManager scannerScaleManager;
-	private DetalleFactura itemPesado=new DetalleFactura();
 
-	 */
-	
-	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
 
-		/*
-		//set scanne and scale with javaPos
-		scale=new Scale();
-		scanner=new Scanner();
-		scannerScaleManager=new ScannerScaleManager(scanner,scale);
-		 */
-
-
-	
-		
 
 		ventanas=ven;
 		view=v;
@@ -172,7 +153,7 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
                                     calcularTotales();
                                     this.view.getModeloTabla().agregarDetalle();
                                     selectRowInset();
-									comprobarItemPesado();
+									getPesoItem();
                                 }else{
                                         //se filtra para que la caja por defecto sera la unica que puede facturar servicios
                                         if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
@@ -181,7 +162,7 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
                                             calcularTotales();
                                             this.view.getModeloTabla().agregarDetalle();
                                             selectRowInset();
-											comprobarItemPesado();
+											getPesoItem();
                                          }else{
                                                  JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
                                                 view.getTxtBuscar().setText("");
@@ -223,7 +204,7 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
 													this.view.getModeloTabla().agregarDetalle();
 													
 													selectRowInset();
-													comprobarItemPesado();
+													getPesoItem();
 														
 											}else{//fin se la comprobacion de la existencia
 												
@@ -276,7 +257,7 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
 														this.view.getModeloTabla().agregarDetalle();
 														
 														selectRowInset();
-														comprobarItemPesado();
+														getPesoItem();
 													}
 													
 												}else{//sino tiene insumos el servicio se agrega directamente a la factura
@@ -287,7 +268,7 @@ public class CtlFacturarFrame implements InternalFrameListener, ActionListener, 
 														this.view.getModeloTabla().agregarDetalle();
 														
 														selectRowInset();
-														comprobarItemPesado();
+														getPesoItem();
 												}
 												
 												
@@ -2220,7 +2201,7 @@ public void calcularTotales(){
 					this.view.getModeloTabla().agregarDetalle();
 					
 					selectRowInset();
-					comprobarItemPesado();
+					getPesoItem();
 				}else{
 					
 					//se filtra para que la caja por defecto sera la unica que puede facturar servicios
@@ -2232,18 +2213,15 @@ public void calcularTotales(){
 						this.view.getModeloTabla().agregarDetalle();
 						
 						selectRowInset();
-						comprobarItemPesado();
+						getPesoItem();
 					}else{
 						JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
 					}
 				}
-				
-				
-				
-			
+
 			}else{//si es necesario comprobar los inventarios de articulos
-				
-				//fdsf
+
+
 				//si es un bien se combrueba la existencia de ese articulo
 				if(myArticulo.getTipoArticulo()==1){
 
@@ -2273,7 +2251,7 @@ public void calcularTotales(){
 								this.view.getModeloTabla().agregarDetalle();
 								
 								selectRowInset();
-								comprobarItemPesado();
+								getPesoItem();
 									
 						}else{//fin se la comprobacion de la existencia
 
@@ -2326,7 +2304,7 @@ public void calcularTotales(){
 									this.view.getModeloTabla().agregarDetalle();
 									
 									selectRowInset();
-									comprobarItemPesado();
+									getPesoItem();
 								}
 								
 							}else{//sino tiene insumos el servicio se agrega directamente a la factura
@@ -2343,7 +2321,7 @@ public void calcularTotales(){
 									this.view.getModeloTabla().agregarDetalle();
 									
 									selectRowInset();
-									comprobarItemPesado();
+									getPesoItem();
 							}
 							
 							
@@ -2363,35 +2341,79 @@ public void calcularTotales(){
 		
 	}
 
-	private void comprobarItemPesado() {
+	private void getPesoItem() {
+
+		//se referencia al objeto scale y scanner iniciado al principio del proyecto
+		Scale scale = ConexionStatic.getScale();
+		ScannerScaleManager scannerScaleManager = ConexionStatic.getScannerScaleManager();
+
+		//se consigue el index del item agregado recientemente
 		filaPulsada=this.view.getTableDetalle().getSelectedRow();
 
+		//se verifica que el articulo del item necesite peso
 		if(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getMedida()==2){
 
-
-
-
+			//se coloca un peso negativo como forma de verificar que se realizo el peso del item
 			view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(-1));
 
-				try {
-					Thread.sleep(5 * 1000);
+			//se hace un espera de unos segundos para que el operador coloque el item en la pesa.
+			try {
+				Thread.sleep(5 * 1000);
 
-				} catch (Exception ee) {
-					System.out.println(ee);
-				}
-
-
-
-			if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
-				view.getModeloTabla().eliminarDetalle(filaPulsada);
-				myArticulo=null;
-				JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
-
+			} catch (Exception ee) {
+				System.out.println(ee);
 			}
 
+			//variable para donde se almacenara el peso
+			int[] weight = new int[1];
+
+			try {
+				//se intenta leer el peso del
+				scale.readWeight(weight, 3000);
+
+				//verify that asynchronous mode is not set since it is not
+				//currently supported
+				if (!scannerScaleManager.bAsyncMode) {
+
+					//se verifica que la lectura de la pesa sea mayor que 0
+					if (weight[0] > 0) {
+						//format weight data from raw integer
+						DecimalFormat formatter = new DecimalFormat(
+								"Stable Weight: 0.00 " + scannerScaleManager.sUnits);
+						if (scannerScaleManager.bUseFiveDigits) {
+							formatter.setMinimumFractionDigits(3);
+						}
+
+						//System.out.println(formatter.format((float) weight[0] / 1000));
+
+						//se pasa el peso a bigDecimal
+						BigDecimal cantidadSaldoItem = new BigDecimal((float) weight[0] / 1000);
+
+						//se agrega la cantidad al item y se recalcula los totales
+						this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+						this.calcularTotales();
+
+
+					}else{//si el valor es cero se elimina el item de la factura
+
+
+						view.getModeloTabla().eliminarDetalle(filaPulsada);
+						myArticulo=null;
+						calcularTotales();
+						selectRowInset();
+						JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+
+					}
+
+				}
+			} catch (JposException var4) {
+				//this.newEMessage(var4);
+			}
 
 		}
 	}
+
+
 
 	private void setEmptyView(){
 		//se estable la tabla de detalles vacia
@@ -3006,6 +3028,7 @@ public void guardarRemoto(){
 		}
 
 	}
+	/*
 
 	@Override
 	public void statusUpdateOccurred(StatusUpdateEvent sue) {
@@ -3073,6 +3096,7 @@ public void guardarRemoto(){
 					if(view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue()<=0){
 						view.getModeloTabla().eliminarDetalle(filaPulsada);
 						myArticulo=null;
+						calcularTotales();
 						JOptionPane.showMessageDialog(view,"Debe colocar el producto en la pesa.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 
 					}
@@ -3090,6 +3114,8 @@ public void guardarRemoto(){
 		}
 
 	}
+
+	 */
 
 	@Override
 	public void internalFrameOpened(InternalFrameEvent e) {
@@ -3109,7 +3135,7 @@ public void guardarRemoto(){
 	public void internalFrameClosed(InternalFrameEvent e) {
 
 		ConexionStatic.getScanner().removeDataListener(this);
-		ConexionStatic.getScale().removeStatusUpdateListener(this);
+		//ConexionStatic.getScale().removeStatusUpdateListener(this);
 
 		ConexionStatic.getScannerScaleManager().disconnectScale();
 		ConexionStatic.getScannerScaleManager().disconnectScanner();

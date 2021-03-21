@@ -154,7 +154,9 @@ public class ViewModuloFacturar extends JFrame  {
 					 "Factura1", true, true, true, true );
 			 CtlFacturarFrame ctlMarco=new CtlFacturarFrame(marco,ventanas);
 
-			 ConexionStatic.getScale().addStatusUpdateListener(ctlMarco);
+			 //ConexionStatic.getScale().addStatusUpdateListener(ctlMarco);
+
+			 ConexionStatic.getScanner().addDataListener(ctlMarco);
 
 			 ConexionStatic.getScannerScaleManager().conectarScaleAndScanner();
 			 
