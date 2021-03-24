@@ -314,6 +314,12 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 	}
 	
 	private void cargarDatosArticuloView(){
+		//se establese la forma de vende el articulo 1=unidad, 2=libras
+		if(view.getRdbtnLibras().isSelected())
+			myArticulo.setMedida(2);
+		else if (view.getRdbtnUnidad().isSelected())
+			myArticulo.setMedida(1);
+
 		//Se establece el nombre del articulo
 		myArticulo.setArticulo(this.view.getTxtNombre().getText());
 		
@@ -415,8 +421,11 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 		
 			this.cargarTabla(precios);
 		}
-		
-		//view.getModeloInsumos().setInsumos(this.insumoDao.buscarPorId(a.getId()));
+		//establece la forma de venta del articulo 1=unidad,2=libras
+		if(myArticulo.getMedida()==1)
+			view.getRdbtnUnidad().setSelected(true);
+		else if(myArticulo.getMedida()==2)
+			view.getRdbtnLibras().setSelected(true);
 				
 		// se hace visible la ventana modal
 		this.view.setVisible(true);

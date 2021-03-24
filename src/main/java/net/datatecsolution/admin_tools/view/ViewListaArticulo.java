@@ -130,6 +130,9 @@ public class ViewListaArticulo extends ViewTabla {
 		
 		
 		this.addWindowListener(c);
+
+		cbxDepart.addActionListener(c);
+		cbxDepart.setActionCommand("CAMBIOCOMBOBOX");
 		
 		btnExistecia.addActionListener(c);
 		btnExistecia.setActionCommand("EXISTENCIA");

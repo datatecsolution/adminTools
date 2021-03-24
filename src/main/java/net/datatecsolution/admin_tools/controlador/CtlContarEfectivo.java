@@ -39,6 +39,7 @@ public class CtlContarEfectivo implements ActionListener, KeyListener{
 		
 		switch(comando){
 		case "GUARDAR":
+			view.getBtnGuardar().setEnabled(false);
 			setTotal();
 			break;
 		case "MOSTRAR":

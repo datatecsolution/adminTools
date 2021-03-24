@@ -45,7 +45,7 @@ public class Principal {
 
         //se cargan todos los reportes
 
-         //AbstractJasperReports.loadFileReport();
+         AbstractJasperReports.loadFileReport();
 
 
         //se establece la conecion a la base de datos

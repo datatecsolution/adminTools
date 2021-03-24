@@ -54,19 +54,17 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 		//this.view.setVisible(true);
 		
 	}
-	
+
 	private void cargarComboBox(){
-		//se crea el objeto para obtener de la bd los impuestos
-		//myImpuestoDao=new ImpuestoDao(conexion);
-	
+
 		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
 		this.view.getModeloCbxDepartamento().setLista(this.deptDao.todos());
-		
-		
+
 		//se remueve la lista por defecto
 		this.view.getCbxDepart().removeAllItems();
-	
-		this.view.getCbxDepart().setSelectedIndex(0);
+
+		int departamento=view.getModeloCbxDepartamento().buscarDepartamento(ConexionStatic.getUsuarioLogin().getConfig().getDepartEnBusqueda());
+		this.view.getCbxDepart().setSelectedIndex(departamento);
 	}
 
 	@Override
@@ -82,6 +80,20 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 		
 		//JOptionPane.showMessageDialog(view, "numero de pagina "+view.getModelo().getCanItemPag()+"-"+view.getModelo().getLimiteSuperior());
 		switch(comando){
+
+		case "CAMBIOCOMBOBOX":
+			//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
+
+			Departamento departamento=(Departamento) view.getCbxDepart().getSelectedItem();
+
+			if(departamento!=null){
+				ConexionStatic.getUsuarioLogin().getConfig().setDepartEnBusqueda(departamento);
+			}
+
+
+
+
+			break;
 		
 		case "REPORTE_VENTA":
 				Articulo unoReporte=this.view.getModelo().getArticulo(view.getTabla().getSelectedRow());

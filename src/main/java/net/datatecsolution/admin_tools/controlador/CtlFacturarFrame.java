@@ -2353,6 +2353,7 @@ public void calcularTotales(){
 		//se verifica que el articulo del item necesite peso
 		if(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getMedida()==2){
 
+
 			//se coloca un peso negativo como forma de verificar que se realizo el peso del item
 			view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(-1));
 
@@ -2408,6 +2409,10 @@ public void calcularTotales(){
 				}
 			} catch (JposException var4) {
 				//this.newEMessage(var4);
+				view.getModeloTabla().eliminarDetalle(filaPulsada);
+				myArticulo=null;
+				calcularTotales();
+				selectRowInset();
 			}
 
 		}
@@ -3009,10 +3014,10 @@ public void guardarRemoto(){
 			String sScanData = new String(scanData);
 			String sScanDataLabel = new String(scanDataLabel);
 			//String sType = getBarcodeTypeName(scanDataType);
-			//System.out.println("Raw Data: " + sScanData + ", Label Data: "
-			//		+ sScanDataLabel + ", Type: " + sType);
+			System.out.println("Raw Data: " + sScanData + ", Label Data: "
+					+ sScanDataLabel + ", Type: " );
 
-			view.getTxtBuscar().setText(sScanDataLabel);
+			view.getTxtBuscar().setText(sScanData);
 			ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCARARTICULO2");
 			actionPerformed(actionEvent);
 

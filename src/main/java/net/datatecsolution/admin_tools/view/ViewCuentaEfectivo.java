@@ -372,8 +372,15 @@ public class ViewCuentaEfectivo extends JDialog {
 			
 			txtTotal.setText(""+total.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		
+
 		
-		
+	}
+	public BotonGuardar getBtnGuardar() {
+		return btnGuardar;
+	}
+
+	public void setBtnGuardar(BotonGuardar btnGuardar) {
+		this.btnGuardar = btnGuardar;
 	}
 	
 	public void conectarControlador(CtlContarEfectivo c){

@@ -781,6 +781,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setMedida(res.getInt("medida"));
+
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
 				
 				
@@ -865,6 +867,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				
 				unArticulo.setExistencia(res.getDouble("existencia"));
 				unArticulo.setEstado(res.getBoolean("estado"));
+				unArticulo.setMedida(res.getInt("medida"));
 				
 				articulos.add(unArticulo);
 			 }

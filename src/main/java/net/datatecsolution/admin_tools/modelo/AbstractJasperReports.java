@@ -150,7 +150,6 @@ public abstract class AbstractJasperReports implements Runnable
 	public static void loadFileReport(){
 
 
-
 		factura= AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
 		factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
 		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");

@@ -32,7 +32,7 @@ public abstract class ConexionStatic implements Runnable{
 
 	private static String bd = "admin_tools";
 
-
+/*
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
 	private static String login = "root";
@@ -40,7 +40,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String server = "127.0.0.1";
 	//private static String server = "192.168.1.100";
 
-
+*/
 
 
 
@@ -54,7 +54,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String server = "127.0.0.1";
 
 
-
+*/
 
 	//NARANJAL
 	private static String login = "admin";
@@ -63,7 +63,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-
+/*
 	//DISTRIBUIDORA SHAROM
 	private static String login = "admin";
 	private static String password = "ronLsnta123.";
