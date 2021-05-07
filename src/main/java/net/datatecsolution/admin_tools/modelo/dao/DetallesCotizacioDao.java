@@ -30,12 +30,17 @@ public class DetallesCotizacioDao extends ModeloDaoBasic{
 							+ " detalle_cotizacion . subtotal  AS  subtotal_detalle , "
 							+ " detalle_cotizacion . total  AS  total_detalle , "
 							+ " articulo . codigo_articulo, "
+							+" impuesto.codigo_impuesto, "
+							+" impuesto.porcentaje AS impuesto, "
+							+" impuesto.descripcion_impuesto, "
 							+ " detalle_cotizacion . id  AS  id , "
 							+ " detalle_cotizacion . codigo_barra "
 							+ " FROM "
 							+ super.DbName+ ".detalle_cotizacion "
 								+ " JOIN  "
-									+super.DbName+ ". articulo  ON( articulo . codigo_articulo  =  detalle_cotizacion . codigo_articulo )";
+									+super.DbName+ ". articulo  ON( articulo . codigo_articulo  =  detalle_cotizacion . codigo_articulo )"
+								+ " join "+super.DbName+ ".impuesto "
+										+ " on(impuesto.codigo_impuesto =articulo.codigo_impuesto) ";
 		
 	super.setSqlQuerySelectJoin(sqlBaseJoin);
 	}
@@ -126,6 +131,9 @@ public class DetallesCotizacioDao extends ModeloDaoBasic{
 				articuloDetalle.setId(res.getInt("codigo_articulo"));
 				articuloDetalle.setArticulo(res.getString("articulo"));
 				articuloDetalle.setPrecioVenta(res.getDouble("precio_detalle"));//se estable el precio del articulo
+				articuloDetalle.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
+				articuloDetalle.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
+
 				unDetalle.setListArticulos(articuloDetalle);//se agrega el articulo al 
 				unDetalle.setCantidad(res.getBigDecimal("cantidad_detalle"));
 				unDetalle.setImpuesto(res.getBigDecimal("impuesto_detalle"));

@@ -215,18 +215,18 @@ public abstract class ViewTabla extends JDialog {
 		
 		dcFecha1 = new JDateChooser();
 		panelFechas.add(dcFecha1);
-		dcFecha1.setSize(new Dimension(100, 20));
-		dcFecha1.setPreferredSize(new Dimension(160, 27));
-		dcFecha1.setDateFormatString("dd-MM-yyyy");
+		dcFecha1.setSize(new Dimension(133, 20));
+		dcFecha1.setPreferredSize(new Dimension(133, 27));
+		dcFecha1.setDateFormatString("dd/MM/yyyy");
 		
 		label_1 = new JLabel("hasta");
 		panelFechas.add(label_1);
 		
 		dcFecha2 = new JDateChooser();
 		panelFechas.add(dcFecha2);
-		dcFecha2.setSize(new Dimension(100, 20));
-		dcFecha2.setPreferredSize(new Dimension(160, 27));
-		dcFecha2.setDateFormatString("dd-MM-yyyy");
+		dcFecha2.setSize(new Dimension(133, 20));
+		dcFecha2.setPreferredSize(new Dimension(133, 27));
+		dcFecha2.setDateFormatString("dd/MM/yyyy");
 		panelFechas.setVisible(false);
 		
 		
@@ -263,7 +263,7 @@ public abstract class ViewTabla extends JDialog {
 		
 		
 		
-		this.setResizable(false);
+		this.setResizable(true);
 		
 		dim = Toolkit.getDefaultToolkit().getScreenSize();
 		

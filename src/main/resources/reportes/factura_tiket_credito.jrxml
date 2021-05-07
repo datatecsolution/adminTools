@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="7" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="3.0"/>
@@ -579,7 +579,7 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center">
-						<font fontName="SansSerif" size="7"/>
+						<font fontName="SansSerif" size="7.5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{cantidad_detalle}]]></textFieldExpression>
 				</textField>
@@ -592,7 +592,7 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="SansSerif" size="7"/>
+						<font fontName="SansSerif" size="7.3"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_detalle}]]></textFieldExpression>
 				</textField>
@@ -605,7 +605,7 @@ WHERE
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Right">
-						<font fontName="SansSerif" size="7"/>
+						<font fontName="SansSerif" size="7.3"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{precio_detalle}]]></textFieldExpression>
 				</textField>
@@ -613,7 +613,7 @@ WHERE
 		</band>
 	</detail>
 	<summary>
-		<band height="305">
+		<band height="310">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="2" width="180" height="239" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
 				<box>
@@ -636,10 +636,10 @@ WHERE
 					<text><![CDATA[Impuesto 15%:]]></text>
 				</staticText>
 				<textField pattern="¤ #,##0.00">
-					<reportElement x="114" y="73" width="66" height="12" uuid="8b86839e-e88c-4436-abff-ff286ee7b12c"/>
+					<reportElement x="114" y="73" width="66" height="16" uuid="8b86839e-e88c-4436-abff-ff286ee7b12c"/>
 					<box rightPadding="3"/>
 					<textElement textAlignment="Right">
-						<font fontName="SansSerif" size="8"/>
+						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{total_fact}]]></textFieldExpression>
 				</textField>
@@ -674,7 +674,7 @@ WHERE
 					<text><![CDATA[Descuento y rebajas:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="5" y="73" width="74" height="12" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>
+					<reportElement x="5" y="73" width="74" height="16" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>
 					<textElement>
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
@@ -822,7 +822,7 @@ WHERE
 				</staticText>
 			</frame>
 			<subreport>
-				<reportElement x="-18" y="239" width="208" height="35" uuid="11829717-06ce-4865-88ff-47f1d7a2b58f">
+				<reportElement x="-18" y="251" width="208" height="35" uuid="11829717-06ce-4865-88ff-47f1d7a2b58f">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<subreportParameter name="bD_admin">
@@ -832,7 +832,7 @@ WHERE
 				<subreportExpression><![CDATA["reportes/factura_tiket_datos_credito.jasper"]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement x="1" y="274" width="180" height="14" uuid="af7f8f6e-6ef9-4e34-bd56-44841283a089"/>
+				<reportElement x="1" y="287" width="180" height="14" uuid="af7f8f6e-6ef9-4e34-bd56-44841283a089"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Dashed"/>
 				</box>
@@ -842,12 +842,20 @@ WHERE
 				<text><![CDATA[EXIJA SU FACTURA, es beneficio de todos.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="289" width="178" height="12" uuid="99d487d9-992a-4e78-aa58-dc8f6f987069"/>
+				<reportElement x="2" y="295" width="178" height="12" uuid="99d487d9-992a-4e78-aa58-dc8f6f987069"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<text><![CDATA[Original: Cliente     Copia: Emisor]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="2" y="240" width="173" height="11" uuid="a9cdaf9c-9b75-41b9-bd64-4a5fc53103f1"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total items:  "+$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
