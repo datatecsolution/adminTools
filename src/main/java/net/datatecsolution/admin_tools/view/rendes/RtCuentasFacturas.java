@@ -21,7 +21,7 @@ public class RtCuentasFacturas implements TableCellRenderer {
         	editor.setBackground(Color.white);
         }
 
-		if(column==6)
+		if(column==7)
 			editor.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		 

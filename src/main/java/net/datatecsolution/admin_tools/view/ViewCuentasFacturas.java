@@ -109,9 +109,9 @@ public class ViewCuentasFacturas extends ViewTabla {
 		tabla.getColumnModel().getColumn(1).setPreferredWidth(10);	//de las columnas
 		tabla.getColumnModel().getColumn(2).setPreferredWidth(300);	//en la tabla
 		tabla.getColumnModel().getColumn(3).setPreferredWidth(50);	//
-		tabla.getColumnModel().getColumn(4).setPreferredWidth(200);	//
-		tabla.getColumnModel().getColumn(5).setPreferredWidth(30);	//
-		tabla.getColumnModel().getColumn(6).setPreferredWidth(30);
+		tabla.getColumnModel().getColumn(4).setPreferredWidth(100);	//
+		tabla.getColumnModel().getColumn(5).setPreferredWidth(150);	//
+		tabla.getColumnModel().getColumn(6).setPreferredWidth(40);
 
 		setPreferredSize(new Dimension(1200,680));
 

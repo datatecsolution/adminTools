@@ -89,8 +89,9 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				this.view.getModelo().agregarCuenta(cuentas.get(c));
 				
 			}
-			setTotalReg();
+
 		}
+		setTotalReg();
 	}
 	void setTotalReg(){
 

@@ -43,7 +43,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		cargarCbxRutas();
 		
 		
-		//cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+		cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 
 		view.pack();
 		view.getTxtBuscar().setText("");
@@ -64,7 +64,8 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		this.view.getCbxEmpleados().removeAllItems();
 		//
 		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
-		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
+		//this.view.getCbxEmpleados().setSelectedIndex(vendedor);
+		this.view.getCbxEmpleados().setSelectedIndex(0);
 	}
 
 	private void cargarCbxRutas(){
@@ -75,7 +76,8 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		this.view.getCbxRutas().removeAllItems();
 		//
 		int idRuta=view.getModeloListaRutas().buscarRuta(ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda());
-		this.view.getCbxRutas().setSelectedIndex(idRuta);
+		//this.view.getCbxRutas().setSelectedIndex(idRuta);
+		this.view.getCbxRutas().setSelectedIndex(0);
 	}
 	
 	
@@ -89,8 +91,9 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				this.view.getModelo().agregarCuenta(cuentas.get(c));
 				
 			}
-			setTotalReg();
+
 		}
+		setTotalReg();
 	}
 	void setTotalReg(){
 

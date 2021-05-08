@@ -34,6 +34,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				+ super.tableName+ ".codigo_cliente, "
 				+ " cliente.nombre_cliente, "
 				+ " cliente.telefono, "
+				+ " cliente.direccion, "
 				+ " cliente.rtn, "
 				+ " empleados.codigo_empleado,"
 				+ " empleados.nombre as nombre_vendedor,"
@@ -196,6 +197,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -306,6 +308,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setNombre(res.getString("nombre_cliente"));
 				cliente.setRtn(res.getString("rtn"));
 				cliente.setTelefono(res.getString("telefono"));
+				cliente.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -385,6 +388,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente.setNombre(res.getString("nombre_cliente"));
 				cliente.setRtn(res.getString("rtn"));
 				cliente.setTelefono(res.getString("telefono"));
+				cliente.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -496,6 +500,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -609,6 +614,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -693,6 +699,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -803,6 +810,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -912,6 +920,8 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
+
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));
@@ -1030,6 +1040,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 				cliente2.setNombre(res.getString("nombre_cliente"));
 				cliente2.setRtn(res.getString("rtn"));
 				cliente2.setTelefono(res.getString("telefono"));
+				cliente2.setDireccion(res.getString("direccion"));
 
 				Empleado empleado=new Empleado();
 				empleado.setCodigo(res.getInt("codigo_empleado"));

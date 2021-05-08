@@ -87,6 +87,10 @@ public class ViewCuentasFacturasReporte extends ViewTabla {
 		cbxRutas=new JComboBox<RutaCobro>(modeloListaRutas);
 		panelOpcioneBusqueda.add(cbxRutas);
 
+		JLabel rango=new JLabel("30 a ");
+		panelOpcioneBusqueda.add(rango);
+
+
 
 
 		panelPaginacion.setVisible(false);
