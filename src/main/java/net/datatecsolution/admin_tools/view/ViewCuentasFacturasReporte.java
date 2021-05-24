@@ -18,6 +18,11 @@ import java.awt.*;
 public class ViewCuentasFacturasReporte extends ViewTabla {
 
 
+	private final SpinnerNumberModel modelSpinner;
+
+
+
+	private final JSpinner jSpinner;
 	protected BotonImprimirSmall btnImprimir;
 	protected BotonCliente btnClientes;
 	private TmCuentasFacturasReporte modelo;
@@ -50,8 +55,6 @@ public class ViewCuentasFacturasReporte extends ViewTabla {
 		btnEliminar.setVisible(false);
 	    
 	    btnImprimir = new BotonImprimirSmall();
-	    btnImprimir.setEnabled(false);
-	    //btnImprimir.setVisible(false);
 	    panelAccion.add(btnImprimir);
 
 		btnClientes = new BotonCliente();
@@ -87,8 +90,22 @@ public class ViewCuentasFacturasReporte extends ViewTabla {
 		cbxRutas=new JComboBox<RutaCobro>(modeloListaRutas);
 		panelOpcioneBusqueda.add(cbxRutas);
 
-		JLabel rango=new JLabel("30 a ");
-		panelOpcioneBusqueda.add(rango);
+
+		JPanel jPanel=new JPanel();
+		Color color2 =Color.decode("#8fcbe0");
+		jPanel.setBackground(color2);
+
+		JLabel rango=new JLabel("Rango de dias atrazador 30 a ");
+		jPanel.add(rango);
+
+
+		modelSpinner=new SpinnerNumberModel(31,31,360,1);
+		jSpinner=new JSpinner(modelSpinner);
+		jPanel.add(jSpinner);
+
+		panelOpcioneBusqueda.add(jPanel);
+
+		txtBuscar.setVisible(false);
 
 
 
@@ -107,8 +124,8 @@ public class ViewCuentasFacturasReporte extends ViewTabla {
 		RtCuentasFacturas renderizador = new RtCuentasFacturas();
 		tabla.setDefaultRenderer(String.class, renderizador);
 		
-		tabla.getColumnModel().getColumn(0).setPreferredWidth(15);     //Tama�o de las columnas de las tablas
-		tabla.getColumnModel().getColumn(1).setPreferredWidth(15);	//de las columnas
+		tabla.getColumnModel().getColumn(0).setPreferredWidth(10);     //Tama�o de las columnas de las tablas
+		tabla.getColumnModel().getColumn(1).setPreferredWidth(20);	//de las columnas
 		tabla.getColumnModel().getColumn(2).setPreferredWidth(250);	//en la tabla
 		tabla.getColumnModel().getColumn(3).setPreferredWidth(50);	//
 		tabla.getColumnModel().getColumn(4).setPreferredWidth(50);	//
@@ -256,6 +273,13 @@ public void conectarControlador(CtlCuentasFacturasReporte c){
 	public JRadioButton getRdbtnTodos(){
 		return rdbtnTodos;
 		
+	}
+	public SpinnerNumberModel getModelSpinner() {
+		return modelSpinner;
+	}
+
+	public JSpinner getjSpinner() {
+		return jSpinner;
 	}
 
 	public JRadioButton getRdbtnRTN() {

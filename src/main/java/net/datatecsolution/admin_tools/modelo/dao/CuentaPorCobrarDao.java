@@ -201,6 +201,57 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 		
 		//return false;
 	}
+
+	public boolean reguistrarCredito(CuentaPorCobrar aRegistrar) {
+		// TODO Auto-generated method stub
+
+		CuentaPorCobrar ultima=this.getSaldoCliente(aRegistrar.getCliente());
+
+
+		BigDecimal newSaldo=ultima.getSaldo().add(aRegistrar.getSaldo());
+		aRegistrar.setSaldo(newSaldo);
+
+		//JOptionPane.showConfirmDialog(null, myCliente);
+		int resultado=0;
+		ResultSet rs=null;
+		Connection con = null;
+
+		try
+		{
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES (now(), ?,?,?,?)");
+			psConsultas.setInt(1, aRegistrar.getCliente().getId());
+			psConsultas.setString(2, aRegistrar.getDescripcion());
+			psConsultas.setBigDecimal(3, aRegistrar.getCredito());
+			psConsultas.setBigDecimal(4, aRegistrar.getSaldo());
+			//psConsultas.setString(5, ConexionStatic.getUsuarioLogin().getUser());
+			resultado=psConsultas.executeUpdate();
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			//conexion.desconectar();
+			return false;
+		}
+		finally
+		{
+			try{
+				if(rs!=null)rs.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		//return false;
+	}
 	@Override
 	public boolean eliminar(Object c) {
 		// TODO Auto-generated method stub

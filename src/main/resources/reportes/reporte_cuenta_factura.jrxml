@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_cuentas_clientes" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="15"/>
+	<property name="ireport.y" value="96"/>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="local_datatec"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="rango_max" class="java.lang.Integer"/>
+	<parameter name="codigo_ruta2" class="java.lang.Integer"/>
+	<parameter name="codigo_ven2" class="java.lang.Integer"/>
+	<parameter name="codigo_ruta" class="java.lang.Integer"/>
+	<parameter name="codigo_vendedor" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<parameter name="vendedor" class="java.lang.String"/>
+	<parameter name="ruta" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	cuentas_facturas.codigo_cuenta,
+	cuentas_facturas.fecha,
+	cuentas_facturas.fecha_vencimiento,
+	cuentas_facturas.no_factura,
+	cuentas_facturas.codigo_caja,
+	cuentas_facturas.codigo_cliente,
+	cliente.nombre_cliente,
+	cliente.telefono,
+	cliente.direccion,
+	cliente.rtn,
+	empleados.codigo_empleado,
+	empleados.nombre AS nombre_vendedor,
+	empleados.apellido AS apellido_vendedor,
+	IFNULL(cuenta2.ultimo_pago,'No tiene') as ultimo_pago,
+	cuenta2.saldo2,
+	cuenta2.no_dias,
+	cuenta2.detalle_venta,
+	cuenta2.saldo2 AS saldo 
+FROM
+	$P!{bD_admin}.cuentas_facturas
+	JOIN $P!{bD_admin}.cliente ON ( cliente.codigo_cliente = cuentas_facturas.codigo_cliente )
+	JOIN $P!{bD_admin}.empleados ON ( cliente.id_vendedor = empleados.codigo_empleado )
+	JOIN (
+	SELECT
+		cuentas_facturas.codigo_cuenta AS cod2,
+		ifnull( admin_tools.f_saldo_factura_cliente ( cuentas_facturas.codigo_cuenta ), 0.00 ) saldo2,
+		cuentas_facturas.codigo_cuenta,
+		admin_tools.f_detalle_cuenta_factura ( cuentas_facturas.codigo_cuenta ) AS detalle_venta,
+		admin_tools.f_fecha_ultimo_pago_factura ( cuentas_facturas.codigo_cuenta ) AS ultimo_pago,
+		ifnull( admin_tools.f_no_dias_del_ultimo_pago ( cuentas_facturas.codigo_cuenta ), 0.00 ) AS no_dias 
+	FROM
+		$P!{bD_admin}.cuentas_facturas 
+	) cuenta2 ON ( cuenta2.codigo_cuenta = cuentas_facturas.codigo_cuenta ) 
+WHERE
+	cuenta2.saldo2 > 0 
+	AND (id_vendedor >= $P{codigo_vendedor} and id_vendedor <= $P{codigo_ven2} )
+	AND (id_ruta_cobro >= $P{codigo_ruta} and id_ruta_cobro <= $P{codigo_ruta2} )
+	AND no_dias >= 30 
+	AND no_dias <= $P{rango_max}]]>
+	</queryString>
+	<field name="codigo_cuenta" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_cuenta"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_cuenta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha_vencimiento" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_vencimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_vencimiento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+	</field>
+	<field name="no_factura" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="no_factura"/>
+		<property name="com.jaspersoft.studio.field.label" value="no_factura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+	</field>
+	<field name="codigo_caja" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_caja"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_caja"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+	</field>
+	<field name="codigo_cliente" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cuentas_facturas"/>
+	</field>
+	<field name="nombre_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rtn" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rtn"/>
+		<property name="com.jaspersoft.studio.field.label" value="rtn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
+	</field>
+	<field name="codigo_empleado" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_empleado"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_empleado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="empleados"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre_vendedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_vendedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="empleados"/>
+	</field>
+	<field name="apellido_vendedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apellido"/>
+		<property name="com.jaspersoft.studio.field.label" value="apellido_vendedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="empleados"/>
+	</field>
+	<field name="ultimo_pago" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ultimo_pago"/>
+		<property name="com.jaspersoft.studio.field.label" value="ultimo_pago"/>
+	</field>
+	<field name="saldo2" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="saldo2"/>
+		<property name="com.jaspersoft.studio.field.label" value="saldo2"/>
+	</field>
+	<field name="no_dias" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="no_dias"/>
+		<property name="com.jaspersoft.studio.field.label" value="no_dias"/>
+	</field>
+	<field name="detalle_venta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="detalle_venta"/>
+		<property name="com.jaspersoft.studio.field.label" value="detalle_venta"/>
+	</field>
+	<field name="saldo" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="saldo2"/>
+		<property name="com.jaspersoft.studio.field.label" value="saldo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="v_saldo_cliente"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<subreport>
+				<reportElement x="-20" y="0" width="612" height="40" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
+				<subreportParameter name="bD_admin">
+					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reportes/factura_carta_datos_empresa.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="60">
+			<staticText>
+				<reportElement x="240" y="44" width="33" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Ruta:]]></text>
+			</staticText>
+			<textField pattern="d/M/yy">
+				<reportElement x="267" y="44" width="97" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{codigo_ruta}+" "+$P{ruta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="0" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE CUENTA EN MORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="44" width="55" height="13" uuid="81c1890e-ff65-4b34-bf25-f59006d2151f"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+			<textField pattern="d/M/yy">
+				<reportElement x="60" y="44" width="170" height="13" uuid="c6f87323-15ee-41c7-a0cd-ecadb87ee256"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{codigo_vendedor}+" | "+$P{vendedor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="d MMMM, yyyy">
+				<reportElement x="239" y="13" width="90" height="13" uuid="4d1e2d95-c9f8-44e3-a8ab-28f582d1153b"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="410" y="44" width="88" height="13" uuid="344cf2bb-12ef-43ad-92e8-57b95d8c4f7f"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Rango dias: 30 a ]]></text>
+			</staticText>
+			<textField pattern="#,##0.###">
+				<reportElement x="493" y="44" width="63" height="13" uuid="82816295-35ab-4496-97d3-dbf8c681390e"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{rango_max}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="525" height="1" uuid="e9d2002a-c8ee-4649-a258-640dad29110c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="90" y="0" width="230" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="30" y="0" width="60" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[Ultimo Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="320" y="0" width="124" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Direccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="444" y="0" width="81" height="15" forecolor="#030303" uuid="c8ec5707-c458-4c27-82e2-c61e23e1f4e2"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="2" y="0" width="28" height="15" forecolor="#030303" uuid="c44486bd-95fe-41d2-bacb-b7e098b7558f"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[# cta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="525" y="0" width="45" height="15" forecolor="#030303" uuid="514d96b8-a6f5-47f7-87e2-081bf5b84ce1"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Retrazo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="2" y="0" width="568" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="88" y="0" width="230" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
+					<box leftPadding="3" rightPadding="2">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_cliente}+" | "+$F{nombre_cliente}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" pattern="dd/MM/yy">
+					<reportElement style="Detail" x="28" y="0" width="60" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ultimo_pago}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
+					<reportElement style="Detail" x="442" y="0" width="81" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
+					<box leftPadding="0" rightPadding="2">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="523" y="0" width="44" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{no_dias}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="0" y="0" width="28" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
+					<box>
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codigo_cuenta}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="318" y="0" width="124" height="15" uuid="61565d88-6cfd-4004-9694-4c7c05844da2"/>
+					<box leftPadding="3" rightPadding="0">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#000000" uuid="59f52e31-e259-4211-b3ae-0ebadf7c459f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#000000" uuid="eec0ac81-2f53-4a10-a99c-68b79783bf54"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -5,7 +5,7 @@ import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.RutaCobro;
 import net.datatecsolution.admin_tools.view.botones.BotonCliente;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
-import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFacturas;
+import net.datatecsolution.admin_tools.view.botones.BotonTransferir;
 import net.datatecsolution.admin_tools.view.rendes.RtCuentasFacturas;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmRutasCobro;
@@ -17,7 +17,7 @@ import java.awt.*;
 public class ViewCuentasFacturas extends ViewTabla {
 	
 
-	protected BotonImprimirSmall btnImprimir;
+	protected BotonTransferir btnTransferir;
 	protected BotonCliente btnClientes;
 	private TmCuentasFacturas modelo;
 	private JRadioButton rdbtnCliente;
@@ -55,10 +55,10 @@ public class ViewCuentasFacturas extends ViewTabla {
 		btnEliminar.setToolTipText("Anular Facturas");
 		btnEliminar.setVisible(false);
 	    
-	    btnImprimir = new BotonImprimirSmall();
-	    btnImprimir.setEnabled(false);
+	    btnTransferir = new BotonTransferir();
+	    //btnImprimir.setEnabled(false);
 	    //btnImprimir.setVisible(false);
-	    panelAccion.add(btnImprimir);
+	    panelAccion.add(btnTransferir);
 
 		btnClientes = new BotonCliente();
 		panelAccion.add(btnClientes);
@@ -173,9 +173,9 @@ public void conectarControlador(CtlCuentasFacturas c){
 		 btnEliminar.setActionCommand("ANULARFACTURA");
 		 btnEliminar.addKeyListener(c);
 		 
-		 btnImprimir.addActionListener(c);
-		 btnImprimir.setActionCommand("IMPRIMIR");
-		 btnImprimir.addKeyListener(c);
+		 btnTransferir.addActionListener(c);
+		 btnTransferir.setActionCommand("TRANSFERIR");
+		 btnTransferir.addKeyListener(c);
 		 
 		 txtBuscar.addActionListener(c);
 		 txtBuscar.setActionCommand("BUSCAR");
@@ -212,9 +212,6 @@ public void conectarControlador(CtlCuentasFacturas c){
 
 		mntmEditarCliente.addActionListener(c);
 		mntmEditarCliente.setActionCommand("EDITAR_CLIENTE");
-
-		tabla.addMouseListener(c);
-		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	public JPopupMenu getMenuContextual() {
@@ -259,8 +256,8 @@ public void conectarControlador(CtlCuentasFacturas c){
 		return modelo;
 	}
 	
-	public BotonImprimirSmall getBtnImprimir(){
-		return btnImprimir;
+	public BotonTransferir getBtnTransferir(){
+		return btnTransferir;
 	}
 	public JRadioButton getRdbtnFecha(){
 		return rdbtnFecha;

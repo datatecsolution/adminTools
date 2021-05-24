@@ -4,6 +4,7 @@ import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
+import net.datatecsolution.admin_tools.view.ViewCambio;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturasReporte;
@@ -255,11 +256,9 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				filaPulsada = this.view.getTabla().getSelectedRow();
 				view.getModelo().setPaginacion();
 				//si la busqueda es por id
-				if(AbstractJasperReports.isNumber(view.getTxtBuscar().getText())){
-					cargarTabla(cuentaFacturaDao.buscarConSaldoReporte(Integer.parseInt(view.getTxtBuscar().getText())));
-				}else{
-					JOptionPane.showMessageDialog(view,"Escriba los dias de retrazo del credito para realizar la busqueda,","Error",JOptionPane.ERROR_MESSAGE);
-				}
+
+				cargarTabla(cuentaFacturaDao.buscarConSaldoReporte(view.getModelSpinner().getNumber().intValue()));
+
 
 
 
@@ -291,6 +290,23 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 		
 			
 		case "IMPRIMIR":
+
+			try {
+				AbstractJasperReports.createReportCuentaMora(ConexionStatic.getPoolConexion().getConnection(),
+																view.getModelSpinner().getNumber().intValue(),
+																ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo(),
+																ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo(),
+																ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getNombre()+" "+ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getApellido(),
+																ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getDescripcion());
+				//
+				//AbstractJasperReports.imprimierFactura();
+				AbstractJasperReports.showViewer(view);
+
+				//myFactura.
+			} catch (SQLException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+			}
 
 			break;
 			

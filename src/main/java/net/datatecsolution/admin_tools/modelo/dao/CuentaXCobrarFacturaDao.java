@@ -361,6 +361,59 @@ public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 		
 		//return false;
 	}
+
+	public boolean reguistrarCreditoSinFactura(CuentaFactura cuentaFactura) {
+		// TODO Auto-generated method stub
+		CuentaXCobrarFactura aRegistrar=new CuentaXCobrarFactura();
+		//se busca el ultimo reg de la cuenta
+		CuentaXCobrarFactura ultima=this.getSaldoFactura(cuentaFactura);
+
+		//se define el nuevo reg
+		aRegistrar.setDescripcion(cuentaFactura.getDetalleCredito());
+		aRegistrar.setCredito(cuentaFactura.getSaldo());
+		BigDecimal newSaldo=ultima.getSaldo().add(cuentaFactura.getSaldo());
+		aRegistrar.setSaldo(newSaldo);
+
+		int resultado=0;
+		ResultSet rs=null;
+		Connection con = null;
+
+		try
+		{
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,descripcion,credito,saldo,usuario,codigo_cuenta) VALUES (now(), ?,?,?,?,?)");
+			psConsultas.setString(1, aRegistrar.getDescripcion());
+			psConsultas.setBigDecimal(2, aRegistrar.getCredito());
+			psConsultas.setBigDecimal(3, aRegistrar.getSaldo());
+			psConsultas.setString(4, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setInt(5, cuentaFactura.getCodigoCuenta());
+			resultado=psConsultas.executeUpdate();
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			//conexion.desconectar();
+			return false;
+		}
+		finally
+		{
+			try{
+				if(rs!=null)rs.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		//return false;
+	}
 	@Override
 	public boolean eliminar(Object c) {
 		// TODO Auto-generated method stub

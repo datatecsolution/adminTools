@@ -1301,14 +1301,14 @@ public void calcularTotales(){
 						break;
 						
 					case KeyEvent.VK_F10:
-						
-						
-							ViewCobro viewCobro=new ViewCobro(null);
-							CtlCobro ctlCobro=new CtlCobro(viewCobro);
-							
-							viewCobro.dispose();
-							viewCobro=null;
-							ctlCobro=null;
+
+
+						ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(null);
+						CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
+
+
+						viewCuentasFacturas.dispose();
+						ctlCuentasFacturas=null;
 						
 						
 						break;

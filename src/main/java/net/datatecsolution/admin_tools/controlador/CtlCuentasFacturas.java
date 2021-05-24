@@ -1,10 +1,7 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
-import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
-import net.datatecsolution.admin_tools.modelo.dao.CuentaFacturaDao;
-import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
-import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
+import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.ViewCobroFactura;
 import net.datatecsolution.admin_tools.view.ViewCrearCliente;
 import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
@@ -12,15 +9,21 @@ import net.datatecsolution.admin_tools.view.ViewCuentasFacturas;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class CtlCuentasFacturas implements ActionListener, MouseListener, ChangeListener, KeyListener {
 	public ViewCuentasFacturas view;
 	
 	private CuentaFacturaDao cuentaFacturaDao;
+	private CuentaPorCobrarDao myCuentaCobrarDao=null;
+	private CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=null;
 
 	private ClienteDao clienteDao=new ClienteDao();
 	
@@ -28,6 +31,8 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 	private int filaPulsada=-1;
 	private EmpleadoDao empleadoDao=null;
 	private RutaCobroDao rutaCobroDao=null;
+	private UsuarioDao usuarioDao=null;
+	private ReciboPagoDao myReciboDao=null;
 	
 	public CtlCuentasFacturas(ViewCuentasFacturas v) {
 		
@@ -39,6 +44,11 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 
 		empleadoDao=new EmpleadoDao();
 		rutaCobroDao=new RutaCobroDao();
+		usuarioDao=new UsuarioDao();
+		myReciboDao=new ReciboPagoDao();
+		myCuentaCobrarDao=new CuentaPorCobrarDao();
+		cuentaXCobrarFacturaDao=new CuentaXCobrarFacturaDao();
+
 		cargarComboBox();
 		cargarCbxRutas();
 		
@@ -123,6 +133,8 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
             
         	//si fue doble click mostrar modificar
         	if (e.getClickCount() == 2) {
+
+
         		
         		try {
         			
@@ -133,7 +145,9 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 					// TODO Auto-generated catch block
 					ee.printStackTrace();
 				}
-        		
+
+
+
         
         		
         		
@@ -369,7 +383,118 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				break;
 		
 			
-		case "IMPRIMIR":
+		case "TRANSFERIR":
+
+			if(verificarSelecion()) {
+				CuentaFactura cuentaFacturaOrigen = view.getModelo().getCuenta(filaPulsada);
+
+				if (cuentaFacturaOrigen.getSaldo().doubleValue() > 0) {
+
+						String numCuenta = JOptionPane.showInputDialog("Transferir saldo a cuenta #:");
+						if (AbstractJasperReports.isNumber(numCuenta)) {
+							CuentaFactura cuentaFacturaDestino = cuentaFacturaDao.buscarPorIdCuenta(Integer.parseInt(numCuenta));
+							if (cuentaFacturaDestino != null) {
+
+
+								//se crea el mensaje para mostrar en la pantalla
+								JLabel jLabel1 = new JLabel("Se realizara la siguiente trasfericia de saldo:");
+								JLabel jLabel2 = new JLabel("-> Cuenta de origen: " + cuentaFacturaOrigen.getCodigoCuenta() + " " + cuentaFacturaOrigen.getCliente().getNombre() + " con saldo Lps " + cuentaFacturaOrigen.getSaldo());
+								JLabel jLabel3 = new JLabel("-> Cuenta de destino: " + cuentaFacturaDestino.getCodigoCuenta() + " " + cuentaFacturaDestino.getCliente().getNombre() + " con saldo Lps " + cuentaFacturaDestino.getSaldo());
+								JLabel jLabel4 = new JLabel("Escriba el password de admin para confirmar");
+								JPasswordField pf2 = new JPasswordField();
+								JPanel jPane = new JPanel();
+								jPane.setLayout(new BoxLayout(jPane, BoxLayout.PAGE_AXIS));
+								jPane.add(jLabel1);
+								jPane.add(Box.createRigidArea(new Dimension(0, 10)));
+								jPane.add(jLabel2);
+								jPane.add(jLabel3);
+								jPane.add(Box.createRigidArea(new Dimension(0, 10)));
+								jPane.add(jLabel4);
+								jPane.add(pf2);
+								//fin del mensaje
+
+								int action2 = JOptionPane.showConfirmDialog(view, jPane, "Confirmacion de tranferencia!!!", JOptionPane.OK_CANCEL_OPTION);
+
+								if (action2 < 0) {
+
+								} else {
+									String pwd = new String(pf2.getPassword());
+
+									//comprabacion del permiso administrativo
+									if (usuarioDao.comprobarAdmin(pwd)) {
+
+										//ser crea el recibo para la cancelacion del saldo de la cuenta
+										ReciboPago myRecibo = new ReciboPago();
+
+										myRecibo.setCliente(cuentaFacturaOrigen.getCliente());
+										String concepto = "Transferencia de saldo a cuenta detalle # " + cuentaFacturaDestino.getCodigoCuenta();
+										myRecibo.setConcepto(concepto);
+										myRecibo.setTotal(cuentaFacturaOrigen.getSaldo());
+										DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+										LocalDateTime now = LocalDateTime.now();
+										myRecibo.setFecha(sdf.format(now));
+										//se establece la cantidad en letras
+										myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+
+										//se manda aguardar el recibo con los pagos realizados
+										boolean resulta = this.myReciboDao.registrar(myRecibo, cuentaFacturaOrigen);
+
+
+										if (resulta) {
+											//se incrementa el saldo de la cuenta de destino general y de detalle
+
+											//creacion reg cuenta general
+											CuentaPorCobrar newRegCuentaGeneral = new CuentaPorCobrar();
+											newRegCuentaGeneral.setCliente(cuentaFacturaDestino.getCliente());
+											newRegCuentaGeneral.setDescripcion("Transferencia de saldo a cuenta factura # " + cuentaFacturaDestino.getCodigoCuenta());
+											newRegCuentaGeneral.setCredito(myRecibo.getTotal());
+
+											myCuentaCobrarDao.reguistrarCredito(newRegCuentaGeneral);
+
+											//creacion reg cuenta detalle factura o cuenta donde se transfirio el saldo
+											CuentaFactura unaCuentaFactura = new CuentaFactura();
+											unaCuentaFactura.setCodigoCuenta(cuentaFacturaDestino.getCodigoCuenta());
+											unaCuentaFactura.setCaja(ConexionStatic.getUsuarioLogin().getCajaActiva());
+											unaCuentaFactura.setCliente(cuentaFacturaDestino.getCliente());
+											unaCuentaFactura.setDetalleCredito("Transferencia de saldo de cuenta factura # " + cuentaFacturaOrigen.getCodigoCuenta());
+											unaCuentaFactura.setSaldo(myRecibo.getTotal());
+
+											cuentaXCobrarFacturaDao.reguistrarCreditoSinFactura(unaCuentaFactura);
+
+
+											myRecibo.setNoRecibo(myReciboDao.idUltimoRecibo);
+
+											try {
+
+												AbstractJasperReports.createReportReciboCobroCajaFactura(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
+												//AbstractJasperReports.imprimierFactura();
+												AbstractJasperReports.showViewer(view);
+
+												this.actionPerformed(new ActionEvent(this,1, "BUSCAR"));
+
+												//myFactura.
+											} catch (SQLException e3) {
+												// TODO Auto-generated catch block
+												e3.printStackTrace();
+											}
+
+										} else {//
+											JOptionPane.showMessageDialog(view, "El recibo no se guardo correctamente.");
+										}//fin del if que verefica la acccion de guardar el recibo
+									}
+
+								}
+
+							} else {
+								JOptionPane.showMessageDialog(view, "No se encontro la cuenta!!!", "Error", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}else{
+					JOptionPane.showMessageDialog(view, "La cuenta de origen no tiene saldo.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+
+			}
+
 
 			break;
 			
@@ -401,7 +526,6 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		case "LAST":
 			view.getModelo().lastPag();
 			if(this.view.getRdbtnId().isSelected()){
-
 				cargarTabla(cuentaFacturaDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText())));
 
 			}else if(this.view.getRdbtnFecha().isSelected()){
