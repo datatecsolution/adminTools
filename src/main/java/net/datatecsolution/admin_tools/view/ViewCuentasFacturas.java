@@ -113,9 +113,9 @@ public class ViewCuentasFacturas extends ViewTabla {
 		tabla.getColumnModel().getColumn(5).setPreferredWidth(150);	//
 		tabla.getColumnModel().getColumn(6).setPreferredWidth(40);
 
-		setPreferredSize(new Dimension(1200,680));
+		setPreferredSize(new Dimension(1300,700));
 
-		this.setSize(1200,680);
+		this.setSize(1300,700);
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
