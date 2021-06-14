@@ -341,9 +341,9 @@ switch(e.getKeyCode()){
 				//se manda aguardar el recibo con los pagos realizados
 				boolean resulta=this.myReciboDao.registrar(myRecibo);
 
-				buscarSaldosFacturas();
-				
-				
+//				buscarSaldosFacturas();
+//				view.getModeloFacturas().setPago(new BigDecimal(view.getTxtTotal().getText()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
 				if(resulta){
 					
 					this.resul=true;

@@ -156,7 +156,7 @@ public abstract class AbstractJasperReports implements Runnable
 		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_orden.jasper");
 
 		facturaTiketCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_credito.jasper");
-		facturaCartaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_orden.jasper");
+		facturaCartaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_orden_credito.jasper");
 		//factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");
 
 		facturaCompra=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_compra_carta.jasper");

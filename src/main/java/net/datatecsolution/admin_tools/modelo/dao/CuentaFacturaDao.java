@@ -99,9 +99,6 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			rs=psConsultas.getGeneratedKeys(); //obtengo las ultimas llaves generadas
 			while(rs.next()){
 				cuentaFactura.setCodigoCuenta(rs.getInt(1));
-	
-					
-					
 				}
 			return true;
 			

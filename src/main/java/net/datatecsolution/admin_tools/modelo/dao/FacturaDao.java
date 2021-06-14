@@ -237,25 +237,65 @@ public class FacturaDao extends ModeloDaoBasic {
 				if(myFactura.getDetalles().get(x).getArticulo().getId()!=-1)
 					detallesDao.agregarDetalle(myFactura.getDetalles().get(x), idFacturaGuardada);
 			}
-			
-			
+
+
+
 			//si la factura es al credito se guarda el credito del cliente
 			if(myFactura.getTipoFactura()==2){
+				//se optione el saldo del cliente y se le esta la factura al credito
+				CuentaPorCobrar ultima=myCuentaCobrarDao.getSaldoCliente(myFactura.getCliente());
+
+
+				//se registra la factura la credito en la cuenta general
 				myCuentaCobrarDao.reguistrarCredito(myFactura);
 
 
-				//verificar si tiene credito a fovor del cliente si tiene no debe registrar el credito de la factura
-
 				//se crea la cuenta de la factura en la bd
-				CuentaFactura unaCuentaFactura=new CuentaFactura();
-			
+				//y se registra su saldo
+				CuentaFactura unaCuentaFactura = new CuentaFactura();
 				unaCuentaFactura.setCaja(ConexionStatic.getUsuarioLogin().getCajaActiva());
 				unaCuentaFactura.setCliente(myFactura.getCliente());
 				unaCuentaFactura.setFactura(myFactura);
-				
+				//se crea la cuenta por la factura
 				cuentaFacturaDao.registrar(unaCuentaFactura);
-				
+				//se crea el saldo de la factura
 				cuentaXCobrarFacturaDao.reguistrarCredito(unaCuentaFactura);
+
+
+				//verificar si tiene credito a fovor del cliente, sino tiene > 0 se registra el credito de la factura
+				if(ultima.getSaldo().doubleValue()<0) {
+
+					//calcular el nuevo saldo restandole el saldo de la factura actual
+					BigDecimal newSaldo=ultima.getSaldo().add(myFactura.getTotal());
+
+					if(newSaldo.doubleValue()<=0){
+						//realizar pago por el saldo afavor del de la cuenta general
+						CuentaXCobrarFactura cuenta=new CuentaXCobrarFactura();
+
+						cuenta.setCodigoCuenta(unaCuentaFactura.getCodigoCuenta());
+						cuenta.setDebito(myFactura.getTotal());
+						cuenta.setSaldo(new BigDecimal(0));
+						cuenta.setDescripcion("Pago por saldo a favor del cliente");
+						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+
+					}else{
+
+						//realizar pago por el saldo afavor del de la cuenta general
+						CuentaXCobrarFactura cuenta=new CuentaXCobrarFactura();
+
+						cuenta.setCodigoCuenta(unaCuentaFactura.getCodigoCuenta());
+						cuenta.setDebito(ultima.getSaldo().multiply(new BigDecimal(-1)));
+						cuenta.setSaldo(new BigDecimal(myFactura.getTotal().subtract(ultima.getSaldo().multiply(new BigDecimal(-1))).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+						cuenta.setDescripcion("Pago por saldo a favor del cliente");
+						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+
+					}
+
+
+
+
+
+				}
 			}
 			
 			resultado= true;

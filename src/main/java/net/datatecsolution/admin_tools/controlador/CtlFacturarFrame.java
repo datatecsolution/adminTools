@@ -2994,14 +2994,14 @@ public void guardarRemotoCredito(){
 								//AbstractJasperReports.showViewer(view);
 								AbstractJasperReports.imprimierFactura();
 								
-								//AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
-								//AbstractJasperReports.imprimierFactura();
+								AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
+								AbstractJasperReports.imprimierFactura();
 								
 						}
 					}
 					
 					
-					/*
+
 					int resul2=JOptionPane.showConfirmDialog(view, "Desea imprimir la orden?");
 					if(resul2==0){
 						AbstractJasperReports.createReportOrden(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
@@ -3009,7 +3009,6 @@ public void guardarRemotoCredito(){
 						AbstractJasperReports.imprimierFactura();
 						
 					}
-					*/
 					String cambioEfectivo=myFactura.getCambio().toString();
 					String pago=myFactura.getPago().toString();
 
