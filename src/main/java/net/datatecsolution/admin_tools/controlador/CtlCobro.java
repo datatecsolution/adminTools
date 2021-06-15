@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.controlador;
 
+import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.ViewCobro;
@@ -12,7 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CtlCobro implements ActionListener, KeyListener {
@@ -270,7 +273,7 @@ switch(e.getKeyCode()){
 		// TODO Auto-generated method stub
 		view.getModeloFacturas().limpiarCuentas();
 		
-		List<CuentaFactura> facturas=cuentaFacturaDao.buscarPorId(this.myCliente.getId());
+		List<CuentaFactura> facturas=cuentaFacturaDao.buscarPorIdCliente(this.myCliente.getId());
 		if(facturas!=null){
 			
 			for(int x=0;x<facturas.size();x++){
@@ -338,6 +341,10 @@ switch(e.getKeyCode()){
 				view.getModeloFacturas().setPago(new BigDecimal(view.getTxtTotal().getText()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
 				setRecibo();
+
+
+
+
 				//se manda aguardar el recibo con los pagos realizados
 				boolean resulta=this.myReciboDao.registrar(myRecibo);
 
@@ -392,7 +399,7 @@ switch(e.getKeyCode()){
 						cuenta.setDebito(new BigDecimal(facturas.get(y).getPago().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 						cuenta.setSaldo(new BigDecimal(facturas.get(y).getNewSaldo().doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 						cuenta.setDescripcion("Pago con recibo # "+this.myRecibo.getNoRecibo());
-						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+						cuentaXCobrarFacturaDao.reguistrarDebitoYaProcesado(cuenta);
 						//cuentasFacturas.add(cuenta);
 					}
 					

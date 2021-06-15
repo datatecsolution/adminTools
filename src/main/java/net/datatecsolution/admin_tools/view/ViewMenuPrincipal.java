@@ -54,6 +54,8 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmAplicarInteresA;
 	private JMenuItem mntmFacturasVencidas;
 	private JMenuItem mntmRutasDeEntregas;
+	private JMenuItem mntmRutasDeCobro;
+	private JMenuItem mntmReporteCuentasFacturas;
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
@@ -125,6 +127,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmRutasDeEntregas = new JMenuItem("Rutas de entregas");
 		mnFacturacion.add(mntmRutasDeEntregas);
+
+		mntmRutasDeCobro= new JMenuItem("Rutas de cobros");
+		mnFacturacion.add(mntmRutasDeCobro);
 		
 		mnCompras = new JMenu("Compras");
 		menuBar.add(mnCompras);
@@ -135,11 +140,14 @@ public class ViewMenuPrincipal extends JFrame {
 		JMenu mnCuentasPorCobrar = new JMenu("Cuentas por cobrar");
 		menuBar.add(mnCuentasPorCobrar);
 		
-		mntmListaPagos = new JMenuItem("Ver pagos");
+		mntmListaPagos = new JMenuItem("Pagos");
 		mnCuentasPorCobrar.add(mntmListaPagos);
 		
-		mntmFacturasVencidas = new JMenuItem("Facturas Vencidas");
+		mntmFacturasVencidas = new JMenuItem("CXC por facturas");
 		mnCuentasPorCobrar.add(mntmFacturasVencidas);
+
+		mntmReporteCuentasFacturas= new JMenuItem("Reportes CXC por facturas");
+		mnCuentasPorCobrar.add(mntmReporteCuentasFacturas);
 		
 		
 		mnReportes = new JMenu("Reportes");
@@ -217,6 +225,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmRutasDeEntregas.addActionListener(c);
 		mntmRutasDeEntregas.setActionCommand("RUTAS_ENTREGAS");
+
+		mntmRutasDeCobro.addActionListener(c);
+		mntmRutasDeCobro.setActionCommand("RUTAS_COBROS");
 		
 		mntmFacturasVencidas.addActionListener(c);
 		mntmFacturasVencidas.setActionCommand("FACT_VENCIDAS");
@@ -309,6 +320,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		btnAlertaExistencia.addActionListener(c);
 		btnAlertaExistencia.setActionCommand("ALERTAEXISTENCIAS");
+
+		mntmReporteCuentasFacturas.addActionListener(c);
+		mntmReporteCuentasFacturas.setActionCommand("REPORTE_CXC_FACTURA");
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");

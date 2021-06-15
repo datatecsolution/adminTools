@@ -117,7 +117,7 @@ public class CtlClienteLista implements ActionListener, MouseListener {
 				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 				
 			}
-			view=null;
+			viewNewCliente=null;
 			ctlCliente=null;
 			break;
 			

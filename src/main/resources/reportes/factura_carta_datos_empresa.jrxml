@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta_datos_empresa" pageWidth="612" pageHeight="396" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta_datos_empresa" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="2" bottomMargin="2" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="15"/>
 	<property name="ireport.y" value="96"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy New Server"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
@@ -54,7 +54,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<title>
-		<band height="77" splitType="Stretch">
+		<band height="69" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="572" height="22" uuid="3f047633-edd7-4417-a293-0458afffdd83"/>
 				<textElement textAlignment="Center">
@@ -91,7 +91,10 @@ FROM $P!{bD_admin}.datos_empresa]]>
 				<textFieldExpression><![CDATA["Correo: "+$F{correo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="54" width="580" height="14" uuid="260a9827-cb7e-4ac7-8d18-7520cfed06d9"/>
+				<reportElement x="0" y="55" width="572" height="14" uuid="260a9827-cb7e-4ac7-8d18-7520cfed06d9"/>
+				<box>
+					<bottomPen lineWidth="0.25" lineColor="#CFCFCF"/>
+				</box>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>

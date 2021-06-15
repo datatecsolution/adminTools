@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_pagos_cliente" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -40,16 +40,19 @@
 	`cliente`.`nombre_cliente` AS `nombre_cliente`,
 	cliente.rtn
 FROM
+	`recibo_pago`
+	INNER JOIN
+	cuentas_facturas
+	ON 
+		recibo_pago.codigo_cliente = cuentas_facturas.codigo_cuenta
+	INNER JOIN
+	cliente
+	ON 
+		cuentas_facturas.codigo_cliente = cliente.codigo_cliente
 	
-		`recibo_pago`
-		JOIN `cliente` ON
-			(
-				`recibo_pago`.`codigo_cliente` = `cliente`.`codigo_cliente`
-			)
-		
 	
 WHERE 
-	 fecha BETWEEN $P{fecha_min} AND $P{fecha_max} and `recibo_pago`.`codigo_cliente`= $P{codigo_cliente}]]>
+	 `recibo_pago`.`fecha` BETWEEN $P{fecha_min} AND $P{fecha_max} and cliente.codigo_cliente= $P{codigo_cliente}]]>
 	</queryString>
 	<field name="no_recibo" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_salida"/>
@@ -88,68 +91,77 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="80" splitType="Stretch">
+		<band height="31" splitType="Stretch">
 			<subreport>
-				<reportElement x="-20" y="0" width="612" height="40" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
+				<reportElement x="-20" y="0" width="612" height="30" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
 				<subreportParameter name="bD_admin">
 					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["reportes/factura_carta_datos_empresa.jasper"]]></subreportExpression>
 			</subreport>
-			<staticText>
-				<reportElement x="2" y="55" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[PAGOS DE CLIENTES]]></text>
-			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="20">
-			<staticText>
-				<reportElement x="277" y="2" width="39" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Desde:]]></text>
-			</staticText>
+		<band height="62">
 			<textField pattern="d/M/yy">
-				<reportElement x="316" y="2" width="90" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
-				<textElement>
+				<reportElement x="208" y="17" width="72" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fecha_min}]]></textFieldExpression>
 			</textField>
-			<textField pattern="d/M/yy">
-				<reportElement x="445" y="2" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
-				<textElement>
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{fecha_max}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="407" y="2" width="37" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
-				<textElement>
-					<font fontName="SansSerif" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Hasta:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="2" y="2" width="54" height="13" uuid="99e6870b-1aa8-41a8-8fde-5792a1dba9fd"/>
+				<reportElement x="6" y="44" width="48" height="13" uuid="99e6870b-1aa8-41a8-8fde-5792a1dba9fd"/>
 				<textElement>
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cliente: ]]></text>
 			</staticText>
 			<textField pattern="d/M/yy">
-				<reportElement x="56" y="2" width="220" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
+				<reportElement x="48" y="44" width="220" height="13" uuid="553c731a-7a40-4c5f-bcfc-2837882fbb3c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{rtn}+ " | "+$F{nombre_cliente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="274" y="44" width="30" height="13" uuid="e36d5a6e-1b43-4630-8173-07f62de705a3"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RTN: ]]></text>
+			</staticText>
+			<textField pattern="d/M/yy">
+				<reportElement x="304" y="44" width="120" height="13" uuid="79493621-8a52-4194-a8fe-a8d515f3982b"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="0" width="568" height="15" uuid="6c196262-82da-485d-a603-6c4337dba8e6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGOS DE CLIENTES]]></text>
+			</staticText>
+			<textField pattern="d/M/yy">
+				<reportElement x="296" y="17" width="74" height="13" uuid="536a9638-4531-49ce-8df7-7e0115b05d89"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha_max}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="280" y="17" width="15" height="13" uuid="4df5550f-095c-43d8-809e-861a3f29710a"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[a]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -161,7 +173,7 @@ WHERE
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement style="Column header" x="160" y="0" width="191" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<reportElement style="Column header" x="120" y="0" width="275" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -174,7 +186,7 @@ WHERE
 				<text><![CDATA[Descripcion]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="351" y="0" width="82" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
+				<reportElement style="Column header" x="395" y="0" width="82" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -187,7 +199,7 @@ WHERE
 				<text><![CDATA[Cajero]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="56" y="0" width="104" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
+				<reportElement style="Column header" x="40" y="0" width="80" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +212,7 @@ WHERE
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="433" y="0" width="92" height="15" forecolor="#030303" uuid="c8ec5707-c458-4c27-82e2-c61e23e1f4e2"/>
+				<reportElement style="Column header" x="477" y="0" width="92" height="15" forecolor="#030303" uuid="c8ec5707-c458-4c27-82e2-c61e23e1f4e2"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -213,7 +225,7 @@ WHERE
 				<text><![CDATA[Efectivo]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2" y="0" width="54" height="15" forecolor="#030303" uuid="c44486bd-95fe-41d2-bacb-b7e098b7558f"/>
+				<reportElement style="Column header" x="2" y="0" width="38" height="15" forecolor="#030303" uuid="c44486bd-95fe-41d2-bacb-b7e098b7558f"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -230,11 +242,11 @@ WHERE
 	<detail>
 		<band height="15">
 			<frame>
-				<reportElement x="2" y="0" width="523" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
+				<reportElement x="2" y="0" width="568" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textField textAdjust="StretchHeight">
-					<reportElement style="Detail" x="158" y="0" width="191" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
+					<reportElement style="Detail" x="118" y="0" width="275" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box leftPadding="3" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -247,7 +259,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="#,##0.###">
-					<reportElement style="Detail" x="349" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
+					<reportElement style="Detail" x="393" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -260,7 +272,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="d/M/yy">
-					<reportElement style="Detail" x="54" y="0" width="104" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
+					<reportElement style="Detail" x="38" y="0" width="80" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -273,7 +285,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
-					<reportElement style="Detail" x="431" y="0" width="92" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
+					<reportElement style="Detail" x="475" y="0" width="92" height="15" uuid="5c0d2497-de15-4ec8-a184-841874865b6b"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -286,7 +298,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight">
-					<reportElement style="Detail" x="0" y="0" width="54" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
+					<reportElement style="Detail" x="0" y="0" width="38" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -304,7 +316,7 @@ WHERE
 	<columnFooter>
 		<band height="58">
 			<textField pattern="¤#,##0.##;¤-#,##0.##">
-				<reportElement x="433" y="0" width="92" height="15" uuid="7da9a0ca-8b07-4a19-9aa8-7b4e4a17f091">
+				<reportElement x="477" y="0" width="92" height="15" uuid="7da9a0ca-8b07-4a19-9aa8-7b4e4a17f091">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -321,7 +333,7 @@ WHERE
 				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="351" y="0" width="82" height="15" uuid="0edc268c-5892-44b2-a6ac-9f98729166e6">
+				<reportElement x="395" y="0" width="82" height="15" uuid="0edc268c-5892-44b2-a6ac-9f98729166e6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>

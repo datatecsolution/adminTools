@@ -141,10 +141,21 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 		// TODO Auto-generated method stub
 		CuentaPorCobrar aRegistrar=new CuentaPorCobrar();
 		CuentaPorCobrar ultima=this.getSaldoCliente(myFactura.getCliente());
-		
-		
+
+		String fecha= myFactura.getFecha()==null? " now(), ":"'"+myFactura.getFecha()+" 00:00:00', ";
+
+		/** se construlle la descripcion de la cuenta segun la factura ***/
+		String descripcion="venta de ";
+		for(int x=0;x<myFactura.getDetalles().size();x++){
+
+			if(myFactura.getDetalles().get(x).getArticulo().getId()!=-1)
+				descripcion=descripcion+myFactura.getDetalles().get(x).getArticulo().getArticulo()+" , ";
+		}
+		descripcion=descripcion+" fact # "+ myFactura.getIdFactura();
+
+
+		aRegistrar.setDescripcion(descripcion);
 		aRegistrar.setCliente(myFactura.getCliente());
-		aRegistrar.setDescripcion("venta segun factura no. "+myFactura.getIdFactura());
 		aRegistrar.setCredito(myFactura.getTotal());
 		BigDecimal newSaldo=ultima.getSaldo().add(myFactura.getTotal());
 		aRegistrar.setSaldo(newSaldo);
@@ -158,7 +169,7 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 				{
 					con = ConexionStatic.getPoolConexion().getConnection();
 					
-					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES (now(),?,?,?,?)");
+					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES ("+fecha+" ?,?,?,?)");
 					psConsultas.setInt(1, aRegistrar.getCliente().getId());
 					psConsultas.setString(2, aRegistrar.getDescripcion());
 					psConsultas.setBigDecimal(3, aRegistrar.getCredito());
@@ -188,6 +199,57 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 					} // fin de catch
 				} // fin de finally
 		
+		//return false;
+	}
+
+	public boolean reguistrarCredito(CuentaPorCobrar aRegistrar) {
+		// TODO Auto-generated method stub
+
+		CuentaPorCobrar ultima=this.getSaldoCliente(aRegistrar.getCliente());
+
+
+		BigDecimal newSaldo=ultima.getSaldo().add(aRegistrar.getSaldo());
+		aRegistrar.setSaldo(newSaldo);
+
+		//JOptionPane.showConfirmDialog(null, myCliente);
+		int resultado=0;
+		ResultSet rs=null;
+		Connection con = null;
+
+		try
+		{
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES (now(), ?,?,?,?)");
+			psConsultas.setInt(1, aRegistrar.getCliente().getId());
+			psConsultas.setString(2, aRegistrar.getDescripcion());
+			psConsultas.setBigDecimal(3, aRegistrar.getCredito());
+			psConsultas.setBigDecimal(4, aRegistrar.getSaldo());
+			//psConsultas.setString(5, ConexionStatic.getUsuarioLogin().getUser());
+			resultado=psConsultas.executeUpdate();
+
+			return true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			//conexion.desconectar();
+			return false;
+		}
+		finally
+		{
+			try{
+				if(rs!=null)rs.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
 		//return false;
 	}
 	@Override

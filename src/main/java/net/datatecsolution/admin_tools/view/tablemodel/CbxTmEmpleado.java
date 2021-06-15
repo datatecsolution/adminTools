@@ -1,5 +1,7 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
+import net.datatecsolution.admin_tools.modelo.Cliente;
+import net.datatecsolution.admin_tools.modelo.Departamento;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 
 import javax.swing.*;
@@ -29,7 +31,22 @@ public class CbxTmEmpleado extends DefaultComboBoxModel{
 		 }
 	
 	public void setLista(Vector<Empleado> im){
-		empleados=im;
+
+		empleados.clear();
+
+		//se agregar un selecion por defecto
+		Empleado unEmpleado=new Empleado();
+		unEmpleado.setCodigo(0);
+		unEmpleado.setNombre("Todos");
+
+
+		empleados.add(unEmpleado);
+
+		for (Empleado emp:im
+		) {
+			empleados.add(emp);
+
+		}
 	}
 	public void addEmpleado(Empleado m){
 		empleados.addElement(m);

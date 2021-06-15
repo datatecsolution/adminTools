@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Factura {
 	
-	private String fecha;
+	private String fecha=null;
 	private Integer idFactura=0;
 	private Integer tipoFactura=1;
 	private Cliente cliente;

@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.modelo.dao;
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.RutaCobro;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -19,6 +20,8 @@ public class ClienteDao extends ModeloDaoBasic {
 	private String sqlBaseJoin=null;
 	
 	private EmpleadoDao empleadoDao=new EmpleadoDao();
+
+	private RutaCobroDao rutaCobroDao=new RutaCobroDao();
 	
 	public ClienteDao(){
 		
@@ -32,6 +35,7 @@ public class ClienteDao extends ModeloDaoBasic {
 				+ " cliente.rtn, "
 				+ " cliente.limite_credito, "
 				+ " cliente.id_vendedor, "
+				+ " cliente.id_ruta_cobro, "
 				+ " cliente.estado, "
 				+ " cliente.tipo_cliente, "
 				+ " ifnull("+super.DbName+ ".`f_saldo_cliente`(`cliente`.`codigo_cliente`),0) AS `saldo2`,  "
@@ -65,10 +69,19 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
+
 		try {
 			conn = ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas = conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente", "="));
+			psConsultas = conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente", "="));
 			
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			
@@ -92,6 +105,9 @@ public class ClienteDao extends ModeloDaoBasic {
 				
 				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
 				unCliente.setVendedor(unVendedor);
+
+				RutaCobro unaRuta=rutaCobroDao.buscarPorId(res.getInt("id_ruta_cobro"));
+				unCliente.setRutaCobro(unaRuta);
 				
 				clientes.add(unCliente);
 			 }
@@ -132,11 +148,19 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		Connection conn=null;
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
+
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			//psConsultas=conn.prepareStatement("SELECT *,ifnull(f_saldo_cliente(codigo_cliente),0) as saldo2 FROM cliente where rtn LIKE ? and tipo_cliente=2;");
-		
-			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and rtn", "LIKE"));
+
+			psConsultas=conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente=2 and rtn", "LIKE"));
 			
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 		
@@ -160,6 +184,9 @@ public class ClienteDao extends ModeloDaoBasic {
 				
 				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
 				unCliente.setVendedor(unVendedor);
+
+				RutaCobro unaRuta=rutaCobroDao.buscarPorId(res.getInt("id_ruta_cobro"));
+				unCliente.setRutaCobro(unaRuta);
 				
 				clientes.add(unCliente);
 			 }
@@ -188,6 +215,70 @@ public class ClienteDao extends ModeloDaoBasic {
 			else return null;
 		
 	}
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para busca los cliente  por nombre>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public List<Cliente> buscarPorNombreTodosLosCobradores(String busqueda,int limitInferio, int canItemPag){
+		List<Cliente> clientes=new ArrayList<Cliente>();
+
+		ResultSet res=null;
+		Connection conn=null;
+		boolean existe=false;
+
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(super.getQuerySearch(" tipo_cliente=2 and nombre_cliente", "LIKE"));
+			psConsultas.setString(1, "%" + busqueda + "%");
+			psConsultas.setInt(2, limitInferio);
+			psConsultas.setInt(3, canItemPag);
+			res = psConsultas.executeQuery();
+			//System.out.println(buscarProveedorNombre); Tampa fl, Houston  //// Washinton internal
+			while(res.next()){
+				Cliente unCliente=new Cliente();
+				existe=true;
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setDireccion(res.getString("direccion"));
+				unCliente.setTelefono(res.getString("telefono"));
+				unCliente.setCelular(res.getString("movil"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+
+				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
+				unCliente.setVendedor(unVendedor);
+
+				RutaCobro unaRuta=rutaCobroDao.buscarPorId(res.getInt("id_ruta_cobro"));
+				unCliente.setRutaCobro(unaRuta);
+
+				unCliente.setLimiteCredito(res.getBigDecimal("limite_credito"));
+				unCliente.setSaldoCuenta(res.getBigDecimal("saldo2"));
+
+				clientes.add(unCliente);
+			}
+
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			System.out.println(e);
+		}finally
+		{
+			try{
+				if(res!=null)res.close();
+				if(conn!=null)conn.close();
+				if(psConsultas!=null)psConsultas.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+		if (existe) {
+			return clientes;
+		}
+		else return null;
+
+	}
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para busca los cliente  por nombre>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public List<Cliente> buscarPorNombre(String busqueda,int limitInferio, int canItemPag){
@@ -196,9 +287,17 @@ public class ClienteDao extends ModeloDaoBasic {
 		ResultSet res=null;
 		Connection conn=null;
 		boolean existe=false;
+
+		String whereBusqueda="";
+
+		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
+			whereBusqueda="id_vendedor>?";
+		}else{
+			whereBusqueda="id_vendedor=?";
+		}
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and nombre_cliente", "LIKE"));
+			psConsultas=conn.prepareStatement(super.getQuerySearch(whereBusqueda+" and tipo_cliente=2 and nombre_cliente", "LIKE"));
 			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			psConsultas.setString(2, "%" + busqueda + "%");
 			psConsultas.setInt(3, limitInferio);
@@ -218,6 +317,9 @@ public class ClienteDao extends ModeloDaoBasic {
 				
 				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
 				unCliente.setVendedor(unVendedor);
+
+				RutaCobro unaRuta=rutaCobroDao.buscarPorId(res.getInt("id_ruta_cobro"));
+				unCliente.setRutaCobro(unaRuta);
 				
 				unCliente.setLimiteCredito(res.getBigDecimal("limite_credito"));
 				unCliente.setSaldoCuenta(res.getBigDecimal("saldo2"));
@@ -270,11 +372,11 @@ public class ClienteDao extends ModeloDaoBasic {
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 		
-			psConsultas=con.prepareStatement(super.getQuerySearch("id_vendedor=? and tipo_cliente=2 and codigo_cliente", "="));
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
-			psConsultas.setInt(2, id);
-			psConsultas.setInt(3, 0);
-			psConsultas.setInt(4, 1);
+			psConsultas=con.prepareStatement(super.getQuerySearch("tipo_cliente=2 and codigo_cliente", "="));
+			//psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(1, id);
+			psConsultas.setInt(2, 0);
+			psConsultas.setInt(3, 1);
 			res=psConsultas.executeQuery();
 			while(res.next()){
 				myCliente.setId(res.getInt("codigo_cliente"));
@@ -282,9 +384,19 @@ public class ClienteDao extends ModeloDaoBasic {
 				myCliente.setTelefono(res.getString("telefono"));
 				myCliente.setCelular(res.getString("movil"));
 				myCliente.setTipoCliente(res.getInt("tipo_cliente"));
-				
+
+
+
+				myCliente.setDireccion(res.getString("direccion"));
+
+
+				myCliente.setRtn(res.getString("rtn"));
+
 				Empleado unVendedor=empleadoDao.buscarPorId(res.getInt("id_vendedor"));
 				myCliente.setVendedor(unVendedor);
+
+				RutaCobro unaRuta=rutaCobroDao.buscarPorId(res.getInt("id_ruta_cobro"));
+				myCliente.setRutaCobro(unaRuta);
 				
 				myCliente.setRtn(res.getString("rtn"));
 				myCliente.setLimiteCredito(res.getBigDecimal("limite_credito"));
@@ -426,7 +538,7 @@ public class ClienteDao extends ModeloDaoBasic {
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET nombre_cliente = ?, direccion = ? ,telefono = ?, movil=?, rtn=?,limite_credito=?,id_vendedor=? WHERE codigo_cliente = ?");
+			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET nombre_cliente = ?, direccion = ? ,telefono = ?, movil=?, rtn=?,limite_credito=?,id_vendedor=?, id_ruta_cobro=? WHERE codigo_cliente = ?");
 			psConsultas.setString(1,cliente.getNombre());
 			psConsultas.setString(2, cliente.getDereccion());
 			psConsultas.setString(3, cliente.getTelefono());
@@ -435,7 +547,8 @@ public class ClienteDao extends ModeloDaoBasic {
 			psConsultas.setBigDecimal(6, cliente.getLimiteCredito());
 			
 			psConsultas.setInt(7, cliente.getVendedor().getCodigo());
-			psConsultas.setInt(8,cliente.getId());
+			psConsultas.setInt(8, cliente.getRutaCobro().getCodigo());
+			psConsultas.setInt(9,cliente.getId());
 			
 			
 			resultado=psConsultas.executeUpdate();
@@ -527,7 +640,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 			
 			//insertarNuevaCliente=con.prepareStatement( "INSERT INTO cliente(nombre_cliente,direccion,telefono,movil,rtn) VALUES (?,?,?,?,?)");
-			psConsultas=con.prepareStatement( super.getQueryInsert()+" (nombre_cliente,direccion,telefono,movil,rtn,limite_credito,tipo_cliente,id_vendedor) VALUES (?,?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (nombre_cliente,direccion,telefono,movil,rtn,limite_credito,tipo_cliente,id_vendedor,id_ruta_cobro) VALUES (?,?,?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			
 			
 			psConsultas.setString( 1, myCliente.getNombre() );
@@ -538,6 +651,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			psConsultas.setBigDecimal(6, myCliente.getLimiteCredito());
 			psConsultas.setInt(7, 2);
 			psConsultas.setInt(8, myCliente.getVendedor().getCodigo());
+			psConsultas.setInt(9, myCliente.getRutaCobro().getCodigo());
 			
 			resultado=psConsultas.executeUpdate();
 			

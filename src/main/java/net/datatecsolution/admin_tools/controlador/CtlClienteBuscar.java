@@ -89,21 +89,53 @@ public boolean buscarCliente(Window v){
 		// TODO Auto-generated method stub
 		String comando=e.getActionCommand();
 		switch (comando){
+
+
+
+			case "EDITAR":
+				int filaPulsada = this.view.getTabla().getSelectedRow();
+				//si seleccion una fila
+				if(filaPulsada>=0) {
+
+					myCliente=this.view.getModelo().getCliente(filaPulsada);
+
+
+					//crea la ventana para ingresar un nuevo proveedor
+					ViewCrearCliente viewCliente= new ViewCrearCliente();
+
+					//se crea el controlador de la ventana y se le pasa la view
+					CtlCliente ctlActulizarCliente=new CtlCliente(viewCliente);
+
+
+
+
+					//se llama del metodo actualizar marca para que se muestre la ventanda y procesa la modificacion
+					boolean resultado=ctlActulizarCliente.actualizarCliente(myCliente);
+
+					//se proceso el resultado de modificar la marca
+					if(resultado){
+						this.view.getModelo().cambiarCliente(filaPulsada, ctlActulizarCliente.getClienteGuardado());//se cambia en la vista
+						this.view.getModelo().fireTableDataChanged();//se refrescan los cambios
+						this.view.getTabla().getSelectionModel().setSelectionInterval(filaPulsada,filaPulsada);//se seleciona lo cambiado
+					}
+
+					ctlActulizarCliente=null;
+					viewCliente=null;
+				}
+
+				break;
 		
 		case "ESCRIBIR":
 			view.setTamanioVentana(1);
 			break;
 			
 		case "CAMBIOCOMBOBOX":
-				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
 			
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 				
 				if(miEmpleado!=null){
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
 				}
-				
-				//JOptionPane.showMessageDialog(view, "Cambio el vendedor "+miEmpleado.toString());
 				
 			break;
 			
@@ -152,6 +184,7 @@ public boolean buscarCliente(Window v){
 					cargarTabla(clienteDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 					view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 				}
+				viewNewCliente.dispose();
 				viewNewCliente=null;
 				ctlCliente=null;
 			}

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TmCuentasFacturas  extends TablaModelo {
 	final private String []columnNames= {
-			"No Factura","Fecha Venc","Fecha Ultimo Pago","Cliente", "Telefono", "Saldo Factura"
+			"Cuenta No","No Factura","Cliente", "Telefono","Direccion","Cobrador","Ultimo Pago", "Saldo Factura"
 		};
 	private List<CuentaFactura> cuentas=new ArrayList<CuentaFactura>();
 	
@@ -48,18 +48,22 @@ public class TmCuentasFacturas  extends TablaModelo {
 		//String date1 = sdf.format(this.view.getDcFecha1().getDate());
 		
 		switch (columnIndex) {
-		case 0:
-			return cuentas.get(rowIndex).getNoFactura();
-		case 1:
-			return sdf.format(cuentas.get(rowIndex).getFechaVenc());
-		case 2:
-			if(cuentas.get(rowIndex).getUltimoPago()!=null) return sdf.format(cuentas.get(rowIndex).getUltimoPago().getFecha()); else return "No tiene pago";
-		case 3:
-			return cuentas.get(rowIndex).getCliente().getNombre();
-		case 4:
-			return cuentas.get(rowIndex).getCliente().getTelefono();
-		case 5:
-			return cuentas.get(rowIndex).getSaldo();
+			case 0:
+				return cuentas.get(rowIndex).getCodigoCuenta();
+			case 1:
+				return cuentas.get(rowIndex).getNoFactura();
+			case 2:
+				return cuentas.get(rowIndex).getCliente().getNombre();
+			case 3:
+				return cuentas.get(rowIndex).getCliente().getTelefono();
+			case 4:
+				return cuentas.get(rowIndex).getCliente().getDereccion();
+			case 5:
+				return cuentas.get(rowIndex).getCliente().getVendedor().getNombre()+ " "+cuentas.get(rowIndex).getCliente().getVendedor().getApellido();
+			case 6:
+				if(cuentas.get(rowIndex).getFechaUltimoPago()!=null) return sdf.format(cuentas.get(rowIndex).getFechaUltimoPago()); else return "No tiene pago";
+
+			case 7: return cuentas.get(rowIndex).getSaldo();
 		
 		default:
 				return null;

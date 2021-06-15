@@ -307,7 +307,8 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 						if(this.myUsuarioDao.comprobarAdmin(pwd)){
 
 							//se extraen los detalles de la factura de la base de datos
-							myFactura.setDetalles(detallesDao.getDetallesFactura(myFactura.getIdFactura()));
+
+
 
 							//se anula la factura en la bd
 							if(myFacturaDao.anularFactura(myFactura)){
