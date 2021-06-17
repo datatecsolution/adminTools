@@ -281,7 +281,7 @@ public class FacturaDao extends ModeloDaoBasic {
 						cuenta.setDebito(myFactura.getTotal());
 						cuenta.setSaldo(new BigDecimal(0));
 						cuenta.setDescripcion("Pago por saldo a favor del cliente");
-						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+						cuentaXCobrarFacturaDao.reguistrarDebitoYaProcesado(cuenta);
 
 					}else{
 
@@ -292,7 +292,7 @@ public class FacturaDao extends ModeloDaoBasic {
 						cuenta.setDebito(ultima.getSaldo().multiply(new BigDecimal(-1)));
 						cuenta.setSaldo(new BigDecimal(myFactura.getTotal().subtract(ultima.getSaldo().multiply(new BigDecimal(-1))).doubleValue()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
 						cuenta.setDescripcion("Pago por saldo a favor del cliente");
-						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+						cuentaXCobrarFacturaDao.reguistrarDebitoYaProcesado(cuenta);
 
 					}
 

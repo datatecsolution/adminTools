@@ -283,7 +283,7 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 			
 			psConsultas.setInt(1, limSupe);
 			psConsultas.setInt(2, limInf);
-			
+			System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
 			while(res.next()){
 				ReciboPago un=new ReciboPago();
