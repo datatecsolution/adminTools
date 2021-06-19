@@ -343,11 +343,16 @@ switch(e.getKeyCode()){
 			
 			
 			if(this.validar()){
+
+				boolean agregarSaldo=false;
 				
 				setRecibo();
-
+				int resul2=JOptionPane.showConfirmDialog(view, "Desea arregar el pago a la cuenta general del cliente?");
+				if(resul2==0){
+					agregarSaldo=true;
+				}
 				//se manda aguardar el recibo con los pagos realizados
-				boolean resulta=this.myReciboDao.registrar(myRecibo,cuenta);
+				boolean resulta=this.myReciboDao.registrar(myRecibo,cuenta,agregarSaldo);
 				
 				
 				if(resulta){
@@ -363,7 +368,7 @@ switch(e.getKeyCode()){
 
 					try {
 					
-						AbstractJasperReports.createReportReciboCobroCajaFactura(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
+						AbstractJasperReports.createReportReciboCobroCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
 						//AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
 						

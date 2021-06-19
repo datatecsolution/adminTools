@@ -72,7 +72,7 @@ public class CtlPagoLista implements ActionListener, MouseListener, ChangeListen
         		
         		try {
 
-					AbstractJasperReports.createReportReciboCobroCajaFactura(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
+					AbstractJasperReports.createReportReciboCobroCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
 					AbstractJasperReports.showViewer(view);
 					//AbstractJasperReports.imprimierFactura();
 

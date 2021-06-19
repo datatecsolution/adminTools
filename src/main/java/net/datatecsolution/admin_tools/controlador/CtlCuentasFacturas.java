@@ -437,7 +437,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 										myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
 
 										//se manda aguardar el recibo con los pagos realizados
-										boolean resulta = this.myReciboDao.registrar(myRecibo, cuentaFacturaOrigen);
+										boolean resulta = this.myReciboDao.registrar(myRecibo, cuentaFacturaOrigen,true);
 
 
 										if (resulta) {

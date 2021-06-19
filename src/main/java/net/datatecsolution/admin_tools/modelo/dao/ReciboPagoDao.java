@@ -42,10 +42,8 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 							+ " cliente.nombre_cliente "
 					+ " FROM "
 							+ super.DbName+ ". recibo_pago  "
-							+ "INNER JOIN "+super.DbName+ ". cuentas_facturas  "
-								+ "ON( recibo_pago.codigo_cliente  =  cuentas_facturas.codigo_cuenta ) "
-							+ "INNER JOIN "+super.DbName+ ". cliente  "
-										+ "ON( cuentas_facturas.codigo_cliente = cliente.codigo_cliente )";
+							+ "JOIN "+super.DbName+ ". cliente  "
+										+ "ON( recibo_pago.codigo_cliente  =  cliente.codigo_cliente )";
 		
 		super.setSqlQuerySelectJoin(sqlBaseJoin);
 	}
@@ -133,7 +131,7 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 
 
 
-	public boolean registrar(Object c, CuentaFactura cuenta)
+	public boolean registrar(Object c, CuentaFactura cuenta, boolean agregarCtaGeneral)
 	{
 		ReciboPago myRecibo=(ReciboPago)c;
 
@@ -162,7 +160,7 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 
 			psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,total_letras,total,concepto,usuario,saldo_anterio,saldo,ref) VALUES ("+fecha+"?,?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 
-			psConsultas.setInt(1, cuenta.getCodigoCuenta());
+			psConsultas.setInt(1, myRecibo.getCliente().getId());
 			psConsultas.setString(2, myRecibo.getTotalLetras());
 			psConsultas.setBigDecimal(3, myRecibo.getTotal());
 			psConsultas.setString(4, myRecibo.getConcepto());
@@ -180,11 +178,14 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 				this.idUltimoRecibo=rs.getInt(1);
 			}
 
-			/*** se crea el registro el debito de la cuenta del cliente con el recibo generado ***/
-			String concepto=myRecibo.getConcepto();
-			concepto=concepto+" con recibo no. "+myRecibo.getNoRecibo()+",  ref "+myRecibo.getRef();
-			myRecibo.setConcepto(concepto);
-			myCuentaCobrarDao.reguistrarDebito(myRecibo);
+			if(agregarCtaGeneral) {
+
+				/*** se crea el registro el debito de la cuenta del cliente con el recibo generado ***/
+				String concepto = myRecibo.getConcepto();
+				concepto = concepto + " con recibo no. " + myRecibo.getNoRecibo() + ",  ref " + myRecibo.getRef();
+				myRecibo.setConcepto(concepto);
+				myCuentaCobrarDao.reguistrarDebito(myRecibo);
+			}
 
 
 			/*** se crea el registro el debito de la cuentaXcobrarFactura con el recibo generado ***/

@@ -142,7 +142,7 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 		CuentaPorCobrar aRegistrar=new CuentaPorCobrar();
 		CuentaPorCobrar ultima=this.getSaldoCliente(myFactura.getCliente());
 
-		String fecha= myFactura.getFecha()==null? " now(), ":"'"+myFactura.getFecha()+" 00:00:00', ";
+		//String fecha= myFactura.getFecha()==null? " now(), ":"'"+myFactura.getFecha()+" 00:00:00', ";
 
 		/** se construlle la descripcion de la cuenta segun la factura ***/
 		String descripcion="venta de ";
@@ -169,7 +169,7 @@ public class CuentaPorCobrarDao extends ModeloDaoBasic {
 				{
 					con = ConexionStatic.getPoolConexion().getConnection();
 					
-					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES ("+fecha+" ?,?,?,?)");
+					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_cliente,descripcion,credito,saldo) VALUES (now(), ?,?,?,?)");
 					psConsultas.setInt(1, aRegistrar.getCliente().getId());
 					psConsultas.setString(2, aRegistrar.getDescripcion());
 					psConsultas.setBigDecimal(3, aRegistrar.getCredito());

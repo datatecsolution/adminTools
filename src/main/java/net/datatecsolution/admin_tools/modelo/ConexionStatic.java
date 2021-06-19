@@ -29,7 +29,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 	private static String bd = "admin_tools";
-
+/*
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
 	private static String login = "root";
@@ -82,7 +82,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-
+*/
 	//FERROCENTER
 	private static String login = "user_admin";
 	private static String password = "Jdmm123.";

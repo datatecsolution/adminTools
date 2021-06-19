@@ -355,7 +355,7 @@ public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 		CuentaXCobrarFactura aRegistrar=new CuentaXCobrarFactura();
 		CuentaXCobrarFactura ultima=this.getSaldoFactura(cuentaFactura);
 
-		String fecha= cuentaFactura.getFactura().getFecha()==null? " now(), ":"'"+cuentaFactura.getFactura().getFecha()+" 00:00:00', ";
+		//String fecha= cuentaFactura.getFactura().getFecha()==null? " now(), ":"'"+cuentaFactura.getFactura().getFecha()+" 00:00:00', ";
 
 		/** se construlle la descripcion de la cuenta segun la factura ***/
 		String descripcion="venta de ";
@@ -381,7 +381,7 @@ public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 				{
 					con = ConexionStatic.getPoolConexion().getConnection();
 					
-					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,descripcion,credito,saldo,usuario,codigo_cuenta) VALUES (" +fecha+" ?,?,?,?,?)");
+					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,descripcion,credito,saldo,usuario,codigo_cuenta) VALUES (now(),?,?,?,?,?)");
 					psConsultas.setString(1, aRegistrar.getDescripcion());
 					psConsultas.setBigDecimal(2, aRegistrar.getCredito());
 					psConsultas.setBigDecimal(3, aRegistrar.getSaldo());

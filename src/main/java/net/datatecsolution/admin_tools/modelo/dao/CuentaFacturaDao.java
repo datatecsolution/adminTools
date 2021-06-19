@@ -107,13 +107,13 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 		// TODO Auto-generated method stub
 		CuentaFactura cuentaFactura=(CuentaFactura)c;
 		ResultSet rs=null;
-		String fecha= cuentaFactura.getFactura().getFecha()==null? " now(), ":"'"+cuentaFactura.getFactura().getFecha()+" 00:00:00', ";
+		//String fecha= cuentaFactura.getFactura().getFecha()==null? " now(), ":"'"+cuentaFactura.getFactura().getFecha()+" 00:00:00', ";
 		Connection conn=null;
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			//fsfsf
-			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(fecha,fecha_vencimiento,codigo_cliente,no_factura,codigo_caja) VALUES ("+fecha+" DATE_ADD(now(), INTERVAL (SELECT dia_vencimiento_factura from config_app LIMIT 1) DAY),?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(fecha,fecha_vencimiento,codigo_cliente,no_factura,codigo_caja) VALUES (now(), DATE_ADD(now(), INTERVAL (SELECT dia_vencimiento_factura from config_app LIMIT 1) DAY),?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			super.psConsultas.setInt(1, cuentaFactura.getCodigoCliente());
 			super.psConsultas.setInt( 2, cuentaFactura.getNoFactura());
 			super.psConsultas.setInt(3, cuentaFactura.getCodigoCaja());
