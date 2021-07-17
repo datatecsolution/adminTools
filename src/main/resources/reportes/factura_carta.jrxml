@@ -357,7 +357,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="43" splitType="Stretch">
+		<band height="52" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout"/>
 			<subreport>
 				<reportElement stretchType="RelativeToTallestObject" x="-28" y="0" width="612" height="41" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
@@ -385,7 +385,7 @@ WHERE
 				<subreportExpression><![CDATA["reportes/factura_carta_datos_dei.jasper"]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement x="451" y="0" width="105" height="20" forecolor="#FFFFFF" uuid="8602c01b-420f-46e5-8a5a-16d7957029d5"/>
+				<reportElement x="451" y="0" width="105" height="20" forecolor="#000000" uuid="8602c01b-420f-46e5-8a5a-16d7957029d5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
@@ -394,16 +394,16 @@ WHERE
 		</band>
 	</title>
 	<pageHeader>
-		<band height="35">
+		<band height="53">
 			<staticText>
-				<reportElement x="0" y="-17" width="554" height="18" uuid="d0e188af-db58-4839-b458-52760f7e0db2"/>
+				<reportElement x="-2" y="1" width="554" height="18" uuid="d0e188af-db58-4839-b458-52760f7e0db2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[FACTURA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="426" y="9" width="29" height="13" uuid="37f783db-b4a4-4ca4-b564-80444ef28b0a">
+				<reportElement x="424" y="27" width="29" height="13" uuid="37f783db-b4a4-4ca4-b564-80444ef28b0a">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -412,7 +412,7 @@ WHERE
 				<text><![CDATA[Vend:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="457" y="9" width="99" height="13" uuid="84df8d7f-250f-42e0-9f8e-05496bfeb5fc">
+				<reportElement x="455" y="27" width="99" height="13" uuid="84df8d7f-250f-42e0-9f8e-05496bfeb5fc">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -421,49 +421,49 @@ WHERE
 				<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="10" width="43" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
+				<reportElement x="5" y="28" width="43" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Cliente:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="50" y="10" width="212" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<reportElement x="48" y="28" width="212" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
 				<textElement>
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="0" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<reportElement x="5" y="18" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[No Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="65" y="0" width="197" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<reportElement x="63" y="18" width="197" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d MMM, yyyy">
-				<reportElement x="336" y="0" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<reportElement x="334" y="18" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha1}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="0" width="75" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<reportElement x="261" y="18" width="75" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Facha Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="307" y="9" width="118" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
+				<reportElement x="305" y="27" width="118" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -472,42 +472,42 @@ WHERE
 				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="9" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
+				<reportElement x="261" y="27" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[RTN:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="426" y="-2" width="84" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
+				<reportElement x="424" y="16" width="84" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Estado Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="510" y="-2" width="47" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
+				<reportElement x="508" y="16" width="47" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estado_factura}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="20" width="58" height="13" uuid="985b5ace-726c-47d4-ba79-3b67b4afddcf"/>
+				<reportElement x="5" y="38" width="58" height="13" uuid="985b5ace-726c-47d4-ba79-3b67b4afddcf"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Direccion:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="62" y="20" width="363" height="13" uuid="3fd51dc0-7dbc-49ae-bcba-20a178b514a8"/>
+				<reportElement x="60" y="38" width="363" height="13" uuid="3fd51dc0-7dbc-49ae-bcba-20a178b514a8"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="428" y="19" width="57" height="13" uuid="b5ba16c6-3ac1-4702-9e55-e60e45ed72a6">
+				<reportElement x="426" y="37" width="57" height="13" uuid="b5ba16c6-3ac1-4702-9e55-e60e45ed72a6">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -516,7 +516,7 @@ WHERE
 				<text><![CDATA[Cajero:]]></text>
 			</staticText>
 			<textField pattern="d/M/yyy">
-				<reportElement x="485" y="19" width="68" height="13" uuid="651ed154-a1ae-4d73-8dbd-0a40771128a7">
+				<reportElement x="483" y="37" width="68" height="13" uuid="651ed154-a1ae-4d73-8dbd-0a40771128a7">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -609,7 +609,7 @@ WHERE
 					<box leftPadding="3" rightPadding="2">
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</box>
-					<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
