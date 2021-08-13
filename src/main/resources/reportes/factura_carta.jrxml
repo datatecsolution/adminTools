@@ -169,7 +169,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="codigo_barra"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_factura"/>
 	</field>
-	<field name="fecha1" class="java.sql.Date">
+	<field name="fecha1" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="fecha1"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -446,12 +446,12 @@ WHERE
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="d MMM, yyyy">
+			<textField pattern="d/M/yyy h:mm a">
 				<reportElement x="334" y="18" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
-					<font fontName="SansSerif"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha1}]]></textFieldExpression>
 			</textField>
@@ -460,7 +460,7 @@ WHERE
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<text><![CDATA[Facha Factura:]]></text>
+				<text><![CDATA[Fecha Factura:]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="305" y="27" width="118" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">

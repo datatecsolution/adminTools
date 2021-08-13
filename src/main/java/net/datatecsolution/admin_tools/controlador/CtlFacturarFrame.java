@@ -41,6 +41,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
+
+	private boolean unirCanItem=true;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -130,52 +132,62 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							//conseguir los precios del producto
 							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 
+							//se verifica que la opcion de unir las cantidades en las articulos repetidos
+							boolean unirCantidad=false;
+							if(unirCanItem==true)
+								unirCantidad=this.buscarArticuloEnFactura(myArticulo);
+							else
+								unirCantidad=false;
+
+							//se busca en los item ya agregados si ya existe en el metodo solo se agrega la nueva cantidad sino se agrega como nuevo
+						if( unirCantidad ==false  )
+
 							//facturar sin tomar en cuenta el inventario
 							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
 							{
 
-								
+
 								//activar para redondiar el precio de venta final
 								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-								
+
 									myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 								}
-								
-								//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);  
-								
+
+								//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);
+
 								//si es un articulo tipo bien se puede agregar en cualquier caja
 								if(myArticulo.getTipoArticulo()==1){
 									//se agrega articulo a la tabla
 									this.view.getModeloTabla().setArticulo(myArticulo);
-									
+
 									calcularTotales();
 									this.view.getModeloTabla().agregarDetalle();
-									
+
 									selectRowInset();
 								}else{
-									
+
 									//se filtra para que la caja por defecto sera la unica que puede facturar servicios
 									if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
 										//se agrega articulo a la tabla
 										this.view.getModeloTabla().setArticulo(myArticulo);
-										
+
 										calcularTotales();
 										this.view.getModeloTabla().agregarDetalle();
-										
+
 										selectRowInset();
 									}else{
-										JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
+										JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 										view.getTxtBuscar().setText("");
 									}
 								}
-								
-								
+
+
 							}else{
 									//se comprueba que exista el producto en el inventario
 									double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-									
+
 									//si es necesario comprobar los inventarios de articulos
-									
+
 									//fdsf
 									//si es un bien se combrueba la existencia de ese articulo
 									if(myArticulo.getTipoArticulo()==1){
@@ -192,91 +204,91 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 										}
 
 										if(existencia>0.0 && cantidad<=existencia){
-													
+
 													//activar para redondiar el precio de venta final
 													if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-													
+
 														myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 													}
-													
+
 													//se agrega articulo a la tabla
 													this.view.getModeloTabla().setArticulo(myArticulo);
-													
+
 													calcularTotales();
 													this.view.getModeloTabla().agregarDetalle();
-													
+
 													selectRowInset();
-														
+
 											}else{//fin se la comprobacion de la existencia
-												
-												JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
+
+												JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 												view.getTxtBuscar().setText("");
 											}
-									}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos 
-										
-										
+									}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos
+
+
 											//se filtra para que la caja por defecto sera la unica que puede facturar servicios
 											if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
-												
+
 												//comprobar la existencia de los insumos
 												//dfs
 												List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
-												
+
 												//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
 												if(insumos!=null && insumos.size()>0){
 													boolean exist=false;
 													//recoremos los insumos comprobando si tiene existencia
 													for(int xx=0;xx<insumos.size();xx++){
-														
+
 														//se comprueba que exista el insumo en el inventario
 														existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-														
+
 														if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
-															//se establece que esiste 
+															//se establece que esiste
 															exist=true;
 															//activar para redondiar el precio de venta final
 															if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-															
+
 																myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 															}
-															
-															
+
+
 														}else{//fin se la comprobacion de la existencia
 															exist=false;
 															JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 															view.getTxtBuscar().setText("");
 															break;
-														}	
+														}
 													}//sin del for que recore los insumos
-													
+
 													//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
 													if(exist){
 														//se agrega articulo a la tabla
 														this.view.getModeloTabla().setArticulo(myArticulo);
-														
+
 														calcularTotales();
 														this.view.getModeloTabla().agregarDetalle();
-														
-														selectRowInset();	
+
+														selectRowInset();
 													}
-													
+
 												}else{//sino tiene insumos el servicio se agrega directamente a la factura
 														//se agrega articulo a la tabla
 														this.view.getModeloTabla().setArticulo(myArticulo);
-														
+
 														calcularTotales();
 														this.view.getModeloTabla().agregarDetalle();
-														
+
 														selectRowInset();
 												}
-												
-												
+
+
 											}else{
-												JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
+												JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 												view.getTxtBuscar().setText("");
 											}
 									}//sin del else para comprobar las existencia de los servicios 
-									
+
 							}
 							view.getTxtBuscar().setText("");
 						}else{
@@ -1745,7 +1757,6 @@ public void calcularTotales(){
 		
 		if(caracter=='+'){
 			if(filaPulsada>=0){
-				
 				if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario()){
 					
 					this.view.getModeloTabla().masCantidad(filaPulsada);
@@ -2178,7 +2189,19 @@ public void calcularTotales(){
 			//conseguir los precios del producto
 			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 			
-			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
+			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+
+
+
+			//se verifica que la opcion de unir las cantidades en las articulos repetidos
+			boolean unirCantidad=false;
+			if(unirCanItem==true)
+				unirCantidad=this.buscarArticuloEnFactura(myArticulo);
+			else
+				unirCantidad=false;
+
+			//se busca en los item ya agregados si ya existe en el metodo solo se agrega la nueva cantidad sino se agrega como nuevo
+	if( unirCantidad ==false  )
 
 
 			//se verfica en la configuracion si se puede facturar sin inventario
@@ -3065,6 +3088,82 @@ public void guardarRemotoCredito(){
 			this.view.dispose();
 		}//fin el if donde se guarda la factura
 		
+	}
+	public boolean buscarArticuloEnFactura(Articulo art){
+		boolean existe=false;
+		for(int x=0;x<view.getModeloTabla().getDetalles().size();x++){
+			Articulo artLocal=view.getModeloTabla().getDetalles().get(x).getArticulo();
+
+			if(art.getId()==artLocal.getId()){
+				existe=true;
+
+				//String entrada=(String) JOptionPane.showInputDialog(view,"El articula ya esta en la factura. Escriba el cantida a agrgar:",JOptionPane.OK_CANCEL_OPTION, null, null, "9090");
+				//se selecciona el item encontrado
+				int row = x;
+				int col = 1;
+				boolean toggle = false;
+				boolean extend = false;
+				this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
+				this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
+				this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+
+				//se pide el ingreso de la cantidad a agregar
+				String entrada = (String) JOptionPane.showInputDialog(view,
+						"El articula ya esta en la factura. Escriba el cantida a agregar:",
+						"Agregar cantidad\n", JOptionPane.OK_CANCEL_OPTION, null,
+						null, "1");
+
+				//se verfica en la configuracion si se puede facturar sin inventario
+				if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
+				{
+					//se registra la cantida en la entrada del usuario
+					BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+
+					BigDecimal newCantidadSaldoItem= new BigDecimal(view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue());
+
+					this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
+					this.calcularTotales();
+
+				}else{//se verfica en la configuracion si se puede facturar con inventario
+
+					if(AbstractJasperReports.isNumberReal(entrada)){
+						//si es un bien se procede de esta manera
+						if(myArticulo.getTipoArticulo()==1){
+							//se extre la exista del producto en el inventario
+							double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+
+							//se registra la cantida en la entrada del usuario
+							BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+							//se recoge la nueva cantidad a colocar en el item
+							double cantidad=view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue();
+
+							BigDecimal newCantidadSaldoItem= new BigDecimal(view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue());
+
+
+							//se establece la nueva cantidad
+							this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
+
+
+
+							if(existencia>0.0 && cantidad<=existencia) {
+								this.calcularTotales();
+							}else{
+								JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+								view.getModeloTabla().eliminarDetalle(x);
+							}
+						}
+					}//fin de la comprobacion que la estrada es un numero
+				}
+
+
+			}
+
+
+		}
+		return existe;
 	}
 
 }

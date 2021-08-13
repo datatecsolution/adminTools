@@ -1614,6 +1614,96 @@ public void getVentasCategorias(Integer noFacturaIncial, Integer noFacturaFinal,
 		
 	}
 
+
+	public Factura buscarPorIdAndVendedor(int id, Object c,int idVendedor){
+
+		Caja caja=(Caja)c;
+
+		//se cambia la base de datos para las facturas de la caja seleccionada
+		super.DbName=caja.getNombreBd();
+		super.setSqlQuerySelectJoin(getQueryJoin());
+
+		Connection con = null;
+
+		Factura unaFactura=new Factura();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas = con.prepareStatement(super.getQuerySearch("codigo_vendedor=? and numero_factura", "="));
+			psConsultas.setInt(1, idVendedor);
+			psConsultas.setInt(2, id);
+			psConsultas.setInt(3, 0);
+			psConsultas.setInt(4, 1);
+
+			//System.out.println(psConsultas);
+
+			res = psConsultas.executeQuery();
+			while(res.next()){
+
+				existe=true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+
+
+				Cliente unCliente= new Cliente();//myClienteDao.buscarCliente(res.getInt("codigo_cliente"));
+
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTelefono(res.getString("telefono"));
+
+				unaFactura.setCliente(unCliente);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				//unaFactura.setEstado(res.getInt("estado_factura"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+
+				unaFactura.setEstado(res.getString("estado_factura"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setAgregadoAkardex(res.getInt("agrega_kardex"));
+
+				//unaFactura.setDetalles(detallesDao.getDetallesFactura(res.getInt("numero_factura")));
+
+
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//se restablece el nombre de la base de datos por defecto
+			super.DbName= DbNameBase;
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return unaFactura;
+		}
+		else return null;
+
+	}
+
 	
 
 }
