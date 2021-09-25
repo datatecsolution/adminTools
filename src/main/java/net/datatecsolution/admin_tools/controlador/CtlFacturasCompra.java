@@ -1,11 +1,7 @@
 package net.datatecsolution.admin_tools.controlador;
 
-import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
-import net.datatecsolution.admin_tools.modelo.ConexionStatic;
-import net.datatecsolution.admin_tools.modelo.FacturaCompra;
-import net.datatecsolution.admin_tools.modelo.dao.DevolucionesCompraDao;
-import net.datatecsolution.admin_tools.modelo.dao.FacturaCompraDao;
-import net.datatecsolution.admin_tools.modelo.dao.UsuarioDao;
+import net.datatecsolution.admin_tools.modelo.*;
+import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.ViewAgregarCompras;
 import net.datatecsolution.admin_tools.view.ViewListaFacturasCompra;
 
@@ -16,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -26,6 +23,7 @@ public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeL
 	private UsuarioDao myUsuarioDao=null;
 	private FacturaCompra myFacturaCompra=null;
 	private DevolucionesCompraDao devolucionDao=null;
+	private ReciboPagoProveedoresDao myReciboDao=null;
 	
 	//fila selecciona enla lista
 		private int filaPulsada;
@@ -40,6 +38,7 @@ public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeL
 		facturaCompraDao=new FacturaCompraDao();
 		myUsuarioDao=new UsuarioDao();
 		devolucionDao=new DevolucionesCompraDao();
+		myReciboDao=new ReciboPagoProveedoresDao();
 		
 		myFacturaCompra=new FacturaCompra();
 		
@@ -204,26 +203,40 @@ public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeL
 							if(resul==0){
 								JPasswordField pf = new JPasswordField();
 								int action = JOptionPane.showConfirmDialog(view, pf,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
-							
-								if(action < 0){
-									
-									
-								}else{
+
+								if(action == 0){
 										String pwd=new String(pf.getPassword());
 										//comprabacion del permiso administrativo
 										if(this.myUsuarioDao.comprobarAdmin(pwd)){
+
 											//se anula la factura en la bd
 											if(facturaCompraDao.anularFactura(myFacturaCompra)){
 												
 												cargarTabla(facturaCompraDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 												
 												//se registrar los detalles de la factura anulada como una devolucion
-												if(myFacturaCompra.getDetalles()!=null)
+												if(myFacturaCompra.getDetalles()!=null) {
 													//se recorre los detalles de la factura
-													for(int x=0;x<myFacturaCompra.getDetalles().size();x++){
-														
-														boolean resu=this.devolucionDao.registrar(myFacturaCompra.getDetalles().get(x), myFacturaCompra.getNoCompra());
+													for (int x = 0; x < myFacturaCompra.getDetalles().size(); x++) {
+
+														boolean resu = this.devolucionDao.registrar(myFacturaCompra.getDetalles().get(x), myFacturaCompra.getNoCompra());
 													}
+
+
+													//se imprime el reporte
+													try {
+														AbstractJasperReports.createReportDevolucionCompra(ConexionStatic.getPoolConexion().getConnection(), myFacturaCompra.getNoCompra());
+														AbstractJasperReports.showViewer(view);
+													} catch (SQLException ee) {
+														ee.printStackTrace();
+													}
+												}
+
+
+												//si la factura que se anulo es al credito se hace un pago a farvor de la empresa para rebajar el saldo y lo mismo con la factura
+												if(myFacturaCompra.getTipoFactura()==2){
+													createDebitoToProveedor();
+												}
 											}
 											this.view.getBtnEliminar().setEnabled(false);
 										}else{
@@ -300,6 +313,50 @@ public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeL
 			break;
 
 		}
+
+	}
+
+	private void createDebitoToProveedor() {
+
+
+
+		/**** para la cuenta general del cliente se estable un debito
+		 *  para rebajar la factura anulada ****/
+
+
+		ReciboPagoProveedor myRecibo=new ReciboPagoProveedor();
+		Banco cuenta=new Banco();
+		cuenta.setId(1);
+		String concepto="Anulacion de factura # "+myFacturaCompra.getIdFactura();
+		myRecibo.setFormaPago(cuenta);
+		myRecibo.setProveedor(myFacturaCompra.getProveedor());
+		myRecibo.setConcepto(concepto);
+		myRecibo.setTotal(myFacturaCompra.getTotal());
+
+		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+
+
+
+		//se manda aguardar el recibo con los pagos realizados
+		boolean resulta=this.myReciboDao.registrar(myRecibo);
+
+		if(resulta){
+
+			myRecibo.setNoRecibo(myReciboDao.idUltimoRecibo);
+			try {
+				//AbstractJasperReports.createReport(conexion.getPoolConexion().getConnection(), 5, myRecibo.getNoRecibo());
+				AbstractJasperReports.createReportReciboPagoCaja(ConexionStatic.getPoolConexion().getConnection(), myRecibo.getNoRecibo());
+				//AbstractJasperReports.showViewer(view);
+				AbstractJasperReports.imprimierFactura();
+				AbstractJasperReports.showViewer(view);
+			} catch (SQLException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+			}
+
+		}else{//
+			JOptionPane.showMessageDialog(view, "El recibo no se guardo correctamente.");
+		}//fin del if que verefica la acccion de guardar el recibo
 
 	}
 

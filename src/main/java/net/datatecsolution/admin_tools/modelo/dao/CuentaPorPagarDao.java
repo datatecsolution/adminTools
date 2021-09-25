@@ -95,7 +95,7 @@ public class CuentaPorPagarDao extends ModeloDaoBasic {
 				{
 					con = ConexionStatic.getPoolConexion().getConnection();
 					
-					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_proveedor,descripcion,credito,saldo) VALUES (now(),?,?,?,?)");
+					psConsultas=con.prepareStatement( super.getQueryInsert()+" (fecha,codigo_proveedor,descripcion,debito,saldo) VALUES (now(),?,?,?,?)");
 					psConsultas.setInt(1, aRegistrar.getProveedor().getId());
 					psConsultas.setString(2, aRegistrar.getDescripcion());
 					psConsultas.setBigDecimal(3, aRegistrar.getDebito());

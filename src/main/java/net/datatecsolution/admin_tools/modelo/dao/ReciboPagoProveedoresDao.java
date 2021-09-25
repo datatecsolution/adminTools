@@ -74,9 +74,11 @@ public class ReciboPagoProveedoresDao extends ModeloDaoBasic {
 			
 			//se establece los saldo en 0
 			myReciboPago.setSaldos0();
+
+			CuentaPorPagar ultima=myCuentaPagarDao.getSaldoProveedor(myReciboPago.getProveedor());
 			
 			//el salado anterio
-			myReciboPago.setSaldoAnterior(myReciboPago.getProveedor().getSaldo());
+			myReciboPago.setSaldoAnterior(ultima.getSaldo());
 			
 			//el saldo actural
 			myReciboPago.setSaldo(myReciboPago.getSaldoAnterior().subtract(myReciboPago.getTotal()));

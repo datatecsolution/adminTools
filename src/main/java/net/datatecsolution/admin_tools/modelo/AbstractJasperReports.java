@@ -51,7 +51,8 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream SarVentas=null;
 	private static InputStream codigoBarra=null;
 	private static InputStream kardex=null;
-	private static InputStream Devolucion=null;
+	private static InputStream devolucion =null;
+	private static InputStream devolucionCompra=null;
 	private static InputStream inventario=null;
 	private static InputStream cierresCaja;
 	private static InputStream cotizacion;
@@ -102,6 +103,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport	reportReciboPago;
 	private static JasperReport	reportSarVentas;
 	private static JasperReport	reportDevolucion;
+	private static JasperReport	reportDevolucionCompra;
 	private static JasperReport	reportCodigoBarra;
 	private static JasperReport	reportKardex;
 	private static JasperReport	reportInventario;
@@ -170,7 +172,8 @@ public abstract class AbstractJasperReports implements Runnable
 		cierreCaja=AbstractJasperReports.class.getResourceAsStream("/reportes/cierre_caja.jasper");
 		reciboPago=AbstractJasperReports.class.getResourceAsStream("/reportes/recibo_pago.jasper");
 		SarVentas=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteSarVentas.jasper");
-		Devolucion=AbstractJasperReports.class.getResourceAsStream("/reportes/devoluciones_venta.jasper");
+		devolucion =AbstractJasperReports.class.getResourceAsStream("/reportes/devoluciones_venta.jasper");
+		devolucionCompra=AbstractJasperReports.class.getResourceAsStream("/reportes/devoluciones_compra.jasper");
 		codigoBarra=AbstractJasperReports.class.getResourceAsStream("/reportes/codigo_barra.jasper");
 		kardex=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteKardex.jasper");
 		inventario=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteExistencia.jasper");
@@ -238,7 +241,8 @@ public abstract class AbstractJasperReports implements Runnable
 			reportFacturaCierreCaja= (JasperReport) JRLoader.loadObject( cierreCaja );
 			reportReciboPago= (JasperReport) JRLoader.loadObject( reciboPago );
 			reportSarVentas= (JasperReport) JRLoader.loadObject( SarVentas );
-			reportDevolucion= (JasperReport) JRLoader.loadObject( Devolucion );
+			reportDevolucion= (JasperReport) JRLoader.loadObject(devolucion);
+			reportDevolucionCompra= (JasperReport) JRLoader.loadObject(devolucionCompra);
 			reportCodigoBarra= (JasperReport) JRLoader.loadObject( codigoBarra );
 			reportKardex= (JasperReport) JRLoader.loadObject( kardex );
 			reportInventario= (JasperReport) JRLoader.loadObject( inventario );
@@ -1193,6 +1197,32 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 			}
+	}
+
+	public static void createReportDevolucionCompra(Connection conn,Integer idFactura){
+
+		Map parametros = new HashMap();
+		parametros.put("numero_factura",idFactura);
+		if(ConexionStatic.getUsuarioLogin().getCajaActiva()!=null){
+			parametros.put("bD_facturacion",ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd());
+			parametros.put("cod_caja",ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
+		}
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportDevolucionCompra, parametros, conn );
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	public static void createReportFacturaTiketCredito( Connection conn,Integer idFactura ){

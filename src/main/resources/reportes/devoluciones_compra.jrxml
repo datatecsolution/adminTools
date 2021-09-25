@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="devolucion" pageWidth="216" pageHeight="720" columnWidth="188" leftMargin="18" rightMargin="10" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="inch"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="inch"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="27"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="376"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="615"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="local"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="numero_factura" class="java.lang.Integer"/>
+	<parameter name="bD_admin" class="java.lang.String"/>
+	<parameter name="bD_facturacion" class="java.lang.String"/>
+	<parameter name="cod_caja" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	`detalle_devoluciones_compra`.`fecha` AS `fecha_devolucion`,
+	`encabezado_factura_compra`.`numero_compra` AS `numero_compra`,
+	`detalle_devoluciones_compra`.`total` AS `total_dev`,
+	`detalle_devoluciones_compra`.`cantidad` AS `cantidad`,
+	`proveedor`.`codigo_proveedor` AS `codigo_proveedor`,
+	`proveedor`.`nombre_proveedor` AS `nombre_proveedor`,
+	`proveedor`.`telefono` AS `telefono`,
+	`proveedor`.`telefono` AS `direccion`,
+	`articulo`.`articulo` AS `articulo` 
+FROM
+	(((
+				$P!{bD_admin}.`encabezado_factura_compra`
+				JOIN $P!{bD_admin}.`detalle_devoluciones_compra` ON ((
+						`encabezado_factura_compra`.`numero_compra` = `detalle_devoluciones_compra`.`numero_factura` 
+					)))
+			JOIN $P!{bD_admin}.`proveedor` ON ((
+					`encabezado_factura_compra`.`codigo_proveedor` = `proveedor`.`codigo_proveedor` 
+				)))
+		JOIN $P!{bD_admin}.`articulo` ON ((
+			`detalle_devoluciones_compra`.`codigo_articulo` = `articulo`.`codigo_articulo` 
+	)))
+where 
+`encabezado_factura_compra`.numero_compra =  $P{numero_factura}]]>
+	</queryString>
+	<field name="fecha_devolucion" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_devolucion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_devoluciones_compra"/>
+	</field>
+	<field name="numero_compra" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="numero_compra"/>
+		<property name="com.jaspersoft.studio.field.label" value="numero_compra"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura_compra"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total_dev" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_dev"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_devoluciones_compra"/>
+	</field>
+	<field name="cantidad" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_devoluciones_compra"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="codigo_proveedor" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_proveedor"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_proveedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proveedor"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre_proveedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_proveedor"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_proveedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proveedor"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proveedor"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="proveedor"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="total_dev" class="java.lang.Float" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_dev}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="195" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="1" y="71" width="187" height="22" uuid="bc1ce1da-8232-46ea-be55-cec4abb986dd"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[Devolucion Compra]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="132" width="58" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Proveedor:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="132" width="129" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_proveedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="118" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[No compra:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="118" width="100" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_compra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="39" y="105" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_devolucion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="105" width="38" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Facha:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="145" width="92" height="13" uuid="4e2756b3-e44a-4f2a-a483-f57881d284e6"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="145" width="58" height="13" uuid="eeb28120-a349-44ef-8c26-9689bd60ca23"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Telefono:]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="1" y="180" width="185" height="1" uuid="8039a7c9-2f56-4904-b8fc-d244f0b02f7f"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="1" y="158" width="58" height="13" uuid="adb8cb65-146a-4aaf-8925-b536b6722ea9"/>
+				<textElement>
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Direccion:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="59" y="158" width="128" height="22" uuid="465c17c1-9c6d-40e4-81d0-d7b7776d9a59"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="-18" y="0" width="216" height="60" uuid="d0873e4f-378a-4289-afb7-82ca15471fc2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="bD_admin">
+					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reportes/factura_datos_empresa.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="186" height="1" uuid="e9d2002a-c8ee-4649-a258-640dad29110c"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="Column header" x="35" y="0" width="100" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="3" y="0" width="32" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Cant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="133" y="0" width="53" height="15" forecolor="#030303" uuid="3e2a378b-fd1a-4d1f-b6e4-4b80ab2a9568"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement style="Detail" mode="Opaque" x="0" y="0" width="188" height="15" backcolor="#FFFFFF" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="35" y="0" width="100" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Detail" x="3" y="0" width="32" height="15" uuid="b2428750-75ab-425e-b459-59bcf05df4e8"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##">
+					<reportElement style="Detail" x="135" y="0" width="51" height="15" uuid="ca68ddd3-3514-4c9f-85c1-ae07ffe8874c"/>
+					<box rightPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{total_dev}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<summary>
+		<band height="64">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="12" width="188" height="48" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
+				<staticText>
+					<reportElement x="7" y="16" width="74" height="15" uuid="c4e71c9d-3979-48fb-9d74-f89e425f1ea5"/>
+					<textElement>
+						<font fontName="SansSerif" size="9"/>
+					</textElement>
+					<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField pattern="¤#,##0.##;¤-#,##0.##">
+					<reportElement x="96" y="14" width="92" height="20" uuid="680cbb32-fc83-4717-8781-0cad60b4d25a"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_dev}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="1" y="40" width="186" height="1" uuid="d892f4f1-d50d-4214-af91-9413231b5a7a"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#999999"/>
+					</graphicElement>
+				</line>
+			</frame>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="3" y="6" width="183" height="1" uuid="058af450-81fc-412d-b317-427d5813c04a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>
