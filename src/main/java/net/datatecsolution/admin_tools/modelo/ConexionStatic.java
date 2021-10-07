@@ -30,11 +30,13 @@ public abstract class ConexionStatic implements Runnable{
 
 	private static String bd = "admin_tools";
 
+/*
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
 	private static String login = "root";
 	private static String password = "Jdmm123.";
 	private static String server = "127.0.0.1";
+<<<<<<< HEAD
 	//private static String server = "192.168.1.100";
 
 /*
@@ -43,6 +45,30 @@ public abstract class ConexionStatic implements Runnable{
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.1.101";
 
+=======
+	//private static String server = "192.168.2.115";
+
+
+*/
+
+	//LOCALHOST
+	private static String login = "root";
+	private static String password = "Jdmm123.";
+	private static String server = "127.0.0.1";
+
+/*
+
+	//Tienda el picacho
+	private static String login = "admin";
+	private static String password = "Jdmm123?";
+	private static String server = "192.168.88.253";
+
+
+	//Comercial velasquez
+	private static String login = "admin";
+	private static String password = "Jdmm123?";
+	private static String server = "192.168.100.110";
+>>>>>>> correcion_user_articulo
 
 
 
@@ -50,6 +76,8 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.1.101";
+
+/*
 
 	//CLINICA PALMA
 	private static String login = "user_admin";
@@ -69,12 +97,14 @@ public abstract class ConexionStatic implements Runnable{
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.1.101";
 
+
 	//MISCELANIAS W&C
 	private static String login = "user_pos";
 	private static String password = "Admin123.";
 	private static String server = "192.168.1.25";
 
 
+<<<<<<< HEAD
 	//DISTRIBUIDORA SHAROM
 	private static String login = "admin";
 	private static String password = "ronLsnta123.";
@@ -84,6 +114,10 @@ public abstract class ConexionStatic implements Runnable{
 
 
 	//FERROCENTER
+=======
+
+	//FERROCENTER           
+>>>>>>> correcion_user_articulo
 	private static String login = "user_admin";
 	private static String password = "Jdmm123.";
 	private static String server = "192.168.1.2";

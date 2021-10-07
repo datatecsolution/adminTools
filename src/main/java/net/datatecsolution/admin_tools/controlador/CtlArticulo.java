@@ -117,18 +117,19 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 				CtlCategoriaBuscar ctl=new CtlCategoriaBuscar(viewListaM);
 				viewListaM.conectarControladorBusqueda(ctl);
 				//se crea una marca y se llena con la busqueda que selecciona el usuario
-				Categoria myMarca=ctl.buscarMarca();
+				Categoria myCategoria=ctl.buscarMarca();
 				
 			//se compara si el usuario selecciono un marca
-				if(myMarca.getDescripcion()!=null && myMarca.getId()!=0){
+				if(myCategoria.getDescripcion()!=null && myCategoria.getId()!=0){
 					//se pasa la marca buscada y selecciona al nuevo articulo
-					myArticulo.setMarcaObj(myMarca);
+					myArticulo.setCategoria(myCategoria);
 					
 					//se muestra el nombre de la marca en la caja de texto
-					view.getTxtMarca().setText(myMarca.getDescripcion());
+					view.getTxtMarca().setText(myCategoria.getDescripcion());
 				
 				}else{
 					JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+					myArticulo.getCategoria().setId(-1);
 				}
 			break;
 		case "GUARDAR":
@@ -136,8 +137,12 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 			if(this.view.getModeloCodBarra().getSize()==0){
 				int resul=JOptionPane.showConfirmDialog(view, "Desea guardar un articulos sin condigos de barra?");
 				if(resul==0){
-					guardarArticulo();
-					this.view.dispose();
+
+					if(validar()){
+						guardarArticulo();
+						this.view.dispose();
+					}
+
 				}
 			}else{
 				guardarArticulo();
@@ -212,7 +217,37 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 		}
 		
 	}
-	
+
+	private boolean validar() {
+
+		boolean resul=false;
+		if(view.getTxtNombre().getText().trim().length()==0){
+			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos","Error validacion",JOptionPane.ERROR_MESSAGE);
+			view.getTxtNombre().requestFocusInWindow();
+		}else
+		if(myArticulo.getCategoria().getId()<1 ||  view.getTxtMarca().getText().trim().length()==0){
+			JOptionPane.showMessageDialog(view, "Debe agregar una categoria","Error validacion",JOptionPane.ERROR_MESSAGE);
+			view.getTxtMarca().requestFocusInWindow();
+		}else if(!validarPrecio()){
+			JOptionPane.showMessageDialog(view, "Debe agregar por lo menos un precio","Error validacion",JOptionPane.ERROR_MESSAGE);
+		} else{
+			resul=true;
+			}
+
+		return resul;
+	}
+
+	private boolean validarPrecio() {
+		boolean resul=false;
+		for (int x=0;x<myArticulo.getPreciosVenta().size();x++){
+			if(myArticulo.getPreciosVenta().get(x).getCodigoArticulo()>0){
+				resul=true;
+				break;
+			}
+		}
+		return resul;
+	}
+
 	private void calcularTotalInsumo() {
 		// TODO Auto-generated method stub
 		BigDecimal totalInsumos=new BigDecimal(0);
@@ -356,7 +391,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 		this.view.getTxtNombre().setText(a.getArticulo());
 		
 		//se establece la marca en la view
-		this.view.getTxtMarca().setText(a.getMarcaObj().getDescripcion());
+		this.view.getTxtMarca().setText(a.getCategoria().getDescripcion());
 		
 		//si el articulo tiene una lista de codigos de barra se incluyen en la view
 		if(a.getCodBarra()!=null){

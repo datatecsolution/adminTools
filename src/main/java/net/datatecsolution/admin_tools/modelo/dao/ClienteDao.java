@@ -373,10 +373,16 @@ public class ClienteDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 		
 			psConsultas=con.prepareStatement(super.getQuerySearch("tipo_cliente=2 and codigo_cliente", "="));
+<<<<<<< HEAD
 			//psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
 			psConsultas.setInt(1, id);
 			psConsultas.setInt(2, 0);
 			psConsultas.setInt(3, 1);
+=======
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(2, id);
+			psConsultas.setInt(3, 0);
+>>>>>>> correcion_user_articulo
 			res=psConsultas.executeQuery();
 			while(res.next()){
 				myCliente.setId(res.getInt("codigo_cliente"));

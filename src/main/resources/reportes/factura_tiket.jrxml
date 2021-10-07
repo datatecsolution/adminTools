@@ -393,7 +393,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="d/M/yyy h:mm a">
+			<textField pattern="d/M/yyy">
 				<reportElement x="39" y="1" width="137" height="12" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif" size="8"/>

@@ -64,6 +64,7 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 		
 		
 	}
+	
 	/*
 	private void cargarComboBox(Vector<Banco> bancos){
 		
@@ -142,17 +143,18 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 		case "BUSCAR":
 			
 			
-			myFactura=myFacturaDao.buscarPorId(Integer.parseInt(this.view.getTxtNofact().getText()),view.getCbxCajas().getSelectedItem());
+			myFactura=myFacturaDao.buscarPorIdAndVendedor(Integer.parseInt(this.view.getTxtNofact().getText()),view.getCbxCajas().getSelectedItem(),myEmpleado.getCodigo());
 			if(myFactura!=null){												
 				
 				
 				Caja caja=(Caja)view.getCbxCajas().getSelectedItem();
 				//se verifica que no este agregada la factura en otra ruta
 				boolean verificar=myDao.verificarExistenciaEnRuta(myFactura,caja);
+				myFactura.setCodigoCaja(caja.getCodigo());
+
+				boolean verificarLocal=verificarFactYaAgregada(myFactura);
 				
-				if(verificar==false){
-					myFactura.setCodigoCaja(caja.getCodigo());
-					
+				if(verificar==false && verificarLocal==false){
 					view.getModeloFacturasEntregas().agregarFactura(myFactura);
 					view.getTxtNofact().setText("");
 					selectRowInset();
@@ -201,6 +203,22 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 	    this.view.getTablasFacturas().changeSelection(row, col, toggle, extend);
 	    this.view.getTablasFacturas().addColumnSelectionInterval(0, 6);
 		
+	}
+
+	private boolean verificarFactYaAgregada(Factura factVerificar){
+		boolean existe=false;
+		for(int x=0;x<view.getModeloFacturasEntregas().getFacturas().size();x++){
+
+			Factura myFact=view.getModeloFacturasEntregas().getFacturas().get(x);
+			int valor1=myFact.getIdFactura();
+			int valor2=factVerificar.getIdFactura();
+			if(valor1==valor2)
+				if(myFact.getCodigoCaja()==factVerificar.getCodigoCaja())
+					existe=true;
+
+		}
+		return existe;
+
 	}
 	
 	public boolean actualizarRuta(RutaEntrega r){
