@@ -331,7 +331,7 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 			
 				if(view.getModelo().getArticulos().size()>0){
 					Departamento depart4= (Departamento) this.view.getCbxDepart().getSelectedItem();
-					Integer idCategoria=view.getModelo().getArticulo(0).getMarcaObj().getId();
+					Integer idCategoria=view.getModelo().getArticulo(0).getCategoria().getId();
 					try {
 						AbstractJasperReports.createReportInventarioBodegaCategoria(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(), depart4.getId(),idCategoria);
 						//AbstractJasperReports.ImprimirCodigo();

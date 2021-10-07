@@ -129,7 +129,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 				Articulo articuloDetalle=new Articulo();//articuloDao.buscarArticulo(res.getInt("codigo_articulo"));
 				articuloDetalle.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				articuloDetalle.setArticulo(res.getString("articulo"));
-				articuloDetalle.getMarcaObj().setId(res.getInt("codigo_marca"));
+				articuloDetalle.getCategoria().setId(res.getInt("codigo_marca"));
 				articuloDetalle.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				articuloDetalle.setTipoArticulo(res.getInt("tipo_articulo"));
 				articuloDetalle.setPrecioVenta(res.getDouble("precio_detalle"));//se estable el precio del articulo

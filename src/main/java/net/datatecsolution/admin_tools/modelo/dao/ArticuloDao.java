@@ -172,8 +172,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -242,8 +242,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -311,8 +311,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -371,8 +371,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -433,8 +433,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -492,8 +492,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -569,8 +569,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -666,7 +666,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET articulo = ?, codigo_marca = ? ,codigo_impuesto = ?, precio_articulo=?,tipo_articulo=? WHERE codigo_articulo = ?");
 			psConsultas.setString(1,articulo.getArticulo());
-			psConsultas.setInt(2, articulo.getMarcaObj().getId());
+			psConsultas.setInt(2, articulo.getCategoria().getId());
 			psConsultas.setInt(3, articulo.getImpuestoObj().getId());
 			psConsultas.setDouble(4, articulo.getPrecioVenta());
 			psConsultas.setDouble(5, articulo.getTipoArticulo());
@@ -764,8 +764,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -846,8 +846,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				existe=true;
 				unArticulo.setId(Integer.parseInt(res.getString("codigo_articulo")));
 				unArticulo.setArticulo(res.getString("articulo"));
-				unArticulo.getMarcaObj().setDescripcion(res.getString("marca"));
-				unArticulo.getMarcaObj().setId(res.getInt("codigo_marca"));
+				unArticulo.getCategoria().setDescripcion(res.getString("marca"));
+				unArticulo.getCategoria().setId(res.getInt("codigo_marca"));
 				unArticulo.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				unArticulo.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
@@ -913,7 +913,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 			psConsultas=con.prepareStatement( super.getQueryInsert()+" (articulo,codigo_marca,codigo_impuesto,precio_articulo,tipo_articulo) VALUES (?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 			
 			psConsultas.setString( 1, myArticulo.getArticulo() );
-			psConsultas.setInt( 2, myArticulo.getMarcaObj().getId() );
+			psConsultas.setInt( 2, myArticulo.getCategoria().getId() );
 			psConsultas.setDouble( 3, myArticulo.getImpuestoObj().getId());
 			psConsultas.setDouble(4, myArticulo.getPrecioVenta());
 			psConsultas.setInt(5, myArticulo.getTipoArticulo());
