@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura_Pos" pageWidth="208" pageHeight="720" columnWidth="180" leftMargin="18" rightMargin="10" topMargin="28" bottomMargin="7" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="3.0"/>
@@ -85,7 +85,8 @@
 	`encabezado_factura`.`codigo_vendedor` AS `codigo_vendedor`,
 	`encabezado_factura`.`cobro_tarjeta` AS `cobro_tarjeta`,
 	`encabezado_factura`.`cobro_efectivo` AS `cobro_efectivo`,
-	`encabezado_factura`.`observacion` AS `observacion`
+	`encabezado_factura`.`observacion` AS `observacion`, 
+	`datos_factura`.`observacion` AS `obs_rango` 
 FROM
 	$P!{bD_facturacion}.encabezado_factura
 INNER JOIN $P!{bD_facturacion}.detalle_factura ON encabezado_factura.numero_factura = detalle_factura.numero_factura
@@ -94,7 +95,8 @@ inner Join $P!{bD_admin}.articulo on detalle_factura.codigo_articulo=articulo.co
 inner join $P!{bD_admin}.cliente on `cliente`.`codigo_cliente` = `encabezado_factura`.`codigo_cliente`
 inner join $P!{bD_admin}.tipo_factura on `tipo_factura`.`id_tipo_factura` = `encabezado_factura`.`tipo_factura`
 inner join $P!{bD_admin}.tipo_pago on `encabezado_factura`.`tipo_pago` = `tipo_pago`.`codigo_tipo_pago`
-inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `empleados`.`codigo_empleado`
+inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `empleados`.`codigo_empleado` 
+INNER JOIN $P!{bD_facturacion}.datos_factura ON encabezado_factura.cod_rango = datos_factura.codigo_rango
 WHERE
     encabezado_factura.numero_factura = $P{numero_factura}]]>
 	</queryString>
@@ -334,6 +336,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 	</field>
 	<field name="observacion" class="java.lang.String"/>
+	<field name="obs_rango" class="java.lang.String"/>
 	<variable name="dato1" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -369,6 +372,13 @@ WHERE
 				</textElement>
 				<text><![CDATA[FACTURA COPIA]]></text>
 			</staticText>
+			<textField pattern="d/M/yyy h:mm a">
+				<reportElement x="0" y="53" width="180" height="12" uuid="d6e9777f-ab7c-4ab7-88fb-fb659e14f3be"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs_rango}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>

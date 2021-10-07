@@ -43,6 +43,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private boolean isThereConexion=false;
 
 	private boolean unirCanItem=false;
+
+	private Integer bandera=0;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -893,7 +895,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F7:
 						
-						double maxDescuento=55;
+						double maxDescuento=25;
 						//configuracion del panel descuento
 						JPanel panelDescuento=new JPanel();
 						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -1048,7 +1050,7 @@ public void calcularTotales(){
 								
 								if(filaPulsada>=0){
 									
-									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-55%");
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
 									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 									String seleccionadoDescuento=descuento.getText();
@@ -1347,10 +1349,21 @@ public void calcularTotales(){
 					break;
 					
 					case KeyEvent.VK_DELETE:
-						if(filaPulsada>=0){
-							 this.view.getModeloTabla().eliminarDetalle(filaPulsada);
-							 this.calcularTotales();
-						 }
+
+						JPasswordField pf = new JPasswordField();
+						int action = JOptionPane.showConfirmDialog(view, pf,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
+						if(action < 0){
+
+						}else {
+							String pwd = new String(pf.getPassword());
+							//comprabacion del permiso administrativo
+							if (myUsuarioDao.comprobarAdmin(pwd)) {
+								if (filaPulsada >= 0) {
+									this.view.getModeloTabla().eliminarDetalle(filaPulsada);
+									this.calcularTotales();
+								}
+							}
+						}
 						break;
 						
 					case KeyEvent.VK_DOWN:
@@ -2000,8 +2013,13 @@ public void calcularTotales(){
 		return resultado;
 	}
 	private void cobrar(){
+
+
+		CajaDao cajasDao=new CajaDao();
+		ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
 		
 		isThereConexion =ConexionStatic.isDbConnected();
+
 		//verificamos si existe la conexion a la base de datos
 		if(isThereConexion){
 			
@@ -2088,10 +2106,17 @@ public void calcularTotales(){
 							// se comprueba que sino tiene un cierre de caja
 							// activo lo realice
 							boolean resl = setCierre();
+
+
 							
 							
 							//se procesa el resultado del cierre de caja
 							if (resl) {
+
+
+								if(myCliente.getId()==1 && bandera<2){
+									Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
+								}
 								
 								this.guardarFactura();
 							}else {
@@ -2133,6 +2158,11 @@ public void calcularTotales(){
 										boolean resl = setCierre();
 										//se procesa el resultado del cierre de caja
 										if (resl) {
+
+											if(myCliente.getId()==1  && bandera<2){
+												//se coloca caja por defecto
+												Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
+											}
 											this.guardarFactura();
 										}else {
 											JOptionPane.showMessageDialog(view,
@@ -3034,11 +3064,29 @@ public void guardarRemotoCredito(){
 					}
 
 					 */
+
+					//se coloca caja por defecto
+					CajaDao cajasDao=new CajaDao();
+					ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
+
+
+					if(bandera>2){
+						bandera=0;
+					}
+					else{
+						if(myCliente.getId()==1)
+							bandera++;
+					}
+
+
+
 					String cambioEfectivo=myFactura.getCambio().toString();
 					String pago=myFactura.getPago().toString();
 
 
 					setEmptyView();
+
+
 
 
 

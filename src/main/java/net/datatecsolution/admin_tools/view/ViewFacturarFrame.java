@@ -101,7 +101,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		//opcion del menu flotante
 		mntmEliminar = new JMenuItem("Eliminar");
 		mntmImprimir = new JMenuItem("Imprimir");
-		menuContextual.add(mntmEliminar);
+		//menuContextual.add(mntmEliminar);
 		menuContextual.add(mntmImprimir);
 		
 		
@@ -471,7 +471,8 @@ public class ViewFacturarFrame extends JInternalFrame {
 		//this.setMaximizable(true);
 		
 		//this.pack();
-		
+		this.rdbtnCredito.setSelected(false);
+		this.rdbtnCredito.setEnabled(false);
 		
 	}
 	
