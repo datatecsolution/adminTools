@@ -139,7 +139,7 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		// TODO Auto-generated method stub
 		myUsuario.setUser(view.getTxtUser().getText());
 		
-		myUsuario.setApellido(view.getTxtApellido().getText());
+		//myUsuario.setApellido(view.getTxtApellido().getText());
 		
 		myUsuario.setNombre(view.getTxtNombre().getText());
 		
@@ -174,11 +174,11 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		if(view.getTxtNombre().getText().trim().length()==0){
 			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
 			view.getTxtNombre().requestFocusInWindow();
-		}else
+		} /* else
 			if(view.getTxtApellido().getText().trim().length()==0){
 				JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
 				view.getTxtApellido().requestFocusInWindow();
-			}else
+			} */else
 				if(view.getPwd().getPassword().length==0){
 					JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
 					view.getPwd().requestFocusInWindow();
@@ -209,7 +209,7 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 	public void loadUsuario(){
 		view.getTxtUser().setText(myUsuario.getUser());
 		view.getTxtNombre().setText(myUsuario.getNombre());
-		view.getTxtApellido().setText(myUsuario.getApellido());
+		//view.getTxtApellido().setText(myUsuario.getApellido());
 		
 		if(myUsuario.getTipoPermiso()==1){
 			view.getRdbtnAdministrador().setSelected(true);

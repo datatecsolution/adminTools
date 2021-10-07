@@ -122,10 +122,10 @@ public class Articulo {
 		return codigo;
 	}
 	
-	public Categoria getMarcaObj(){
+	public Categoria getCategoria(){
 		return mar;
 	}
-	public void setMarcaObj(Categoria m){
+	public void setCategoria(Categoria m){
 		mar=m;
 		
 	}

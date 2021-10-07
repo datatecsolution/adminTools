@@ -75,7 +75,7 @@ public class TmArticulo extends TablaModelo {
         case 1:
             return articulos.get(rowIndex).getArticulo();
         case 2:
-        	return articulos.get(rowIndex).getMarcaObj().getDescripcion();//articulos.get(rowIndex).getMarca();
+        	return articulos.get(rowIndex).getCategoria().getDescripcion();//articulos.get(rowIndex).getMarca();
         case 3:
             
             return articulos.get(rowIndex).getImpuestoObj().getPorcentaje();
@@ -101,7 +101,7 @@ public class TmArticulo extends TablaModelo {
 	            	articulo.setArticulo((String) value);
 	            case 2:
 	            	//articulo.setMarca((String) value);
-	            	articulo.getMarcaObj().setDescripcion((String) value);
+	            	articulo.getCategoria().setDescripcion((String) value);
 	            case 3:
 	            	articulo.getImpuestoObj().setPorcentaje((String) value);
 	            case 4:

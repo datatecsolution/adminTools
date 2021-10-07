@@ -15,7 +15,7 @@ import java.awt.*;
 public class ViewCrearUsuario extends JDialog {
 	private JTextField txtUsuario;
 	private JTextField txtNombre;
-	private JTextField txtApellido;
+	//private JTextField txtApellido;
 	private JPasswordField pwdPwd;
 	private JPasswordField pwdRePwd;
 	private BotonGuardar btnGuardar;
@@ -59,32 +59,33 @@ public class ViewCrearUsuario extends JDialog {
 		menuContextual.add(mntmDefault);
 		
 		grupoOpciones = new ButtonGroup();
-		this.setSize(534, 700);
+		this.setSize(534, 650);
 		getContentPane().setLayout(null);
 		
 		getContentPane().setBackground(PanelPadre.color1);
 		
 		JLabel lblUsuario = new JLabel("Usuario");
-		lblUsuario.setBounds(20, 9, 60, 15);
+		lblUsuario.setBounds(20, 17, 60, 15);
 		getContentPane().add(lblUsuario);
 		
 		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(20, 234, 101, 15);
+		lblPassword.setBounds(20, 157, 101, 15);
 		getContentPane().add(lblPassword);
 		
 		JLabel lblRepetirPassword = new JLabel("Repetir Password");
-		lblRepetirPassword.setBounds(20, 309, 172, 15);
+		lblRepetirPassword.setBounds(20, 227, 172, 15);
 		getContentPane().add(lblRepetirPassword);
 		
 		JLabel lblNombres = new JLabel("Nombre");
-		lblNombres.setBounds(20, 84, 88, 15);
+		lblNombres.setBounds(20, 87, 88, 15);
 		getContentPane().add(lblNombres);
 		
 		txtNombre = new JTextField();
-		txtNombre.setBounds(20, 108, 482, 42);
+		txtNombre.setBounds(20, 103, 482, 42);
 		getContentPane().add(txtNombre);
 		txtNombre.setColumns(10);
-		
+
+		/*
 		JLabel lblApellido = new JLabel("Apellido");
 		lblApellido.setBounds(20, 159, 88, 15);
 		getContentPane().add(lblApellido);
@@ -93,32 +94,34 @@ public class ViewCrearUsuario extends JDialog {
 		txtApellido.setBounds(20, 183, 482, 42);
 		getContentPane().add(txtApellido);
 		txtApellido.setColumns(10);
+
+		 */
 		
 		pwdPwd = new JPasswordField();
-		pwdPwd.setBounds(20, 258, 482, 42);
+		pwdPwd.setBounds(20, 173, 482, 42);
 		getContentPane().add(pwdPwd);
 		
 		pwdRePwd = new JPasswordField();
-		pwdRePwd.setBounds(20, 333, 482, 42);
+		pwdRePwd.setBounds(20, 243, 482, 42);
 		getContentPane().add(pwdRePwd);
 		
 		rdbtnAdministrador = new JRadioButton("Administrador");
-		rdbtnAdministrador.setBounds(222, 395, 149, 18);
+		rdbtnAdministrador.setBounds(222, 297, 149, 18);
 		grupoOpciones.add(rdbtnAdministrador);
 		getContentPane().add(rdbtnAdministrador);
 		
 		rdbtnCajero = new JRadioButton("Cajero");
 		rdbtnCajero.setSelected(true);
 		this.grupoOpciones.add(rdbtnCajero);
-		rdbtnCajero.setBounds(20, 395, 111, 18);
+		rdbtnCajero.setBounds(20, 297, 111, 18);
 		getContentPane().add(rdbtnCajero);
 		
 		btnGuardar = new BotonGuardar();
-		btnGuardar.setLocation(87, 595);
+		btnGuardar.setLocation(87, 527);
 		getContentPane().add(btnGuardar);
 		
 		btnCancelar = new BotonCancelar();
-		btnCancelar.setLocation(310, 595);
+		btnCancelar.setLocation(310, 527);
 		getContentPane().add(btnCancelar);
 		
 		txtUsuario = new JTextField();
@@ -127,12 +130,12 @@ public class ViewCrearUsuario extends JDialog {
 		txtUsuario.setColumns(10);
 		
 		btnActualizar=new BotonActualizar();
-		btnActualizar.setLocation(87, 595);
+		btnActualizar.setLocation(87, 527);
 		getContentPane().add(btnActualizar);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(new TitledBorder(null, "Cajas asignadas", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		scrollPane.setBounds(20, 425, 482, 158);
+		scrollPane.setBounds(20, 327, 482, 158);
 		scrollPane.setBackground(PanelPadre.color1);
 		getContentPane().add(scrollPane);
 		
@@ -171,9 +174,11 @@ public class ViewCrearUsuario extends JDialog {
 	public JTextField getTxtNombre(){
 		return txtNombre;
 	}
-	public JTextField getTxtApellido(){
+	/*public JTextField getTxtApellido(){
 		return txtApellido;
 	}
+
+	 */
 	public JPasswordField getPwd(){
 		return pwdPwd;
 	}
