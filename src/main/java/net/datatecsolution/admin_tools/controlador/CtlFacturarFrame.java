@@ -1493,9 +1493,17 @@ public void calcularTotales(){
 		
 		
 		CierreCajaDao cierreDao=new CierreCajaDao();
-		
-		// se verifica que hay facturas para crear un cierre
-		if(facturaDao.verificarCierre(ConexionStatic.getUsuarioLogin().getCajas())){
+
+
+
+		CierreCaja oldCierre = new CierreCaja();
+
+		// se consiguie el ultimo cierre del usuario
+		oldCierre = cierreDao.getCierreUltimoUser();
+
+
+			// se verifica que hay facturas para crear un cierre
+		if(facturaDao.verificarCierre(ConexionStatic.getUsuarioLogin().getCajas()) && oldCierre.getEstado() == true){
 			
 			ViewCuentaEfectivo viewContar=new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar=new CtlContarEfectivo(viewContar);
@@ -1575,6 +1583,7 @@ public void calcularTotales(){
 						viewContar.dispose();
 						viewContar=null;
 						ctlContar=null;
+						salir();
 						
 						
 					} catch (SQLException ee) {
@@ -1586,7 +1595,8 @@ public void calcularTotales(){
 				}
 		}//fin de la verificacion de las facturas 
 		else{
-			JOptionPane.showMessageDialog(view, "No hay facturas para crear un cierre de caja. Primero debe facturar.");
+			JOptionPane.showMessageDialog(view, "No hay facturas para crear un cierre de caja o no tiene un cierre activo.");
+			salir();
 		}
 
 		//ConexionStatic.setNivelFac(true);
