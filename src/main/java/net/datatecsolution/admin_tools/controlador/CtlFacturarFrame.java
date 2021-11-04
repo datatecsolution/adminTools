@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
-
+	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
 	private FacturaDao facturaDao=null;//=new FacturaDao();
@@ -26,32 +26,28 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private PrecioArticuloDao preciosDao=null;
 	private InsumoDao insumoDao=null;
 	private CodBarraDao codBarraDao=null;
-
-
+	
+	
 	private Cliente myCliente=null;
 	private int filaPulsada=0;
 	private boolean resultado=false;
 	private UsuarioDao myUsuarioDao;
-
+	
 	private int tipoView=1;
 	private int netBuscar=0;
-
+	
 	private DetalleFacturaOrdenDao detallesOrdenDao=null;
 	List<ViewFacturarFrame> ventanas;
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-<<<<<<< HEAD
-
-=======
 	private boolean unirCanItem=false;
 	
 	
->>>>>>> correcion_user_articulo
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
-
-
+	
+		
 
 		ventanas=ven;
 		view=v;
@@ -66,33 +62,33 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		codBarraDao=new CodBarraDao();
 		detallesOrdenDao=new DetalleFacturaOrdenDao();
 		insumoDao=new InsumoDao();
-
+		
 		myUsuarioDao=new UsuarioDao();
-
-
+		
+		
 		this.setEmptyView();
-
+		
 		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 		this.tipoView=1;
-
+		
 		this.setCierre();
 		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
-
-
+	
+		
 	}
-
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		String comando=e.getActionCommand();
-
+		
 		//se filtra el comando para verificar que la accion se genero desde los botones de las facturas pendientes.
 		if(AbstractJasperReports.isNumber(comando)){
 			int numeroFactura=Integer.parseInt(comando);
 			//si es un factura guardada
 			if(numeroFactura>0){
-
+			
 				cargarFacturaPendiente(numeroFactura);
 			}
 			//si es una nueva factura
@@ -100,70 +96,42 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				this.tipoView=1;
 				this.view.getBtnGuardar().setEnabled(true);
 				this.view.getBtnActualizar().setEnabled(false);
-
+				
 				//view.getBtnsGuardador().setFactura(myFactura);
-
+				
 				setEmptyView();
-
+				
 				view.getBtnsGuardador().deleteAll();
-
+				
 				cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 			}
 		}
 		//JOptionPane.showMessageDialog(view, "paso de celdas"+comando);
 		switch(comando){
-
-			case "BUSCARARTICULO2":
-				//se comprueba que se ingreso un codigo de barra o que el articulo este nulo para poder buscar
-				if(view.getTxtBuscar().getText().trim().length()!=0 || myArticulo==null){
-
-
+		
+		case "BUSCARARTICULO2":
+			//se comprueba que se ingreso un codigo de barra o que el articulo este nulo para poder buscar
+			if(view.getTxtBuscar().getText().trim().length()!=0 || myArticulo==null){
+				
+					
 					String busca=this.view.getTxtBuscar().getText();
-
-					this.myArticulo=this.myArticuloDao.buscarArticuloBarraCod(busca);
-
-
-
-
-
-					if(myArticulo!=null){
-
-						//activar para redondiar el precio de venta final
-						if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-							myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
-						}
-
-						//conseguir los precios del producto
-						myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-
-						//facturar sin tomar en cuenta el inventario
-						if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
-						{
-
-
+						
+						this.myArticulo=this.myArticuloDao.buscarArticuloBarraCod(busca);
+						
+						
+						
+						
+						
+						if(myArticulo!=null){
+							
 							//activar para redondiar el precio de venta final
 							if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
 								myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 							}
+							
+							//conseguir los precios del producto
+							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 
-<<<<<<< HEAD
-							//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);
-
-							//si es un articulo tipo bien se puede agregar en cualquier caja
-							if(myArticulo.getTipoArticulo()==1){
-								//se agrega articulo a la tabla
-								this.view.getModeloTabla().setArticulo(myArticulo);
-
-								calcularTotales();
-								this.view.getModeloTabla().agregarDetalle();
-
-								selectRowInset();
-							}else{
-
-								//se filtra para que la caja por defecto sera la unica que puede facturar servicios
-								if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
-=======
 							//se verifica que la opcion de unir las cantidades en las articulos repetidos
 							boolean unirCantidad=false;
 							if(unirCanItem==true)
@@ -189,7 +157,6 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 								//si es un articulo tipo bien se puede agregar en cualquier caja
 								if(myArticulo.getTipoArticulo()==1){
->>>>>>> correcion_user_articulo
 									//se agrega articulo a la tabla
 									this.view.getModeloTabla().setArticulo(myArticulo);
 
@@ -198,41 +165,6 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 									selectRowInset();
 								}else{
-<<<<<<< HEAD
-									JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
-									view.getTxtBuscar().setText("");
-								}
-							}
-
-
-						}else{
-							//se comprueba que exista el producto en el inventario
-							double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
-							//si es necesario comprobar los inventarios de articulos
-
-							//fdsf
-							//si es un bien se combrueba la existencia de ese articulo
-							if(myArticulo.getTipoArticulo()==1){
-
-								//se comprueba que exista el producto en el inventario
-								existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
-								double cantidad=1;
-
-								double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
-
-								if(buscarEnRequisicionCantidad>0){
-									cantidad=cantidad+buscarEnRequisicionCantidad;
-								}
-
-								if(existencia>0.0 && cantidad<=existencia){
-
-									//activar para redondiar el precio de venta final
-									if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
-										myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
-=======
 
 									//se filtra para que la caja por defecto sera la unica que puede facturar servicios
 									if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
@@ -246,25 +178,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 									}else{
 										JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 										view.getTxtBuscar().setText("");
->>>>>>> correcion_user_articulo
 									}
-
-									//se agrega articulo a la tabla
-									this.view.getModeloTabla().setArticulo(myArticulo);
-
-									calcularTotales();
-									this.view.getModeloTabla().agregarDetalle();
-
-									selectRowInset();
-
-								}else{//fin se la comprobacion de la existencia
-
-									JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
-									view.getTxtBuscar().setText("");
 								}
-<<<<<<< HEAD
-							}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos
-=======
 
 
 							}else{
@@ -276,40 +191,18 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 									//fdsf
 									//si es un bien se combrueba la existencia de ese articulo
 									if(myArticulo.getTipoArticulo()==1){
->>>>>>> correcion_user_articulo
 
+											//se comprueba que exista el producto en el inventario
+											existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
-								//se filtra para que la caja por defecto sera la unica que puede facturar servicios
-								if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
+										double cantidad=1;
 
-									//comprobar la existencia de los insumos
-									//dfs
-									List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
+										double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
 
-									//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
-									if(insumos!=null && insumos.size()>0){
-										boolean exist=false;
-										//recoremos los insumos comprobando si tiene existencia
-										for(int xx=0;xx<insumos.size();xx++){
+										if(buscarEnRequisicionCantidad>0){
+											cantidad=cantidad+buscarEnRequisicionCantidad;
+										}
 
-<<<<<<< HEAD
-											//se comprueba que exista el insumo en el inventario
-											existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
-											if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
-												//se establece que esiste
-												exist=true;
-												//activar para redondiar el precio de venta final
-												if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
-													myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
-												}
-
-
-											}else{//fin se la comprobacion de la existencia
-												exist=false;
-												JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
-=======
 										if(existencia>0.0 && cantidad<=existencia){
 
 													//activar para redondiar el precio de venta final
@@ -392,42 +285,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 											}else{
 												JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
->>>>>>> correcion_user_articulo
 												view.getTxtBuscar().setText("");
-												break;
 											}
-<<<<<<< HEAD
-										}//sin del for que recore los insumos
-
-										//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
-										if(exist){
-											//se agrega articulo a la tabla
-											this.view.getModeloTabla().setArticulo(myArticulo);
-
-											calcularTotales();
-											this.view.getModeloTabla().agregarDetalle();
-
-											selectRowInset();
-										}
-
-									}else{//sino tiene insumos el servicio se agrega directamente a la factura
-										//se agrega articulo a la tabla
-										this.view.getModeloTabla().setArticulo(myArticulo);
-
-										calcularTotales();
-										this.view.getModeloTabla().agregarDetalle();
-
-										selectRowInset();
-									}
-
-
-								}else{
-									JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
-									view.getTxtBuscar().setText("");
-								}
-							}//sin del else para comprobar las existencia de los servicios
-
-=======
 									}//sin del else para comprobar las existencia de los servicios 
 
 							}
@@ -437,16 +296,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							view.getTxtBuscar().setText("");
 							view.getTxtBuscar().requestFocusInWindow();
 							myArticulo=null;
->>>>>>> correcion_user_articulo
 						}
-						view.getTxtBuscar().setText("");
-					}else{
-						JOptionPane.showMessageDialog(view, "No se encontro el articulo");
-						view.getTxtBuscar().setText("");
-						view.getTxtBuscar().requestFocusInWindow();
-						myArticulo=null;
-					}
-
+						
 					//}
 				}/*else//si el articulo esta nulo se agrega el ultimo articulo creado
 				{
@@ -454,103 +305,103 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 					myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 					this.view.getModeloTabla().setArticulo(myArticulo);
 					//this.view.getModelo().getDetalle(row).setCantidad(1);
-
+					
 					//calcularTotal(this.view.getModeloTabla().getDetalle(row));
 					calcularTotales();
 					this.view.getModeloTabla().agregarDetalle();
 					view.getTxtBuscar().setText("");
 					selectRowInset();
-
+					
 				}*/
 				netBuscar=0;
-				break;
-			case "BUSCARCLIENTE":
-
-				myCliente=null;
-				myCliente=clienteDao.buscarPorId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
-
-				if(myCliente!=null){
-					this.view.getTxtNombrecliente().setText(myCliente.getNombre());
-					this.view.getTxtRtn().setText(myCliente.getRtn());
-				}else{
-
-					JOptionPane.showMessageDialog(view, "Cliente no encontrado");
-					this.view.getTxtIdcliente().setText("1");
-					this.view.getTxtNombrecliente().setText("Cliente Normal");
-				}
-				//96995768
-				break;
-			case "ACTUALIZAR":
-
+			break;
+		case "BUSCARCLIENTE":
+			
+			myCliente=null;
+			myCliente=clienteDao.buscarPorId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
+			
+			if(myCliente!=null){
+				this.view.getTxtNombrecliente().setText(myCliente.getNombre());
+				this.view.getTxtRtn().setText(myCliente.getRtn());
+			}else{
+		
+				JOptionPane.showMessageDialog(view, "Cliente no encontrado");
+				this.view.getTxtIdcliente().setText("1");
+				this.view.getTxtNombrecliente().setText("Cliente Normal");
+			}
+			//96995768
+			break;
+		case "ACTUALIZAR":
+			
 				this.actualizar();
+			
+			break;
+		case "BUSCARARTICULO":
+			//se verfica si esta activo la busqueda de articulo por descripcion
+			if(ConexionStatic.getUsuarioLogin().getConfig().isActivarBusquedaFacturacion())
+			{
+				this.buscarArticulo();
+			}
+		break;
+		
+		case "CERRAR":
+			this.salir();
+		break;
+		case "BUSCARCLIENTES":
+			this.buscarCliente();
+			break;
+		case "COBRAR":
+			this.cobrar();
+			break;
+		case "GUARDAR":
+			this.guardar();
+			break;
+			
+		case "CIERRECAJA":
+			this.cierreCaja();
+			break;
+		case "COTIZACION":
+			//this.showPendientes();
+			//JOptionPane.showMessageDialog(view, "Cliente no encontrado");
+			guardarCotizacion();
+			break;
+		case "GET_COTIZACIONES":
+			buscarCotizaciones();
+			break;
 
-				break;
-			case "BUSCARARTICULO":
-				//se verfica si esta activo la busqueda de articulo por descripcion
-				if(ConexionStatic.getUsuarioLogin().getConfig().isActivarBusquedaFacturacion())
-				{
-					this.buscarArticulo();
-				}
-				break;
+		case "IMPRIMIRPENDIENTE":
 
-			case "CERRAR":
-				this.salir();
-				break;
-			case "BUSCARCLIENTES":
-				this.buscarCliente();
-				break;
-			case "COBRAR":
-				this.cobrar();
-				break;
-			case "GUARDAR":
-				this.guardar();
-				break;
+			int idFacturaTemporal=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
 
-			case "CIERRECAJA":
-				this.cierreCaja();
-				break;
-			case "COTIZACION":
-				//this.showPendientes();
-				//JOptionPane.showMessageDialog(view, "Cliente no encontrado");
-				guardarCotizacion();
-				break;
-			case "GET_COTIZACIONES":
-				buscarCotizaciones();
-				break;
+			//se imprime un tike de salida para prueba
+			try {
+				AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(),idFacturaTemporal);
 
-			case "IMPRIMIRPENDIENTE":
-
-				int idFacturaTemporal=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-
-				//se imprime un tike de salida para prueba
-				try {
-					AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(),idFacturaTemporal);
-
-					//AbstractJasperReports.imprimierFactura();
-					AbstractJasperReports.showViewer(view);
-
-
-				} catch (SQLException ee) {
-					// TODO Auto-generated catch block
-					ee.printStackTrace();
-				}
+				//AbstractJasperReports.imprimierFactura();
+				AbstractJasperReports.showViewer(view);
 
 
+			} catch (SQLException ee) {
+				// TODO Auto-generated catch block
+				ee.printStackTrace();
+			}
 
 
-				break;
-			case "ELIMINARPENDIENTE":
-
-				int idFacturaTemporal2=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-
-				Factura eliminarTem=new Factura();
-				eliminarTem.setIdFactura(idFacturaTemporal2);
 
 
-				JPasswordField pf = new JPasswordField();
-				int action =JOptionPane.showConfirmDialog(view,"Desea eliminar la orden de "+view.getBtnsGuardador().getFacturaSeleted().getCliente().getNombre()+" ?","Confirmacion",JOptionPane.OK_CANCEL_OPTION);
-				//JOptionPane.showMessageDialog(view,"La accion es: "+action);
-				if(action == 0){
+			break;
+		case "ELIMINARPENDIENTE":
+
+			int idFacturaTemporal2=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
+
+			Factura eliminarTem=new Factura();
+			eliminarTem.setIdFactura(idFacturaTemporal2);
+
+
+			JPasswordField pf = new JPasswordField();
+			int action =JOptionPane.showConfirmDialog(view,"Desea eliminar la orden de "+view.getBtnsGuardador().getFacturaSeleted().getCliente().getNombre()+" ?","Confirmacion",JOptionPane.OK_CANCEL_OPTION);
+			//JOptionPane.showMessageDialog(view,"La accion es: "+action);
+			if(action == 0){
 
 
 
@@ -569,14 +420,14 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 
-				}
-
-				break;
-
+			}
+			
+			break;
+		
 		}
-
+		
 	}
-
+	
 
 
 	private void guardarCotizacion() {
@@ -584,71 +435,71 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		//s
 		setFactura();
 		if(validar()){
-			CotizacionDao cotizacioDao=new CotizacionDao();
-			//sf
-			boolean resultado=cotizacioDao.registrar(myFactura);
-
-			if(resultado){
-
-				try {
+				CotizacionDao cotizacioDao=new CotizacionDao();
+				//sf
+				boolean resultado=cotizacioDao.registrar(myFactura);
+				
+				if(resultado){
+					
+					try {
 						/*this.view.setVisible(false);
 						this.view.dispose();*/
-					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
-					AbstractJasperReports.crearReporteCotizacion(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
-					AbstractJasperReports.showViewer(view);
-					//AbstractJasperReports.imprimierFactura();
-
-
-					//myFactura=null;
-					setEmptyView();
-
-					//si la view es de actualizacion al cobrar se cierra la view
-					if(this.tipoView==2){//dfsfda
+						//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
+						AbstractJasperReports.crearReporteCotizacion(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
+						AbstractJasperReports.showViewer(view);
+						//AbstractJasperReports.imprimierFactura();
+						
+						
 						//myFactura=null;
-						this.tipoView=1;
-						this.view.getBtnGuardar().setEnabled(true);
-						this.view.getBtnActualizar().setEnabled(false);
-
-						//	this.facturaDao.EliminarTemp(idFacturaTemporal);
 						setEmptyView();
-
-						view.getBtnsGuardador().deleteAll();
-
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-						//view.setVisible(false);
-
-
+						
+						//si la view es de actualizacion al cobrar se cierra la view
+						if(this.tipoView==2){//dfsfda
+							//myFactura=null;
+							this.tipoView=1;
+							this.view.getBtnGuardar().setEnabled(true);
+							this.view.getBtnActualizar().setEnabled(false);
+							
+						//	this.facturaDao.EliminarTemp(idFacturaTemporal);
+							setEmptyView();
+							
+							view.getBtnsGuardador().deleteAll();
+							
+							cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+							//view.setVisible(false);
+							
+							
+						}
+						//myFactura.
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					//myFactura.
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//JOptionPane.showMessageDialog(view, "Se guardao la cotizacion con exito", "Cotizacion", JOptionPane.INFORMATION_MESSAGE);
+				}else{
+					JOptionPane.showMessageDialog(view, "Error al guardar la cotizacion", "Error al guardar", JOptionPane.ERROR_MESSAGE);
 				}
-				//JOptionPane.showMessageDialog(view, "Se guardao la cotizacion con exito", "Cotizacion", JOptionPane.INFORMATION_MESSAGE);
-			}else{
-				JOptionPane.showMessageDialog(view, "Error al guardar la cotizacion", "Error al guardar", JOptionPane.ERROR_MESSAGE);
-			}
 		}
-
+		
 	}
 
 	private void cargarFacturaPendiente(int numeroFactura) {
 		// TODO Auto-generated method stub
-
-
+		
+		
 		Factura fact=view.getBtnsGuardador().buscarFactura(numeroFactura);
 		this.myFactura=fact;
-
+		
 		//se configura la caja donde se guardo la factura
 		Caja caja=ConexionStatic.getUsuarioLogin().setCajaActica(fact.getCodigoCaja());
 		//JOptionPane.showMessageDialog(view, caja.toString());
-
+		
 		ViewModuloFacturar frame = (ViewModuloFacturar)view.getTopLevelAncestor();
 		frame.btnCaja.setText(caja.getDescripcion());
-
-
+		
+		
 		myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(numeroFactura));
-
+		
 		cargarFacturaView();
 		this.calcularTotales();
 		this.view.getBtnGuardar().setEnabled(false);
@@ -658,16 +509,16 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	}
 
 	private void setFactura(){
-
+		
 		//sino se ingreso un cliente en particular que coge el cliente por defecto
 		if(myCliente==null){
 			myCliente=new Cliente();
 			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
 			myCliente.setNombre(this.view.getTxtNombrecliente().getText());
 			myCliente.setRtn(view.getTxtRtn().getText());
-
+			
 		}
-
+		
 		if(this.view.getRdbtnContado().isSelected()){
 			myFactura.setTipoFactura(1);
 			myFactura.setEstadoPago(1);
@@ -1643,9 +1494,17 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 		CierreCajaDao cierreDao=new CierreCajaDao();
 
-		// se verifica que hay facturas para crear un cierre
-		if(facturaDao.verificarCierre(ConexionStatic.getUsuarioLogin().getCajas())){
 
+
+		CierreCaja oldCierre = new CierreCaja();
+
+		// se consiguie el ultimo cierre del usuario
+		oldCierre = cierreDao.getCierreUltimoUser();
+
+
+			// se verifica que hay facturas para crear un cierre
+		if(facturaDao.verificarCierre(ConexionStatic.getUsuarioLogin().getCajas()) && oldCierre.getEstado() == true){
+			
 			ViewCuentaEfectivo viewContar=new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar=new CtlContarEfectivo(viewContar);
 
@@ -1719,13 +1578,14 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 						AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
-
-
+						
+						
 						viewContar.dispose();
 						viewContar=null;
 						ctlContar=null;
+						salir();
 
-
+						
 					} catch (SQLException ee) {
 						// TODO Auto-generated catch block
 						ee.printStackTrace();
@@ -1733,9 +1593,10 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				}else{
 					JOptionPane.showMessageDialog(view, "No se guardo el cierre de corte. Vuelva a hacer el corte.");
 				}
-		}//fin de la verificacion de las facturas
+		}//fin de la verificacion de las facturas 
 		else{
-			JOptionPane.showMessageDialog(view, "No hay facturas para crear un cierre de caja. Primero debe facturar.");
+			JOptionPane.showMessageDialog(view, "No hay facturas para crear un cierre de caja o no tiene un cierre activo.");
+			salir();
 		}
 
 		//ConexionStatic.setNivelFac(true);
@@ -1817,7 +1678,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N){
 			setEmptyView();
 		}
-
+		
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P) {
 
 
@@ -1903,120 +1764,116 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			view.getTxtPrecio().setText("");
 		}
 		*/
-
+		
 		if(caracter=='+'){
 			if(filaPulsada>=0){
-<<<<<<< HEAD
-
-=======
->>>>>>> correcion_user_articulo
 				if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario()){
-
+					
 					this.view.getModeloTabla().masCantidad(filaPulsada);
 					view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(0));
 					//JOptionPane.showMessageDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
 					this.calcularTotales();
-
+					
 				}else{
-
+					
 					//se extrae el articulo de tabla
 					myArticulo= view.getModeloTabla().getDetalle(filaPulsada).getArticulo();
-
+					
 					//se filtra se es un bien
 					if(myArticulo.getTipoArticulo()==1){
 						//se extre la exista del producto en el inventario
 						double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
+						
 						//se pasa a bigdecimal
 						BigDecimal cantidadSaldoKardex=new BigDecimal(existencia);
-
+						
 						//se registra la cantida que tiene item
 						BigDecimal cantidadSaldoItem=new BigDecimal(this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue());
-
+						
 						//se le suma uno que es la intencio del usuario
 						cantidadSaldoItem=cantidadSaldoItem.add(new BigDecimal(1));
-
-						//se calcula de diferencia
+						
+						//se calcula de diferencia 
 						BigDecimal diferencia=cantidadSaldoKardex.subtract(cantidadSaldoItem);
-
+						
 						//si la direncia es mayor o igual a 0 se procede a establecer
 						if(diferencia.doubleValue()>=0.00 || myArticulo.getTipoArticulo()==2){
 							this.view.getModeloTabla().masCantidad(filaPulsada);
 							//JOptionPane.showMessageDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
 							this.calcularTotales();
 						}else{
-							JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);  
 							//view.getModeloTabla().eliminarDetalle(filaPulsada);
 						}
 					}else{//si es un servicio se buscan los insumos
-
-						//si es un servicio se procede a buscar sus insumos y si es posible facturar
-
+						
+						//si es un servicio se procede a buscar sus insumos y si es posible facturar 
+						
 						//la variable para la existecia en el kardex
 						double existencia=0;
-
+						
 						//se registra la cantida que tiene item
 						BigDecimal cantidadSaldoItem=new BigDecimal(this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad().doubleValue());
-
+						
 						//se registra la cantida en la entrada del usuario
 						BigDecimal newCantSaldoItem=cantidadSaldoItem.add(new BigDecimal(1));
-
+						
 						//comprobar la existencia de los insumos
 						List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
-
+						
 						//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
 						if(insumos!=null && insumos.size()>0){
 							boolean exist=false;
 							//recoremos los insumos comprobando si tiene existencia
 							for(int xx=0;xx<insumos.size();xx++){
-
+								
 								//se comprueba que exista el insumo en el inventario
 								existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-
+								
 								BigDecimal cantRequerida=newCantSaldoItem.multiply(insumos.get(xx).getCantidad());
-
+								
 								if(existencia>0.0 && existencia>=cantRequerida.doubleValue()){
-									//se establece que esiste
+									//se establece que esiste 
 									exist=true;
-
+								
 								}else{//fin se la comprobacion de la existencia
 									exist=false;
 									JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 									break;
-								}
+								}	
 							}//sin del for que recore los insumos
-
+							
 							//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
 							if(exist){
-
+								
 								//activar para redondiar el precio de venta final
 								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
+								
 									myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 								}
 								//se establece la cantidad al item
 								this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(newCantSaldoItem);
 								this.calcularTotales();
 							}else{
-								JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+newCantSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+								JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+newCantSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());  
 								view.getModeloTabla().eliminarDetalle(filaPulsada);
 								this.calcularTotales();
 							}
-
+							
 						}else{//sino tiene insumos el servicio se agrega directamente a la factura
-
+							
 							//se establece la cantidad al item
 							this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(newCantSaldoItem);
 							this.calcularTotales();
 						}
-
-
+			
+						
 					}
-
+				
 				}
-
-
-
+									
+									
+									
 			}
 		}
 		if(caracter=='-'){
@@ -2027,39 +1884,39 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				this.calcularTotales();
 			}
 		}
-
-
+		
+		
 	}
 	public void actualizarVentanas() {
 		// TODO Auto-generated method stub
-
+		
 		for(int x=0;x<ventanas.size();x++){
 			if(ConexionStatic.getNivelFact()==true){
 				ventanas.get(x).getTxtBuscar().setBackground(new Color(250, 0, 0));
-			}
+			}	
 			else{
 				ventanas.get(x).getTxtBuscar().setBackground(new Color(60, 179, 113));
 			}
 		}
-
+		
 	}
 
 
-	/*
+	/*	
 	private void buscarMasOmenos(int p){
 		//se comprueba que hay algo que buscar
 				if(view.getTxtBuscar().getText().trim().length()!=0){
-
+					
 					myArticuloDao=new ArticuloDao(conexion);
 					//JOptionPane.showMessageDialog(view, "2");
 					//JOptionPane.showMessageDialog(view, view.getTxtBuscar().getText());
 					this.myArticulo=this.myArticuloDao.buscarArticuloNombre(view.getTxtBuscar().getText(),p);
-
+					
 					//JOptionPane.showMessageDialog(view, myArticulo);
 					if(myArticulo!=null){
 						view.getTxtArticulo().setText(myArticulo.getArticulo());
 						view.getTxtPrecio().setText("L. "+myArticulo.getPrecioVenta());
-
+						
 					}
 					else{
 						myArticulo=null;
@@ -2073,46 +1930,46 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 					view.getTxtPrecio().setText("");
 				}
 	}*/
-
+	
 	private void salir(){
 		this.view.setVisible(false);
-
-
+		
+		
 	}
 	private void guardar(){
-
-
+		
+		
 		if(view.getModeloTabla().getRowCount()>1){
-
-
-			setFactura();
-			myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
-
-			boolean resultado=facturaOrdenesDao.registrar(myFactura);
-
-			if(resultado){
-				myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-				resultado=true;
-
-				this.tipoView=1;
-				//this.view.setVisible(false);
-				//view.addBotonPendiente(myFactura,this);
-
-				setEmptyView();
-
-				view.getBtnsGuardador().deleteAll();
-
-				cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-			}else{
-				JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
-			}
-
+			
+		
+					setFactura();
+					myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
+					
+					boolean resultado=facturaOrdenesDao.registrar(myFactura);
+					
+					if(resultado){
+						myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+						resultado=true;
+						
+						this.tipoView=1;
+						//this.view.setVisible(false);
+						//view.addBotonPendiente(myFactura,this);
+						
+						setEmptyView();
+						
+						view.getBtnsGuardador().deleteAll();
+						
+						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+					}else{
+						JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
+					}
+		
 		}else{
 			JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.","ERROR",JOptionPane.ERROR_MESSAGE);
 		}
-
-
-
+		
+	
+		
 	}
 	private void actualizar() {
 		// TODO Auto-generated method stub
@@ -2123,17 +1980,17 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		this.tipoView=1;
 		this.view.getBtnGuardar().setEnabled(true);
 		this.view.getBtnActualizar().setEnabled(false);
-
+		
 		//view.getBtnsGuardador().setFactura(myFactura);
-
+		
 		setEmptyView();
-
+		
 		view.getBtnsGuardador().deleteAll();
-
+		
 		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-
+		
 		//view.addBotonPendiente(myFactura,this);
-
+		
 	}
 	private boolean validar(){
 		boolean resultado=false;
@@ -2142,81 +1999,81 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			resultado=false;
 		}
 		else if(this.myCliente==null){
-
+			
 			//JOptionPane.showMessageDialog(view, "Debe agregar el cliente primero");
 			JOptionPane.showMessageDialog(view, "Debe agregar el cliente primero", "Error Validacion", JOptionPane.ERROR_MESSAGE);
 			resultado=false;
-
+			
 		}else{
 			resultado=true;
 		}
 		return resultado;
 	}
 	private void cobrar(){
-
+		
 		isThereConexion =ConexionStatic.isDbConnected();
 		//verificamos si existe la conexion a la base de datos
 		if(isThereConexion){
-
+			
 			//verificamos que se agregaron articulos a la factura
 			if(view.getModeloTabla().getRowCount()>1){
-
+				
 				boolean resulVendedor=false;
-
+				
 				//activas para cuando se necesite un vendedor
 				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){
 					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(null);
 					CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
-
-					resulVendedor=ctlVendedor.cargarVendedor();
-					myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
+					
+					 resulVendedor=ctlVendedor.cargarVendedor();
+					 myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
 				}else{
-
-					resulVendedor=true;
-
-					Empleado uno=new Empleado();
-					uno.setCodigo(1);
+				
+					 resulVendedor=true;
+					 
+					 Empleado uno=new Empleado();
+					 uno.setCodigo(1);
 					myFactura.setVendedor(uno);
-
+					 
 				}
-
-
+				
+			
 				//captura las observaciones d ela factura
 				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaObservaciones()){
-					String observaciones="";
-					JTextArea ta = new JTextArea(20, 20);
-
-					switch (JOptionPane.showConfirmDialog(view, new JScrollPane(ta),"Observaciones de la factura",JOptionPane.ERROR_MESSAGE)) {
-						case JOptionPane.OK_OPTION:
-							observaciones=ta.getText();
-							break;
-						default:
-							observaciones="NA";
-							break;
-					}
-					myFactura.setObservacion(observaciones);
+						String observaciones="";
+						JTextArea ta = new JTextArea(20, 20);
+						
+						switch (JOptionPane.showConfirmDialog(view, new JScrollPane(ta),"Observaciones de la factura",JOptionPane.ERROR_MESSAGE)) {
+						    case JOptionPane.OK_OPTION:
+						        observaciones=ta.getText();
+						        break;
+						    default:
+						    	observaciones="NA";
+						    	break;
+						}
+						myFactura.setObservacion(observaciones);
 				}
-
+				
 				if(resulVendedor)//verifica si ingreso el codigo del bombero
 				{
-
-
-
-
+					
+					
+				
+					
 					//
-
-
-
-
+					
+					
+				
+				
 					//si la factura es al contado
 					if(view.getRdbtnContado().isSelected()){
-
-						//se muestra la vista para cobrar y introducir el cambio
+				
+						//se muestra la vista para cobrar y introducir el cambio 
 						ViewCambioPago viewPago=new ViewCambioPago(null);
 						CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
 						//se muestra y ventana del cobro y se devuelve un resultado del cobro
 						boolean resulPago=ctlPago.pagar();
-
+						
 						//se procede a verificar si se cobro
 						if(resulPago)
 						{
@@ -2236,16 +2093,16 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 								myFactura.setObservacion(ctlPago.getRefencia());
 							}
 							setFactura();
-
-
+							
+							
 							// se comprueba que sino tiene un cierre de caja
 							// activo lo realice
 							boolean resl = setCierre();
-
-
+							
+							
 							//se procesa el resultado del cierre de caja
 							if (resl) {
-
+								
 								this.guardarFactura();
 							}else {
 								JOptionPane.showMessageDialog(view,
@@ -2254,97 +2111,93 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							}
 
 						}//fin de la ventana en cobro
-
+					
 					}//fin de la factura al credito
 					else
-					if(view.getRdbtnCredito().isSelected()){//si la factura es al contado se procede a guardar e imprimir
-
-
-
+					if(view.getRdbtnCredito().isSelected()){//si la factura es al contado se procede a guardar e imprimir 
+						
+						
+						
 						//JOptionPane.showMessageDialog(view, myCliente.toString());
 						//fsdf
-
+						
 						if(myCliente!=null &&  myCliente.getTipoCliente()==2){
-
-
+							
+							
 							setFactura();
 							myFactura.setTipoPago(3);
 							//comprueba que el cliente este registrado
-							//para verificar el credito del cliente
-							///	BigDecimal saldo=this.myCliente.getSaldoCuenta();
-							///	BigDecimal limite=this.myCliente.getLimiteCredito();
-							///	BigDecimal nuevoSaldo=saldo.add(this.myFactura.getTotal());
-
-							//no se necesita el cambio y pago porque es al credito
-							myFactura.setCambio(new BigDecimal(0));
-							myFactura.setPago(new BigDecimal(0));
-
-							myFactura.setTipoFactura(2);
-
-							// se comprueba que sino tiene un cierre de caja
-							// activo lo realice
-							boolean resl = setCierre();
-							//se procesa el resultado del cierre de caja
-							if (resl) {
-								this.guardarFactura();
-							}else {
-								JOptionPane.showMessageDialog(view,
-										"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
-										JOptionPane.ERROR_MESSAGE);
-							}
-
-
-						}//fin de la verificacion del cliente
+									//para verificar el credito del cliente
+									///	BigDecimal saldo=this.myCliente.getSaldoCuenta();
+									///	BigDecimal limite=this.myCliente.getLimiteCredito();
+									///	BigDecimal nuevoSaldo=saldo.add(this.myFactura.getTotal());
+						
+										//no se necesita el cambio y pago porque es al credito
+										myFactura.setCambio(new BigDecimal(0));
+										myFactura.setPago(new BigDecimal(0));
+										
+										myFactura.setTipoFactura(2);
+										
+										// se comprueba que sino tiene un cierre de caja
+										// activo lo realice
+										boolean resl = setCierre();
+										//se procesa el resultado del cierre de caja
+										if (resl) {
+											this.guardarFactura();
+										}else {
+											JOptionPane.showMessageDialog(view,
+													"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
+													JOptionPane.ERROR_MESSAGE);
+										}
+										
+										
+						}//fin de la verificacion del cliente 
 						else{
 							JOptionPane.showMessageDialog(view,
 									"No se puede facturar. Debe crear el cliente primero!!!", "Error facturar",
 									JOptionPane.ERROR_MESSAGE);
 						}
-
-
+						
+						
 					}//fin de la factura al credito
-				}//sin del if donde se pide el codigo del vendedor
-
-
+			}//sin del if donde se pide el codigo del vendedor
+					
+						
 			}//fin del if donde se verifica que hay articulos que facturar
 			else{
 				JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.","ERORR",JOptionPane.ERROR_MESSAGE);
 			}
-
+		
 			//para cargar las ordenes de compra
 			view.getBtnsGuardador().deleteAll();
 			cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-
+			
 		}//fin de la verificacion de la conexion de la base de datos
-
+		
 	}
 	private void buscarArticulo(){
-
+	
 		//se llama el metodo que mostrar la ventana para buscar el articulo
 		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(null);
 		CtlArticuloBuscar ctlArticulo=new CtlArticuloBuscar(viewListaArticulo);
-
+		
 		viewListaArticulo.pack();
 		ctlArticulo.view.getTxtBuscar().setText("");
 		ctlArticulo.view.getTxtBuscar().selectAll();
 		view.getTxtBuscar().requestFocusInWindow();
 		viewListaArticulo.conectarControladorBuscar(ctlArticulo);
-
+		
 		boolean resul=ctlArticulo.buscarArticulo(null);
 		//dfsdf
 		if(resul){
 			myArticulo=ctlArticulo.getArticulo();
 			double existencia=0;
-
+			
 			//se establece el codigo de barra del articulo
 			myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
-
+			
 			//conseguir los precios del producto
 			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-<<<<<<< HEAD
-
-			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
-=======
 			
 			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 
@@ -2359,198 +2212,197 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 			//se busca en los item ya agregados si ya existe en el metodo solo se agrega la nueva cantidad sino se agrega como nuevo
 	if( unirCantidad ==false  )
->>>>>>> correcion_user_articulo
 
 
 			//se verfica en la configuracion si se puede facturar sin inventario
 			if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
 			{
-
+				
 				//activar para redondiar el precio de venta final
 				if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
+				
 					myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 				}
-
-				//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);
-
+				
+				//JOptionPane.showMessageDialog(view,myArticulo.getTipoArticulo()+" tipo de articulo","Error en existencia",JOptionPane.ERROR_MESSAGE);  
+				
 				//si es un articulo tipo bien se puede agregar en cualquier caja
 				if(myArticulo.getTipoArticulo()==1){
 					//se agrega articulo a la tabla
 					this.view.getModeloTabla().setArticulo(myArticulo);
-
+					
 					calcularTotales();
 					this.view.getModeloTabla().agregarDetalle();
-
+					
 					selectRowInset();
 				}else{
-
+					
 					//se filtra para que la caja por defecto sera la unica que puede facturar servicios
 					if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
 						//se agrega articulo a la tabla
 						this.view.getModeloTabla().setArticulo(myArticulo);
-
+						
 						calcularTotales();
 						this.view.getModeloTabla().agregarDetalle();
-
+						
 						selectRowInset();
 					}else{
-						JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
 					}
 				}
-
-
-
-
+				
+				
+				
+			
 			}else{//si es necesario comprobar los inventarios de articulos
-
+				
 				//fdsf
 				//si es un bien se combrueba la existencia de ese articulo
 				if(myArticulo.getTipoArticulo()==1){
 
-					//se comprueba que exista el producto en el inventario
-					existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+						//se comprueba que exista el producto en el inventario
+						existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
-					double cantidad=1;
+						double cantidad=1;
 
-					double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+						double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
 
-					if(buscarEnRequisicionCantidad>0){
-						cantidad=cantidad+buscarEnRequisicionCantidad;
-					}
-
-					if(existencia>0.0 && cantidad<=existencia){
-
-						//activar para redondiar el precio de venta final
-						if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
-							myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+						if(buscarEnRequisicionCantidad>0){
+							cantidad=cantidad+buscarEnRequisicionCantidad;
 						}
-
-						//se agrega articulo a la tabla
-						this.view.getModeloTabla().setArticulo(myArticulo);
-
-						calcularTotales();
-						this.view.getModeloTabla().agregarDetalle();
-
-						selectRowInset();
-
-					}else{//fin se la comprobacion de la existencia
-
-						JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidad+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
-
-
-					}
-				}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos
-
-
-					//se filtra para que la caja por defecto sera la unica que puede facturar servicios
-					if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
-
-						//comprobar la existencia de los insumos
-						List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
-
-						//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
-						if(insumos!=null && insumos.size()>0){
-							boolean exist=false;
-							//recoremos los insumos comprobando si tiene existencia
-							for(int xx=0;xx<insumos.size();xx++){
-
-								//se comprueba que exista el insumo en el inventario
-								existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
-								//insumos.get(xx).getCantidad().multiply(new BigDecimal(e))
-
-								//se valida la existencia solo para los bienes
-								if(insumos.get(xx).getArticulo().getTipoArticulo()==1){
-									//se comprueba la existencia del articulo en la farmacia
-									if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
-										//se establece que esiste
-										exist=true;
-
-
-
-									}else if(insumos.get(xx).getArticulo().getTipoArticulo()==2){//fin se la comprobacion de la existencia
-										exist=false;
-										JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
-										break;
-									}
-								}else{//si es un servicio se pasa por alto la validacion
-									exist=true;
-								}
-							}//sin del for que recore los insumos
-
-							//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
-							if(exist){
-								//se agrega articulo a la tabla
-								this.view.getModeloTabla().setArticulo(myArticulo);
-
+						
+						if(existencia>0.0 && cantidad<=existencia){
+								
 								//activar para redondiar el precio de venta final
 								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
-
+								
 									myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 								}
-
+								
+								//se agrega articulo a la tabla
+								this.view.getModeloTabla().setArticulo(myArticulo);
+								
 								calcularTotales();
 								this.view.getModeloTabla().agregarDetalle();
-
+								
 								selectRowInset();
-							}
+									
+						}else{//fin se la comprobacion de la existencia
 
-						}else{//sino tiene insumos el servicio se agrega directamente a la factura
-							//se agrega articulo a la tabla
-							this.view.getModeloTabla().setArticulo(myArticulo);
+							JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidad+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
 
-							//activar para redondiar el precio de venta final
-							if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
 
-								myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
-							}
-
-							calcularTotales();
-							this.view.getModeloTabla().agregarDetalle();
-
-							selectRowInset();
 						}
-
-
-					}else{
-						JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
-					}
-				}//sin del else para comprobar las existencia de los servicios
-
-
-
+				}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos 
+					
+					
+						//se filtra para que la caja por defecto sera la unica que puede facturar servicios
+						if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
+							
+							//comprobar la existencia de los insumos
+							List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
+							
+							//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
+							if(insumos!=null && insumos.size()>0){
+								boolean exist=false;
+								//recoremos los insumos comprobando si tiene existencia
+								for(int xx=0;xx<insumos.size();xx++){
+									
+									//se comprueba que exista el insumo en el inventario
+									existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+									//insumos.get(xx).getCantidad().multiply(new BigDecimal(e))
+									
+									//se valida la existencia solo para los bienes
+									if(insumos.get(xx).getArticulo().getTipoArticulo()==1){
+										//se comprueba la existencia del articulo en la farmacia
+										if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
+											//se establece que esiste 
+											exist=true;
+											
+											
+											
+										}else if(insumos.get(xx).getArticulo().getTipoArticulo()==2){//fin se la comprobacion de la existencia
+											exist=false;
+											JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+											break;
+										}
+									}else{//si es un servicio se pasa por alto la validacion
+										exist=true;
+									}
+								}//sin del for que recore los insumos
+								
+								//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
+								if(exist){
+									//se agrega articulo a la tabla
+									this.view.getModeloTabla().setArticulo(myArticulo);
+									
+									//activar para redondiar el precio de venta final
+									if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+									
+										myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+									}
+									
+									calcularTotales();
+									this.view.getModeloTabla().agregarDetalle();
+									
+									selectRowInset();	
+								}
+								
+							}else{//sino tiene insumos el servicio se agrega directamente a la factura
+									//se agrega articulo a la tabla
+									this.view.getModeloTabla().setArticulo(myArticulo);
+									
+									//activar para redondiar el precio de venta final
+									if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+									
+										myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+									}
+									
+									calcularTotales();
+									this.view.getModeloTabla().agregarDetalle();
+									
+									selectRowInset();
+							}
+							
+							
+						}else{
+							JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE); 
+						}
+				}//sin del else para comprobar las existencia de los servicios 
+				
+				
+				
 			}//sin de else para facturar con inventario
 		}//fin de la busqueda de articulo
-
+		
 		//myArticulo=null;
 		viewListaArticulo.dispose();
 		ctlArticulo=null;
-
+		
 	}
 	private void setEmptyView(){
 		//se estable la tabla de detalles vacia
 		view.getModeloTabla().setEmptyDetalles();
-
+		
 		myFactura.setCodigoAlter(0);
 		//se agrega una fila vacia a la tabla detalle
 		view.getModeloTabla().agregarDetalle();
-
-
-
+		
+		
+		
 		//conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
-
+		
 		//se estable un cliente generico para la factura
 		this.view.getTxtIdcliente().setText("1");
 		this.view.getTxtNombrecliente().setText("Consumidor final");
 		view.getTxtRtn().setText("");
-
-
+		
+		
 		this.myCliente=null;
 		this.myArticulo=null;
 		//myFactura.getCliente()=null;
-
+		
 		//this.view.getTxtArticulo().setText("");
 		this.view.getTxtBuscar().setText("");
 		this.view.getTxtDescuento().setText("");
@@ -2561,56 +2413,56 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		this.view.getTxtTotal().setText("0.00");
 		this.myFactura.setObservacion("");
 		this.view.getRdbtnContado().setSelected(true);
-
+		
 		//se estable el focus de la view en la caja de texto buscar
 		this.view.getTxtBuscar().requestFocusInWindow();
-
+		
 	}
 	private void buscarCliente(){
 		//se crea la vista para buscar los cliente
 		ViewListaClientes viewListaCliente=new ViewListaClientes (null);
-
+		
 		CtlClienteBuscar ctlBuscarCliente=new CtlClienteBuscar(viewListaCliente);
 		viewListaCliente.pack();
 		ctlBuscarCliente.view.getTxtBuscar().setText("");
 		ctlBuscarCliente.view.getTxtBuscar().selectAll();
 		view.getTxtBuscar().requestFocusInWindow();
-
+		
 		boolean resul=ctlBuscarCliente.buscarCliente(null);
 		//se comprueba si le regreso un articulo valido
 		if(resul){
-
+			
 			myCliente=ctlBuscarCliente.getCliente();
 			this.view.getTxtIdcliente().setText(""+myCliente.getId());
 			this.view.getTxtNombrecliente().setText(myCliente.getNombre());
 			this.view.getTxtRtn().setText(myCliente.getRtn());
-
+		
 		}else{
 			//JOptionPane.showMessageDialog(view, "No se encontro el cliente");
 			this.view.getTxtIdcliente().setText("1");
 			this.view.getTxtNombrecliente().setText("Consumidor final");
-
+		
 		}
 		viewListaCliente.dispose();
 		ctlBuscarCliente=null;
 	}
-
-
-	public void guardarLocal(){
-
+	
+	
+public void guardarLocal(){
+	
 		//se captura el id de la factura por si la factura es temporal
 		int idFacturaTemporal=myFactura.getIdFactura();
-
-		//se registra la factura
+		
+		//se registra la factura	
 		boolean resul=facturaDao.registrar(myFactura);
-
-
-
+		
+		
+			
 		//se porcesa el resultado de ristrar la factura
 		if(resul){
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-
-
+			
+			
 			if(ConexionStatic.getNivelFact()){//nivel de facturo 2
 				try {
 					/*this.view.setVisible(false);
@@ -2620,36 +2472,36 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 					//AbstractJasperReports.showViewer(view);
 					AbstractJasperReports.imprimierFactura();
 					//JOptionPane.showMessageDialog(view, "Aqui"+myFactura.toString());
-
+					
 					//muestra en la pantalla el cambio y lo mantiene permanente
 					ViewCambio cambio=new ViewCambio(null);
 					cambio.getTxtCambio().setText(myFactura.getCambio().toString());
 					cambio.getTxtEfectivo().setText(myFactura.getPago().toString());
 					cambio.setVisible(true);
-
+					
 					//myFactura=null;
 					setEmptyView();
-
+					
 					//si la view es de actualizacion al cobrar se cierra la view
 					if(this.tipoView==2){//dfsfda
 						//myFactura=null;
 						this.tipoView=1;
 						this.view.getBtnGuardar().setEnabled(true);
 						this.view.getBtnActualizar().setEnabled(false);
-
+						
 						Factura eliminarTem=new Factura();
 						eliminarTem.setIdFactura(idFacturaTemporal);
-
+						
 						this.facturaOrdenesDao.eliminar(eliminarTem);
-
+						
 						setEmptyView();
-
+						
 						view.getBtnsGuardador().deleteAll();
-
+						
 						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 						//view.setVisible(false);
-
-
+						
+						
 					}
 					//myFactura.
 				} catch (SQLException e) {
@@ -2657,96 +2509,96 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 					e.printStackTrace();
 				}
 			}//fin del nivel de factura
-
+			
 			setEmptyView();
-
-
+			
+			
 		}else{
 			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
 		}//fin el if donde se guarda la factura
-
+		
 	}
 
-	public void guardarRemoto(){
-
-
-		//se captura el id de la factura por si la factura es temporal
-		int idFacturaTemporal=myFactura.getIdFactura();
-
-		//se registra la factura
-		//boolean resul=facturaDaoRemote.registrarFactura(myFactura);
-		boolean resul=facturaDao.registrar(myFactura);
-
-
-
-		//se porcesa el resultado de ristrar la factura
-		if(resul){
-			//myFactura.setIdFactura(facturaDaoRemote.getIdFacturaGuardada());
-			//myFactura.setCodigo(this.facturaDaoRemote.getIdFacturaGuardada());
-			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-			myFactura.setCodigoAlter(this.facturaDao.getIdFacturaGuardada());
-
-			try {
-
-				AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 1, myFactura.getIdFactura());
-				AbstractJasperReports.imprimierFactura();
-
-				//muestra en la pantalla el cambio y lo mantiene permanente
-				ViewCambio cambio=new ViewCambio(null);
-				cambio.getTxtCambio().setText(myFactura.getCambio().toString());
-				cambio.getTxtEfectivo().setText(myFactura.getPago().toString());
-				cambio.setVisible(true);
-
-
-				//si la view es de actualizacion al cobrar se cierra la view
-				if(this.tipoView==2){
-					//myFactura=null;
-					this.tipoView=1;
-					this.view.getBtnGuardar().setEnabled(true);
-					this.view.getBtnActualizar().setEnabled(false);
-
-					Factura eliminarTem=new Factura();
-					eliminarTem.setIdFactura(idFacturaTemporal);
-
-					this.facturaOrdenesDao.eliminar(eliminarTem);
-
-					setEmptyView();
-
-					view.getBtnsGuardador().deleteAll();
-
-					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+public void guardarRemoto(){
+	
+	
+	//se captura el id de la factura por si la factura es temporal
+	int idFacturaTemporal=myFactura.getIdFactura();
+	
+	//se registra la factura	
+	//boolean resul=facturaDaoRemote.registrarFactura(myFactura);
+	boolean resul=facturaDao.registrar(myFactura);
+	
+	
+		
+	//se porcesa el resultado de ristrar la factura
+	if(resul){
+		//myFactura.setIdFactura(facturaDaoRemote.getIdFacturaGuardada());
+		//myFactura.setCodigo(this.facturaDaoRemote.getIdFacturaGuardada());
+		myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+		myFactura.setCodigoAlter(this.facturaDao.getIdFacturaGuardada());
+		
+				try {
+					
+					AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 1, myFactura.getIdFactura());
+					AbstractJasperReports.imprimierFactura();
+					
+					//muestra en la pantalla el cambio y lo mantiene permanente
+					ViewCambio cambio=new ViewCambio(null);
+					cambio.getTxtCambio().setText(myFactura.getCambio().toString());
+					cambio.getTxtEfectivo().setText(myFactura.getPago().toString());
+					cambio.setVisible(true);
+					
+					
+					//si la view es de actualizacion al cobrar se cierra la view
+					if(this.tipoView==2){
+						//myFactura=null;
+						this.tipoView=1;
+						this.view.getBtnGuardar().setEnabled(true);
+						this.view.getBtnActualizar().setEnabled(false);
+						
+						Factura eliminarTem=new Factura();
+						eliminarTem.setIdFactura(idFacturaTemporal);
+						
+						this.facturaOrdenesDao.eliminar(eliminarTem);
+						
+						setEmptyView();
+						
+						view.getBtnsGuardador().deleteAll();
+						
+						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+					}
+					//myFactura.
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				//myFactura.
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-
-		}else{
-			JOptionPane.showMessageDialog(view, "No se guardo la factura intente otra vez", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
-			//this.view.setVisible(false);
-			//this.view.dispose();
-		}//fin el if donde se guarda la factura
+		
+		
+	}else{
+		JOptionPane.showMessageDialog(view, "No se guardo la factura intente otra vez", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
+		//this.view.setVisible(false);
+		//this.view.dispose();
+	}//fin el if donde se guarda la factura
 	}
 
 
 /*
 public void guardarRemotoCredito(){
-
+		
 	//dfs
-	//se registra la factura
+	//se registra la factura	
 	boolean resul=facturaDaoRemote.registrarFactura(myFactura);
-
+		
 	//se porcesa el resultado de ristrar la factura
 	if(resul){
 		myFactura.setIdFactura(facturaDaoRemote.getIdFacturaGuardada());
 		myFactura.setCodigo(this.facturaDaoRemote.getIdFacturaGuardada());
-
+		
 				try {
-
+					
 					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
 					AbstractJasperReports.createReport(conexionRemote.getPoolConexion().getConnection(), 7, myFactura.getIdFactura());
 					//AbstractJasperReports.imprimierFactura();
@@ -2754,7 +2606,7 @@ public void guardarRemotoCredito(){
 					AbstractJasperReports.showViewer(view);
 					//myFactura=null;
 					//setEmptyView();
-
+					
 					//si la view es de actualizacion al cobrar se cierra la view
 					if(this.tipoView==2){
 						myFactura=null;
@@ -2765,8 +2617,8 @@ public void guardarRemotoCredito(){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-
+		
+		
 	}else{
 		JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
 		this.view.setVisible(false);
@@ -2775,27 +2627,27 @@ public void guardarRemotoCredito(){
 	}
 
 	public void guardarLocalCredito(){
-
-
-		//se registra la factura
+		
+		
+		//se registra la factura	
 		boolean resul=facturaDao.registrarFactura(myFactura);
-
+			
 		//se porcesa el resultado de ristrar la factura
 		if(resul){
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-
-
+			
+			
 			if(conexion.getNivelFact()){//nivel de facturo 2
-
+				
 				try {
-
+					
 					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
 					AbstractJasperReports.createReport(conexion.getPoolConexion().getConnection(), 8, myFactura.getIdFactura());
 					AbstractJasperReports.showViewer(view);
 					//AbstractJasperReports.imprimierFactura();
 					//myFactura=null;
 					setEmptyView();
-
+					
 					//si la view es de actualizacion al cobrar se cierra la view
 					if(this.tipoView==2){
 						myFactura=null;
@@ -2806,33 +2658,33 @@ public void guardarRemotoCredito(){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				
 			}//fin del nivel de factura
-
+			
 			setEmptyView();
-
-
+			
+			
 		}else{
 			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
 		}//fin el if donde se guarda la factura
-
+		
 	}
 
 	*/
-
-
+	
+	
 	private void selectRowInset(){
-
+		
 		int row = this.view.getTableDetalle().getRowCount () - 2;
-		int col = 1;
-		boolean toggle = false;
-		boolean extend = false;
-		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
-		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
-		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
-
+	    int col = 1;
+	    boolean toggle = false;
+	    boolean extend = false;
+	    this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
+	    this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
+	    this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+		
 		/*<<<<<<<<<<<<<<<selecionar la ultima fila creada>>>>>>>>>>>>>>>*/
 		/*int row =  this.view.geTableDetalle().getRowCount () - 2;
 		JOptionPane.showMessageDialog(view, row);
@@ -2851,7 +2703,7 @@ public void guardarRemotoCredito(){
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -2867,44 +2719,44 @@ public void guardarRemotoCredito(){
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
+	
 	public void cargarFacturaView(){
-
+		
 		this.view.getTxtIdcliente().setText(""+myFactura.getCliente().getId());
 		this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
 		view.getTxtRtn().setText(myFactura.getCliente().getRtn());
-
+		
 		//se establece el total e impuesto en el vista
 		this.view.getTxtTotal().setText(""+myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		this.view.getTxtImpuesto().setText(""+myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 		this.view.getTxtSubtotal().setText(""+myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
+		
 		this.view.getModeloTabla().setDetalles(myFactura.getDetalles());
 	}
 
@@ -2918,12 +2770,12 @@ public void guardarRemotoCredito(){
 		this.view.getModeloTabla().agregarDetalle();
 		tipoView=2;
 		this.view.setVisible(true);
-
+		
 		//para controlar que es una actualizacion la que se hace
-
-
+		
+		
 		return myFactura;
-
+		
 	}
 
 
@@ -2931,7 +2783,7 @@ public void guardarRemotoCredito(){
 		view.setVisible(true);
 		return resultado;
 	}
-
+	
 
 
 	public void viewFactura(Factura f) {
@@ -2947,7 +2799,7 @@ public void guardarRemotoCredito(){
 		// TODO Auto-generated method stub
 		return this.myFactura;
 	}
-
+	
 	private boolean setCierre() {
 		/* seccion de cierre de caja */
 		/* seccion de cierre de caja */
@@ -2963,28 +2815,28 @@ public void guardarRemotoCredito(){
 		oldCierre = cierreDao.getCierreUltimoUser();
 
 		if (oldCierre.getEstado() == false) {// si el ultimo cierre esta hecho
-			// se registras el nuevo aumentando los valores en uno del anterior cierre
+											// se registras el nuevo aumentando los valores en uno del anterior cierre
+				
 
-
-
+			
 			// cantidad de efectivo inicial de la caja");
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar = new CtlContarEfectivo(viewContar);
 
 			//comprobar si se guardo el efectivo inicial
 			if (ctlContar.getEstado()) {
-
+				
 				CierreCaja newCierre = new CierreCaja();//se crea el nuevo cierre
 
 				newCierre.setEfectivoInicial(ctlContar.getTotal());//se establece el efectivo inicial
 				newCierre.setUsuario(ConexionStatic.getUsuarioLogin().getUser());//se establece el usuario
-
+				
 				//se recoren las cajas donde el usuario puede facturar para ver los registros de los ultimos cierre
 				for(int xx=0;xx<ConexionStatic.getUsuarioLogin().getCajas().size();xx++){
-
+					
 					//se consigue los datos de cierre por cada caja
 					CierreFacturacion unaC=cierreFacturasDao.buscarPorCajaUsuario(ConexionStatic.getUsuarioLogin().getCajas().get(xx),ConexionStatic.getUsuarioLogin().getUser());
-
+					
 					//si ya existe el registro se crea uno nuevo incrementando en uno el del anterior
 					if(unaC!=null){
 						//JOptionPane.showMessageDialog(view, unaC.toString());
@@ -2992,111 +2844,111 @@ public void guardarRemotoCredito(){
 						CierreFacturacion una=new CierreFacturacion();
 						//se estraablece la caja
 						una.setCaja(unaC.getCaja());
-
+						
 						una.setNoFacturaInicio(unaC.getNoFacturaFinal()+1);// se
-						// estable
-						// la
-						// factura
-						// incial
-						// sumandole
-						// uno
-						// a
-						// la
-						// ultima
-						// factura
-						// realizada
-						// por
-						// el
-						// usuario
+																		// estable
+																		// la
+																		// factura
+																		// incial
+																		// sumandole
+																		// uno
+																		// a
+																		// la
+																		// ultima
+																		// factura
+																		// realizada
+																		// por
+																		// el
+																		// usuario
 						una.setUsuario(ConexionStatic.getUsuarioLogin().getUser());//se establece el usuario
-
+						
 						//se agrega el registro al cierre nuevo
 						newCierre.getCierreFacturas().add(una);
-
+						
 					}else{//sino existe se crea uno comenzando con el numero de factura 1 para esa caja y usuario
-
+						
 						//se crear los nuevos registros para el cierre nuevo
 						CierreFacturacion una=new CierreFacturacion();
-
+						
 						//se estraablece la caja
 						una.setCaja(ConexionStatic.getUsuarioLogin().getCajas().get(xx));
-
+						
 						una.setNoFacturaInicio(1);// se
-						// estable
-						// la
-						// factura
-						// incial
-						// en 1
-
+												// estable
+												// la
+												// factura
+												// incial
+												// en 1
+												
 						una.setUsuario(ConexionStatic.getUsuarioLogin().getUser());//se establece el usuario
-
+						
 						//se agrega el registro al cierre nuevo
 						newCierre.getCierreFacturas().add(una);
 					}
 				}
 
-
+				
 				newCierre.setNoSalidaInicial(oldCierre.getNoSalidaFinal() + 1);// se
-				// estable
-				// la
-				// salida
-				// incial
-				// sumandole
-				// uno
-				// a
-				// la
-				// ultima
-				// salida
-				// realizada
-				// por
-				// el
-				// usuario
+																				// estable
+																				// la
+																				// salida
+																				// incial
+																				// sumandole
+																				// uno
+																				// a
+																				// la
+																				// ultima
+																				// salida
+																				// realizada
+																				// por
+																				// el
+																				// usuario
 				newCierre.setNoEntradaInicial(oldCierre.getNoEntradaFinal() + 1);// se
-				// estable
-				// la
-				// entrada
-				// incial
-				// sumandole
-				// uno
-				// a
-				// la
-				// ultima
-				// salida
-				// realizada
-				// por
-				// el
-				// usuario
+																				// estable
+																				// la
+																				// entrada
+																				// incial
+																				// sumandole
+																				// uno
+																				// a
+																				// la
+																				// ultima
+																				// salida
+																				// realizada
+																				// por
+																				// el
+																				// usuario
 				newCierre.setNoCobroInicial(oldCierre.getNoCobroFinal() + 1);// se
-				// estable
-				// la
-				// cobros
-				// incial
-				// sumandole
-				// uno
-				// a
-				// la
-				// ultima
-				// salida
-				// realizada
-				// por
-				// el
-				// usuario
+																			// estable
+																			// la
+																			// cobros
+																			// incial
+																			// sumandole
+																			// uno
+																			// a
+																			// la
+																			// ultima
+																			// salida
+																			// realizada
+																			// por
+																			// el
+																			// usuario
 				//JOptionPane.showMessageDialog(view, oldCierre.getNoPagoFinal());
 				newCierre.setNoPagoInicial(oldCierre.getNoPagoFinal() + 1);// se
-				// estable
-				// la
-				// pagos
-				// incial
-				// sumandole
-				// uno
-				// a
-				// al
-				// ultimo
-				// pago
-				// realizada
-				// por
-				// el
-				// usuario
+																			// estable
+																			// la
+																			// pagos
+																			// incial
+																			// sumandole
+																			// uno
+																			// a
+																			// al
+																			// ultimo
+																			// pago
+																			// realizada
+																			// por
+																			// el
+																			// usuario
 				cierreDao.registrarCierre(newCierre);
 				resul = true;
 
@@ -3118,151 +2970,134 @@ public void guardarRemotoCredito(){
 
 
 	public void guardarFactura(){
-
-
+	
+		
 		//se captura el id de la factura por si la factura es temporal
 		int idFacturaTemporal=myFactura.getIdFactura();
 
 
 
-		//se registra la factura
+		//se registra la factura	
 		boolean resul=facturaDao.registrar(myFactura);
-
-
-
+		
+		
+			
 		//se porcesa el resultado de ristrar la factura
 		if(resul){
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
 
 			//erwqrq
-
-			try {
-
-				//si la factura es al contado se imprime con un formato especifico
-				if(myFactura.getTipoFactura()==1){
-					//si la configuracion de la impresion de la factura es tiket o carta
-					if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("tiket")){
-
-						AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),6, myFactura.getIdFactura());
-						//AbstractJasperReports.showViewer(view);
-						AbstractJasperReports.imprimierFactura();
-						//AbstractJasperReports.imprimierFactura();
+			
+				try {
+					
+					//si la factura es al contado se imprime con un formato especifico
+					if(myFactura.getTipoFactura()==1){
+						//si la configuracion de la impresion de la factura es tiket o carta
+						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("tiket")){
+						
+							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),6, myFactura.getIdFactura());
+							//AbstractJasperReports.showViewer(view);
+							AbstractJasperReports.imprimierFactura();
+							//AbstractJasperReports.imprimierFactura();
+						}
+						
+						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("carta")){
+								AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"ORIGINAL");
+								//AbstractJasperReports.showViewer(view);
+								AbstractJasperReports.imprimierFactura();
+								
+								AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
+								AbstractJasperReports.imprimierFactura();
+								
+						}
+					}//fin de la impresion de la factura carta al contado
+					
+					if(myFactura.getTipoFactura()==2){
+						//si la configuracion de la impresion de la factura es tiket o carta
+						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("tiket")){
+						
+							AbstractJasperReports.createReportFacturaTiketCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
+							//AbstractJasperReports.showViewer(view);
+							//AbstractJasperReports.imprimierFactura();
+							AbstractJasperReports.imprimierFactura();
+						}
+						
+						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("carta")){
+								AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"ORIGINAL");
+								//AbstractJasperReports.showViewer(view);
+								AbstractJasperReports.imprimierFactura();
+								
+								AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
+								AbstractJasperReports.imprimierFactura();
+								
+						}
 					}
-<<<<<<< HEAD
-
-					if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("carta")){
-						AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"ORIGINAL");
-=======
 					
 					
 					/*
 					int resul2=JOptionPane.showConfirmDialog(view, "Desea imprimir la orden?");
 					if(resul2==0){
 						AbstractJasperReports.createReportOrden(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
->>>>>>> correcion_user_articulo
 						//AbstractJasperReports.showViewer(view);
 						AbstractJasperReports.imprimierFactura();
-
-						AbstractJasperReports.createReportFacturaCarta(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
-						AbstractJasperReports.imprimierFactura();
-
+						
 					}
-<<<<<<< HEAD
-				}//fin de la impresion de la factura carta al contado
-=======
 
 					 */
 					String cambioEfectivo=myFactura.getCambio().toString();
 					String pago=myFactura.getPago().toString();
->>>>>>> correcion_user_articulo
 
-				if(myFactura.getTipoFactura()==2){
-					//si la configuracion de la impresion de la factura es tiket o carta
-					if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("tiket")){
-
-						AbstractJasperReports.createReportFacturaTiketCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
-						//AbstractJasperReports.showViewer(view);
-						//AbstractJasperReports.imprimierFactura();
-						AbstractJasperReports.imprimierFactura();
-					}
-
-					if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("carta")){
-						AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"ORIGINAL");
-						//AbstractJasperReports.showViewer(view);
-						AbstractJasperReports.imprimierFactura();
-
-						AbstractJasperReports.createReportFacturaCartaCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),"COPIA");
-						AbstractJasperReports.imprimierFactura();
-
-					}
-				}
-
-
-				/*
-				int resul2=JOptionPane.showConfirmDialog(view, "Desea imprimir la orden?");
-				if(resul2==0){
-					AbstractJasperReports.createReportOrden(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
-					//AbstractJasperReports.showViewer(view);
-					AbstractJasperReports.imprimierFactura();
-
-				}
-
-				 */
-
-				String cambioEfectivo=myFactura.getCambio().toString();
-				String pago=myFactura.getPago().toString();
-
-
-				setEmptyView();
-
-
-
-				//muestra en la pantalla el cambio y lo mantiene permanente
-				ViewCambio cambio=new ViewCambio(null);
-				cambio.getTxtCambio().setText(cambioEfectivo);
-				cambio.getTxtEfectivo().setText(pago);
-				cambio.setVisible(true);
-
-				//myFactura=null;
-
-
-				//si la view es de actualizacion al cobrar se cierra la view
-				if(this.tipoView==2){//dfsfda
-					//myFactura=null;
-					this.tipoView=1;
-					this.view.getBtnGuardar().setEnabled(true);
-					this.view.getBtnActualizar().setEnabled(false);
-
-					Factura eliminarTem=new Factura();
-					eliminarTem.setIdFactura(idFacturaTemporal);
-
-					this.facturaOrdenesDao.eliminar(eliminarTem);
 
 					setEmptyView();
 
-					view.getBtnsGuardador().deleteAll();
-
-					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-					//view.setVisible(false);
 
 
+					//muestra en la pantalla el cambio y lo mantiene permanente
+					ViewCambio cambio=new ViewCambio(null);
+					cambio.getTxtCambio().setText(cambioEfectivo);
+					cambio.getTxtEfectivo().setText(pago);
+					cambio.setVisible(true);
+					
+					//myFactura=null;
+
+					
+					//si la view es de actualizacion al cobrar se cierra la view
+					if(this.tipoView==2){//dfsfda
+						//myFactura=null;
+						this.tipoView=1;
+						this.view.getBtnGuardar().setEnabled(true);
+						this.view.getBtnActualizar().setEnabled(false);
+						
+						Factura eliminarTem=new Factura();
+						eliminarTem.setIdFactura(idFacturaTemporal);
+						
+						this.facturaOrdenesDao.eliminar(eliminarTem);
+						
+						setEmptyView();
+						
+						view.getBtnsGuardador().deleteAll();
+						
+						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						//view.setVisible(false);
+						
+						
+					}
+					//myFactura.
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				//myFactura.
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-
+			
 			setEmptyView();
-
-
+			
+			
 		}else{
 			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos", JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
 		}//fin el if donde se guarda la factura
-
+		
 	}
 	public boolean buscarArticuloEnFactura(Articulo art){
 		boolean existe=false;
