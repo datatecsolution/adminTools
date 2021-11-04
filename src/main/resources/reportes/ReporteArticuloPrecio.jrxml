@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.13.0.final using JasperReports Library version 6.13.0-46ada4d1be8f3c5985fd0b6146f3ed44caed6f05  -->
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteExistencia" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -102,7 +102,7 @@ FROM
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement style="Column header" x="53" y="19" width="242" height="16" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<reportElement style="Column header" x="100" y="19" width="292" height="16" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -116,21 +116,7 @@ FROM
 				<text><![CDATA[Detalle]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="295" y="19" width="97" height="16" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5" lineStyle="Solid"/>
-					<leftPen lineWidth="0.5" lineStyle="Solid"/>
-					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-					<rightPen lineWidth="0.5" lineStyle="Solid"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8"/>
-				</textElement>
-				<text><![CDATA[Categoria]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="Column header" x="2" y="19" width="51" height="16" forecolor="#030303" uuid="465a1eba-f9eb-45b9-a0c0-ffde29719935"/>
+				<reportElement style="Column header" x="2" y="19" width="98" height="16" forecolor="#030303" uuid="465a1eba-f9eb-45b9-a0c0-ffde29719935"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -204,22 +190,8 @@ FROM
 		<band height="15" splitType="Stretch">
 			<frame>
 				<reportElement style="Row" mode="Opaque" x="2" y="0" width="547" height="15" uuid="fa7cec56-4ec1-48e6-a26e-7266a995d174"/>
-				<textField textAdjust="StretchHeight" pattern="###0">
-					<reportElement style="Detail" x="293" y="0" width="97" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
-					<box leftPadding="2">
-						<pen lineWidth="0.5"/>
-						<topPen lineWidth="0.5" lineStyle="Solid"/>
-						<leftPen lineWidth="0.5" lineStyle="Solid"/>
-						<bottomPen lineWidth="0.5" lineStyle="Solid"/>
-						<rightPen lineWidth="0.5" lineStyle="Solid"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{marca}]]></textFieldExpression>
-				</textField>
 				<textField textAdjust="StretchHeight" pattern="#,##0.###">
-					<reportElement style="Detail" x="0" y="0" width="51" height="15" uuid="8b2d71e6-2571-41d7-8c89-91657dab1d31"/>
+					<reportElement style="Detail" x="0" y="0" width="98" height="15" uuid="8b2d71e6-2571-41d7-8c89-91657dab1d31"/>
 					<box>
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
@@ -261,7 +233,7 @@ FROM
 					<textFieldExpression><![CDATA[$F{precio_publico}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy">
-					<reportElement style="Detail" x="51" y="0" width="242" height="15" uuid="0cb0558d-08f6-4f64-8e5a-bd3d8646f64a"/>
+					<reportElement style="Detail" x="98" y="0" width="292" height="15" uuid="0cb0558d-08f6-4f64-8e5a-bd3d8646f64a"/>
 					<box leftPadding="2">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5" lineStyle="Solid"/>

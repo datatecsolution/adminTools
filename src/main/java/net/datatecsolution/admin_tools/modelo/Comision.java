@@ -10,6 +10,9 @@ public class Comision {
 	private String fecha2="";
 	private double comision=0.0;
 	private double totalCosto=0.0;
+	private double devoluciones=0.0;
+
+	private double totalCostoDev=0.0;
 	private double totalCredito=0.0;
 	private double totalContado=0.0;
 	private double totalVentas=0.0;
@@ -124,12 +127,31 @@ public class Comision {
 	public void setTotalVentas(double t) {
 		this.totalVentas = totalVentas + t;
 	}
+
+
+	public double getDevoluciones() {
+		return devoluciones;
+	}
+
+	public void setDevoluciones(double d) {
+		this.devoluciones =devoluciones+ d;
+	}
+	public double getTotalCostoDev() {
+		return totalCostoDev;
+	}
+
+	public void setTotalCostoDev(double c) {
+		this.totalCostoDev =totalCostoDev+ c;
+	}
 	
 	public void resetTotales(){
 		this.comision=0;
 		this.porcentaje=0;
 		this.totalVentas=0;
 		clienteAtendidos=0;
+		this.devoluciones=0;
+		totalCostoDev=0;
+
 	}
 	
 	
@@ -195,6 +217,5 @@ public class Comision {
 	public void setPedidasGanacias() {
 		this.pedidasGanacias = this.totalVentas-this.totalCosto;
 	}
-	
 
 }
