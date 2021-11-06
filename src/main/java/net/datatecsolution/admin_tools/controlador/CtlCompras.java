@@ -381,7 +381,7 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				}
 				
 				
-				if(colum==9){
+				if(colum==11){
 					calcularTotales();
 				}
 				
