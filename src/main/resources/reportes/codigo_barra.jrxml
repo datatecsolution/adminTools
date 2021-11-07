@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="codigoBarra" pageWidth="143" pageHeight="53" columnWidth="143" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a22f8285-ccf9-4405-81f8-e821d4d6d899">
 	<property name="ireport.zoom" value="3.0"/>
 	<property name="ireport.x" value="0"/>
@@ -11,7 +11,8 @@
 	<queryString>
 		<![CDATA[SELECT
      v_articulo_codigo_barra.`articulo`,
-     v_articulo_codigo_barra.`codigo_barra`
+     v_articulo_codigo_barra.`codigo_barra`,
+          v_articulo_codigo_barra.`precio_articulo`
 FROM
      $P!{bD_admin}.`v_articulo_codigo_barra`
 
@@ -30,21 +31,29 @@ where
 		<property name="com.jaspersoft.studio.field.tree.path" value="v_articulo_codigo_barra"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="precio_articulo" class="java.lang.Double"/>
 	<title>
 		<band height="53">
 			<textField>
-				<reportElement x="33" y="39" width="110" height="10" uuid="bef4e355-d74e-4bb1-83d4-9e697970bb19"/>
+				<reportElement x="33" y="30" width="110" height="10" uuid="bef4e355-d74e-4bb1-83d4-9e697970bb19"/>
 				<textElement>
 					<font fontName="SansSerif" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="33" y="3" width="107" height="36" uuid="897f2b03-6437-4e5b-8902-3027f3e2bf44"/>
+				<reportElement x="33" y="3" width="107" height="27" uuid="897f2b03-6437-4e5b-8902-3027f3e2bf44"/>
 				<jr:Code128 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
 					<jr:codeExpression><![CDATA[$F{codigo_barra}]]></jr:codeExpression>
 				</jr:Code128>
 			</componentElement>
+			<textField>
+				<reportElement x="33" y="40" width="110" height="10" uuid="5bf40f24-f388-4508-aa67-9c9ca1af84aa"/>
+				<textElement>
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_articulo}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 </jasperReport>
