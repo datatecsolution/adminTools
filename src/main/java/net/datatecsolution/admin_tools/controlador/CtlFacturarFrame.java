@@ -895,7 +895,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F7:
 						
-						double maxDescuento=25;
+						double maxDescuento=30;
 						//configuracion del panel descuento
 						JPanel panelDescuento=new JPanel();
 						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -934,7 +934,7 @@ public void calcularTotales(){
 										
 										if(filaPulsada>=0){
 											
-											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-55%");
+											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-30%");
 											JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 											//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 											String seleccionadoDescuento=descuento.getText();
@@ -989,7 +989,7 @@ public void calcularTotales(){
 											    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 											    	this.calcularTotales();
 										    	}else{
-										    		JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 55%", "Error", JOptionPane.ERROR_MESSAGE);
+										    		JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 30%", "Error", JOptionPane.ERROR_MESSAGE);
 										    	}
 										    }else{
 										    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1050,7 +1050,7 @@ public void calcularTotales(){
 								
 								if(filaPulsada>=0){
 									
-									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-30%");
 									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 									String seleccionadoDescuento=descuento.getText();
@@ -1105,7 +1105,7 @@ public void calcularTotales(){
 									    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 									    	this.calcularTotales();
 								    	}else{
-								    		JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 55%", "Error", JOptionPane.ERROR_MESSAGE);
+								    		JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 30%", "Error", JOptionPane.ERROR_MESSAGE);
 								    	}
 								    }else{
 								    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2124,7 +2124,7 @@ public void calcularTotales(){
 							if (resl) {
 
 
-								if(myCliente.getId()==1 && bandera<2){
+								if(myCliente.getId()==1 && bandera<4){
 									Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
 								}
 								
@@ -2169,7 +2169,7 @@ public void calcularTotales(){
 										//se procesa el resultado del cierre de caja
 										if (resl) {
 
-											if(myCliente.getId()==1  && bandera<2){
+											if(myCliente.getId()==1  && bandera<4){
 												//se coloca caja por defecto
 												Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
 											}
@@ -3080,7 +3080,7 @@ public void guardarRemotoCredito(){
 					ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
 
 
-					if(bandera>2){
+					if(bandera>4){
 						bandera=0;
 					}
 					else{
