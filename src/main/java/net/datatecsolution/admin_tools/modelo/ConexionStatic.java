@@ -30,7 +30,7 @@ public abstract class ConexionStatic implements Runnable{
 
 	private static String bd = "admin_tools";
 
-/*
+
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
 	private static String login = "root";
@@ -65,7 +65,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.1.101";
-*/
+
 	//Hotel Venecia
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
