@@ -42,7 +42,7 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 		
 		boolean resultado=false;
 		
-		//se verifica que hay item para selecciona y marcados para devolver 
+		//se verifica que hay item para selecciona y marcados para devolver por el usuario
 		if(view.getModeloTabla().getDetalles().size()>0 && view.getModeloTabla().hayDevoluciones()==true){
 			
 				//se recorren los item en busca de los que se seran devueltos 
@@ -55,12 +55,9 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 
 						//conseguir la cantidad total del producto en la factura
 						BigDecimal canFactura=new BigDecimal(0.0);
-						for(int cc=0;cc<view.getModeloTabla().getDetalles().size();cc++){
-							if(view.getModeloTabla().getDetalles().get(cc).getArticulo().getId()==view.getModeloTabla().getDetalles().get(x).getArticulo().getId()){
-								canFactura=canFactura.add(view.getModeloTabla().getDetalles().get(cc).getCantidad());
-							}
-						}
-						
+						canFactura=canFactura.add(view.getModeloTabla().getDetalles().get(x).getCantidad());
+
+
 						//se verifica la existencia de una devolucion previa
 						List<DetalleFactura> detallesDevs=devolucionDao.getDevolucionArticulo( myFactura.getIdFactura(), view.getModeloTabla().getDetalles().get(x).getArticulo().getId());
 						
@@ -161,105 +158,6 @@ public class CtlDevoluciones implements ActionListener, MouseListener, TableMode
 			JOptionPane.showMessageDialog(view, "Seleccione por lo menos un articulo de la factura");
 		}
 		
-	}
-
-	public void calcularTotales(){
-
-		//se establecen los totales en cero
-		this.myFactura.resetTotales();
-
-		for(int x=0; x<view.getModeloTabla().getDetalles().size();x++){
-
-			DetalleFactura detalle=view.getModeloTabla().getDetalle(x);
-
-
-			if(detalle.getArticulo().getId()!=-1)
-				if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
-
-
-					//dfs
-					//se obtien la cantidad y el precio de compra por unidad
-					BigDecimal cantidad=detalle.getCantidad();
-					BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
-
-					//se calcula el total del item
-					BigDecimal totalItem=cantidad.multiply(precioVenta);
-
-					BigDecimal des =detalle.getDescuentoItem();
-
-
-
-					totalItem=totalItem.subtract(des.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-
-
-					//se obtiene el impuesto del articulo
-					BigDecimal porcentaImpuesto =new BigDecimal(detalle.getArticulo().getImpuestoObj().getPorcentaje());
-					BigDecimal porImpuesto=new BigDecimal(0);
-					porImpuesto=porcentaImpuesto.divide(new BigDecimal(100));
-					porImpuesto=porImpuesto.add(new BigDecimal(1));
-
-					BigDecimal totalsiniva= new BigDecimal("0.0");
-					totalsiniva=totalItem.divide(porImpuesto,2,BigDecimal.ROUND_HALF_EVEN);//.divide(porImpuesto);// (totalItem)/(porcentaImpuesto);
-
-
-					//se calcula el total de impuesto del item
-					BigDecimal impuestoItem=totalItem.subtract(totalsiniva);//-totalsiniva;
-
-
-
-					//se estable el total y impuesto en el modelo
-					myFactura.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					if(porcentaImpuesto.intValue()==0){
-						myFactura.setSubTotalExcento(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					}else
-					if(porcentaImpuesto.intValue()==15){
-						myFactura.setTotalImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setSubTotal15(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					}else
-					if(porcentaImpuesto.intValue()==18){
-						myFactura.setTotalImpuesto18(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setSubTotal18(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					}
-
-					//se calcuala el total del impuesto de los articulo que son servicios de turismo
-					if(detalle.getArticulo().getTipoArticulo()==3){
-						BigDecimal totalOtrosImp= new BigDecimal("0.0");
-
-						totalOtrosImp=totalsiniva.multiply(new BigDecimal(0.04));
-
-						myFactura.setTotalOtrosImpuesto(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setTotal(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					}
-
-					myFactura.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					//myFactura.getDetalles().add(detalle);
-					myFactura.setTotalDescuento(detalle.getDescuentoItem().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					//myFactura.getDetalles()
-
-					//se establece en la y el impuesto en el item de la vista
-					//detalle.setImpuesto(impuesto2.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					//se establece el total e impuesto en el vista
-					this.view.getTxtTotal().setText(""+myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtImpuesto().setText(""+myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtImpuesto18().setText(""+myFactura.getTotalImpuesto18().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtSubtotal().setText(""+myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtDescuento().setText(""+myFactura.getTotalDescuento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					view.getModeloTabla().fireTableDataChanged();
-
-
-					//this.view.getModelo().fireTableDataChanged();
-				}//fin del if
-
-		}//fin del for
 	}
 
 	@Override
@@ -376,7 +274,10 @@ public void cargarFacturaView(){
     	this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
 		
 		
-		view.getModeloEmpleados().addEmpleado(myFactura.getVendedor());
+		//view.getModeloEmpleados().addEmpleado(myFactura.getVendedor());
+
+
+		view.getTxtCaja().setText(ConexionStatic.getUsuarioLogin().getCajaActiva().getDescripcion());
 		
 		//se establece el total e impuesto en el vista
 		this.view.getTxtTotal().setText(""+myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));

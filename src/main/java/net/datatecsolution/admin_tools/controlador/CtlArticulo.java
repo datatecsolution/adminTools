@@ -137,7 +137,6 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 			if(this.view.getModeloCodBarra().getSize()==0){
 				int resul=JOptionPane.showConfirmDialog(view, "Desea guardar un articulos sin condigos de barra?");
 				if(resul==0){
-
 					if(validar()){
 						guardarArticulo();
 						this.view.dispose();
@@ -145,8 +144,10 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 
 				}
 			}else{
-				guardarArticulo();
-				this.view.dispose();
+				if(validar()){
+					guardarArticulo();
+					this.view.dispose();
+				}
 			}
 			
 			
@@ -181,6 +182,8 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 			break;
 		case "ACTUALIZAR":
 			cargarDatosArticuloView();
+
+			if(validar())
 				//se actulizar el articulo en la base de datos
 				if(myArticuloDao.actualizarArticulo(myArticulo,this.view.getModeloCodBarra().getCodsElimnar())){
 					
@@ -222,7 +225,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 
 		boolean resul=false;
 		if(view.getTxtNombre().getText().trim().length()==0){
-			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos","Error validacion",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(view, "Debe rellenar la descripcion","Error validacion",JOptionPane.ERROR_MESSAGE);
 			view.getTxtNombre().requestFocusInWindow();
 		}else
 		if(myArticulo.getCategoria().getId()<1 ||  view.getTxtMarca().getText().trim().length()==0){
@@ -239,8 +242,8 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 
 	private boolean validarPrecio() {
 		boolean resul=false;
-		for (int x=0;x<myArticulo.getPreciosVenta().size();x++){
-			if(myArticulo.getPreciosVenta().get(x).getCodigoArticulo()>0){
+		for (int x=0;x<view.getModeloPrecio().getPrecios().size();x++){
+			if(view.getModeloPrecio().getPrecios().get(x).getPrecio().doubleValue()>0){
 				resul=true;
 				break;
 			}

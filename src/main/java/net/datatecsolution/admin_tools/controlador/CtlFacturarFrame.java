@@ -42,7 +42,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	private boolean unirCanItem=false;
+	private boolean unirCanItem=true;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -130,7 +130,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							}
 							
 							//conseguir los precios del producto
-							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
 
 							//se verifica que la opcion de unir las cantidades en las articulos repetidos
 							boolean unirCantidad=false;
@@ -2197,7 +2197,7 @@ public void calcularTotales(){
 			myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
 			
 			//conseguir los precios del producto
-			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
 			
 			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 
