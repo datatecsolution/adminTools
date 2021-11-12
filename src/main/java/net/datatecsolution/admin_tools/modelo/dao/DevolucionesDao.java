@@ -225,7 +225,7 @@ public class DevolucionesDao extends ModeloDaoBasic {
 				"INNER JOIN  " + DbNameBase + ".detalle_devoluciones " +
 				"ON encabezado_factura.numero_factura = detalle_devoluciones.numero_factura " +
 				"where encabezado_factura.estado_factura = 'ACT'" +
-				"and DATE_FORMAT(encabezqado_factura.fecha,'%y-%m-%d') BETWEEN CAST(? AS DATE) and CAST(? AS DATE) " +
+				"and DATE_FORMAT(encabezado_factura.fecha,'%y-%m-%d') BETWEEN CAST(? AS DATE) and CAST(? AS DATE) " +
 				"and detalle_devoluciones.codigo_caja = ? " +
 				"GROUP BY encabezado_factura.codigo_vendedor;";
 

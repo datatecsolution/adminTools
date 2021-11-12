@@ -156,6 +156,69 @@ public class PrecioArticuloDao extends ModeloDaoBasic {
 	}
 
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los precios de un articulo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public PrecioArticulo getPrecioArticulo(int idArticulo,int idPrecio){
+
+
+
+		Connection con = null;
+
+
+
+		PrecioArticulo unPrecio=new PrecioArticulo();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas = con.prepareStatement(super.getQuerySelect()+" WHERE precios_articulos.codigo_articulo = ? and precios_articulos.codigo_precio = ?;");
+			psConsultas.setInt(1,idArticulo);
+			psConsultas.setInt(2,idPrecio);
+			//System.out.println(psConsultas);
+			res = psConsultas.executeQuery();
+			while(res.next()){
+
+				existe=true;
+
+				unPrecio.setCodigoArticulo(res.getInt("codigo_articulo"));
+				unPrecio.setCodigoPrecio(res.getInt("codigo_precio"));
+				unPrecio.setDecripcion(res.getString("descripcion"));
+				unPrecio.setPrecio(res.getBigDecimal("precio_articulo"));
+
+
+			}
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			System.out.println(e);
+		}
+		finally
+		{
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return unPrecio;
+		}
+		else return null;
+
+	}
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los precios de un articulo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public List<PrecioArticulo> getPreciosArticuloSinCosto(int id){
 
 
