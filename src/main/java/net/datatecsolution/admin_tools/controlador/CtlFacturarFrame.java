@@ -1676,9 +1676,9 @@ public void calcularTotales(){
 											detalle.getArticulo().netPrecio();
 										}
 
+									}else{
+										detalle.getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
 									}
-
-
 								}
 
 			    					
@@ -1706,6 +1706,8 @@ public void calcularTotales(){
 										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
 										this.selectRowInset(filaPulsada);
 									}
+								}else{
+									this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
 
 								}
 
