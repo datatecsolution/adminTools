@@ -127,6 +127,9 @@ public class ViewListaArticulo extends ViewTabla {
 	
 	
 	public void conectarControlador(CtlArticuloLista c){
+
+		cbxDepart.addActionListener(c);
+		cbxDepart.setActionCommand("CAMBIOCOMBOBOX");
 		
 		
 		this.addWindowListener(c);

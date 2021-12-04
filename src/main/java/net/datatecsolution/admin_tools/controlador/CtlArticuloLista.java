@@ -56,17 +56,14 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 	}
 	
 	private void cargarComboBox(){
-		//se crea el objeto para obtener de la bd los impuestos
-		//myImpuestoDao=new ImpuestoDao(conexion);
-	
 		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
 		this.view.getModeloCbxDepartamento().setLista(this.deptDao.todos());
-		
-		
+
 		//se remueve la lista por defecto
 		this.view.getCbxDepart().removeAllItems();
-	
-		this.view.getCbxDepart().setSelectedIndex(0);
+
+		int departamento=view.getModeloCbxDepartamento().buscarDepartamento(ConexionStatic.getUsuarioLogin().getConfig().getDepartEnBusqueda());
+		this.view.getCbxDepart().setSelectedIndex(departamento);
 	}
 
 	@Override
@@ -82,298 +79,308 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 		
 		//JOptionPane.showMessageDialog(view, "numero de pagina "+view.getModelo().getCanItemPag()+"-"+view.getModelo().getLimiteSuperior());
 		switch(comando){
-		
-		case "REPORTE_VENTA":
-				Articulo unoReporte=this.view.getModelo().getArticulo(view.getTabla().getSelectedRow());
-				//JOptionPane.showMessageDialog(view, uno.toString());
-				ViewFiltroRepVentasArticulo viewFiltroReportVentaArticulo=new ViewFiltroRepVentasArticulo(view);
-				CtlFiltroRepVentasArticulo ctlFiltroRepVentasArticulo=new CtlFiltroRepVentasArticulo(viewFiltroReportVentaArticulo,unoReporte);
-			break;
-		
-		case "EXISTENCIA":
-			
-			Integer codigo=1;
-			
-			String codString=JOptionPane.showInputDialog(view, "Ingrese el codigo de precio");
-			
-			if(AbstractJasperReports.isNumber(codString)){
-			
-				codigo=Integer.parseInt(codString);
-			
-				try {
-					AbstractJasperReports.createReportArticulosPreios(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(),codigo);
-					//AbstractJasperReports.ImprimirCodigo();
-					AbstractJasperReports.showViewer(view);
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-			
-		
-			break;
-		
-		case "REG_ACTIVO":
-				this.myArticuloDao.setEstado(1);
-			break;
-			
-		case "REG_INACTIVO":
-			this.myArticuloDao.setEstado(0);
-		break;
-		
-		case "REG_TODOS":
-			this.myArticuloDao.setEstado(2);
-		break;
-		case "ESCRIBIR":
-			view.setTamanioVentana(1);
-			break;
-		case "BUSCAR":
-			view.getModelo().setPaginacion();
-			
-			//si se seleciono el boton ID
-			if(this.view.getRdbtnId().isSelected()){  
-				//myArticulo=myArticuloDao.buscarArticulo(Integer.parseInt(this.view.getTxtBuscar().getText()));
-				myArticulo=myArticuloDao.buscarArticuloBarraCod(this.view.getTxtBuscar().getText());
-				this.view.getModelo().limpiarArticulos();
-				if(myArticulo!=null){												
-					this.view.getModelo().agregarArticulo(myArticulo);
-				}
-			} 
-			
-			if(this.view.getRdbtnArticulo().isSelected()){ //si esta selecionado la busqueda por nombre	
-				
-				cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-		        
-				}
-			if(this.view.getRdbtnMarca().isSelected()){  
-				cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				}
-			
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				this.view.getTxtBuscar().setText("");
-				}
-			//se establece el numero de pagina en la view
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
-		
-		case "INSERTAR":
-			//crea la ventana para ingresar un nuevo proveedor
-			viewArticulo= new ViewCrearArticulo(this.view);
-			
-			//se crea el controlador de la ventana y se le pasa la view
-			CtlArticulo ctl=new CtlArticulo(viewArticulo,myArticuloDao);
-			
-			//se llama la metodo conectarCtl encargado de hacer set al manejador de eventos
-			viewArticulo.conectarCtl(ctl);
-			
-			boolean resuldoGuarda=ctl.agregarArticulo();
-			if(resuldoGuarda){
-				
-				view.getModelo().setPaginacion();
-				//Se establece el departamento seleccionado
-				myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
-				
-				cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				
-				//se establece el numero de pagina en la view
-				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-				
-			}
-			
-			
-			
-			break;
-		case "ELIMINAR":
-			
-			//Recoger qu� fila se ha pulsadao en la tabla
-	        filaPulsada = this.view.getTabla().getSelectedRow();
-	        
-	        //si seleccion una fila
-	        if(filaPulsada>=0){
-	            
-	          //se consigue el proveedore de la fila seleccionada
-	            myArticulo=this.view.getModelo().getArticulo(filaPulsada);
-	            
-	            int resul=JOptionPane.showConfirmDialog(view, "Desea dar de"+(myArticulo.isEstado() ?" BAJA ":" ALTA ")  +"el articulo \""+myArticulo.getArticulo()+"\"?");
-				
-				if(resul==0){
-					myArticulo.setEstado((!myArticulo.isEstado()));
-					//se manda a cambiar el estado
-					if(myArticuloDao.actualizarEstado(myArticulo));{
-						JOptionPane.showMessageDialog(view, "Se dio de "+(myArticulo.isEstado() ?" ALTA ":" BAJA ")  +" al articulo!!!", "Resultado eliminar articulo.", JOptionPane.INFORMATION_MESSAGE);
-						this.actionPerformed(new ActionEvent(this, resul, "UPDATE"));
-					}
-					
-				}
-	           
-	            
-	        }
-			else {
-				JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
-			}
 
-			break;
-			
-		case "LIMPIAR":
-			//validar que este selecciona una fila
-			if(filaPulsada>=0) {
-				//se consigue el proveedore de la fila seleccionada
-				myArticulo=this.view.getModelo().getArticulo(filaPulsada);
-				try {
-					AbstractJasperReports.createReportCodBarra(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId());
-					AbstractJasperReports.showViewer(view);
+			case "CAMBIOCOMBOBOX":
+				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
 
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}else {
-				JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
-		}
+				Departamento departamento=(Departamento) view.getCbxDepart().getSelectedItem();
 
-			break;
-			
-			
-		case "UPDATE":
-			
-			if(this.view.getRdbtnTodos().isSelected()){  
-				
-				
-				cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				
-				
-			}
-			if(view.getRdbtnArticulo().isSelected()){
-				cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-			}
-			if(this.view.getRdbtnMarca().isSelected()){  
-				
-				cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				if(departamento!=null){
+					ConexionStatic.getUsuarioLogin().getConfig().setDepartEnBusqueda(departamento);
 				}
-			//se establece el numero de pagina en la view
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
-			
-		case "NEXT":
-			//se establece los datos de la nueva pagina
-			view.getModelo().netPag();
-			
-			if(this.view.getRdbtnTodos().isSelected()){  
-				
-				
-				cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				
-				
-			}
-			if(view.getRdbtnArticulo().isSelected()){
-				cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-			}
-			if(this.view.getRdbtnMarca().isSelected()){  
-				
-				cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				}
-			//se establece el numero de pagina en la view
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
-		case "LAST":
-			//se establece los datos de la pagina anterior
-			view.getModelo().lastPag();
-			
-			if(this.view.getRdbtnTodos().isSelected()){  
+				break;
+		
+			case "REPORTE_VENTA":
+					Articulo unoReporte=this.view.getModelo().getArticulo(view.getTabla().getSelectedRow());
+					//JOptionPane.showMessageDialog(view, uno.toString());
+					ViewFiltroRepVentasArticulo viewFiltroReportVentaArticulo=new ViewFiltroRepVentasArticulo(view);
+					CtlFiltroRepVentasArticulo ctlFiltroRepVentasArticulo=new CtlFiltroRepVentasArticulo(viewFiltroReportVentaArticulo,unoReporte);
+				break;
 
-				cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				
-				
-			}
-			if(view.getRdbtnArticulo().isSelected()){
-				cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-			}
-			
-			if(this.view.getRdbtnMarca().isSelected()){  
-				
-				cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				}
-			//se establece el numero de pagina en la view
-			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			break;
-			
-		case "KARDEX":
-			if(this.filaPulsada>=0){
-				//se consigue el proveedore de la fila seleccionada
-				myArticulo=this.view.getModelo().getArticulo(filaPulsada);
-				
-				Departamento depart3= (Departamento) this.view.getCbxDepart().getSelectedItem();
-				try {
-					AbstractJasperReports.createReportKardex(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId(), depart3.getId(), ConexionStatic.getUsuarioLogin().getUser());
-					//AbstractJasperReports.ImprimirCodigo();
-					AbstractJasperReports.showViewer(view);
-					//AbstractJasperReports.showViewer(view);
-					//this.view.getBtnBarCode().setEnabled(false);
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-			else{
-				JOptionPane.showMessageDialog(view, "Selecione un articulo!!!", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			break;
-			
-		case "INVENTARIO":
-			
-			//si esta seleccionado el filtro de categoria se crea un reporte de inventario por filtrado por categoria filtrada
-			if(this.view.getRdbtnMarca().isSelected()){ 
-				
-				
-			
-				if(view.getModelo().getArticulos().size()>0){
-					Departamento depart4= (Departamento) this.view.getCbxDepart().getSelectedItem();
-					Integer idCategoria=view.getModelo().getArticulo(0).getCategoria().getId();
+			case "EXISTENCIA":
+
+				Integer codigo=1;
+
+				String codString=JOptionPane.showInputDialog(view, "Ingrese el codigo de precio");
+
+				if(AbstractJasperReports.isNumber(codString)){
+
+					codigo=Integer.parseInt(codString);
+
 					try {
-						AbstractJasperReports.createReportInventarioBodegaCategoria(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(), depart4.getId(),idCategoria);
+						AbstractJasperReports.createReportArticulosPreios(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(),codigo);
 						//AbstractJasperReports.ImprimirCodigo();
 						AbstractJasperReports.showViewer(view);
-						//AbstractJasperReports.showViewer(view);
-						//this.view.getBtnBarCode().setEnabled(false);
-						
+
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				}else{
-					JOptionPane.showMessageDialog(view, "Debe realizar la busqueda primero para generar el reporte por categoria!!!", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
-				
-				
-			}else{
-			
-		
-							
-				Departamento depart4= (Departamento) this.view.getCbxDepart().getSelectedItem();
-				try {
-					AbstractJasperReports.createReportInventarioBodega(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(), depart4.getId());
-					//AbstractJasperReports.ImprimirCodigo();
-					AbstractJasperReports.showViewer(view);
-					//AbstractJasperReports.showViewer(view);
-					//this.view.getBtnBarCode().setEnabled(false);
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-						
-			/*
-				KardexDao kardexDao=new KardexDao(conexion);
-				if(this.filaPulsada>0)
-					if(kardexDao.buscarExistencia(myArticulo.getId(), 1)!=null)
-						JOptionPane.showMessageDialog(view, "La Existencia de "+myArticulo.getArticulo()+" es:"+kardexDao.buscarExistencia(myArticulo.getId(), 1));
-						*/
+
+
+				break;
+
+			case "REG_ACTIVO":
+					this.myArticuloDao.setEstado(1);
+				break;
+
+			case "REG_INACTIVO":
+				this.myArticuloDao.setEstado(0);
 			break;
+
+			case "REG_TODOS":
+				this.myArticuloDao.setEstado(2);
+			break;
+			case "ESCRIBIR":
+				view.setTamanioVentana(1);
+				break;
+			case "BUSCAR":
+				view.getModelo().setPaginacion();
+
+				//si se seleciono el boton ID
+				if(this.view.getRdbtnId().isSelected()){
+					//myArticulo=myArticuloDao.buscarArticulo(Integer.parseInt(this.view.getTxtBuscar().getText()));
+					myArticulo=myArticuloDao.buscarArticuloBarraCod(this.view.getTxtBuscar().getText());
+					this.view.getModelo().limpiarArticulos();
+					if(myArticulo!=null){
+						this.view.getModelo().agregarArticulo(myArticulo);
+					}
+				}
+
+				if(this.view.getRdbtnArticulo().isSelected()){ //si esta selecionado la busqueda por nombre
+
+					cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+
+					}
+				if(this.view.getRdbtnMarca().isSelected()){
+					cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+					}
+
+				if(this.view.getRdbtnTodos().isSelected()){
+					cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+					this.view.getTxtBuscar().setText("");
+					}
+				//se establece el numero de pagina en la view
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
+
+			case "INSERTAR":
+				//crea la ventana para ingresar un nuevo proveedor
+				viewArticulo= new ViewCrearArticulo(this.view);
+
+				//se crea el controlador de la ventana y se le pasa la view
+				CtlArticulo ctl=new CtlArticulo(viewArticulo,myArticuloDao);
+
+				//se llama la metodo conectarCtl encargado de hacer set al manejador de eventos
+				viewArticulo.conectarCtl(ctl);
+
+				boolean resuldoGuarda=ctl.agregarArticulo();
+				if(resuldoGuarda){
+
+					view.getModelo().setPaginacion();
+					//Se establece el departamento seleccionado
+					myArticuloDao.setMyBodega(view.getModeloCbxDepartamento().getDepartamento(view.getCbxDepart().getSelectedIndex()));
+
+					cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+
+					//se establece el numero de pagina en la view
+					view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+
+				}
+
+
+
+				break;
+			case "ELIMINAR":
+
+				//Recoger qu� fila se ha pulsadao en la tabla
+				filaPulsada = this.view.getTabla().getSelectedRow();
+
+				//si seleccion una fila
+				if(filaPulsada>=0){
+
+				  //se consigue el proveedore de la fila seleccionada
+					myArticulo=this.view.getModelo().getArticulo(filaPulsada);
+
+					int resul=JOptionPane.showConfirmDialog(view, "Desea dar de"+(myArticulo.isEstado() ?" BAJA ":" ALTA ")  +"el articulo \""+myArticulo.getArticulo()+"\"?");
+
+					if(resul==0){
+						myArticulo.setEstado((!myArticulo.isEstado()));
+						//se manda a cambiar el estado
+						if(myArticuloDao.actualizarEstado(myArticulo));{
+							JOptionPane.showMessageDialog(view, "Se dio de "+(myArticulo.isEstado() ?" ALTA ":" BAJA ")  +" al articulo!!!", "Resultado eliminar articulo.", JOptionPane.INFORMATION_MESSAGE);
+							this.actionPerformed(new ActionEvent(this, resul, "UPDATE"));
+						}
+
+					}
+
+
+				}
+				else {
+					JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
+				}
+
+				break;
+
+			case "LIMPIAR":
+				//validar que este selecciona una fila
+				if(filaPulsada>=0) {
+					//se consigue el proveedore de la fila seleccionada
+					myArticulo=this.view.getModelo().getArticulo(filaPulsada);
+					try {
+						AbstractJasperReports.createReportCodBarra(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId());
+						AbstractJasperReports.showViewer(view);
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}else {
+					JOptionPane.showMessageDialog(view,"Debe seleccionar una fila primero","Error validacion",JOptionPane.ERROR_MESSAGE);
+			}
+
+				break;
+
+
+			case "UPDATE":
+
+				if(this.view.getRdbtnTodos().isSelected()){
+
+
+					cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+
+
+				}
+				if(view.getRdbtnArticulo().isSelected()){
+					cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				}
+				if(this.view.getRdbtnMarca().isSelected()){
+
+					cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+					}
+				//se establece el numero de pagina en la view
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
+
+			case "NEXT":
+				//se establece los datos de la nueva pagina
+				view.getModelo().netPag();
+
+				if(this.view.getRdbtnTodos().isSelected()){
+
+
+					cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+
+
+				}
+				if(view.getRdbtnArticulo().isSelected()){
+					cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				}
+				if(this.view.getRdbtnMarca().isSelected()){
+
+					cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+					}
+				//se establece el numero de pagina en la view
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
+			case "LAST":
+				//se establece los datos de la pagina anterior
+				view.getModelo().lastPag();
+
+				if(this.view.getRdbtnTodos().isSelected()){
+
+					cargarTabla(myArticuloDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+
+
+				}
+				if(view.getRdbtnArticulo().isSelected()){
+					cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				}
+
+				if(this.view.getRdbtnMarca().isSelected()){
+
+					cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+					}
+				//se establece el numero de pagina en la view
+				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+				break;
+
+			case "KARDEX":
+				if(this.filaPulsada>=0){
+					//se consigue el proveedore de la fila seleccionada
+					myArticulo=this.view.getModelo().getArticulo(filaPulsada);
+
+					Departamento depart3= (Departamento) this.view.getCbxDepart().getSelectedItem();
+					try {
+						AbstractJasperReports.createReportKardex(ConexionStatic.getPoolConexion().getConnection(), myArticulo.getId(), depart3.getId(), ConexionStatic.getUsuarioLogin().getUser());
+						//AbstractJasperReports.ImprimirCodigo();
+						AbstractJasperReports.showViewer(view);
+						//AbstractJasperReports.showViewer(view);
+						//this.view.getBtnBarCode().setEnabled(false);
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				else{
+					JOptionPane.showMessageDialog(view, "Selecione un articulo!!!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				break;
+
+			case "INVENTARIO":
+
+				//si esta seleccionado el filtro de categoria se crea un reporte de inventario por filtrado por categoria filtrada
+				if(this.view.getRdbtnMarca().isSelected()){
+
+
+
+					if(view.getModelo().getArticulos().size()>0){
+						Departamento depart4= (Departamento) this.view.getCbxDepart().getSelectedItem();
+						Integer idCategoria=view.getModelo().getArticulo(0).getCategoria().getId();
+						try {
+							AbstractJasperReports.createReportInventarioBodegaCategoria(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(), depart4.getId(),idCategoria);
+							//AbstractJasperReports.ImprimirCodigo();
+							AbstractJasperReports.showViewer(view);
+							//AbstractJasperReports.showViewer(view);
+							//this.view.getBtnBarCode().setEnabled(false);
+
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}else{
+						JOptionPane.showMessageDialog(view, "Debe realizar la busqueda primero para generar el reporte por categoria!!!", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+
+
+
+				}else{
+
+
+
+					Departamento depart4= (Departamento) this.view.getCbxDepart().getSelectedItem();
+					try {
+						AbstractJasperReports.createReportInventarioBodega(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser(), depart4.getId());
+						//AbstractJasperReports.ImprimirCodigo();
+						AbstractJasperReports.showViewer(view);
+						//AbstractJasperReports.showViewer(view);
+						//this.view.getBtnBarCode().setEnabled(false);
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+				/*
+					KardexDao kardexDao=new KardexDao(conexion);
+					if(this.filaPulsada>0)
+						if(kardexDao.buscarExistencia(myArticulo.getId(), 1)!=null)
+							JOptionPane.showMessageDialog(view, "La Existencia de "+myArticulo.getArticulo()+" es:"+kardexDao.buscarExistencia(myArticulo.getId(), 1));
+							*/
+				break;
 			
 				
 			}

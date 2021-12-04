@@ -141,39 +141,42 @@ public class ViewModuloFacturar extends JFrame {
 		
 		// establece componente de escucha para el elemento de menú nuevoMarco
 		btnAgregar.addActionListener(
+			new ActionListener() // clase interna anónima
+			{
+				 // muestra la nueva ventana interna
+				 public void actionPerformed( ActionEvent evento )
+				 {
+				 	//se verifica para limpiar el array si no hay ventana visible
+					if(ventanas.size()==1 && ventanas.get(0).isClosed()==true) {
+						ventanas.clear();
+					}
 
-		new ActionListener() // clase interna anónima
-		{
-		 // muestra la nueva ventana interna
-		 public void actionPerformed( ActionEvent evento )
-		 {
-			 // crea el marco interno
-			 ViewFacturarFrame marco = new ViewFacturarFrame(
-					 "Factura1", true, true, true, true );
-			 CtlFacturarFrame ctlMarco=new CtlFacturarFrame(marco,ventanas);
-			 
-			 elEscritorio.add( marco ); // adjunta marco interno
-			 
-			 try {
-				marco.setSelected(true);
-				 //diz que a janela interna é maximizável   
-				 marco.setMaximizable(true);   
-		            //set o tamanho máximo dela, que depende da janela pai   
-				 marco.setMaximum(true); 
-			} catch (PropertyVetoException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}   
-	           
-			 ventanas.add(marco);
-			 ctlMarco.actualizarVentanas();
-			
-	
-		
-		 
-		 marco.setVisible( true ); // muestra marco interno
-		 } // fin del método actionPerformed
-		 } // fin de la clase interna anónima
+					//se agrega la ventana de facturacion solo no hay ninguna ventada visible
+					 if(ventanas.size()<1) {
+						 // crea el marco interno
+						 ViewFacturarFrame marco = new ViewFacturarFrame("Factura1", true, true, true, true);
+						 CtlFacturarFrame ctlMarco = new CtlFacturarFrame(marco, ventanas);
+
+						 elEscritorio.add(marco); // adjunta marco interno
+
+						 try {
+							 marco.setSelected(true);
+							 //diz que a janela interna é maximizável
+							 marco.setMaximizable(true);
+							 //set o tamanho máximo dela, que depende da janela pai
+							 marco.setMaximum(true);
+						 } catch (PropertyVetoException e) {
+							 // TODO Auto-generated catch block
+							 e.printStackTrace();
+						 }
+
+						 ventanas.add(marco);
+						 ctlMarco.actualizarVentanas();
+						 marco.setVisible(true); // muestra marco interno
+					 }
+
+				 } // fin del método actionPerformed
+			 } // fin de la clase interna anónima
 		 ); // fin de la llamada a addActionListener
 		
 		

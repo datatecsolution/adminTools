@@ -75,7 +75,7 @@ public class DepartamentoDao extends ModeloDaoBasic {
 			psConsultas=conn.prepareStatement(super.getQuerySelect());
 
 
-			System.out.println(psConsultas);
+			//System.out.println(psConsultas);
 			res=psConsultas.executeQuery();
 			while(res.next()){
 				Departamento unDept=new Departamento();
