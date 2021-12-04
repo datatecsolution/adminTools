@@ -433,6 +433,9 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 				myFactura=this.view.getModelo().getFactura(filaPulsada);
 				myFactura.setDetalles(detallesDao.getDetallesFactura(myFactura.getIdFactura()));
 
+				//se establece la caja por defecto del la seccion para realizar la busqueda
+				ConexionStatic.getUsuarioLogin().setCajaActica(((Caja) view.getCbxCajas().getSelectedItem()).getCodigo());
+
 				ViewFacturaDevolucion viewDevolucion=new ViewFacturaDevolucion(view);
 				CtlDevoluciones ctlDevolucion=new CtlDevoluciones(viewDevolucion);
 				ctlDevolucion.actualizarFactura(myFactura);

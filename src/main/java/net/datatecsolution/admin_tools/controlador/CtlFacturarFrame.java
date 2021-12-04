@@ -132,7 +132,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							}
 							
 							//conseguir los precios del producto
-							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
 
 							//se verifica que la opcion de unir las cantidades en las articulos repetidos
 							boolean unirCantidad=false;
@@ -1391,6 +1391,7 @@ public void calcularTotales(){
 										if(filaPulsada>=0){
 											 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
 											 this.calcularTotales();
+											 selectRowInset(filaPulsada);
 										}
 									}
 								}
@@ -1398,9 +1399,11 @@ public void calcularTotales(){
 								if(filaPulsada>=0){
 									 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
 									 this.calcularTotales();
+									selectRowInset(filaPulsada);
 								}
 							}
-						
+
+
 						
 						
 						break;
@@ -1422,6 +1425,7 @@ public void calcularTotales(){
 										if(filaPulsada>=0){
 											 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
 											 this.calcularTotales();
+											selectRowInset(filaPulsada);
 										}
 									}
 								}
@@ -1431,6 +1435,7 @@ public void calcularTotales(){
 							if(filaPulsada>=0){
 								 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
 								 this.calcularTotales();
+								selectRowInset(filaPulsada);
 							 }
 						}
 						
@@ -1665,17 +1670,60 @@ public void calcularTotales(){
 							//se recorren los item de la factura aplicando el descuento
 			    			for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
 			    				DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
-			    				
-			    				//dfsdf
-			    				if(detalle.getArticulo().getId()!=-1)
-			    					detalle.getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
+			    				//se los precio sin el costo de la base de datos
+								detalle.getArticulo().setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(detalle.getArticulo().getId()));
+			    				//se verifica que el item no sea nullo
+			    				if(detalle.getArticulo().getId()!=-1){
+
+									//se verifica que seleccion el precio costo
+									if(ctlSelectPrecio.getPrecioSelect().getCodigoPrecio()==4){
+
+										//se busca el precio de costo del articulo
+										PrecioArticulo unPrecio =this.preciosDao.getPrecioArticulo(detalle.getArticulo().getId(),4);
+										//si el articulo tiene precio de costo se agrega a la el
+										if(unPrecio!=null){
+											detalle.getArticulo().getPreciosVenta().add(unPrecio);
+											detalle.getArticulo().setPrecio(unPrecio);
+										}else{
+											detalle.getArticulo().lastPrecio();
+											detalle.getArticulo().netPrecio();
+										}
+
+									}else{
+										detalle.getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
+									}
+								}
+
 			    					
 			    			}
 							
 						}else{
 							//fdsf
 							if(filaPulsada>=0){
-								this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
+								//se los precio sin el costo de la base de datos
+								view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId()));
+
+								//se verifica que seleccion el precio costo
+								if(ctlSelectPrecio.getPrecioSelect().getCodigoPrecio()==4){
+
+									//se busca el precio de costo del articulo
+									PrecioArticulo unPrecio =this.preciosDao.getPrecioArticulo(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId(),4);
+									//si el articulo tiene precio de costo se agrega a la el
+									if(unPrecio!=null){
+										//se agrega el precio de costo al item
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPreciosVenta().add(unPrecio);
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(unPrecio);
+										this.selectRowInset(filaPulsada);
+									}else{
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
+										this.selectRowInset(filaPulsada);
+									}
+								}else{
+									this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
+
+								}
+
 								
 							}
 						}
@@ -2027,7 +2075,7 @@ public void calcularTotales(){
 
 		CajaDao cajasDao=new CajaDao();
 		ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
-		
+
 		isThereConexion =ConexionStatic.isDbConnected();
 
 		//verificamos si existe la conexion a la base de datos
@@ -2118,7 +2166,7 @@ public void calcularTotales(){
 							boolean resl = setCierre();
 
 
-							
+
 							
 							//se procesa el resultado del cierre de caja
 							if (resl) {
@@ -2127,7 +2175,7 @@ public void calcularTotales(){
 								if(myCliente.getId()==1 && bandera<4){
 									Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
 								}
-								
+
 								this.guardarFactura();
 							}else {
 								JOptionPane.showMessageDialog(view,
@@ -2227,7 +2275,7 @@ public void calcularTotales(){
 			myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
 			
 			//conseguir los precios del producto
-			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
 			
 			//JOptionPane.showMessageDialog(view,ConexionStatic.getUsuarioLogin().getConfig(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
 
@@ -3222,6 +3270,16 @@ public void guardarRemotoCredito(){
 
 		}
 		return existe;
+	}
+
+	private void selectRowInset(int row){
+		int col = 1;
+		boolean toggle = false;
+		boolean extend = false;
+		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
+		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
+		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+
 	}
 
 }

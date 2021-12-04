@@ -46,19 +46,23 @@ public abstract class ConexionStatic implements Runnable{
 	private static String password = "Jdmm123.";
 	private static String server = "127.0.0.1";
 
-/*
+
 
 	//Tienda el picacho
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.88.253";
 
-
+/*
 	//Comercial velasquez
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.100.110";
 
+	//Farmacia San Ramon
+	private static String login = "admin";
+	private static String password = "Jdmm123?";
+	private static String server = "192.168.88.254";
 
 
 	//NARANJAL

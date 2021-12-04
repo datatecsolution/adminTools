@@ -1384,6 +1384,7 @@ public class FacturaDao extends ModeloDaoBasic {
 		
 			while(res.next()){
 				int itemEmpleado=-1;
+				//se revisa la lista de los empleados cargados previos establecer a quien corresponde el resultado obtenido
 				for(int x=0;x<comisiones.size();x++){
 					if(comisiones.get(x).getCodigoVendedor()==res.getInt("codigo_vendedor")){
 						itemEmpleado=x;

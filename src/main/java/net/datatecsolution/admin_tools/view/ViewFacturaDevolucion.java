@@ -61,9 +61,7 @@ public class ViewFacturaDevolucion extends JDialog {
 	private JTextField txtRtn;
 	
 	
-	private JComboBox cbxEmpleados;
-	//se crea el modelo de la lista de los impuestos
-	private CbxTmEmpleado modeloEmpleado;//=new ComboBoxImpuesto();
+	private JTextField txtCaja;
 	private JPanel panel;
 	private JPanel panel_1;
 
@@ -259,15 +257,13 @@ public class ViewFacturaDevolucion extends JDialog {
 		lblCredito.setBounds(562, 23, 46, 14);
 		panelDatosFactura.add(lblCredito);
 		
-		JLabel lblVendedor = new JLabel("Vendedor");
-		lblVendedor.setBounds(632, 23, 61, 14);
+		JLabel lblVendedor = new JLabel("Caja factura");
+		lblVendedor.setBounds(632, 23, 80, 14);
 		panelDatosFactura.add(lblVendedor);
 		
-		cbxEmpleados = new JComboBox();
-		this.modeloEmpleado=new CbxTmEmpleado();
-		//cbxEmpleados.setModel(modeloEmpleado);//comentar para moder ver la vista de dise�o
-		cbxEmpleados.setBounds(632, 53, 199, 20);
-		panelDatosFactura.add(cbxEmpleados);
+		txtCaja = new JTextField();
+		txtCaja.setBounds(632, 44, 150, 29);
+		panelDatosFactura.add(txtCaja);
 		
 		
 		tableDetalle = new JTable();
@@ -382,12 +378,10 @@ public class ViewFacturaDevolucion extends JDialog {
 		this.pack();
 		
 	}
-	public JComboBox getCbxEmpleados(){
-		return cbxEmpleados;
+	public JTextField getTxtCaja(){
+		return txtCaja;
 	}
-	public CbxTmEmpleado getModeloEmpleados(){
-		return this.modeloEmpleado;
-	}
+
 	
 	public JRadioButton getRdbtnContado(){
 		return rdbtnContado;
