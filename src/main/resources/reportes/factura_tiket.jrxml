@@ -210,7 +210,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="cliente"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="subtotal" class="java.lang.Float">
+	<field name="subtotal_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -662,7 +662,7 @@ WHERE
 					<textElement textAlignment="Right">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{subtotal_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="0" width="95" height="12" uuid="c7d78f80-c0c4-4b5d-a56c-f71f21a86111"/>
