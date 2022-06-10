@@ -311,7 +311,7 @@ public class ViewOrdeneVenta extends JDialog {
 		
 		btnGetCotizacion = new BotonPendientes();// new JButton("F5 Pendientes");
 		btnGetCotizacion.setBackground(color1);
-		btnGetCotizacion.setText("F5 Cotizaciones");
+		btnGetCotizacion.setText("Cotizaciones");
 		panelAcciones.add(btnGetCotizacion);
 		
 		btnCierreCaja = new BotonCierreCaja();// JButton("F6 Cierre");
@@ -338,9 +338,16 @@ public class ViewOrdeneVenta extends JDialog {
 		
 		panelGuardados = new JPanel();
 		panelGuardados.setBackground(color3);
-		panelGuardados.setSize(100, 0);
-		getContentPane().add(panelGuardados, BorderLayout.EAST);
+		panelGuardados.setSize(160, 0);
+		//getContentPane().add(panelGuardados, BorderLayout.EAST);
 		panelGuardados.setLayout(new GridLayout(10, 1, 0, 0));
+
+		JScrollPane scrollPane2 = new JScrollPane(panelGuardados, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		scrollPane2.setSize(160, 0);
+		scrollPane2.setPreferredSize(new Dimension(160,0));
+		scrollPane2.setBackground(color3);
+		getContentPane().add(scrollPane2, BorderLayout.EAST);
 		
 		
 		//getContentPane().setLayout(null);
@@ -554,6 +561,9 @@ public class ViewOrdeneVenta extends JDialog {
 	}
 	public JTextField getTxtBuscar(){
 		return txtBuscar;
+	}
+	public JButton getBtnCierreCaja() {
+		return btnCierreCaja;
 	}
 	/*public JTextField getTxtArticulo(){
 		return txtArticulo;

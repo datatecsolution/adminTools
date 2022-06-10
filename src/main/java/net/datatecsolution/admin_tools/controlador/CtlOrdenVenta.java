@@ -26,6 +26,9 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 	private PrecioArticuloDao preciosDao=null;
 	private CodBarraDao codBarraDao=null;
 	private Cliente myCliente=null;
+	private UsuarioDao myUsuarioDao;
+	private InsumoDao insumoDao=null;
+	private Caja cajaDefecto;
 
 	private int filaPulsada=0;
 	private boolean resultado=false;
@@ -35,6 +38,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 	
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private DetalleFacturaOrdenDao detallesOrdenDao=null;
+	private boolean unirCanItem=true;
 	
 	public CtlOrdenVenta(ViewOrdeneVenta v){
 	
@@ -53,10 +57,16 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 		
 		facturaOrdenesDao=new FacturaOrdenVentaDao();
 		detallesOrdenDao=new DetalleFacturaOrdenDao();
-		
+		myUsuarioDao=new UsuarioDao();
+		insumoDao=new InsumoDao();
+		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
 		
 		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 		this.tipoView=1;
+
+		view.getBtnCobrar().setVisible(false);
+		view.getBtnCierreCaja().setVisible(false);
+
 	
 		
 	}
@@ -97,61 +107,172 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 		case "BUSCARARTICULO2":
 			//se comprueba que se ingreso un codigo de barra o que el articulo este nulo para poder buscar
 			if(view.getTxtBuscar().getText().trim().length()!=0 || myArticulo==null){
-				
-					
-					String busca=this.view.getTxtBuscar().getText();
-						
-						this.myArticulo=this.myArticuloDao.buscarArticuloBarraCod(busca);
-						
-						if(myArticulo!=null){
-							
-							//conseguir los precios del producto
-							myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
+
+
+				String busca=this.view.getTxtBuscar().getText();
+
+				this.myArticulo=this.myArticuloDao.buscarArticuloBarraCod(busca);
+
+				if(myArticulo!=null){
+
+					//activar para redondiar el precio de venta final
+					if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+						myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+					}
+
+					//conseguir los precios del producto
+					myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
+
+					//facturar sin tomar en cuenta el inventario
+					if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario()){
+						//activar para redondiar el precio de venta final
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+							myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+						}
+
+						//si es un articulo tipo bien se puede agregar en cualquier caja
+						if(myArticulo.getTipoArticulo()==1){
+							//se agrega articulo a la tabla
 							this.view.getModeloTabla().setArticulo(myArticulo);
-							//this.view.getModelo().getDetalle(row).setCantidad(1);
-							
-							//calcularTotal(this.view.getModeloTabla().getDetalle(row));
 							calcularTotales();
 							this.view.getModeloTabla().agregarDetalle();
-							view.getTxtBuscar().setText("");
 							selectRowInset();
-							
 						}else{
-							JOptionPane.showMessageDialog(view, "No se encontro el articulo");
-							view.getTxtBuscar().setText("");
-							view.getTxtBuscar().requestFocusInWindow();
+
+							//se filtra para que la caja por defecto sera la unica que puede facturar servicios
+							if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
+								//se agrega articulo a la tabla
+								this.view.getModeloTabla().setArticulo(myArticulo);
+								calcularTotales();
+								this.view.getModeloTabla().agregarDetalle();
+								selectRowInset();
+							}else{
+								JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+								view.getTxtBuscar().setText("");
+							}
 						}
-						
-					//}
-				}else//si el articulo esta nulo se agrega el ultimo articulo creado
-				{
-					//conseguir los precios del producto
-					myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
-					this.view.getModeloTabla().setArticulo(myArticulo);
-					//this.view.getModelo().getDetalle(row).setCantidad(1);
-					
-					//calcularTotal(this.view.getModeloTabla().getDetalle(row));
-					calcularTotales();
-					this.view.getModeloTabla().agregarDetalle();
+
+
+					} else{  //si esta activado la facturacion con inventario
+
+						//se comprueba que exista el producto en el inventario
+						double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+						//es necesario comprobar los inventarios de articulos
+						//si es un bien se combrueba la existencia de ese articulo
+						if(myArticulo.getTipoArticulo()==1){
+
+							//se comprueba que exista el producto en el inventario
+							existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+							double cantidad=1;
+
+							double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+							if(buscarEnRequisicionCantidad>0){
+								cantidad=cantidad+buscarEnRequisicionCantidad;
+							}
+
+							if(existencia>0.0 && cantidad<=existencia){
+
+								//activar para redondiar el precio de venta final
+								if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+									myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+								}
+
+								//se agrega articulo a la tabla
+								this.view.getModeloTabla().setArticulo(myArticulo);
+								calcularTotales();
+								this.view.getModeloTabla().agregarDetalle();
+								selectRowInset();
+
+							}else{//fin se la comprobacion de la existencia
+								JOptionPane.showMessageDialog(view, myArticulo.getArticulo()+" no tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+								view.getTxtBuscar().setText("");
+							}
+						}else{//si es un servicio que se necesita comprobar la existencia se busca sus insumos
+
+							//se filtra para que la caja por defecto sera la unica que puede facturar servicios
+							if(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo()==this.cajaDefecto.getCodigo()){
+
+								//comprobar la existencia de los insumos
+								List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
+
+								//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
+								if(insumos!=null && insumos.size()>0){
+									boolean exist=false;
+									//recoremos los insumos comprobando si tiene existencia
+									for(int xx=0;xx<insumos.size();xx++){
+
+										//se comprueba que exista el insumo en el inventario
+										existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+										if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
+											//se establece que esiste
+											exist=true;
+											//activar para redondiar el precio de venta final
+											if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+												myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+											}
+										}else{//fin se la comprobacion de la existencia
+											exist=false;
+											JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+											view.getTxtBuscar().setText("");
+											break;
+										}
+									}//sin del for que recore los insumos
+
+									//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
+									if(exist){
+										//se agrega articulo a la tabla
+										this.view.getModeloTabla().setArticulo(myArticulo);
+
+										calcularTotales();
+										this.view.getModeloTabla().agregarDetalle();
+
+										selectRowInset();
+									}
+
+								}else{//sino tiene insumos el servicio se agrega directamente a la factura
+									//se agrega articulo a la tabla
+									this.view.getModeloTabla().setArticulo(myArticulo);
+									calcularTotales();
+									this.view.getModeloTabla().agregarDetalle();
+									selectRowInset();
+								}
+							}else{
+								JOptionPane.showMessageDialog(view,"Solo la caja "+cajaDefecto.getDescripcion() +" puede facturar servicios.","Error en articulo",JOptionPane.ERROR_MESSAGE);
+								view.getTxtBuscar().setText("");
+							}
+						}//sin del else para comprobar las existencia de los servicios
+
+					}
 					view.getTxtBuscar().setText("");
-					selectRowInset();
-					
+
+				} else{//sino se encuentra ningun articulo se avisa al usuario
+					JOptionPane.showMessageDialog(view, "No se encontro el articulo");
+					view.getTxtBuscar().setText("");
+					view.getTxtBuscar().requestFocusInWindow();
+					myArticulo=null;
 				}
+
+				//}
+			}
 				netBuscar=0;
 			break;
 		case "BUSCARCLIENTE":
-			
+
 			myCliente=null;
 			myCliente=clienteDao.buscarPorId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
-			
+
 			if(myCliente!=null){
 				this.view.getTxtNombrecliente().setText(myCliente.getNombre());
 				this.view.getTxtRtn().setText(myCliente.getRtn());
 			}else{
-		
+
 				JOptionPane.showMessageDialog(view, "Cliente no encontrado");
 				this.view.getTxtIdcliente().setText("1");
-                this.view.getTxtNombrecliente().setText("Cliente Normal");
+				this.view.getTxtNombrecliente().setText("Cliente Normal");
 			}
 			//96995768
 			break;
@@ -159,7 +280,11 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 			this.actualizar();
 			break;
 		case "BUSCARARTICULO":
-			this.buscarArticulo();
+			//se verfica si esta activo la busqueda de articulo por descripcion
+			if(ConexionStatic.getUsuarioLogin().getConfig().isActivarBusquedaFacturacion())
+			{
+				this.buscarArticulo();
+			}
 		break;
 		
 		case "CERRAR":
@@ -187,35 +312,42 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 			showPendientes();
 			break;
 		case "ELIMINARPENDIENTE":
-			//JOptionPane.showMessageDialog(view, "se eliminara la factura pendiente");
-			int idFacturaTemporal=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-			
+			int idFacturaTemporal2=view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
 
 			Factura eliminarTem=new Factura();
-			eliminarTem.setIdFactura(idFacturaTemporal);
-			
-			this.facturaOrdenesDao.eliminar(eliminarTem);
-			
-			
-			this.tipoView=1;
-			this.view.getBtnGuardar().setEnabled(true);
-			this.view.getBtnActualizar().setEnabled(false);
-			
-			//view.getBtnsGuardador().setFactura(myFactura);
-			
-			//setEmptyView();
-			setEmptyView();
-			
-			view.getBtnsGuardador().deleteAll();
-			
-			cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-			
+			eliminarTem.setIdFactura(idFacturaTemporal2);
+
+
+			JPasswordField pf = new JPasswordField();
+			int action =JOptionPane.showConfirmDialog(view,"Desea eliminar la orden de "+view.getBtnsGuardador().getFacturaSeleted().getCliente().getNombre()+" ?","Confirmacion",JOptionPane.OK_CANCEL_OPTION);
+			//JOptionPane.showMessageDialog(view,"La accion es: "+action);
+			if(action == 0){
+
+
+
+				this.facturaOrdenesDao.eliminar(eliminarTem);
+
+				this.tipoView=1;
+				this.view.getBtnGuardar().setEnabled(true);
+				this.view.getBtnActualizar().setEnabled(false);
+
+				//view.getBtnsGuardador().setFactura(myFactura);
+
+				//setEmptyView();
+				setEmptyView();
+
+				view.getBtnsGuardador().deleteAll();
+
+				cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+
+			}
+
 			break;
 		
 		}
 		
 	}
-	
+
 
 
 	private void guardarCotizacion() {
@@ -590,69 +722,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 			
 		}//fin del for
 		}
-		
-	
-public void calcularTotal(DetalleFactura detalle){
-		
-		if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
-			
-			//se obtien la cantidad y el precio de compra por unidad
-			BigDecimal cantidad=detalle.getCantidad();
-			BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
-			
-			
-			
-			//se obtiene el impuesto del articulo 
-			BigDecimal porcentaImpuesto =new BigDecimal(detalle.getArticulo().getImpuestoObj().getPorcentaje());
-			BigDecimal porImpuesto=new BigDecimal(0);
-			porImpuesto=porcentaImpuesto.divide(new BigDecimal(100));
-			porImpuesto=porImpuesto.add(new BigDecimal(1));
-					//new BigDecimal(((Double.parseDouble(detalle.getArticulo().getImpuestoObj().getPorcentaje())  )/100)+1);
-			
-			//se calcula el total del item
-			BigDecimal totalItem=cantidad.multiply(precioVenta);
-			
-			//se calcula el total sin  el impuesto;
-			BigDecimal totalsiniva= new BigDecimal("0.0");
-			totalsiniva=totalItem.divide(porImpuesto,2,BigDecimal.ROUND_HALF_EVEN);//.divide(porImpuesto);// (totalItem)/(porcentaImpuesto);
-		
-			
-			//se calcula el total de impuesto del item
-			BigDecimal impuestoItem=totalItem.subtract(totalsiniva);//-totalsiniva;
-			
-			
-			
-			//se estable el total y impuesto en el modelo
-			myFactura.setTotal(totalItem);
-			myFactura.setTotalImpuesto(impuestoItem);
-			myFactura.setSubTotal(totalsiniva);
-			//myFactura.getDetalles().add(detalle);
-			
-			detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			//myFactura.getDetalles()
-			
-			//se establece en la y el impuesto en el item de la vista
-			//detalle.setImpuesto(impuesto2.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			
-			//se establece el total e impuesto en el vista
-			this.view.getTxtTotal().setText(""+myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			this.view.getTxtImpuesto().setText(""+myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			this.view.getTxtSubtotal().setText(""+myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			
-			
-			
-			
-		
-			
-			//this.view.getModelo().fireTableDataChanged();
-		}
-	}
 
-	
-
-	
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -674,7 +744,11 @@ public void calcularTotal(DetalleFactura detalle){
 			switch(e.getKeyCode()){
 					
 					case KeyEvent.VK_F1:
-						buscarArticulo();
+						//se verfica si esta activo la busqueda de articulo por descripcion
+						if(ConexionStatic.getUsuarioLogin().getConfig().isActivarBusquedaFacturacion())
+						{
+							buscarArticulo();
+						}
 						break;
 						
 					case KeyEvent.VK_F2:
@@ -686,9 +760,7 @@ public void calcularTotal(DetalleFactura detalle){
 						break;
 						
 					case KeyEvent.VK_F4:
-						
-						
-							
+						this.guardar();
 						break;
 						
 					case KeyEvent.VK_F5:
@@ -700,120 +772,421 @@ public void calcularTotal(DetalleFactura detalle){
 						break;
 						
 					case KeyEvent.VK_F7:
-						if(filaPulsada>=0){
-							String entrada=JOptionPane.showInputDialog("Escriba el descuento");
-							
-							if(AbstractJasperReports.isNumberReal(entrada)){
-					
-								this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(entrada));//.getArticulo().setPrecioVenta(new Double(entrada));
-								this.calcularTotales();
-							}
+
+						double maxDescuento=55;
+						//configuracion del panel descuento
+						JPanel panelDescuento=new JPanel();
+						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
+
+						JLabel etiqueta =new JLabel("Escriba el descuento");
+						panelDescuento.add(etiqueta);
+
+						JTextField descuento=new JTextField(15);
+						panelDescuento.add(descuento);
+						//dfs
+						JCheckBox   rememberChk = new JCheckBox("Agregar descuento a todos los items?");
+						panelDescuento.add(rememberChk);
+
+						descuento.requestFocusInWindow();
+						//sdfsdf
+
+
+
+						//si es necesario el password para el descuento
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdDescuento()){
+							String pwd=getPassword();
+							if(pwd!=null)
+							{
+								//comprabacion del permiso administrativo
+								if(myUsuarioDao.comprobarAdmin(pwd)){
+
+
+									//si el descuento es un porcentaje
+									if(ConexionStatic.getUsuarioLogin().getConfig().isDescPorcentaje()){
+
+
+										if(filaPulsada>=0){
+
+											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-55%");
+
+											//se muestra la pantalla para solitar el descuento
+											JOptionPane pane = new JOptionPane(panelDescuento, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
+												@Override
+												public void selectInitialValue() {
+													descuento.requestFocusInWindow();
+												}
+											};
+											pane.createDialog(view, "Descuento").setVisible(true);
+
+											String seleccionadoDescuento=descuento.getText();
+
+											boolean aplicarTodo = rememberChk.isSelected();
+
+
+											if(AbstractJasperReports.isNumberReal(seleccionadoDescuento)){
+												double bdDescuento=Double.parseDouble(seleccionadoDescuento);
+
+												if(bdDescuento<=maxDescuento){
+
+													if(aplicarTodo==false){
+														BigDecimal cantidad=this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad();
+														BigDecimal precioVenta= new BigDecimal(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPrecioVenta());
+														//se calcula el total del item
+														BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+
+														double desc=bdDescuento/100;
+
+														BigDecimal des=totalItem.multiply(new BigDecimal(desc));
+
+														this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+													}else{
+
+														//se recorren los item de la factura aplicando el descuento
+														for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+															DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
+
+															//dfsdf
+															if(detalle.getArticulo().getId()!=-1)
+																if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
+
+
+																	BigDecimal cantidad=detalle.getCantidad();
+																	BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
+																	//se calcula el total del item
+																	BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+
+																	double desc=bdDescuento/100;
+
+																	BigDecimal des=totalItem.multiply(new BigDecimal(desc));
+
+																	detalle.setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+
+
+																}
+														}
+													}//fin del descuento por item o todo
+													//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
+													this.calcularTotales();
+												}else{
+													JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 55%", "Error", JOptionPane.ERROR_MESSAGE);
+												}
+											}else{
+												JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
+											}
+										}
+
+									}else{//sino es un porcentaje
+
+										if(filaPulsada>=0){
+											//String entrada=JOptionPane.showInputDialog("Escriba el descuento");
+
+											etiqueta.setText("Escriba el descuento");
+											JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE);
+											//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
+											String entrada=descuento.getText();
+											boolean aplicarTodo = rememberChk.isSelected();
+
+											if(AbstractJasperReports.isNumberReal(entrada)){
+
+												if(aplicarTodo==false){
+
+													this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(entrada));//.getArticulo().setPrecioVenta(new Double(entrada));
+
+												}else{
+
+													//se recorren los item de la factura aplicando el descuento
+													for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+														DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
+
+														//dfsdf
+														if(detalle.getArticulo().getId()!=-1)
+															if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
+
+																detalle.setDescuentoItem(new BigDecimal(entrada));
+															}
+													}
+												}
+
+												this.calcularTotales();
+											}
+										}
+									}//fin del descuento no porjentaje
+
+
+
+								}//fin comprobacion del usuario admin
+							}//fin de la captura del pwd del usuario
+
+						}else{
+
+
+
+
+
+							//si el descuento es un porcentaje
+							if(ConexionStatic.getUsuarioLogin().getConfig().isDescPorcentaje()){
+
+
+								if(filaPulsada>=0){
+
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-55%");
+									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE);
+									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
+									String seleccionadoDescuento=descuento.getText();
+
+									boolean aplicarTodo = rememberChk.isSelected();
+
+
+									if(AbstractJasperReports.isNumberReal(seleccionadoDescuento)){
+										double bdDescuento=Double.parseDouble(seleccionadoDescuento);
+
+										if(bdDescuento<=maxDescuento){
+
+											if(aplicarTodo==false){
+												BigDecimal cantidad=this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad();
+												BigDecimal precioVenta= new BigDecimal(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPrecioVenta());
+												//se calcula el total del item
+												BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+
+												double desc=bdDescuento/100;
+
+												BigDecimal des=totalItem.multiply(new BigDecimal(desc));
+
+												this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+											}else{
+
+												//se recorren los item de la factura aplicando el descuento
+												for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+													DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
+
+													//dfsdf
+													if(detalle.getArticulo().getId()!=-1)
+														if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
+
+
+															BigDecimal cantidad=detalle.getCantidad();
+															BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
+															//se calcula el total del item
+															BigDecimal totalItem=cantidad.multiply(precioVenta);
+
+
+															double desc=bdDescuento/100;
+
+															BigDecimal des=totalItem.multiply(new BigDecimal(desc));
+
+															detalle.setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+
+
+														}
+												}
+											}//fin del descuento por item o todo
+											//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
+											this.calcularTotales();
+										}else{
+											JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 55%", "Error", JOptionPane.ERROR_MESSAGE);
+										}
+									}else{
+										JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+
+							}else{//sino es un porcentaje
+
+								if(filaPulsada>=0){
+									//String entrada=JOptionPane.showInputDialog("Escriba el descuento");
+
+									etiqueta.setText("Escriba el descuento");
+									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE);
+									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
+									String entrada=descuento.getText();
+									boolean aplicarTodo = rememberChk.isSelected();
+
+									if(AbstractJasperReports.isNumberReal(entrada)){
+
+										if(aplicarTodo==false){
+
+											this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(entrada));//.getArticulo().setPrecioVenta(new Double(entrada));
+
+										}else{
+
+											//se recorren los item de la factura aplicando el descuento
+											for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+												DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
+
+												//dfsdf
+												if(detalle.getArticulo().getId()!=-1)
+													if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
+
+														detalle.setDescuentoItem(new BigDecimal(entrada));
+													}
+											}
+										}
+
+										this.calcularTotales();
+									}
+								}
+							}//fin del descuento no porjentaje
+
+
+
+
 						}
-						
 						break;
 						
 					case KeyEvent.VK_F8:
-						
-						/*
-						JPasswordField pf = new JPasswordField();
-						int action = JOptionPane.showConfirmDialog(view, pf,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
 
-						if(action < 0){
-							
-						}else{
-							String pwd=new String(pf.getPassword());
-							//comprabacion del permiso administrativo
-							if(myUsuarioDao.comprobarAdmin(pwd)){
-						
-								if(filaPulsada>=0){
-									String entrada=JOptionPane.showInputDialog("Escriba el precio");
-							
-									if(modelo.AbstractJasperReports.isNumberReal(entrada)){
-												this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecioVenta(new Double(entrada));
-												this.calcularTotales();
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdPrecio()){
+
+							String pwd=getPassword();
+							if(pwd!=null)
+							{
+								//String pwd=new String(pf.getPassword());
+								//comprabacion del permiso administrativo
+								if(myUsuarioDao.comprobarAdmin(pwd)){
+
+									if(filaPulsada>=0){
+										String entrada=JOptionPane.showInputDialog("Escriba el precio");
+
+										if(AbstractJasperReports.isNumberReal(entrada)){
+											this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecioVenta(new Double(entrada));
+											this.calcularTotales();
 										}
+									}
 								}
 							}
-						}*/
-						
-						if(filaPulsada>=0){
-							String entrada=JOptionPane.showInputDialog("Escriba el precio");
-							
-							if(AbstractJasperReports.isNumberReal(entrada)){
-								this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecioVenta(new Double(entrada));
-								this.calcularTotales();
+						}else{
+							if(filaPulsada>=0){
+								String entrada=JOptionPane.showInputDialog(view,"Escriba el precio");
+
+								if(AbstractJasperReports.isNumberReal(entrada)){
+									this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecioVenta(new Double(entrada));
+									this.calcularTotales();
+								}
 							}
 						}
-						
-						/*
-						if(filaPulsada>=0){
-							
-							
-							String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-5%",JOptionPane.QUESTION_MESSAGE);
-						    
-						    //JOptionPane.showMessageDialog(null, "El Descucnto que se otorgara es:"+seleccionadoDescuento);
-							
-							//String entrada=JOptionPane.showInputDialog(this,cbDescuento,"Seleccione un descuesto",JOptionPane.ERROR_MESSAGE);
-						    
-						    if(AbstractJasperReports.isNumberReal(seleccionadoDescuento)){
-						    	double bdDescuento=Double.parseDouble(seleccionadoDescuento);
-						    	
-						    	if(bdDescuento<=5){
-							
-							    	this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
-							    	this.calcularTotales();
-						    	}else{
-						    		JOptionPane.showMessageDialog(view, "No puede otrogar un descuento mayo del 5%", "Error", JOptionPane.ERROR_MESSAGE);
-						    	}
-						    }else{
-						    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
-						    }
-						 }*/
 						
 						break;
 					case KeyEvent.VK_F9:
 						if(filaPulsada>=0){
-							String entrada=JOptionPane.showInputDialog("Escriba el cantida");
-							if(AbstractJasperReports.isNumberReal(entrada)){
-								 this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(new BigDecimal(entrada));
-								 this.calcularTotales();
+
+
+							String entrada=JOptionPane.showInputDialog(view,"Escriba la candidad");
+
+							//se verfica en la configuracion si se puede facturar sin inventario
+							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
+							{
+								//se registra la cantida en la entrada del usuario
+								BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+								this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+								this.calcularTotales();
+
+							}else{//se verfica en la configuracion si se puede facturar con inventario
+
+								if(AbstractJasperReports.isNumberReal(entrada)){
+									//si es un bien se procede de esta manera
+									if(myArticulo.getTipoArticulo()==1){
+										//se extre la exista del producto en el inventario
+										double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+
+										//se registra la cantida en la entrada del usuario
+										BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+										//se recoge la nueva cantidad a colocar en el item
+										double cantidad=cantidadSaldoItem.doubleValue();
+
+										//se establece la nueva cantidad
+										this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+
+
+										//se busca el articulo en la factura las cantidades del mismo articulo
+										double buscarEnRequisicionCantidad=view.getModeloTabla().buscarCantidadPorArticulo(myArticulo);
+
+
+										if(existencia>0.0 && cantidad<=existencia) {
+											this.calcularTotales();
+										}else{
+											JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+											view.getModeloTabla().eliminarDetalle(filaPulsada);
+										}
+									}else{//si es un servicio se procede a buscar sus insumos y si es posible facturar
+
+										//la variable para la existecia en el kardex
+										double existencia=0;
+
+										//se registra la cantida en la entrada del usuario
+										BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+										//comprobar la existencia de los insumos
+										List<Insumo> insumos=this.insumoDao.buscarPorId(myArticulo.getId());
+
+										//comprobamos de el articulo tenga insumos para hacer la busca de sus existencias
+										if(insumos!=null && insumos.size()>0){
+											boolean exist=false;
+											//recoremos los insumos comprobando si tiene existencia
+											for(int xx=0;xx<insumos.size();xx++){
+
+												//se comprueba que exista el insumo en el inventario
+												existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+												BigDecimal cantRequerida=cantidadSaldoItem.multiply(insumos.get(xx).getCantidad());
+
+												if(existencia>0.0 && existencia>=cantRequerida.doubleValue()){
+													//se establece que esiste
+													exist=true;
+
+												}else{//fin se la comprobacion de la existencia
+													exist=false;
+													JOptionPane.showMessageDialog(view,"El insumo "+ insumos.get(xx).getArticulo().getArticulo()+" que pertence al servicio "+myArticulo.getArticulo()+" ,\nno tiene existencia en "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion(),"Error en existencia",JOptionPane.ERROR_MESSAGE);
+													break;
+												}
+											}//sin del for que recore los insumos
+
+											//se comprueba que todos los insumos tienen exitencia para agregar el servicio a la factura
+											if(exist){
+
+												//activar para redondiar el precio de venta final
+												if(ConexionStatic.getUsuarioLogin().getConfig().isPrecioRedondear()){
+
+													myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
+												}
+												//se establece la cantidad al item
+												this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+												this.calcularTotales();
+											}else{
+												JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+												view.getModeloTabla().eliminarDetalle(filaPulsada);
+												this.calcularTotales();
+											}
+
+										}else{//sino tiene insumos el servicio se agrega directamente a la factura
+
+											//se establece la cantidad al item
+											this.view.getModeloTabla().getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
+											this.calcularTotales();
+										}
+									}
+								}//fin de la comprobacion que la estrada es un numero
 							}
-						 }
+						}
 						
 						break;
 						
 					case KeyEvent.VK_F10:
 						
 						
-							ViewCobro viewCobro=new ViewCobro(null);
-							CtlCobro ctlCobro=new CtlCobro(viewCobro);
-							
-							viewCobro.dispose();
-							viewCobro=null;
-							ctlCobro=null;
-						
-						
 						break;
 						
 					case KeyEvent.VK_F11:
-						ViewPagoProveedor vPagoProveedores=new ViewPagoProveedor(null);
-						vPagoProveedores.getCbFormaPago().setEnabled(false);
-						CtlPagoProveedor cPagoProveedores=new CtlPagoProveedor(vPagoProveedores);
-						
-						vPagoProveedores.dispose();
-						cPagoProveedores=null;
+
 						break;
 						
 					case KeyEvent.VK_F12:
-						
 
-							ViewSalidaCaja viewSalida = new ViewSalidaCaja(null);
-							CtlSalidaCaja ctlSalida = new CtlSalidaCaja(viewSalida);
-
-							
-							viewSalida.dispose();
-							viewSalida = null;
-							ctlSalida = null;
 						
 						break;
 						
@@ -839,22 +1212,83 @@ public void calcularTotal(DetalleFactura detalle){
 						}
 						break;
 					case KeyEvent.VK_LEFT:
-						if(filaPulsada>=0){
-							 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
-							 this.calcularTotales();
-						 }
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()){
+							String pwd=getPassword();
+							if(pwd!=null)
+							{
+								//comprabacion del permiso administrativo
+								if(myUsuarioDao.comprobarAdmin(pwd)){
+
+									if(filaPulsada>=0){
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
+										this.calcularTotales();
+										selectRowInset(filaPulsada);
+									}
+								}
+							}
+						}else{
+							if(filaPulsada>=0){
+								this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
+								this.calcularTotales();
+								selectRowInset(filaPulsada);
+							}
+						}
 						break;
 					case KeyEvent.VK_RIGHT:
-						if(filaPulsada>=0){
-							 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
-							 this.calcularTotales();
-						 }
+						if(ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()){
+
+							String pwd=getPassword();
+							if(pwd!=null)
+							{
+								//comprabacion del permiso administrativo
+								if(myUsuarioDao.comprobarAdmin(pwd)){
+
+									if(filaPulsada>=0){
+										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
+										this.calcularTotales();
+										selectRowInset(filaPulsada);
+									}
+								}
+							}
+						}else{
+
+
+							if(filaPulsada>=0){
+								this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
+								this.calcularTotales();
+								selectRowInset(filaPulsada);
+							}
+						}
 						break;
 					}
 					
 								 
 							
 								
+	}
+
+	public static String getPassword() {
+		JPanel panel = new JPanel();
+		final JPasswordField passwordField = new JPasswordField(10);
+		panel.add(new JLabel("Password"));
+		panel.add(passwordField);
+		JOptionPane pane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
+			@Override
+			public void selectInitialValue() {
+				passwordField.requestFocusInWindow();
+			}
+		};
+		pane.createDialog(null, "Autorizacion").setVisible(true);
+		return passwordField.getPassword().length == 0 ? null : new String(passwordField.getPassword());
+	}
+	private void selectRowInset(int row){
+		int col = 1;
+		boolean toggle = false;
+		boolean extend = false;
+		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
+		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
+		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+
 	}
 	
 	public void cargarFacturasPendientes(List<Factura> facturas){

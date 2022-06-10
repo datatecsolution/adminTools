@@ -1204,7 +1204,7 @@ public void calcularTotales(){
 					case KeyEvent.VK_F9:
 						if(filaPulsada>=0){
 							
-							String entrada=JOptionPane.showInputDialog("Escriba el cantida");
+							String entrada=JOptionPane.showInputDialog(view,"Escriba el cantida");
 							
 							//se verfica en la configuracion si se puede facturar sin inventario
 							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
