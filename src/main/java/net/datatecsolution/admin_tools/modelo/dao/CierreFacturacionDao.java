@@ -233,6 +233,8 @@ public List<CierreFacturacion> buscarIdCierre(Integer id){
 			psConsultas=conn.prepareStatement(super.getQuerySearch("usuario", "="));
 			
 			psConsultas.setString(1, user.getUser());
+			psConsultas.setInt(2, 0);
+			psConsultas.setInt(3, 1);
 			
 			res = psConsultas.executeQuery();
 			while(res.next()){
