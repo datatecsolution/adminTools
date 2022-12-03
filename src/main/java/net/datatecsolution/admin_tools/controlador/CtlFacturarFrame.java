@@ -42,7 +42,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	private boolean unirCanItem=true;
+	private boolean unirCanItem=false;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -2070,7 +2070,7 @@ public void calcularTotales(){
 				
 				//activas para cuando se necesite un vendedor
 				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){
-					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(null);
+					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 					CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
 					
 					 resulVendedor=ctlVendedor.cargarVendedor();
@@ -2117,7 +2117,7 @@ public void calcularTotales(){
 					if(view.getRdbtnContado().isSelected()){
 				
 						//se muestra la vista para cobrar y introducir el cambio 
-						ViewCambioPago viewPago=new ViewCambioPago(null);
+						ViewCambioPago viewPago=new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
 						CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
 						//se muestra y ventana del cobro y se devuelve un resultado del cobro
 						boolean resulPago=ctlPago.pagar();
@@ -2435,8 +2435,8 @@ public void calcularTotales(){
 		myFactura.setCodigoAlter(0);
 		//se agrega una fila vacia a la tabla detalle
 		view.getModeloTabla().agregarDetalle();
-		
-		
+
+		this.myFactura.resetTotales();
 		
 		//conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
@@ -3043,7 +3043,7 @@ public void guardarRemotoCredito(){
 						//si la configuracion de la impresion de la factura es tiket o carta
 						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("tiket")){
 						
-							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),6, myFactura.getIdFactura());
+							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),1, myFactura.getIdFactura());
 							//AbstractJasperReports.showViewer(view);
 							AbstractJasperReports.imprimierFactura();
 							//AbstractJasperReports.imprimierFactura();
@@ -3101,7 +3101,7 @@ public void guardarRemotoCredito(){
 
 
 					//muestra en la pantalla el cambio y lo mantiene permanente
-					ViewCambio cambio=new ViewCambio(null);
+					ViewCambio cambio=new ViewCambio(SwingUtilities.getWindowAncestor(view));
 					cambio.getTxtCambio().setText(cambioEfectivo);
 					cambio.getTxtEfectivo().setText(pago);
 					cambio.setVisible(true);

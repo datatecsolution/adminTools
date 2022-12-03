@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="datos_empresa" pageWidth="203" pageHeight="720" columnWidth="175" leftMargin="18" rightMargin="10" topMargin="0" bottomMargin="5" isIgnorePagination="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="3.0"/>
@@ -30,7 +30,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 	<field name="direccion" class="java.lang.String"/>
 	<variable name="dato1" class="java.lang.String"/>
 	<title>
-		<band height="77" splitType="Stretch">
+		<band height="61" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="1" width="173" height="13" uuid="26025472-71fe-408c-bbe8-b106cd474dd4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -41,7 +41,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField textAdjust="StretchHeight">
 				<reportElement x="0" y="11" width="173" height="17" uuid="0a3d1fde-1d67-49ff-b05b-de85fcfae3e0">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -61,7 +61,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 				<textFieldExpression><![CDATA["R.T.N "+$F{rtn}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="34" width="173" height="12" uuid="732f1081-9c43-4770-a456-3ec4bf3a6fc4">
+				<reportElement x="0" y="33" width="173" height="12" uuid="732f1081-9c43-4770-a456-3ec4bf3a6fc4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -70,7 +70,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 				<textFieldExpression><![CDATA["Telefono "+$F{telefono}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="43" width="173" height="12" uuid="d531031f-4c83-46e5-9e83-780771b11649">
+				<reportElement x="0" y="40" width="173" height="12" uuid="d531031f-4c83-46e5-9e83-780771b11649">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -79,7 +79,7 @@ FROM $P!{bD_admin}.datos_empresa]]>
 				<textFieldExpression><![CDATA[$F{correo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="53" width="173" height="12" uuid="1291ffb1-cf42-4e6c-bc37-daa83bfb97b7">
+				<reportElement x="0" y="48" width="173" height="12" uuid="1291ffb1-cf42-4e6c-bc37-daa83bfb97b7">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">

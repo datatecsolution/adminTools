@@ -105,7 +105,7 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 						//si la configuracion de la impresion de la factura es tiket o carta
 						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFactura().equals("tiket")){
 						
-							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),6, myFactura.getIdFactura());
+							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(),3, myFactura.getIdFactura());
 							AbstractJasperReports.showViewer(view);
 							//AbstractJasperReports.imprimierFactura();
 							//AbstractJasperReports.imprimierFactura();

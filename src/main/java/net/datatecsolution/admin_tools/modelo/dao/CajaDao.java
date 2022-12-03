@@ -114,8 +114,8 @@ public class CajaDao extends ModeloDaoBasic {
 					//se crea el trigger para la tabla detalle que maneja el inventario
 					crearTriggerDetalle(caja);
 					
-					//se crea la tabla encabezado fatura temporal
-					//this.crearEncabezadoTemTabla(caja.getNombreBd());
+					//se crea funcion para calcular el costo de la factura
+					this.crearFunctionCostoFact(caja);
 					
 					//se crea la tabla detalle de factura temporar
 					//this.crearDetalleTemTabla(caja.getNombreBd());
@@ -303,7 +303,7 @@ public class CajaDao extends ModeloDaoBasic {
 		Connection conn=null;
 		String sql="Create table if not exists "+nombreBd+".`encabezado_factura` ( "
 				+ "`numero_factura` int(11) NOT NULL AUTO_INCREMENT,"
-				+ " `fecha` date NOT NULL,"
+				+ " `fecha` datetime NOT NULL,"
 				+ "`subtotal_excento` float(8,2) NOT NULL DEFAULT '0.00',"
 				+ "`subtotal15` float(8,2) NOT NULL DEFAULT '0.00',"
 				+ "`subtotal18` float(8,2) NOT NULL DEFAULT '0.00',"
@@ -458,7 +458,7 @@ public class CajaDao extends ModeloDaoBasic {
 				+ " end if; "
 				+ " end;";
 		
-		System.out.println(sql);
+		//System.out.println(sql);
 		
 		
 		try {
@@ -492,7 +492,60 @@ public class CajaDao extends ModeloDaoBasic {
 		}
 		
 	}
-	
+	public boolean crearFunctionCostoFact(Caja caja){
+
+
+
+		Connection conn=null;
+		Statement stmt =null;
+		String sql="CREATE DEFINER=`root`@`localhost` FUNCTION "+ caja.getNombreBd()+".f_costo_factura(p_numero_factura int(11)) RETURNS double(11,2) "
+				+ " BEGIN "
+				+ " return (SELECT "
+				+ "	SUM( "
+				+ "			cantidad * precios_articulos.precio_articulo "
+				+ "	) AS total_costo "
+				+ "	FROM "
+				+ "			detalle_factura "
+				+ "	INNER JOIN admin_tools.precios_articulos ON ( "
+					+ caja.getNombreBd()+".detalle_factura.codigo_articulo = admin_tools.precios_articulos.codigo_articulo "
+					+ "	AND admin_tools.precios_articulos.codigo_precio = 4 "
+				+ " ) "
+				+ "	WHERE "
+				+ "			numero_factura= p_numero_factura) ; "
+				+ " end; ";
+
+				System.out.println(sql);
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			stmt = conn.createStatement();
+			//super.psConsultas=conn.prepareStatement(sql);
+			//psConsultas.executeUpdate();
+
+			stmt.execute(sql);
+			return true;
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			return false;
+		}
+		finally{
+			try{
+
+				//if(res != null) res.close();
+				if(stmt != null)stmt.close();
+				if(conn != null) conn.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//Sconexion.desconectar();
+			} // fin de catch
+		}
+
+	}
 public boolean crearEncabezadoTemTabla(String nombreBd){
 		
 		
@@ -614,6 +667,7 @@ public boolean crearDetalleTemTabla(String nombreBd){
 					+ "`codigo_tipo_facturacion` varchar(50) NOT NULL DEFAULT 'NA',"
 					+ "`cantida_solicitada` int(11) NOT NULL DEFAULT '0',"
 					+ "`fecha_limite_emision` date NOT NULL DEFAULT '1990-01-01',"
+					+ " `observacion` varchar(255) DEFAULT '',"
 					+ "PRIMARY KEY (`codigo_rango`)"
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;";
 			

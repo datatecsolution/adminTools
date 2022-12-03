@@ -152,7 +152,7 @@ public abstract class AbstractJasperReports implements Runnable
 
 
 		factura= AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
-		factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
+		//factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_la_copia.jasper");
 		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");
 
 		facturaTiketCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_credito.jasper");
@@ -218,7 +218,7 @@ public abstract class AbstractJasperReports implements Runnable
 		
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject( factura );
-			reportFactura2 = (JasperReport) JRLoader.loadObject( factura2 );
+			//reportFactura2 = (JasperReport) JRLoader.loadObject( factura2 );
 			reportFacturaCarta = (JasperReport) JRLoader.loadObject( facturaCarta );
 			reportFacturaTiketCredito = (JasperReport) JRLoader.loadObject( facturaTiketCredito );
 			reportFacturaCartaCredito = (JasperReport) JRLoader.loadObject( facturaCartaCredito );
@@ -1221,9 +1221,11 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 			if(tipoReporte==5){
 				reportFilled = JasperFillManager.fillReport( reportReciboPago, parametros, conn );
 			}
-			if(tipoReporte==6){
+			/*if(tipoReporte==6){
 				reportFilled = JasperFillManager.fillReport( reportFactura2, parametros, conn );
 			}
+
+			 */
 			if(tipoReporte==7){
 				reportFilled = JasperFillManager.fillReport( reportDevolucion, parametros, conn );
 			}
