@@ -55,7 +55,7 @@
 	`cliente`.`rtn` AS `rtn`,
 	`encabezado_factura`.`subtotal` AS `subtotal_factura`,
 	`encabezado_factura`.`impuesto` AS `impuesto`,
-	`encabezado_factura`.`total` AS `total`,
+	`encabezado_factura`.`total` AS `total_fact`,
 	`encabezado_factura`.`codigo` AS `codigo`,
 	`encabezado_factura`.`estado_factura` AS `estado_factura`,
 	`encabezado_factura`.`isv18` AS `isv18`,
@@ -158,7 +158,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="codigo_barra"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_factura"/>
 	</field>
-	<field name="fecha1" class="java.sql.Date">
+	<field name="fecha1" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="fecha1"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -222,7 +222,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="total" class="java.lang.Float">
+	<field name="total_fact" class="java.lang.Float">
 		<property name="com.jaspersoft.studio.field.label" value="total"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -638,7 +638,7 @@ WHERE
 					<textElement textAlignment="Right">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{total_fact}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="5" y="11" width="75" height="12" uuid="15a2f42b-d8ee-44c3-8f88-8448614561a0"/>

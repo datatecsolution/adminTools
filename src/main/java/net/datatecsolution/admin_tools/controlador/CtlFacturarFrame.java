@@ -1451,7 +1451,7 @@ public void calcularTotales(){
 	}
 	private void buscarCotizaciones() {
 		// TODO Auto-generated method stub
-		ViewListaCotizacion vistaFacturars=new ViewListaCotizacion(null);
+		ViewListaCotizacion vistaFacturars=new ViewListaCotizacion(SwingUtilities.getWindowAncestor(view));
 		CtlCotizacionLista ctlFacturas=new CtlCotizacionLista(vistaFacturars );
 		
 		vistaFacturars.pack();
@@ -2226,7 +2226,7 @@ public void calcularTotales(){
 	private void buscarArticulo(){
 	
 		//se llama el metodo que mostrar la ventana para buscar el articulo
-		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(null);
+		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(SwingUtilities.getWindowAncestor(view));
 		CtlArticuloBuscar ctlArticulo=new CtlArticuloBuscar(viewListaArticulo);
 		
 		viewListaArticulo.pack();
@@ -2468,7 +2468,7 @@ public void calcularTotales(){
 	}
 	private void buscarCliente(){
 		//se crea la vista para buscar los cliente
-		ViewListaClientes viewListaCliente=new ViewListaClientes (null);
+		ViewListaClientes viewListaCliente=new ViewListaClientes (SwingUtilities.getWindowAncestor(view));
 		
 		CtlClienteBuscar ctlBuscarCliente=new CtlClienteBuscar(viewListaCliente);
 		viewListaCliente.pack();
@@ -3067,6 +3067,7 @@ public void guardarRemotoCredito(){
 							AbstractJasperReports.createReportFacturaTiketCredito(ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
 							//AbstractJasperReports.showViewer(view);
 							//AbstractJasperReports.imprimierFactura();
+							AbstractJasperReports.imprimierFactura();
 							AbstractJasperReports.imprimierFactura();
 						}
 						

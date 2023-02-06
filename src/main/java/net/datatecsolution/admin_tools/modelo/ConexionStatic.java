@@ -30,13 +30,13 @@ public abstract class ConexionStatic implements Runnable{
 
 	private static String bd = "admin_tools";
 
-
+/*
 	//LOCAL_PRODUCCION
 	private static String login = "admin";
 	//private static String login = "root";
-	private static String password = "Jdmm123.";
-	//private static String server = "127.0.0.1";
-	private static String server = "192.168.1.4";
+	private static String password = "Jdmm123?";
+	private static String server = "127.0.0.1";
+	//private static String server = "192.168.1.4";
 /*
 
 
@@ -55,7 +55,13 @@ public abstract class ConexionStatic implements Runnable{
 	private static String server = "192.168.88.253";
 
 
+	//Supermercado Erlin
+	private static String login = "admin";
+	private static String password = "Jdmm123?";
+	private static String server = "192.168.89.250";
 
+
+/*
     //AutoRepuesto Escobar
 	private static String login = "admin";
 	private static String password = "Jdmm123.";
@@ -93,7 +99,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.100.110";
-
+*/
 	//Farmacia San Ramon
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
@@ -148,7 +154,8 @@ public abstract class ConexionStatic implements Runnable{
 	//LA GRANJA
 	private static String login = "admin_tools_user";
 	private static String password = "Jdmm123.";
-	private static String server = "192.168.0.110";
+	//private static String server = "192.168.0.110";
+	private static String server = "192.168.1.4";
 
 */
 
