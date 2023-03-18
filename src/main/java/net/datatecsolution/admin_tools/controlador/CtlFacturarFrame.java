@@ -1206,7 +1206,7 @@ public void calcularTotales(){
 					case KeyEvent.VK_F9:
 						if(filaPulsada>=0){
 							
-							String entrada=JOptionPane.showInputDialog("Escriba el cantida");
+							String entrada=JOptionPane.showInputDialog(view,"Escriba el cantida");
 							
 							//se verfica en la configuracion si se puede facturar sin inventario
 							if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
@@ -1464,7 +1464,7 @@ public void calcularTotales(){
 	}
 	private void buscarCotizaciones() {
 		// TODO Auto-generated method stub
-		ViewListaCotizacion vistaFacturars=new ViewListaCotizacion(null);
+		ViewListaCotizacion vistaFacturars=new ViewListaCotizacion(SwingUtilities.getWindowAncestor(view));
 		CtlCotizacionLista ctlFacturas=new CtlCotizacionLista(vistaFacturars );
 		
 		vistaFacturars.pack();
@@ -2088,7 +2088,7 @@ public void calcularTotales(){
 				
 				//activas para cuando se necesite un vendedor
 				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){
-					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(null);
+					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 					CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
 					
 					 resulVendedor=ctlVendedor.cargarVendedor();
@@ -2135,7 +2135,7 @@ public void calcularTotales(){
 					if(view.getRdbtnContado().isSelected()){
 				
 						//se muestra la vista para cobrar y introducir el cambio 
-						ViewCambioPago viewPago=new ViewCambioPago(null);
+						ViewCambioPago viewPago=new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
 						CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
 						//se muestra y ventana del cobro y se devuelve un resultado del cobro
 						boolean resulPago=ctlPago.pagar();
@@ -2256,7 +2256,7 @@ public void calcularTotales(){
 	private void buscarArticulo(){
 	
 		//se llama el metodo que mostrar la ventana para buscar el articulo
-		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(null);
+		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(SwingUtilities.getWindowAncestor(view));
 		CtlArticuloBuscar ctlArticulo=new CtlArticuloBuscar(viewListaArticulo);
 		
 		viewListaArticulo.pack();
@@ -2465,9 +2465,9 @@ public void calcularTotales(){
 		myFactura.setCodigoAlter(0);
 		//se agrega una fila vacia a la tabla detalle
 		view.getModeloTabla().agregarDetalle();
-		
-		
-		
+
+		this.myFactura.resetTotales();
+
 		//conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
 		
@@ -2498,7 +2498,7 @@ public void calcularTotales(){
 	}
 	private void buscarCliente(){
 		//se crea la vista para buscar los cliente
-		ViewListaClientes viewListaCliente=new ViewListaClientes (null);
+		ViewListaClientes viewListaCliente=new ViewListaClientes (SwingUtilities.getWindowAncestor(view));
 		
 		CtlClienteBuscar ctlBuscarCliente=new CtlClienteBuscar(viewListaCliente);
 		viewListaCliente.pack();
@@ -3098,6 +3098,7 @@ public void guardarRemotoCredito(){
 							//AbstractJasperReports.showViewer(view);
 							//AbstractJasperReports.imprimierFactura();
 							AbstractJasperReports.imprimierFactura();
+							AbstractJasperReports.imprimierFactura();
 						}
 						
 						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("carta")){
@@ -3149,7 +3150,7 @@ public void guardarRemotoCredito(){
 
 
 					//muestra en la pantalla el cambio y lo mantiene permanente
-					ViewCambio cambio=new ViewCambio(null);
+					ViewCambio cambio=new ViewCambio(SwingUtilities.getWindowAncestor(view));
 					cambio.getTxtCambio().setText(cambioEfectivo);
 					cambio.getTxtEfectivo().setText(pago);
 					cambio.setVisible(true);
