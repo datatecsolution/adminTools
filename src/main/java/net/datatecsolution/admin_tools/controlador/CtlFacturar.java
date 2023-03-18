@@ -1187,7 +1187,7 @@ public void calcularTotal(DetalleFactura detalle){
 			if(resulVendedor)//verifica si ingreso el codigo del bombero
 			{
 				//se 
-				myFactura.setVendedor(ctlVendedor.getVendetor());
+				myFactura.setVendedor(ctlVendedor.getVendedor());
 			
 			
 				//si la factura es al contado

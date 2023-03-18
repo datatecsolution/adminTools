@@ -83,7 +83,6 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 			int numeroFactura=Integer.parseInt(comando);
 			//si es un factura guardada
 			if(numeroFactura>0){
-			
 				cargarFacturaPendiente(numeroFactura);
 			}
 			//si es una nueva factura
@@ -1493,7 +1492,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 
 		if(resulVendedor) {
 
-			myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
+			myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
 			boolean resultado = facturaOrdenesDao.registrar(myFactura);
 
 			if (resultado) {

@@ -2074,7 +2074,7 @@ public void calcularTotales(){
 					CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
 					
 					 resulVendedor=ctlVendedor.cargarVendedor();
-					 myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
+					 myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
 				}else{
 						if(myFactura.getVendedor().getCodigo()<1){
 							Empleado uno=new Empleado();

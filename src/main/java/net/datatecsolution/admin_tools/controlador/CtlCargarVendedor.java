@@ -139,7 +139,7 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 		this.view.setVisible(true);
 		return this.Estado;
 	}
-	public Empleado getVendetor(){
+	public Empleado getVendedor(){
 		return myEmpleado;
 	}
 	private void salir() {
