@@ -2076,12 +2076,13 @@ public void calcularTotales(){
 					 resulVendedor=ctlVendedor.cargarVendedor();
 					 myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
 				}else{
-				
-					 resulVendedor=true;
-					 
-					 Empleado uno=new Empleado();
-					 uno.setCodigo(1);
-					myFactura.setVendedor(uno);
+						if(myFactura.getVendedor().getCodigo()<1){
+							Empleado uno=new Empleado();
+							uno.setCodigo(1);
+							myFactura.setVendedor(uno);
+						}
+					resulVendedor=true;
+
 					 
 				}
 				

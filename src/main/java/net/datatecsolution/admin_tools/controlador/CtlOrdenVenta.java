@@ -1482,26 +1482,41 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 		
 		
 		setFactura();
-		boolean resultado=facturaOrdenesDao.registrar(myFactura);
-		
-		if(resultado){
-			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-			resultado=true;
-			
-			this.tipoView=1;
-			//this.view.setVisible(false);
-			//view.addBotonPendiente(myFactura,this);
-			
-			setEmptyView();
-			
-			
-			view.getBtnsGuardador().deleteAll();
-			
-			cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-		}else{
-			JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
+
+
+		boolean resulVendedor=false;
+
+		ViewCargarVenderor viewVendedor=new ViewCargarVenderor(view);
+		CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
+
+		resulVendedor=ctlVendedor.cargarVendedor();
+
+		if(resulVendedor) {
+
+			myFactura.setVendedor(ctlVendedor.getVendetor());//activas para cuando se necesite un vendedor
+			boolean resultado = facturaOrdenesDao.registrar(myFactura);
+
+			if (resultado) {
+				myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+				resultado = true;
+
+				this.tipoView = 1;
+				//this.view.setVisible(false);
+				//view.addBotonPendiente(myFactura,this);
+
+				setEmptyView();
+
+
+				view.getBtnsGuardador().deleteAll();
+
+				cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+			} else {
+				JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
+			}
+		}else {
+			JOptionPane.showMessageDialog(view, "Debe agregar un vendendor a la factura", "Error al guardar", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 	
 		
 	}

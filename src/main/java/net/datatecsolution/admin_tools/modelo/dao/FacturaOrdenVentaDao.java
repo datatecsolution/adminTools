@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.modelo.dao;
 
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.Factura;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 							+ " encabezado_factura_temp.subtotal15 AS subtotal15, "
 							+ " encabezado_factura_temp.subtotal18 AS subtotal18, "
 							+ " encabezado_factura_temp.subtotal AS subtotal, "
+							+ " encabezado_factura_temp.codigo_vendedor AS codigo_vendedor, "
 							+ " encabezado_factura_temp.impuesto AS impuesto, "
 							+ " encabezado_factura_temp.total AS total, "
 							+ " cliente.codigo_cliente AS codigo_cliente, "
@@ -79,12 +81,13 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ "estado_factura,"
 				+ "tipo_factura,"
 				+ "usuario,"
+				+ "codigo_vendedor,"
 				+ "subtotal_excento,"
 				+ "subtotal15,"
 				+ "subtotal18,"
 				+ "isvOtros,"
 				+ "codigo_caja)"
-				+ " VALUES (now(),?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ " VALUES (now(),?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		try 
 		{
@@ -107,11 +110,12 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			psConsultas.setString(6, "ACT");
 			psConsultas.setInt(7, myFactura.getTipoFactura());
 			psConsultas.setString(8, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setBigDecimal(9, myFactura.getSubTotalExcento());
-			psConsultas.setBigDecimal(10, myFactura.getSubTotal15());
-			psConsultas.setBigDecimal(11, myFactura.getSubTotal18());
-			psConsultas.setBigDecimal(12, myFactura.getTotalOtrosImpuesto1());
-			psConsultas.setInt(13, myFactura.getCodigoCaja());
+			psConsultas.setInt(9, myFactura.getVendedor().getCodigo());
+			psConsultas.setBigDecimal(10, myFactura.getSubTotalExcento());
+			psConsultas.setBigDecimal(11, myFactura.getSubTotal15());
+			psConsultas.setBigDecimal(12, myFactura.getSubTotal18());
+			psConsultas.setBigDecimal(13, myFactura.getTotalOtrosImpuesto1());
+			psConsultas.setInt(14, myFactura.getCodigoCaja());
 			
 			
 			
@@ -194,6 +198,11 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unCliente.setRtn(res.getString("rtn"));
 				
 				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado=new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+
+				unaFactura.setVendedor(unEmpleado);
 				
 				unaFactura.setFecha(res.getString("fecha"));
 				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
