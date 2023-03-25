@@ -1449,7 +1449,7 @@ public class FacturaDao extends ModeloDaoBasic {
         		+ " FROM "+super.DbName+".encabezado_factura "
         				+ " INNER JOIN "+ DbNameBase+".usuario "
         						+ " ON encabezado_factura.usuario = usuario.usuario "
-        						+ " where fecha BETWEEN ? and ? "
+        						+ " where DATE_FORMAT(fecha,'%y-%m-%d') BETWEEN CAST(? AS DATE) and CAST(? AS DATE) "
         						+ " and encabezado_factura.estado_factura = 'ACT'"
         						+ "GROUP BY usuario.id";
         
