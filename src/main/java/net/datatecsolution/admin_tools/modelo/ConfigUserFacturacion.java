@@ -23,6 +23,8 @@ public class ConfigUserFacturacion {
 	private Usuario usuario2=null;
 	private Empleado vendedorEnBusqueda;
 
+	private boolean imprReportOrden=true;
+
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
 	}
@@ -272,6 +274,14 @@ public class ConfigUserFacturacion {
 
 	public void setPwdEntrePrecio(boolean pwdEntrePrecio) {
 		this.pwdEntrePrecio = pwdEntrePrecio;
+	}
+
+	public boolean isImprReportOrden() {
+		return imprReportOrden;
+	}
+
+	public void setImprReportOrden(boolean imprReportOrden) {
+		this.imprReportOrden = imprReportOrden;
 	}
 	
 
