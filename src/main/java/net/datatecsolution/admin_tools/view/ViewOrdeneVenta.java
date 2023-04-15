@@ -52,8 +52,6 @@ public class ViewOrdeneVenta extends JDialog {
 	private BotonCancelar btnCerrar;
 	private BotonBuscar1 btnBuscar;
 	private BotonBuscarClientes btnCliente;
-	private BotonCobrar btnCobrar;
-	private JButton btnCierreCaja;
 	private JButton btnGetCotizacion;
 	
 	private JTextField txtDescuento;
@@ -287,12 +285,7 @@ public class ViewOrdeneVenta extends JDialog {
 		btnBuscar = new BotonBuscar1();
 		btnBuscar.setBackground(color1);
 		panelAcciones.add(btnBuscar);
-		
-		btnCobrar = new BotonCobrar();
-		btnCobrar.setEnabled(false);
-		btnCobrar.setBackground(color1);
-		btnCobrar.setText("F2 Cobrar");
-		panelAcciones.add(btnCobrar);
+
 		
 		btnCliente = new BotonBuscarClientes();
 		btnCliente.setBackground(color1);
@@ -314,13 +307,6 @@ public class ViewOrdeneVenta extends JDialog {
 		btnGetCotizacion.setText("Cotizaciones");
 		panelAcciones.add(btnGetCotizacion);
 		
-		btnCierreCaja = new BotonCierreCaja();// JButton("F6 Cierre");
-		btnCierreCaja.setEnabled(false);
-		btnCierreCaja.setBackground(color1);
-		btnCierreCaja.setText("F6 Cierre");
-		btnCierreCaja.setHorizontalTextPosition(SwingConstants.CENTER);
-		panelAcciones.add(btnCierreCaja);
-		
 		btnActualizar=new BotonActualizar();
 		btnActualizar.setEnabled(false);
 		btnActualizar.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -338,9 +324,9 @@ public class ViewOrdeneVenta extends JDialog {
 		
 		panelGuardados = new JPanel();
 		panelGuardados.setBackground(color3);
-		panelGuardados.setSize(160, 0);
+		panelGuardados.setSize(160, 0);// Establece un tamaño fijo al panel de contenido
 		//getContentPane().add(panelGuardados, BorderLayout.EAST);
-		panelGuardados.setLayout(new GridLayout(10, 1, 0, 0));
+		panelGuardados.setLayout(new GridLayout(0, 1, 0, 0));
 
 		JScrollPane scrollPane2 = new JScrollPane(panelGuardados, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -520,9 +506,7 @@ public class ViewOrdeneVenta extends JDialog {
 	public JButton getBtnBuscarCliente(){
 		return btnCliente;
 	}
-	public JButton getBtnCobrar(){
-		return btnCobrar;
-	}
+
 	public JButton getBtnCerrar(){
 		return btnCerrar;
 	}
@@ -562,9 +546,6 @@ public class ViewOrdeneVenta extends JDialog {
 	public JTextField getTxtBuscar(){
 		return txtBuscar;
 	}
-	public JButton getBtnCierreCaja() {
-		return btnCierreCaja;
-	}
 	/*public JTextField getTxtArticulo(){
 		return txtArticulo;
 	}
@@ -574,6 +555,9 @@ public class ViewOrdeneVenta extends JDialog {
 	public JPopupMenu getMenuContextual(){
 		return menuContextual;
 		
+	}
+	public JPanel getPanelGuardados() {
+		return panelGuardados;
 	}
 	public JTextField getTxtFechafactura(){
 		return txtFechafactura;
@@ -603,10 +587,6 @@ public class ViewOrdeneVenta extends JDialog {
 		txtNombrecliente.addKeyListener(c);
 		txtFechafactura.addKeyListener(c);
 		
-		btnCierreCaja.addKeyListener(c);
-		btnCierreCaja.addActionListener(c);
-		btnCierreCaja.setActionCommand("CIERRECAJA");
-		
 		
 		btnGuardarCotizacion.addKeyListener(c);
 		btnGuardarCotizacion.addActionListener(c);
@@ -631,9 +611,7 @@ public class ViewOrdeneVenta extends JDialog {
 		this.btnCliente.addActionListener(c);
 		this.btnCliente.setActionCommand("BUSCARCLIENTES");
 		
-		this.btnCobrar.addKeyListener(c);
-		this.btnCobrar.addActionListener(c);
-		this.btnCobrar.setActionCommand("COBRAR");
+
 		
 		this.btnGuardar.addKeyListener(c);
 		this.btnGuardar.addActionListener(c);
