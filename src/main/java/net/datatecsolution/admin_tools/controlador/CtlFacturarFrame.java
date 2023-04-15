@@ -3069,7 +3069,7 @@ public void guardarRemotoCredito(){
 							//AbstractJasperReports.showViewer(view);
 							//AbstractJasperReports.imprimierFactura();
 							AbstractJasperReports.imprimierFactura();
-							AbstractJasperReports.imprimierFactura();
+							//AbstractJasperReports.imprimierFactura();
 						}
 						
 						if(ConexionStatic.getUsuarioLogin().getConfig().getFormatoFacturaCredito().equals("carta")){
