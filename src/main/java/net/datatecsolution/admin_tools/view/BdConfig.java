@@ -9,6 +9,7 @@ import java.awt.*;
 
 public class BdConfig extends JDialog {
 	private JTextField txtUrl;
+	private JPasswordField tpfClave;
 	private JTextField txtUser;
 	private JTextField txtPwd;
 	private JTextField txtDataBase;
@@ -18,54 +19,54 @@ public class BdConfig extends JDialog {
 	
 	public BdConfig(Window v) {
 		super(v,"Configuracion de la base de datos", ModalityType.DOCUMENT_MODAL);
-		getContentPane().setLayout(null);
-		this.setSize(450, 385);
-		this.setPreferredSize(new Dimension(450,385));
-		
+		getContentPane().setLayout(new BorderLayout());
+		this.setSize(450, 400);
+		this.setPreferredSize(new Dimension(450,400));
+		JPanel jpDatos=new JPanel(new GridLayout(0, 2,3,3));
+
+
+		JLabel lblClave = new JLabel("clave");
+		//jpDatos.add(lblClave);
+
+		tpfClave = new JPasswordField();
+		//jpDatos.add(tpfClave);
+		tpfClave.setColumns(10);
+
 		JLabel lblServidor = new JLabel("Host name/ip adress");
-		lblServidor.setBounds(23, 12, 151, 15);
-		getContentPane().add(lblServidor);
+		jpDatos.add(lblServidor);
 		
 		txtUrl = new JTextField();
-		txtUrl.setBounds(23, 39, 405, 27);
-		getContentPane().add(txtUrl);
+		jpDatos.add(txtUrl);
 		txtUrl.setColumns(10);
 		
 		JLabel lblUserName = new JLabel("User name");
-		lblUserName.setBounds(23, 78, 106, 15);
-		getContentPane().add(lblUserName);
+		jpDatos.setBounds(23, 78, 106, 15);
+		jpDatos.add(lblUserName);
 		
 		txtUser = new JTextField();
-		txtUser.setBounds(23, 105, 405, 27);
-		getContentPane().add(txtUser);
+		jpDatos.add(txtUser);
 		txtUser.setColumns(10);
 		
 		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(23, 144, 106, 15);
-		getContentPane().add(lblPassword);
+		jpDatos.add(lblPassword);
 		
-		txtPwd = new JTextField();
-		txtPwd.setBounds(23, 171, 405, 27);
-		getContentPane().add(txtPwd);
+		txtPwd = new JPasswordField();
+		jpDatos.add(txtPwd);
 		txtPwd.setColumns(10);
 		
 		JLabel lblDataBase = new JLabel("Data base");
-		lblDataBase.setBounds(23, 210, 151, 15);
-		getContentPane().add(lblDataBase);
+		jpDatos.add(lblDataBase);
 		
 		txtDataBase = new JTextField();
-		txtDataBase.setBounds(23, 237, 405, 27);
-		getContentPane().add(txtDataBase);
+		jpDatos.add(txtDataBase);
 		txtDataBase.setColumns(10);
 		
 		btnGuardar = new BotonGuardar();
-		btnGuardar.setBounds(29, 274, 145, 77);
-		getContentPane().add(btnGuardar);
+		jpDatos.add(btnGuardar);
 		
 		btnCancelar = new BotonCancelar();
-		btnCancelar.setBounds(244, 274, 146, 77);
-		getContentPane().add(btnCancelar);
-		
+		jpDatos.add(btnCancelar);
+		getContentPane().add(jpDatos);
 		//Centrar la ventana de autentificacion en la pantalla
 		Dimension tamFrame=this.getSize();//para obtener las dimensiones del frame
 		Dimension tamPantalla=Toolkit.getDefaultToolkit().getScreenSize();      //para obtener el tamanio de la pantalla
@@ -89,6 +90,10 @@ public class BdConfig extends JDialog {
 	}
 	
 	public void conectarControlador(CtlBdConfig c){
+
+		tpfClave.setActionCommand("CLAVE");
+		tpfClave.addActionListener(c);
+
 		btnGuardar.setActionCommand("GUARDAR");
 		btnGuardar.addActionListener(c);
 		

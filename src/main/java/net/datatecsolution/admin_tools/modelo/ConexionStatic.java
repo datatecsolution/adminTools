@@ -2,6 +2,7 @@
 
 package net.datatecsolution.admin_tools.modelo;
 
+import net.datatecsolution.admin_tools.config.Cifrado;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 
@@ -12,11 +13,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-
-
-
-
+import java.util.Properties;
 
 
 /**
@@ -28,16 +25,17 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String bd = "admin_tools";
+	private static String bd;
 
 
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
-	private static String login = "root";
+	private static String login;
 	//private static String password = "Jdmm123?";
-	private static String password = "Jdmm123.";
-	private static String server = "127.0.0.1";
+	private static String password ;
+	private static String server;
 	//private static String server = "192.168.1.4";
+
 
 
 /*
@@ -131,7 +129,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String server = "192.168.1.10";
 
 
-/*
+
 
 
 	//DISTRIBUIDORA SHAROM
@@ -172,7 +170,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
+	private static String url;// = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
 	private static String driver="com.mysql.cj.jdbc.Driver";
 
 
@@ -191,7 +189,31 @@ public abstract class ConexionStatic implements Runnable{
 	}
 
 	public static void conectarBD() {
+
+		Cifrado cifrado = new Cifrado();
+		// Recuperamos los datos cifrados desde el archivo
+		Properties datosRecuperados = null;
+		try {
+			datosRecuperados = cifrado.recuperarDatosCifrados();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		login=datosRecuperados.getProperty("usuario");
+		password=datosRecuperados.getProperty("pwd");
+		server =datosRecuperados.getProperty("host");
+		bd =datosRecuperados.getProperty("dataBase");
+		url="jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
+
+		/*
+		// Imprimimos los datos recuperados
+		System.out.println("Host: " + login);
+		System.out.println("Usuario: " + password);
+		System.out.println("Contraseña: " + server);
+		System.out.println("Base de datos: " + bd);
+		*
+		 */
 		poolConexiones = setDataSource("mysql");
+		//System.exit(0);
 
 	}
 

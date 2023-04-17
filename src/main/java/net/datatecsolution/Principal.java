@@ -21,6 +21,7 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,14 +36,16 @@ public class Principal {
         // TODO Auto-generated method stub
 
 
+        Locale.setDefault(new Locale("es", "HN"));
 
+        //se establece la conecion a la base de datos
+        ConexionStatic.conectarBD();
 
         //se cargan todos los reportes
         AbstractJasperReports.loadFileReport();
 
 
-        //se establece la conecion a la base de datos
-        ConexionStatic.conectarBD();
+
 
 
         //se aplican los interes de las facturas vendidas
