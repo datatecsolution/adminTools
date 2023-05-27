@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.controlador;
 import net.datatecsolution.admin_tools.modelo.Categoria;
 import net.datatecsolution.admin_tools.modelo.dao.CategoriaDao;
 import net.datatecsolution.admin_tools.view.ViewCrearCategoria;
+import net.datatecsolution.admin_tools.view.ViewFiltroRepVentasCategoria;
 import net.datatecsolution.admin_tools.view.ViewListaCategorias;
 
 import javax.swing.*;
@@ -143,6 +144,27 @@ public class CtlCategoriaLista implements ActionListener, MouseListener,WindowLi
 			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
+		case "LIMPIAR":
+
+					//Recoger que fila se ha pulsadao en la tabla
+					filaPulsada = this.view.getTabla().getSelectedRow();
+
+					//si seleccion una fila
+					if(filaPulsada>=0) {
+
+						//Se recoge el id de la fila marcada
+						int identificador = (int) this.view.getModelo().getValueAt(filaPulsada, 0);
+						Categoria newCat = this.view.getModelo().getMarca(filaPulsada);//se consigue el proveedore de la fila seleccionada
+
+						ViewFiltroRepVentasCategoria filtro = new ViewFiltroRepVentasCategoria(view);
+						CtlFiltroRepVentasCategoria ctlfiltro = new CtlFiltroRepVentasCategoria(filtro, newCat);
+					}else{//si solo seleccion la fila se guarda el id de proveedor para accion de eliminar
+
+						JOptionPane.showMessageDialog(view, "No se seleccion un  registro","Error validacion",JOptionPane.ERROR_MESSAGE);
+
+					}
+
+				break;
 		}
 		
 	}

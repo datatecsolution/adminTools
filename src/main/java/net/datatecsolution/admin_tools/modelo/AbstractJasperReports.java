@@ -77,6 +77,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream ventasCategoria=null;
 	private static InputStream ventasDetalleTurno=null;
 	private static InputStream ventasArticulo=null;
+	private static InputStream ventasCategoriaTotal=null;
 	private static InputStream cierreVentasDetalleCateg=null;
 	private static InputStream cuentaFactura=null;
 	private static InputStream ruta=null;
@@ -125,6 +126,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport reportVentasCategoria;
 	private static JasperReport reportVentasDetalleTurno;
 	private static JasperReport reportVentasArticulo;
+	private static JasperReport reportVentasCategoriaTotal;
 	private static JasperReport reportCierreVentasDetalleCateg;
 	private static JasperReport	reportCuentaFactura;
 	private static JasperReport reportRuta;
@@ -202,8 +204,9 @@ public abstract class AbstractJasperReports implements Runnable
 		ventasDetalleTurno=AbstractJasperReports.class.getResourceAsStream("/reportes/ventas_detalle_turno.jasper");
 		
 		ventasArticulo=AbstractJasperReports.class.getResourceAsStream("/reportes/ventas_detalle_articulo.jasper");
-		
-		
+
+		ventasCategoriaTotal=AbstractJasperReports.class.getResourceAsStream("/reportes/ventas_categoria_total.jasper");
+
 		cierreVentasDetalleCateg=AbstractJasperReports.class.getResourceAsStream("/reportes/cierre_ventas_detalle_categ.jasper");
 		
 		cuentaFactura=AbstractJasperReports.class.getResourceAsStream("/reportes/cliente_cuenta_factura.jasper");
@@ -264,6 +267,7 @@ public abstract class AbstractJasperReports implements Runnable
 			reportVentasDetalleTurno=(JasperReport) JRLoader.loadObject( ventasDetalleTurno );
 			
 			reportVentasArticulo=(JasperReport) JRLoader.loadObject( ventasArticulo );
+			reportVentasCategoriaTotal=(JasperReport) JRLoader.loadObject( ventasCategoriaTotal );
 			
 			reportCierreVentasDetalleCateg=(JasperReport) JRLoader.loadObject( cierreVentasDetalleCateg );
 			
@@ -482,6 +486,44 @@ public static void createReportVentasArticulo(Connection conn,List<DetalleFactur
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 			}
+	}
+
+	public static void createReportVentasCategoria(Connection conn,List<DetalleFactura> ventas,Categoria cat,String fecha1,String fecha2){
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("fecha1",fecha1);
+		parametros.put("fecha2", fecha2);
+		parametros.put("categoria", cat.getDescripcion());
+
+		parametros.put("codigo_categoria", cat.getId());
+		parametros.put("bD_admin",facturaDao.getDbNameDefault());
+
+
+
+
+
+
+
+		JRBeanCollectionDataSource comisionesJRBean =new JRBeanCollectionDataSource(ventas);
+		parametros.put("ventasDataSource",comisionesJRBean);
+
+
+		try {
+			if(reportVentasCategoriaTotal!=null)
+				reportFilled = JasperFillManager.fillReport( reportVentasCategoriaTotal, parametros, conn );
+				//reportFilled = JasperFillManager.fillReport( reportComisiones, parametros, new JREmptyDataSource() );
+			else
+				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 
 public static void createReportRuta(Connection conn,RutaEntrega ruta,List<DetalleFactura> ventas){
