@@ -23,7 +23,7 @@ public class ConfigUserFacturacion {
 	private Usuario usuario2=null;
 	private Empleado vendedorEnBusqueda;
 
-	private boolean imprReportOrden=true;
+	private boolean imprReportOrden=false;
 
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
