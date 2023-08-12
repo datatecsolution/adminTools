@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="34" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -99,7 +99,8 @@
 	`encabezado_factura`.`codigo_vendedor` AS `codigo_vendedor`,
 	`encabezado_factura`.`cobro_tarjeta` AS `cobro_tarjeta`,
 	`encabezado_factura`.`cobro_efectivo` AS `cobro_efectivo`,
-	`encabezado_factura`.`observacion` AS `observacion`
+	`encabezado_factura`.`observacion` AS `observacion`,
+	 datos_factura.codigo_tipo_facturacion as codigo_tipo_facturacion
 FROM
 	$P!{bD_facturacion}.encabezado_factura
 INNER JOIN $P!{bD_facturacion}.detalle_factura ON encabezado_factura.numero_factura = detalle_factura.numero_factura
@@ -108,7 +109,8 @@ inner Join $P!{bD_admin}.articulo on detalle_factura.codigo_articulo=articulo.co
 inner join $P!{bD_admin}.cliente on `cliente`.`codigo_cliente` = `encabezado_factura`.`codigo_cliente`
 inner join $P!{bD_admin}.tipo_factura on `tipo_factura`.`id_tipo_factura` = `encabezado_factura`.`tipo_factura`
 inner join $P!{bD_admin}.tipo_pago on `encabezado_factura`.`tipo_pago` = `tipo_pago`.`codigo_tipo_pago`
-inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `empleados`.`codigo_empleado`
+inner join $P!{bD_admin}.empleados on `encabezado_factura`.`codigo_vendedor` = `empleados`.`codigo_empleado` 
+INNER JOIN $P!{bD_facturacion}.datos_factura on datos_factura.codigo_rango=encabezado_factura.cod_rango 
 WHERE
     encabezado_factura.numero_factura = $P{numero_factura}]]>
 	</queryString>
@@ -299,7 +301,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="tipo_factura"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="COLUMN_39" class="java.lang.Integer">
+	<field name="codigo_tipo_facturacion" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="agrega_kardex"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura"/>
 	</field>
@@ -415,7 +417,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="8" y="31" width="43" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f">
+				<reportElement x="8" y="30" width="43" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -424,42 +426,42 @@ WHERE
 				<text><![CDATA[Cliente:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="51" y="31" width="212" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<reportElement x="51" y="30" width="179" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="8" y="22" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<reportElement x="8" y="20" width="58" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[No Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="66" y="22" width="197" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<reportElement x="66" y="20" width="164" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{dato1}+"-"+$F{numero_factura2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{codigo_tipo_facturacion}+"-"+$F{numero_factura2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yyy h:mm a">
-				<reportElement x="337" y="22" width="90" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<reportElement x="305" y="20" width="122" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha1}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="264" y="22" width="75" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<reportElement x="230" y="20" width="75" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Fecha Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="308" y="30" width="100" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
+				<reportElement x="264" y="29" width="163" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -468,7 +470,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="264" y="30" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026">
+				<reportElement x="230" y="29" width="34" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<textElement>
@@ -477,7 +479,7 @@ WHERE
 				<text><![CDATA[RTN:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="432" y="20" width="57" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
+				<reportElement x="431" y="20" width="58" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
@@ -505,14 +507,14 @@ WHERE
 				<text><![CDATA[Tipo Factura:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="293" y="38" width="138" height="13" uuid="992598af-e87f-47db-bf17-ee6aa1839d07"/>
+				<reportElement x="268" y="38" width="162" height="13" uuid="992598af-e87f-47db-bf17-ee6aa1839d07"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_vendedor}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="264" y="38" width="37" height="13" uuid="25fce559-e4f0-4530-b7e6-7458d668a215"/>
+				<reportElement x="231" y="38" width="37" height="13" uuid="25fce559-e4f0-4530-b7e6-7458d668a215"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
@@ -528,14 +530,14 @@ WHERE
 				<text><![CDATA[Direccion:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="61" y="40" width="202" height="13" uuid="72eee08a-4adc-4f7c-a4b3-0c5ebdc52bcf"/>
+				<reportElement x="61" y="40" width="168" height="13" uuid="72eee08a-4adc-4f7c-a4b3-0c5ebdc52bcf"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="4" width="555" height="18" uuid="36597603-4400-4dd7-b0de-721d146b0ba5"/>
+				<reportElement x="1" y="-3" width="555" height="18" uuid="36597603-4400-4dd7-b0de-721d146b0ba5"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
@@ -693,6 +695,27 @@ WHERE
 			</frame>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="20">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="1" width="550" height="19" forecolor="#050505" backcolor="#FFFFFF" uuid="e8c26ee4-31ac-4875-8766-652d296d56fd"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="510" y="1" width="40" height="18" forecolor="#030303" uuid="a2cbc39f-ca5b-4330-b7ae-7b357abfb863"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="430" y="1" width="80" height="18" forecolor="#030303" uuid="d0f74539-1580-4342-95ac-abb73c9db1b7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
 	<summary>
 		<band height="158">
 			<frame>
@@ -784,15 +807,15 @@ WHERE
 					<textFieldExpression><![CDATA[$F{isv18}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="4" y="42" width="334" height="17" uuid="e12adf8b-0f17-4476-bc43-54f988c7d71b"/>
-					<box leftPadding="5"/>
+					<reportElement x="-1" y="47" width="339" height="17" uuid="e12adf8b-0f17-4476-bc43-54f988c7d71b"/>
+					<box leftPadding="0"/>
 					<textElement>
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Total en letras: "+$F{total_letras}]]></textFieldExpression>
 				</textField>
 				<subreport>
-					<reportElement positionType="Float" x="5" y="1" width="333" height="35" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="4874c174-4e7f-4939-a242-3bb8b213451e"/>
+					<reportElement positionType="Float" x="-1" y="1" width="339" height="46" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="4874c174-4e7f-4939-a242-3bb8b213451e"/>
 					<subreportParameter name="cod_rango">
 						<subreportParameterExpression><![CDATA[$F{cod_rango}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -917,14 +940,14 @@ WHERE
 					<text><![CDATA[Descuento y rebajas]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="4" y="61" width="334" height="12" uuid="ec0b45d2-ec8a-471f-b9da-3991d40f583a"/>
+					<reportElement x="-1" y="63" width="334" height="12" uuid="ec0b45d2-ec8a-471f-b9da-3991d40f583a"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<text><![CDATA[Factura exonerada #: NA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="4" y="69" width="334" height="12" uuid="9ba01e27-561e-4a6a-8213-451e1f76b5c3">
+					<reportElement x="-1" y="71" width="334" height="12" uuid="9ba01e27-561e-4a6a-8213-451e1f76b5c3">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
@@ -933,7 +956,7 @@ WHERE
 					<text><![CDATA[Orden de compra exonerada #: NA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="4" y="78" width="334" height="12" uuid="a34d7006-5ee0-4ea5-80d3-3f707f51b908">
+					<reportElement x="-1" y="80" width="334" height="12" uuid="a34d7006-5ee0-4ea5-80d3-3f707f51b908">
 						<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
