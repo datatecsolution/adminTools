@@ -24,28 +24,26 @@ public class ViewAgregarCompras extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtIdProveedor;
 	private JTextField txtNombreproveedor;
-	protected JPanel panelProveedor;
-	private JTextField txtTelefonoProveedor;
-	
+
 	private JTable tablaArticulos;
 	private DmtFacturaProveedores modelo;
 	private JTextField txtNofactura;
 	private ButtonGroup grupoOpciones;
 	private JRadioButton rdbtnCredito;
 	private JRadioButton rdbtnContado;
-	
-	
+
+
 	private BotonCancelar btnCancelar;
 	private BotonGuardar btnGuardar;
 	private BotonActualizar btnActualizar;
-	
+
 	private JDateChooser dateCompra;
 	private JDateChooser dateVencFactura;
 	private JTextField txtTotalimpuesto15;
 	private JTextField txtTotal;
 	private JLabel lblFechaVencimiento;
 	private JTextField txtSubtotal;
-	
+
 	private CbxTmDepartamento modeloCbx;
 	private JComboBox cbxDepart;
 	private JLabel lblContado;
@@ -53,160 +51,147 @@ public class ViewAgregarCompras extends JDialog {
 	private JButton btnBuscar;
 	private JTextField txtTotalImpusto18;
 	private JPanel panel;
-	
-	
+	private JCheckBox chckbxIVAincluido;
+
+
 	public ViewAgregarCompras(Window view) {
 		super(view,"Registrar Compras", ModalityType.DOCUMENT_MODAL);
 		getContentPane().setLayout(null);
-		modeloCbx=new CbxTmDepartamento();//comentar para ver en forma de dise�o
-		
-		panelProveedor=new PanelPadre();
-		panelProveedor.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Proveedor", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panelProveedor.setBounds(10, 90, 1007, 78);
-		panelProveedor.setLayout(null);
-		
+		modeloCbx=new CbxTmDepartamento();
+
 		Color color1 =new Color(60, 179, 113);
 		Color color2 =Color.decode("#33cccc");
 		Color color3 =Color.decode("#d4f4ff");
 		Color color4 =Color.decode("#f4fbfe");
-		
+
 		this.getContentPane().setBackground(color3);
-		
-		//JPanel panelProveedor = new JPanel();
-		
-		//
-		
-		JLabel lblIdProveedor = new JLabel("Id");
-		lblIdProveedor.setBounds(15, 21, 72, 14);
-		panelProveedor.add(lblIdProveedor);
-		
-		txtIdProveedor = new JTextField();
-		txtIdProveedor.setBounds(15, 36, 104, 31);
-		txtIdProveedor.setToolTipText("Id Proveedor");
-		panelProveedor.add(txtIdProveedor);
-		txtIdProveedor.setColumns(10);
-		
-		JLabel lblNombreProveedor = new JLabel("Nombre");
-		lblNombreProveedor.setBounds(181, 21, 104, 14);
-		panelProveedor.add(lblNombreProveedor);
-		
-		txtNombreproveedor = new JTextField();
-		txtNombreproveedor.setEditable(false);
-		txtNombreproveedor.setBounds(181, 36, 276, 31);
-		panelProveedor.add(txtNombreproveedor);
-		txtNombreproveedor.setColumns(10);
-		
-		getContentPane().add(panelProveedor);
-		
-		JLabel lblTelefono = new JLabel("Telefono");
-		lblTelefono.setBounds(472, 21, 58, 14);
-		panelProveedor.add(lblTelefono);
-		
-		txtTelefonoProveedor = new JTextField();
-		txtTelefonoProveedor.setEditable(false);
-		txtTelefonoProveedor.setBounds(472, 36, 276, 31);
-		panelProveedor.add(txtTelefonoProveedor);
-		txtTelefonoProveedor.setColumns(10);
-		
-		btnBuscar = new JButton("...");
-		btnBuscar.setBounds(116, 38, 32, 29);
-		panelProveedor.add(btnBuscar);
-		
+
 		JPanel panelInfoCompra = new PanelPadre();
-		panelInfoCompra.setBounds(10, 11, 1007, 80);
+		panelInfoCompra.setBounds(10, 11, 1184, 80);
 		panelInfoCompra.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		getContentPane().add(panelInfoCompra);
 		panelInfoCompra.setLayout(null);
-		
+
 		JLabel lblFecha = new JLabel("Fecha Factura");
 		lblFecha.setBounds(10, 18, 90, 14);
 		panelInfoCompra.add(lblFecha);
-		
+
 		dateCompra = new JDateChooser("dd/MM/yyyy", "##/##/####", '_');
 		dateCompra.setBounds(10, 36, 134, 31);
-	
+
 		panelInfoCompra.add(dateCompra);
 		dateCompra.setDateFormatString("dd-MM-yyyy");
 		//dateCompra.setDate(Date.);
-		
+
 		JLabel lblNoFactura = new JLabel("No Factura");
 		lblNoFactura.setBounds(149, 18, 90, 14);
 		panelInfoCompra.add(lblNoFactura);
-		
+
 		txtNofactura = new JTextField();
 		txtNofactura.setBounds(149, 36, 102, 31);
 		panelInfoCompra.add(txtNofactura);
 		txtNofactura.setColumns(10);
-		
+
 		grupoOpciones = new ButtonGroup();
 		rdbtnCredito = new JRadioButton("");
-		rdbtnCredito.setBounds(340, 40, 40, 23);
+		rdbtnCredito.setBounds(327, 41, 40, 23);
 		grupoOpciones.add(rdbtnCredito);
 		panelInfoCompra.add(rdbtnCredito);
-		
+
 		rdbtnContado = new JRadioButton("");
 		rdbtnContado.setSelected(true);
-		rdbtnContado.setBounds(274, 40, 40, 23);
+		rdbtnContado.setBounds(261, 41, 40, 23);
 		grupoOpciones.add(rdbtnContado);
 		panelInfoCompra.add(rdbtnContado);
-		
+
 		lblFechaVencimiento = new JLabel("Vencimiento");
-		lblFechaVencimiento.setBounds(405, 18, 90, 14);
+		lblFechaVencimiento.setBounds(392, 19, 90, 14);
 		panelInfoCompra.add(lblFechaVencimiento);
-		
+
 		dateVencFactura = new JDateChooser();
 		dateVencFactura.setDateFormatString("dd-MM-yyyy");
-		dateVencFactura.setBounds(405, 36, 129, 31);
+		dateVencFactura.setBounds(392, 37, 129, 31);
 		dateVencFactura.setEnabled(false);
 		panelInfoCompra.add(dateVencFactura);
-		
+
 		JLabel lblDepartementoDeLa = new JLabel("Departemento de la compra");
-		lblDepartementoDeLa.setBounds(544, 18, 200, 14);
+		lblDepartementoDeLa.setBounds(531, 19, 200, 14);
 		panelInfoCompra.add(lblDepartementoDeLa);
-		
+
 		lblContado = new JLabel("Contado");
-		lblContado.setBounds(274, 17, 61, 16);
+		lblContado.setBounds(251, 18, 61, 16);
 		panelInfoCompra.add(lblContado);
-		
+
 		lblCredito = new JLabel("Credito");
-		lblCredito.setBounds(340, 17, 61, 16);
+		lblCredito.setBounds(317, 18, 61, 16);
 		panelInfoCompra.add(lblCredito);
-		
-	
+
+
 		cbxDepart = new JComboBox();
 		cbxDepart.setModel(modeloCbx);
-		cbxDepart.setBounds(544, 36, 210, 31);
+		cbxDepart.setBounds(531, 37, 210, 31);
 		panelInfoCompra.add(cbxDepart);
-		
+
+		JLabel lblNombreProveedor = new JLabel("Proveedor");
+		lblNombreProveedor.setBounds(745, 19, 104, 14);
+		panelInfoCompra.add(lblNombreProveedor);
+
+		txtNombreproveedor = new JTextField();
+		txtNombreproveedor.setBounds(789, 37, 292, 31);
+		panelInfoCompra.add(txtNombreproveedor);
+		txtNombreproveedor.setEditable(false);
+		txtNombreproveedor.setColumns(10);
+
+		txtIdProveedor = new JTextField();
+		txtIdProveedor.setText("ID");
+		txtIdProveedor.setBounds(745, 37, 45, 31);
+		panelInfoCompra.add(txtIdProveedor);
+		txtIdProveedor.setToolTipText("Id Proveedor");
+		txtIdProveedor.setColumns(10);
+
+		btnBuscar = new JButton("...");
+		btnBuscar.setBounds(1080, 36, 32, 29);
+		panelInfoCompra.add(btnBuscar);
+
+		chckbxIVAincluido = new JCheckBox("");
+		chckbxIVAincluido.setToolTipText("Incluir impuesto en factura?");
+		chckbxIVAincluido.setSelected(true);
+		chckbxIVAincluido.setBounds(1136, 36, 32, 23);
+		panelInfoCompra.add(chckbxIVAincluido);
+
+		JLabel lblIVAincluido = new JLabel("I/V");
+		lblIVAincluido.setBounds(1140, 17, 25, 16);
+		panelInfoCompra.add(lblIVAincluido);
+
 		//botones
 		btnGuardar = new BotonGuardar();
-		btnGuardar.setSize(128, 72);
-		btnGuardar.setLocation(42, 559);
+		btnGuardar.setSize(128, 64);
+		btnGuardar.setLocation(20, 626);
 		//tnCancelar.setLocation(42, 175);
 		getContentPane().add(btnGuardar);
 		btnActualizar=new BotonActualizar();
-		btnActualizar.setSize(128, 72);
-		btnActualizar.setLocation(42, 559);
+		btnActualizar.setSize(128, 64);
+		btnActualizar.setLocation(20, 626);
 		getContentPane().add(btnActualizar);
 		btnActualizar.setVisible(false);
-		
+
 		btnCancelar = new BotonCancelar();
-		btnCancelar.setSize(128, 72);
-		
+		btnCancelar.setSize(128, 64);
+
 		//btnCancelar.setBounds(212, 175, 135, 39);
-		btnCancelar.setLocation(270, 559);
+		btnCancelar.setLocation(174, 626);
 		getContentPane().add(btnCancelar);
-		
-		
+
+
 		//tabla de registro de los proveedores
 		tablaArticulos=new JTable();
-		
+
 		TrProveedor renderizador = new TrProveedor();
 		tablaArticulos.setDefaultRenderer(String.class, renderizador);
-		
+
 		modelo = new DmtFacturaProveedores();//se crea el modelo de los datos de la tabla
-		
-		
+
+
 		tablaArticulos.setModel(modelo);
 		tablaArticulos.getColumnModel().getColumn(0).setPreferredWidth(100);     //Tama�o de las columnas de las tablas
 		tablaArticulos.getColumnModel().getColumn(1).setPreferredWidth(200);	//
@@ -217,79 +202,79 @@ public class ViewAgregarCompras extends JDialog {
 		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(90);	//
 		tablaArticulos.setRowHeight(25);
 		//tablaArticulos.getColumnModel().getColumn(6).setPreferredWidth(100);	//
-		//Estitlo para la tabla		
-		
+		//Estitlo para la tabla
+
 		JScrollPane scrollPane = new JScrollPane(tablaArticulos);
-		scrollPane.setBounds(10, 171, 1007, 301);
+		scrollPane.setBounds(10, 103, 1184, 511);
 		scrollPane.setBackground(color3);
 		scrollPane.getViewport().setBackground(color3);
 		getContentPane().add(scrollPane);
-		
+
 		panel = new PanelPadre();
-		panel.setBounds(664, 492, 330, 160);
+		panel.setBounds(333, 626, 861, 64);
 		getContentPane().add(panel);
 		panel.setLayout(null);
-		
+
 		txtTotalimpuesto15 = new JTextField();
-		txtTotalimpuesto15.setBounds(146, 44, 184, 34);
+		txtTotalimpuesto15.setBounds(230, 24, 184, 34);
 		panel.add(txtTotalimpuesto15);
 		txtTotalimpuesto15.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTotalimpuesto15.setEditable(false);
 		txtTotalimpuesto15.setColumns(10);
-		
+
 		txtTotal = new JTextField();
-		txtTotal.setBounds(146, 120, 184, 34);
+		txtTotal.setBounds(644, 24, 184, 34);
 		panel.add(txtTotal);
 		txtTotal.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTotal.setEditable(false);
 		txtTotal.setColumns(10);
-		
+
 		JLabel lblTotalImpuesto = new JLabel("Total Impuesto 15%");
-		lblTotalImpuesto.setBounds(20, 54, 128, 14);
+		lblTotalImpuesto.setBounds(230, 5, 128, 14);
 		panel.add(lblTotalImpuesto);
-		
+
 		JLabel lblTotalFactura = new JLabel("Total Factura");
-		lblTotalFactura.setBounds(20, 122, 84, 14);
+		lblTotalFactura.setBounds(644, 5, 84, 14);
 		panel.add(lblTotalFactura);
-		
+
 		JLabel lblSubtotal = new JLabel("SubTotal");
-		lblSubtotal.setBounds(20, 20, 84, 14);
+		lblSubtotal.setBounds(23, 4, 84, 14);
 		panel.add(lblSubtotal);
-		
+
 		txtSubtotal = new JTextField();
-		txtSubtotal.setBounds(146, 4, 184, 36);
+		txtSubtotal.setBounds(23, 22, 184, 36);
 		panel.add(txtSubtotal);
 		txtSubtotal.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtSubtotal.setEditable(false);
 		txtSubtotal.setColumns(10);
-		
+
 		txtTotalImpusto18 = new JTextField();
-		txtTotalImpusto18.setBounds(146, 82, 184, 34);
+		txtTotalImpusto18.setBounds(437, 24, 184, 34);
 		panel.add(txtTotalImpusto18);
 		txtTotalImpusto18.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTotalImpusto18.setEditable(false);
 		txtTotalImpusto18.setColumns(10);
-		
+
 		JLabel lblTotalImpuesto_1 = new JLabel("Total Impuesto 18%");
-		lblTotalImpuesto_1.setBounds(20, 88, 128, 14);
+		lblTotalImpuesto_1.setBounds(437, 5, 128, 14);
 		panel.add(lblTotalImpuesto_1);
-		
-		
-		
+
+
+
 		///DetalleFacturaProveedor uno= new DetalleFacturaProveedor();
-		
+
 		//modelo.agregarDetalle(uno);
-		this.setSize(1050, 700);
-		
+		this.setSize(1200, 737);
+
 		//centrar la ventana en la pantalla
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-		
-	
-		
 
-		
-		
+
+
+
+
+
 	}
 	public JComboBox getCbxDepart(){
 		return cbxDepart;
@@ -303,7 +288,7 @@ public class ViewAgregarCompras extends JDialog {
 	public JTextField getTxtSubtotal(){
 		return txtSubtotal;
 	}
-	
+
 	public JTextField getTxtTotal(){
 		return txtTotal;
 	}
@@ -315,9 +300,6 @@ public class ViewAgregarCompras extends JDialog {
 	}
 	public JDateChooser getDateVencFactura(){
 		return dateVencFactura;
-	}
-	public JTextField gettxtTelefonoProveedor(){
-		return txtTelefonoProveedor;
 	}
 	public JTextField getTxtNombreproveedor(){
 		return txtNombreproveedor;
@@ -331,43 +313,47 @@ public class ViewAgregarCompras extends JDialog {
 	public JTable getTablaArticulos(){
 		return tablaArticulos;
 	}
+	public JCheckBox getChckbxIVAincluido() {
+		return chckbxIVAincluido;
+	}
+	public void setChckbxIVAincluido(JCheckBox chckbxIVAincluido) {
+		this.chckbxIVAincluido = chckbxIVAincluido;
+	}
 	public void conectarControlador(CtlCompras c){
-		
-		
+
+
 		btnBuscar.addActionListener(c);
 		btnBuscar.setActionCommand("BUSCARPROVEEDOR2");
-		
+
 		this.txtIdProveedor.addActionListener(c);
 		this.txtIdProveedor.setActionCommand("BUSCARPROVEEDOR");
 		txtIdProveedor.addKeyListener(c);
-		
-		
+
+
 		this.btnGuardar.addActionListener(c);
 		this.btnGuardar.setActionCommand("GUARDARCOMPRA");
 		btnGuardar.addKeyListener(c);
-		
+
 
 		this.rdbtnContado.addActionListener(c);
 		this.rdbtnContado.setActionCommand("CONTADO");
 		rdbtnContado.addKeyListener(c);
-		
-		
+
+
 		this.rdbtnCredito.addActionListener(c);
 		this.rdbtnCredito.setActionCommand("CREDITO");
 		rdbtnCredito.addKeyListener(c);
-		
+
 		this.btnCancelar.addActionListener(c);
 		this.btnCancelar.setActionCommand("CANCELAR");
 		btnCancelar.addKeyListener(c);
-		
+
 		this.addWindowListener(c);
-		
-		txtTelefonoProveedor.addKeyListener(c);
-		
+
 		tablaArticulos.addKeyListener(c);
 		txtNofactura.addKeyListener(c);
 		dateCompra.getDateEditor().getUiComponent().addKeyListener(c);
-		
+
 		dateVencFactura.addKeyListener(c);
 		dateVencFactura.getDateEditor().getUiComponent().addKeyListener(c);
 		txtTotalimpuesto15.addKeyListener(c);
@@ -401,8 +387,8 @@ public class ViewAgregarCompras extends JDialog {
 		 
 		 btnLimpiar.addActionListener(c);
 		 btnLimpiar.setActionCommand("LIMPIAR");*/
-		 
-		 tablaArticulos.addMouseListener(c);
+
+		tablaArticulos.addMouseListener(c);
 		// tablaArticulos.getModel().addTableModelListener(c);
 		/* tablaArticulos.getModel().addTableModelListener(new TableModelListener() {
 
@@ -412,11 +398,11 @@ public class ViewAgregarCompras extends JDialog {
 					JOptionPane.showMessageDialog(null, "Se modifico el dato en la celda "+e.getColumn()+", "+e.getFirstRow());
 				}
 	        });*/
-		 modelo.addTableModelListener(c);
-		 //tablaArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		modelo.addTableModelListener(c);
+		//tablaArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tablaArticulos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		 tablaArticulos.setColumnSelectionAllowed(true);
-		 tablaArticulos.setRowSelectionAllowed(true);
+		tablaArticulos.setColumnSelectionAllowed(true);
+		tablaArticulos.setRowSelectionAllowed(true);
 	}
 	/**
 	 * @return the txtTotalImpusto18
