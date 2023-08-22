@@ -12,8 +12,8 @@ import java.sql.SQLException;
 
 public class CtlFiltroRepSarVentas implements ActionListener {
 	
-	private ViewFiltroRepSarVentas view;
-	private CajaDao cajaDao;
+	private final ViewFiltroRepSarVentas view;
+	private final CajaDao cajaDao;
 
 	public CtlFiltroRepSarVentas(ViewFiltroRepSarVentas v) {
 		// TODO Auto-generated constructor stub

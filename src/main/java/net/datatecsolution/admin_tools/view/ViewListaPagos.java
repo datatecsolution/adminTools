@@ -20,7 +20,7 @@ public class ViewListaPagos extends ViewTabla {
 	
 	
 	
-	private TmPagos modelo;
+	private final TmPagos modelo;
 
 
 
@@ -28,7 +28,7 @@ public class ViewListaPagos extends ViewTabla {
 
 
 
-	private BotonReporte btnReporte;
+	private final BotonReporte btnReporte;
 
 
 

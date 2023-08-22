@@ -15,7 +15,7 @@ public class ViewCuentasFacturas extends ViewTabla {
 	
 	
 	
-	private TmCuentasFacturas modelo;
+	private final TmCuentasFacturas modelo;
 	private JRadioButton rdbtnCliente;
 	
 

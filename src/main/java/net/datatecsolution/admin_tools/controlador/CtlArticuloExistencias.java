@@ -13,13 +13,13 @@ import java.awt.event.ActionListener;
 public class CtlArticuloExistencias implements ActionListener {
 	
 	
-	private ViewArticuloExistencias view;
+	private final ViewArticuloExistencias view;
 	private Articulo myArticulo;
 	private Departamento myBodega;
 	
 	private boolean resultado=false;
 	
-	private ArticuloDao articuloDao;
+	private final ArticuloDao articuloDao;
 
 	public CtlArticuloExistencias(ViewArticuloExistencias v) {
 		// TODO Auto-generated constructor stub

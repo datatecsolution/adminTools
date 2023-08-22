@@ -20,7 +20,7 @@ public class CtlArticuloBuscar implements ActionListener,MouseListener, WindowLi
 	
 	
 	private Articulo myArticulo;
-	private ArticuloDao myArticuloDao;
+	private final ArticuloDao myArticuloDao;
 	
 	//fila selecciona enla lista
 	private int filaPulsada;

@@ -17,54 +17,54 @@ import java.awt.*;
 
 
 public class ViewCrearArticulo extends JDialog {
-	private JLabel lblNombre;
-	private JTextField txtNombre;
-	private JLabel lblMarca;
-	private JComboBox<Impuesto> cbxImpuesto ;
-	private JLabel lblImpuesto;
-	private Font myFont;
-	private BotonCancelar btnCancelar;
-	private BotonGuardar btnGuardar;
-	private BotonActualizar btnActualizar;
+	private final JLabel lblNombre;
+	private final JTextField txtNombre;
+	private final JLabel lblMarca;
+	private final JComboBox<Impuesto> cbxImpuesto ;
+	private final JLabel lblImpuesto;
+	private final Font myFont;
+	private final BotonCancelar btnCancelar;
+	private final BotonGuardar btnGuardar;
+	private final BotonActualizar btnActualizar;
 	
-	private JTextField txtMarca;
-	private JButton btnBuscar;
-	private JList<CodBarra> listCodigos;
-	private JTextField txtCodigo;
-	private JComboBox<String> cbxTipo;
-	private TmPrecios modeloPrecio;
-	private TmInsumo modeloInsumos;
+	private final JTextField txtMarca;
+	private final JButton btnBuscar;
+	private final JList<CodBarra> listCodigos;
+	private final JTextField txtCodigo;
+	private final JComboBox<String> cbxTipo;
+	private final TmPrecios modeloPrecio;
+	private final TmInsumo modeloInsumos;
 	
 	
-	private JMenuItem mntmEliminar;
-	private JMenuItem mntmImprimir;
+	private final JMenuItem mntmEliminar;
+	private final JMenuItem mntmImprimir;
 	
 
 	
-	private JPopupMenu menuContextual; // permite al usuario seleccionar el color
+	private final JPopupMenu menuContextual; // permite al usuario seleccionar el color
 	
 	
 	
 	//se crea el modelo de la lista de los impuestos
-	private ComboBoxImpuesto modeloImpuesto;
+	private final ComboBoxImpuesto modeloImpuesto;
 	
-	private ListaModeloCodBarra modeloCodBarra;
-	private JTable tblPrecios;
-	private JScrollPane scrollPane_1;
-	private Color colorBorde;
-	private JLabel label;
-	private JPanel panel_1;
-	private JTable tInsumos;
-	private JPanel panel_3;
-	private JPanel panel_4;
-	private JPanel panel_5;
-	private JButton btnAgregarInsumo;
-	private JPanel pInsumo;
-	private BotonEliminar btnEliminarInsumo;
-	private JTabbedPane tpInsumos;
-	private JPanel panel;
-	private JPanel panel_6;
-	private JTextField txtInsumoTotal;
+	private final ListaModeloCodBarra modeloCodBarra;
+	private final JTable tblPrecios;
+	private final JScrollPane scrollPane_1;
+	private final Color colorBorde;
+	private final JLabel label;
+	private final JPanel panel_1;
+	private final JTable tInsumos;
+	private final JPanel panel_3;
+	private final JPanel panel_4;
+	private final JPanel panel_5;
+	private final JButton btnAgregarInsumo;
+	private final JPanel pInsumo;
+	private final BotonEliminar btnEliminarInsumo;
+	private final JTabbedPane tpInsumos;
+	private final JPanel panel;
+	private final JPanel panel_6;
+	private final JTextField txtInsumoTotal;
 	
 	
 

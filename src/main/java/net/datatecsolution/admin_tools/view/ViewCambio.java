@@ -7,11 +7,11 @@ import java.awt.event.ActionListener;
 
 public class ViewCambio extends JDialog  {
 	
-	private JTextField txtEfectivo;
-	private JTextField txtCambio;
+	private final JTextField txtEfectivo;
+	private final JTextField txtCambio;
 	//private final ToggleGroup grupo;
-	private ButtonGroup grupoOpciones;
-	private JPanel panel;
+	private final ButtonGroup grupoOpciones;
+	private final JPanel panel;
 
 	public ViewCambio(Window v) {
 		

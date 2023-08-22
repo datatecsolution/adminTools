@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class CtlContarEfectivo implements ActionListener, KeyListener{
 	
 	
-	private ViewCuentaEfectivo view;
+	private final ViewCuentaEfectivo view;
 	
 	private BigDecimal total=new BigDecimal(0.0);
 	

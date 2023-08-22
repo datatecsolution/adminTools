@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TmCategorias extends TablaModelo {
 	
-	private String []columnNames={"Id","Descripcion","Observacion"};
-	private List<Categoria> marcas = new ArrayList<Categoria>();
+	private final String []columnNames={"Id","Descripcion","Observacion"};
+	private final List<Categoria> marcas = new ArrayList<Categoria>();
 	
 	public void agregarMarca(Categoria marca) {
 		marcas.add(marca);

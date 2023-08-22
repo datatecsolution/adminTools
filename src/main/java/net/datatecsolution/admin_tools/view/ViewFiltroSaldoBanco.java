@@ -13,12 +13,12 @@ public class ViewFiltroSaldoBanco extends JDialog {
 	
 
 	
-	private JDateChooser dCBuscar1;
-	private JButton btnBuscar;
-	private JDateChooser dCBuscar2;
+	private final JDateChooser dCBuscar1;
+	private final JButton btnBuscar;
+	private final JDateChooser dCBuscar2;
 	
-	private JComboBox<Banco> cbxBancos;
-	private CbxTmCuentasBancos modeloCuentasBancos;
+	private final JComboBox<Banco> cbxBancos;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
 
 	public ViewFiltroSaldoBanco(Window view) {
 		

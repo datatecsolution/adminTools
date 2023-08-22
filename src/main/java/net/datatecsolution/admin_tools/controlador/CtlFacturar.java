@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CtlFacturar  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
 	
-	private ViewFacturar view;
+	private final ViewFacturar view;
 	private Factura myFactura=null;
 	private FacturaDao facturaDao=null;//=new FacturaDao();
 	private FacturaOrdenVentaDao facturaOrdenesDao=null;
@@ -31,7 +31,7 @@ public class CtlFacturar  implements ActionListener, MouseListener, TableModelLi
 	
 	
 	private int filaPulsada=0;
-	private boolean resultado=false;
+	private final boolean resultado=false;
 	
 	private int tipoView=1;
 	private int netBuscar=0;

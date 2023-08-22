@@ -20,7 +20,7 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 	//private KardexDao kardexDao=null;
 	private CuentaPorPagarDao myCuentaPagarDao=null;
 	private PrecioArticuloDao preciosDao=null;
-	private DetalleFacturaProveedorDao detallesDao;
+	private final DetalleFacturaProveedorDao detallesDao;
 	private String sqlBaseJoin=null;
 	public FacturaCompraDao(){
 		super("encabezado_factura_compra","numero_compra");

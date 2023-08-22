@@ -17,12 +17,12 @@ import java.util.List;
 
 public class CtlDevoluciones implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener {
 	
-	private ViewFacturaDevolucion view;
+	private final ViewFacturaDevolucion view;
 	
 	
 	private Factura myFactura=null;
 	
-	private boolean resultado=false;
+	private final boolean resultado=false;
 	
 	
 	private DevolucionesDao devolucionDao=null;

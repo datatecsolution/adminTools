@@ -19,16 +19,16 @@ public class ViewListaClientes extends ViewTabla {
 	
 	
 	
-	private JRadioButton rdbtnNombre;
-	private JRadioButton rdbtnRtn;
+	private final JRadioButton rdbtnNombre;
+	private final JRadioButton rdbtnRtn;
 
 	
-	private TablaModeloCliente modelo;
+	private final TablaModeloCliente modelo;
 
-	private BotonReporte btnReporte;
-	private BotonCuenta btnCuenta;
-	private JComboBox<Empleado> cbxEmpleados;
-	private CbxTmEmpleado modeloListaEmpleados;
+	private final BotonReporte btnReporte;
+	private final BotonCuenta btnCuenta;
+	private final JComboBox<Empleado> cbxEmpleados;
+	private final CbxTmEmpleado modeloListaEmpleados;
 	
 	
 	

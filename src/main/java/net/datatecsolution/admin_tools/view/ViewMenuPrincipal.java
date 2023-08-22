@@ -13,47 +13,47 @@ public class ViewMenuPrincipal extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JLabel usuario = new JLabel("Usuario:");
-	private JMenuItem mntmProveedores;
-	private JMenuItem mntmArticulos;
-	private JMenuItem mntmCategorias;
-	private JMenuItem mntmFacturar;
-	private JMenuItem mntmClientes;
-	private JMenuItem mntmBuscarFacturas;
-	private JLabel lblUserName;
-	private JMenu mnArchivo;
-	private JMenuItem mntmUsuarios;
-	private JMenuItem mntmSalir;
-	private JMenuItem mnRequisiciones;
+	private final JMenuItem mntmProveedores;
+	private final JMenuItem mntmArticulos;
+	private final JMenuItem mntmCategorias;
+	private final JMenuItem mntmFacturar;
+	private final JMenuItem mntmClientes;
+	private final JMenuItem mntmBuscarFacturas;
+	private final JLabel lblUserName;
+	private final JMenu mnArchivo;
+	private final JMenuItem mntmUsuarios;
+	private final JMenuItem mntmSalir;
+	private final JMenuItem mnRequisiciones;
 	
 	
-	private JMenuItem mntmListaPagos;
-	private JMenu mnReportes;
-	private JMenuItem mntmDeclaracionDei;
+	private final JMenuItem mntmListaPagos;
+	private final JMenu mnReportes;
+	private final JMenuItem mntmDeclaracionDei;
 
-	private JMenuItem mntmInventario;
+	private final JMenuItem mntmInventario;
 
-	private JMenuItem mntmCierresDeCaja;
+	private final JMenuItem mntmCierresDeCaja;
 
-	private JMenuItem mntmEmpleados;
-	private JMenuItem mntmComisiones;
-	private JMenu mnCompras;
-	private JMenuItem mntmGestionCompas;
-	private JMenuItem mntmSalidasCaja;
-	private JMenuItem mntmPagoAproveedores;
-	private JMenuItem mntmCotizaciones;
-	private JMenuItem mntmCuentasDeBancos;
-	private JButton btnAlertaExistencia;
-	private JMenuItem mntmCajas;
-	private JMenuItem mntmDatosFacturacion;
-	private JMenuItem mntmDeclaracionSarCompras;
-	private JMenuItem mntmVentasUsuarios;
-	private JMenuItem mntmEntradasCaja;
-	private JMenu mnBancos;
-	private JMenuItem mntmDepositoretiros;
-	private JMenuItem mntmConfiguracionUsuarios;
-	private JMenuItem mntmAplicarInteresA;
-	private JMenuItem mntmFacturasVencidas;
-	private JMenuItem mntmRutasDeEntregas;
+	private final JMenuItem mntmEmpleados;
+	private final JMenuItem mntmComisiones;
+	private final JMenu mnCompras;
+	private final JMenuItem mntmGestionCompas;
+	private final JMenuItem mntmSalidasCaja;
+	private final JMenuItem mntmPagoAproveedores;
+	private final JMenuItem mntmCotizaciones;
+	private final JMenuItem mntmCuentasDeBancos;
+	private final JButton btnAlertaExistencia;
+	private final JMenuItem mntmCajas;
+	private final JMenuItem mntmDatosFacturacion;
+	private final JMenuItem mntmDeclaracionSarCompras;
+	private final JMenuItem mntmVentasUsuarios;
+	private final JMenuItem mntmEntradasCaja;
+	private final JMenu mnBancos;
+	private final JMenuItem mntmDepositoretiros;
+	private final JMenuItem mntmConfiguracionUsuarios;
+	private final JMenuItem mntmAplicarInteresA;
+	private final JMenuItem mntmFacturasVencidas;
+	private final JMenuItem mntmRutasDeEntregas;
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");

@@ -14,7 +14,7 @@ public class TmInsumo extends TablaModelo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1222;
-	private String []columnNames={"Id","Descripcion","Cantidad","Precio U","Total"};
+	private final String []columnNames={"Id","Descripcion","Cantidad","Precio U","Total"};
 	private List<Insumo> insumos = new ArrayList<Insumo>();
 	
 	
@@ -112,13 +112,11 @@ public class TmInsumo extends TablaModelo {
 	
 	@Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean resul=false;
+		boolean resul= columnIndex == 2;
 		/*if(columnIndex==0)
 			resul= true;*/
-		if(columnIndex==2)
-			resul=true;
-		
-		
+
+
 		return resul;
     }
 

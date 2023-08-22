@@ -15,19 +15,19 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ViewCrearRuta extends JDialog {
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCancelar;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
 	private JTable tFacturas;
 	private TmFacturasEntregas modeloFacturasEntregas;
-	private JTextField txtNofact;
-	private JTextField txtEmpleado;
-	private BotonAgregar botonAgregar;
-	private BotonEliminar botonEliminar;
-	private JComboBox<Caja> cbxCajas;
-	private CbxTmCajas modeloListaCajas;
-	private JLabel lblFact;
-	private JDateChooser dateFecha;
-	private BotonActualizar btnActualizar;
+	private final JTextField txtNofact;
+	private final JTextField txtEmpleado;
+	private final BotonAgregar botonAgregar;
+	private final BotonEliminar botonEliminar;
+	private final JComboBox<Caja> cbxCajas;
+	private final CbxTmCajas modeloListaCajas;
+	private final JLabel lblFact;
+	private final JDateChooser dateFecha;
+	private final BotonActualizar btnActualizar;
 
 	public ViewCrearRuta(Window view) {
 		// TODO Auto-generated constructor stub

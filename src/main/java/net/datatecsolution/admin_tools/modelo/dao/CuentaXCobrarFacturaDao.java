@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CuentaXCobrarFacturaDao extends ModeloDaoBasic {
 	
-	private String sqlBaseJoin=null;
+	private final String sqlBaseJoin=null;
 
 	public CuentaXCobrarFacturaDao() {
 		super("cuentas_por_cobrar_facturas","codigo_reguistro");

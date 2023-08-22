@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InventarioDao {
-	private Conexion conexion;
+	private final Conexion conexion;
 	private PreparedStatement buscarArticulo=null;
 	private PreparedStatement actualizarInventario=null;
 	private PreparedStatement insertarNuevaInventario=null;

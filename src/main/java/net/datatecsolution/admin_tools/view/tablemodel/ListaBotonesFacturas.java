@@ -10,9 +10,9 @@ import java.util.List;
 public class ListaBotonesFacturas extends AbstractListModel {
 	private static final int ancho=128;
 	private static final int alto=45;
-	private List<JToggleButton> btnGuardados= new ArrayList<>();
-	private List<Factura> facturas=new ArrayList<>();
-	private ButtonGroup grupoOpciones;
+	private final List<JToggleButton> btnGuardados= new ArrayList<>();
+	private final List<Factura> facturas=new ArrayList<>();
+	private final ButtonGroup grupoOpciones;
 	private Font myFon;
 	
 	public ListaBotonesFacturas(){

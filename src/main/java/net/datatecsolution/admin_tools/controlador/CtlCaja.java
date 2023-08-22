@@ -14,8 +14,8 @@ import java.awt.event.KeyListener;
 
 public class CtlCaja implements ActionListener, KeyListener {
 	
-	private ViewCrearCaja view;
-	private CajaDao myDao;
+	private final ViewCrearCaja view;
+	private final CajaDao myDao;
 	private Caja myCaja=new Caja();
 	private DepartamentoDao deptDao=null;
 	boolean resultaOperacion=false;

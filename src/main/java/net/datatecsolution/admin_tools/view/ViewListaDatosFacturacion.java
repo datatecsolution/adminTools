@@ -12,10 +12,10 @@ import java.awt.*;
 
 public class ViewListaDatosFacturacion extends ViewTabla {
 	
-	private TmDatosFacturacion modelo;
-	private JComboBox<Caja> cbxCajas;
+	private final TmDatosFacturacion modelo;
+	private final JComboBox<Caja> cbxCajas;
 	protected JButton btnLimpiar;
-	private CbxTmCajas modeloListaCajas;
+	private final CbxTmCajas modeloListaCajas;
 
 	public ViewListaDatosFacturacion(Window view) {
 		super(view, "Datos de facturacion");

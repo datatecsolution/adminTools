@@ -11,13 +11,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewMovimientoBanco extends JDialog  {
-	private JTextField txtMonto;
-	private CbxTmCuentasBancos modeloCuentasBancos;
-	private JComboBox<Banco> cbFormaPago;
-	private JComboBox<String> cbTipoMovimiento;
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCancelar;
-	private JTextArea txtrDescripcion;
+	private final JTextField txtMonto;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
+	private final JComboBox<Banco> cbFormaPago;
+	private final JComboBox<String> cbTipoMovimiento;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
+	private final JTextArea txtrDescripcion;
 	
 	
 public ViewMovimientoBanco(Window view) {

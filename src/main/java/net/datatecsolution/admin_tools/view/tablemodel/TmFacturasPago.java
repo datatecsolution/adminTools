@@ -11,7 +11,7 @@ public class TmFacturasPago extends AbstractTableModel {
 	final private String []columnNames= {
 			"No Factura","Fecha", "Total","Estado","Pagar Factura?"
 		};
-	private List<Factura> facturas=new ArrayList<Factura>();
+	private final List<Factura> facturas=new ArrayList<Factura>();
 	
 	public Factura getFactura(int row){
 		return facturas.get(row);
@@ -105,12 +105,10 @@ public class TmFacturasPago extends AbstractTableModel {
 	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean resul=false;
+		boolean resul= columnIndex == 4;
 		/*if(columnIndex==0)
 			resul= true;*/
 		
-		if(columnIndex==4)
-			resul=true;
 		/*if(columnIndex==6)
 			resul=true;*/
 	

@@ -13,10 +13,10 @@ import java.awt.*;
 
 public class ViewCuentaBanco extends ViewTabla {
 
-	private TmCuentasBanco modelo;
-	private BotonCuenta btnReporte;
-    private JComboBox<Banco> cbxBancos;
-	private CbxTmCuentasBancos modeloCuentasBancos;
+	private final TmCuentasBanco modelo;
+	private final BotonCuenta btnReporte;
+    private final JComboBox<Banco> cbxBancos;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
 
 
 	

@@ -18,9 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CtlCuentasFacturas implements ActionListener, MouseListener, ChangeListener {
-	private ViewCuentasFacturas view;
+	private final ViewCuentasFacturas view;
 	
-	private CuentaFacturaDao cuentaFacturaDao;
+	private final CuentaFacturaDao cuentaFacturaDao;
 	
 	//fila selecciona enla lista
 	private int filaPulsada=-1;

@@ -12,7 +12,7 @@ public class RenderizadorTablaFacturas implements TableCellRenderer {
 		JLabel editor= new JLabel();
 		editor.setOpaque(true);
 		if (value != null)
-		      editor.setText("  "+value.toString()+"  ");
+		      editor.setText("  "+ value +"  ");
 		
 		
 		if (row % 2 == 0) {

@@ -18,14 +18,14 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CtlFacturas implements ActionListener, MouseListener, ChangeListener {
-	private ViewFacturas view;
+	private final ViewFacturas view;
 	
 	private FacturaDao myFacturaDao=null;
 	private Factura myFactura;
 	private UsuarioDao myUsuarioDao=null;
 	private DetalleFacturaDao detallesDao=null;
 	private DevolucionesDao devolucionDao=null;
-	private CajaDao cajaDao;
+	private final CajaDao cajaDao;
 	private ReciboPagoDao myReciboDao=null;
 	
 	//fila selecciona enla lista

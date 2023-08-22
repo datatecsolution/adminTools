@@ -15,7 +15,7 @@ public class ListaModeloCodBarra extends AbstractListModel {
 	
 private List<CodBarra> codsBarras=new ArrayList<CodBarra>();
 
-private List<CodBarra> codsBarrasElimniar=new ArrayList<CodBarra>();
+private final List<CodBarra> codsBarrasElimniar=new ArrayList<CodBarra>();
 
 @Override
 public int getSize() {

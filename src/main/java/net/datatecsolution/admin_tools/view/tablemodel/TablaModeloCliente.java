@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TablaModeloCliente extends TablaModelo {
-	private String []columnNames={"Id","Nombre","Direccion","Telefono","RTN","Saldo"};
-	private List<Cliente> clientes = new ArrayList<Cliente>();
+	private final String []columnNames={"Id","Nombre","Direccion","Telefono","RTN","Saldo"};
+	private final List<Cliente> clientes = new ArrayList<Cliente>();
 	
 	@Override
     public String getColumnName(int columnIndex) {

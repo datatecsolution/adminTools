@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmRutasEntregas extends TablaModelo {
-	private String []columnNames={"codigo","Vendedor","Fecha","Estado"};
-	private List<RutaEntrega> rutas = new ArrayList<RutaEntrega>();
+	private final String []columnNames={"codigo","Vendedor","Fecha","Estado"};
+	private final List<RutaEntrega> rutas = new ArrayList<RutaEntrega>();
 	
 	public void agregar(RutaEntrega c) {
 		rutas.add(c);

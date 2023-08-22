@@ -9,7 +9,7 @@ public class TmFacturasEntregas  extends TablaModelo {
 	final private String []columnNames= {
 			"# fact","Fecha","Tipo","Cliente", "Total"
 		};
-	private List<Factura> facturas=new ArrayList<Factura>();
+	private final List<Factura> facturas=new ArrayList<Factura>();
 	
 	
 	

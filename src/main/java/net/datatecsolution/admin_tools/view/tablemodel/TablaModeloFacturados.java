@@ -9,7 +9,7 @@ public class TablaModeloFacturados  extends TablaModelo {
 	final private String []columnNames= {
 			"No","Fecha","Tipo","Cliente", "Telefono", "Total","Estado"
 		};
-	private List<Factura> facturas=new ArrayList<Factura>();
+	private final List<Factura> facturas=new ArrayList<Factura>();
 	
 	
 	

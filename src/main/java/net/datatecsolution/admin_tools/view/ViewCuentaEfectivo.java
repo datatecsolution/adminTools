@@ -17,22 +17,22 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 
 public class ViewCuentaEfectivo extends JDialog {
-	private JTextField txtUno;
-	private JTextField txtDos;
-	private JTextField txtCinco;
-	private JTextField txtDiez;
-	private JTextField txtVeinte;
-	private JTextField txtCincuenta;
-	private JTextField txtCien;
-	private JTextField txtQuinientos;
+	private final JTextField txtUno;
+	private final JTextField txtDos;
+	private final JTextField txtCinco;
+	private final JTextField txtDiez;
+	private final JTextField txtVeinte;
+	private final JTextField txtCincuenta;
+	private final JTextField txtCien;
+	private final JTextField txtQuinientos;
 	
-	private JPanel panelAcciones;
+	private final JPanel panelAcciones;
 	
 	private ButtonGroup grupoOpciones;
-	private BotonCancelar btnCerrar;
-	private BotonGuardar btnGuardar;
-	private BotonBuscar1 btnMostrar;
-	private JTextField txtTotal;
+	private final BotonCancelar btnCerrar;
+	private final BotonGuardar btnGuardar;
+	private final BotonBuscar1 btnMostrar;
+	private final JTextField txtTotal;
 
 	public ViewCuentaEfectivo(Window v) {
 		// TODO Auto-generated constructor stub

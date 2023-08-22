@@ -20,13 +20,13 @@ public class CtlSalidaCaja implements ActionListener, KeyListener {
 	
 	private ViewSalidaCaja view;
 	private SalidaCaja mySalida;
-	private SalidaCajaDao myDao;
+	private final SalidaCajaDao myDao;
 	private boolean resul=false;
 	private Empleado myEmpleado=null;
-	private EmpleadoDao myEmpleadoDao;
+	private final EmpleadoDao myEmpleadoDao;
 
 	
-	private BancosDao myFormaPago;
+	private final BancosDao myFormaPago;
 
 	public CtlSalidaCaja(ViewSalidaCaja v ) {
 		// TODO Auto-generated constructor stub

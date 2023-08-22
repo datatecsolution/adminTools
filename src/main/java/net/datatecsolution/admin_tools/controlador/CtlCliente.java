@@ -12,12 +12,12 @@ import java.awt.event.*;
 
 public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 	
-	private ViewCrearCliente view;
+	private final ViewCrearCliente view;
 	private Cliente myCliente=null;
 	private ClienteDao myClienteDao=null;
 	private boolean resultaOperacion=false;
 	private Empleado myVendedor=null;
-	private EmpleadoDao myEmpleadoDao;
+	private final EmpleadoDao myEmpleadoDao;
 	
 	public CtlCliente(ViewCrearCliente v){
 		view=v;

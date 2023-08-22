@@ -13,8 +13,8 @@ public class TmArticulo extends TablaModelo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1222;
-	private String []columnNames={"Id","Nombre","Categoria","Impuesto","Precio Venta","Existencia","Estado"};
-	private List<Articulo> articulos = new ArrayList<Articulo>();
+	private final String []columnNames={"Id","Nombre","Categoria","Impuesto","Precio Venta","Existencia","Estado"};
+	private final List<Articulo> articulos = new ArrayList<Articulo>();
 	
 	
 	

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
 	
-	private ViewFacturarFrame view;
+	private final ViewFacturarFrame view;
 	private Factura myFactura=null;
 	private FacturaDao facturaDao=null;//=new FacturaDao();
 	private ClienteDao clienteDao=null;
@@ -30,19 +30,19 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	
 	private Cliente myCliente=null;
 	private int filaPulsada=0;
-	private boolean resultado=false;
-	private UsuarioDao myUsuarioDao;
+	private final boolean resultado=false;
+	private final UsuarioDao myUsuarioDao;
 	
 	private int tipoView=1;
 	private int netBuscar=0;
 	
 	private DetalleFacturaOrdenDao detallesOrdenDao=null;
 	List<ViewFacturarFrame> ventanas;
-	private FacturaOrdenVentaDao facturaOrdenesDao;
-	private Caja cajaDefecto;
+	private final FacturaOrdenVentaDao facturaOrdenesDao;
+	private final Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	private boolean unirCanItem=false;
+	private final boolean unirCanItem=false;
 
 	private Integer bandera=0;
 	

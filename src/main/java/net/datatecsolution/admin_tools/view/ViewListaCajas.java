@@ -12,9 +12,9 @@ import java.awt.*;
 
 public class ViewListaCajas  extends ViewTabla  {
 	
-	private TmCajas modelo;
-	private JRadioButton rdbtnDescripcion;
-	private BotonLimpiar btnLimpiar;
+	private final TmCajas modelo;
+	private final JRadioButton rdbtnDescripcion;
+	private final BotonLimpiar btnLimpiar;
 
 	public ViewListaCajas(Window view) {
 		super(view, "Cajas de facturacion");

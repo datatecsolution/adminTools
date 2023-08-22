@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BotonCobrarSmall extends BotonesApp {
-	private ImageIcon imgGuardar;
+	private final ImageIcon imgGuardar;
 	
 	
 	

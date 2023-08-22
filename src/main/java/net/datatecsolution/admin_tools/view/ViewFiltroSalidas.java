@@ -11,10 +11,10 @@ public class ViewFiltroSalidas extends JDialog {
 	
 
 	
-	private JDateChooser dCBuscar1;
-	private JButton btnBuscar;
-	private JTextField txtEmpleado;
-	private JDateChooser dCBuscar2;
+	private final JDateChooser dCBuscar1;
+	private final JButton btnBuscar;
+	private final JTextField txtEmpleado;
+	private final JDateChooser dCBuscar2;
 
 	public ViewFiltroSalidas(Window view) {
 		

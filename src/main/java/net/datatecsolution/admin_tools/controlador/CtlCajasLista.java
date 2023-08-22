@@ -12,7 +12,7 @@ import java.util.List;
 public class CtlCajasLista extends CtlGenerico implements ActionListener, ItemListener, MouseListener, WindowListener {
 	
 	private ViewListaCajas view=null;
-	private CajaDao myDao;
+	private final CajaDao myDao;
 
 	
 	//fila selecciona enla lista

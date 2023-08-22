@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CtlConfigUser implements ActionListener, ItemListener {
 	
-	private ViewConfigUser view;
+	private final ViewConfigUser view;
 	private ConfigUserFactDao myDao=null;
 	private List<ConfigUserFacturacion> configs=new ArrayList<ConfigUserFacturacion>();
 	private ConfigUserFacturacion configEnPantalla=null;

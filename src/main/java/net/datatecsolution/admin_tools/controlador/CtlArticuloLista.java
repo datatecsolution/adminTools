@@ -22,7 +22,7 @@ public class CtlArticuloLista extends MouseAdapter implements ActionListener, Wi
 	
 	
 	private Articulo myArticulo;
-	private ArticuloDao myArticuloDao;
+	private final ArticuloDao myArticuloDao;
 	private DepartamentoDao deptDao=null;
 	
 	//fila selecciona enla lista

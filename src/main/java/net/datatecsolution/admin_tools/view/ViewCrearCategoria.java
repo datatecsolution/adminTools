@@ -13,15 +13,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class ViewCrearCategoria extends JDialog {
-	private JTextField txtMarca;
-	private JLabel lblMarca;
+	private final JTextField txtMarca;
+	private final JLabel lblMarca;
 	
-	private JTextArea txtAreaObservacion;
-	private JLabel lblObservacion;
+	private final JTextArea txtAreaObservacion;
+	private final JLabel lblObservacion;
 	
-	private BotonCancelar btnCancelar;
-	private BotonActualizar btnActualizar;
-	private BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
+	private final BotonActualizar btnActualizar;
+	private final BotonGuardar btnGuardar;
 	private Categoria myCategoria;
 	
 	

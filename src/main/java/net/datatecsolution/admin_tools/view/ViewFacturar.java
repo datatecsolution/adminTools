@@ -16,71 +16,71 @@ import java.awt.*;
 public class ViewFacturar extends JDialog {
 	
 	protected BorderLayout miEsquema;
-	private JTable tableDetalle;
-	private TablaModeloFactura modeloTabla;
+	private final JTable tableDetalle;
+	private final TablaModeloFactura modeloTabla;
 	
-	private JPanel panelAcciones;
-	private JPanel panelBuscar;
-	private JPanel panelDatosFactura;
+	private final JPanel panelAcciones;
+	private final JPanel panelBuscar;
+	private final JPanel panelDatosFactura;
 	protected JPanel panelNorte;
 	
 	protected JPanel panel_1;
-	private JLabel lblFecha;
-	private JTextField txtFechafactura;
-	private JLabel lblCodigoCliente;
-	private JTextField txtIdcliente;
-	private JTextField txtNombrecliente;
+	private final JLabel lblFecha;
+	private final JTextField txtFechafactura;
+	private final JLabel lblCodigoCliente;
+	private final JTextField txtIdcliente;
+	private final JTextField txtNombrecliente;
 	
-	private ButtonGroup grupoOpciones;
-	private JRadioButton rdbtnCredito;
-	private JRadioButton rdbtnContado;
+	private final ButtonGroup grupoOpciones;
+	private final JRadioButton rdbtnCredito;
+	private final JRadioButton rdbtnContado;
 	
-	private JTextField txtSubtotal;
-	private JLabel lblSubtotal;
-	private JTextField txtImpuesto;
-	private JLabel lblImpuesto;
-	private JTextField txtTotal;
-	private JLabel lblTotal;
-	private JLabel lblNombreCliente;
-	private JLabel lblContado;
-	private JLabel lblCredito;
+	private final JTextField txtSubtotal;
+	private final JLabel lblSubtotal;
+	private final JTextField txtImpuesto;
+	private final JLabel lblImpuesto;
+	private final JTextField txtTotal;
+	private final JLabel lblTotal;
+	private final JLabel lblNombreCliente;
+	private final JLabel lblContado;
+	private final JLabel lblCredito;
 	
-	private BotonGuardar btnGuardar;
+	private final BotonGuardar btnGuardar;
 	
 	//private List<BotonesApp> btnGuardados= new ArrayList<>();
-	private ListaBotonesFacturas btnGuardados=new ListaBotonesFacturas();
-	private BotonCancelar btnCerrar;
-	private BotonBuscar1 btnBuscar;
-	private BotonBuscarClientes btnCliente;
-	private BotonCobrar btnCobrar;
-	private JButton btnCierreCaja;
-	private JButton btnGetCotizacion;
+	private final ListaBotonesFacturas btnGuardados=new ListaBotonesFacturas();
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscar1 btnBuscar;
+	private final BotonBuscarClientes btnCliente;
+	private final BotonCobrar btnCobrar;
+	private final JButton btnCierreCaja;
+	private final JButton btnGetCotizacion;
 	
-	private JTextField txtDescuento;
+	private final JTextField txtDescuento;
 	
-	private BotonActualizar btnActualizar;
+	private final BotonActualizar btnActualizar;
 	
 	
-	private JTextField txtBuscar;
-	private JTextField txtImpuesto18;
-	private JButton btnGuardarCotizacion;
+	private final JTextField txtBuscar;
+	private final JTextField txtImpuesto18;
+	private final JButton btnGuardarCotizacion;
 	
-	private JTextField txtRtn;
+	private final JTextField txtRtn;
 	
 	private JComboBox cbxEmpleados;
 	//se crea el modelo de la lista de los impuestos
-	private CbxTmEmpleado modeloEmpleado;//=new ComboBoxImpuesto();
+	private final CbxTmEmpleado modeloEmpleado;//=new ComboBoxImpuesto();
 	
 	protected JPanel panel;
 	protected JLabel lblBuscar;
-	private JPanel panel_2;
-	private JLabel lblLogo;
-	private JPanel panelGuardados;
+	private final JPanel panel_2;
+	private final JLabel lblLogo;
+	private final JPanel panelGuardados;
 	
 	
 	//menu contextual para eliminar las facturas pendientess
-	private JMenuItem mntmEliminar;
-	private JPopupMenu menuContextual;
+	private final JMenuItem mntmEliminar;
+	private final JPopupMenu menuContextual;
 	
 	public ViewFacturar(Window view) {
 		

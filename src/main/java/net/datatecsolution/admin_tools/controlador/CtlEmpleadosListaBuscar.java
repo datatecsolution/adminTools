@@ -10,8 +10,8 @@ import java.util.List;
 
 public class CtlEmpleadosListaBuscar implements ActionListener,MouseListener, WindowListener,KeyListener {
 	
-	private ViewListaEmpleados view;
-	private EmpleadoDao myDao;
+	private final ViewListaEmpleados view;
+	private final EmpleadoDao myDao;
 	private int filaPulsada;
 	private Empleado myEmpleado;
 	private boolean resultado=false;

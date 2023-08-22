@@ -19,7 +19,7 @@ public class CtlRequisicion implements ActionListener, MouseListener, TableModel
 	private Articulo myArticulo=null;
 	private ArticuloDao myArticuloDao=null;
 	private int filaPulsada=0;
-	private KardexDao myKardexDao;
+	private final KardexDao myKardexDao;
 	private DepartamentoDao deptDao=null;
 	private RequisicionDao myRequiDao=null;
 	private PrecioArticuloDao preciosDao=null;

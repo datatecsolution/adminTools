@@ -9,13 +9,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewLogin extends JDialog{
-	private JTextField txtUser, txtPass;
-	private JLabel lblUser, lblPass;
-	private JButton btnAceptar, btnCancelar;
+	private final JTextField txtUser;
+    private final JTextField txtPass;
+	private final JLabel lblUser;
+    private final JLabel lblPass;
+	private final JButton btnAceptar;
+    private final JButton btnCancelar;
 	String usuario, elPassword;
-	private JPanel panel_1;
-	private JLabel lblNewLabel;
-	private JButton btnConfig;
+	private final JPanel panel_1;
+	private final JLabel lblNewLabel;
+	private final JButton btnConfig;
 
 	public ViewLogin()
 		{

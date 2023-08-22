@@ -29,7 +29,7 @@ public abstract class ViewTabla extends JDialog {
 	protected BotonEliminar btnEliminar;
 	protected JTextField txtBuscar;
 	//protected JTextField txtBuscar;
-	private JTextField txtBuscar2;
+	private final JTextField txtBuscar2;
 	
 	
 	protected JRadioButton rdbtnId;
@@ -58,16 +58,16 @@ public abstract class ViewTabla extends JDialog {
 
 
 
-	private JLabel label;
+	private final JLabel label;
 
 
 
-	private JLabel label_1;
+	private final JLabel label_1;
 	protected PanelPadre panelTxtBoxBusqueda;
 	protected BotonBuscar btnBuscar;
-	private Dimension dim;
+	private final Dimension dim;
 	protected PanelPadre panelEstadoRegistro;
-	private ButtonGroup grupoOpcionesEstado;
+	private final ButtonGroup grupoOpcionesEstado;
 	protected JRadioButton rdbtnActivos;
 	protected JRadioButton rdbtnInactivo;
 	protected JRadioButton rdbtnTodosEstado;

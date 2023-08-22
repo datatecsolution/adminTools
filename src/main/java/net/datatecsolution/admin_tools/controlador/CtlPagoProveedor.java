@@ -21,7 +21,7 @@ public class CtlPagoProveedor implements ActionListener, KeyListener {
 	
 	private Proveedor myProveedor=null;
 	private ProveedorDao myDao=null;
-	private BancosDao myFormaPago;
+	private final BancosDao myFormaPago;
 	
 	
 	private ReciboPagoProveedor myRecibo=null;

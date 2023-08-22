@@ -15,9 +15,9 @@ import java.util.Date;
 import java.util.Vector;
 
 public class CtlFiltroRepEntradas implements ActionListener, KeyListener  {
-	private ViewFiltroEntrada view;
-	private Banco banco =null;
-	private BancosDao bancosDao;
+	private final ViewFiltroEntrada view;
+	private final Banco banco =null;
+	private final BancosDao bancosDao;
 
 
 	public CtlFiltroRepEntradas(ViewFiltroEntrada v){

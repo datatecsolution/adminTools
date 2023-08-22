@@ -19,29 +19,29 @@ public class ViewCxCPagos extends JDialog {
 	 */
 	private static final long serialVersionUID = 1;
 	
-	private JTable tabla;
-	private TmFacturasPago modelo;
-	private JPanel panelAcciones;
-	private JPanel panelDatosFactura;
-	private JLabel lblFecha;
-	private JTextField txtFechafactura;
-	private JLabel lblCodigoCliente;
-	private JTextField txtIdcliente;
-	private JTextField txtNombrecliente;
+	private final JTable tabla;
+	private final TmFacturasPago modelo;
+	private final JPanel panelAcciones;
+	private final JPanel panelDatosFactura;
+	private final JLabel lblFecha;
+	private final JTextField txtFechafactura;
+	private final JLabel lblCodigoCliente;
+	private final JTextField txtIdcliente;
+	private final JTextField txtNombrecliente;
 	
-	private ButtonGroup grupoOpciones;
-	private BotonCancelar btnCerrar;
-	private BotonBuscarClientes btnCliente;
-	private BotonCobrar btnCobrar;
-	private JLabel lblNombreCliente;
-	private JTextField txtLimitecredito;
-	private JTextField txtSaldocliente;
+	private final ButtonGroup grupoOpciones;
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscarClientes btnCliente;
+	private final BotonCobrar btnCobrar;
+	private final JLabel lblNombreCliente;
+	private final JTextField txtLimitecredito;
+	private final JTextField txtSaldocliente;
 	
 	
-	private JTextField txtTotal;
-	private JLabel lblTotal;
+	private final JTextField txtTotal;
+	private final JLabel lblTotal;
 	
-	private JCheckBox chckbxSeleccionarTodos;
+	private final JCheckBox chckbxSeleccionarTodos;
 
 	public ViewCxCPagos(Window view) {
 		

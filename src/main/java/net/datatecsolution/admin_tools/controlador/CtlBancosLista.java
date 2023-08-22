@@ -18,7 +18,7 @@ public class CtlBancosLista implements ActionListener, MouseListener {
 	private ViewListaCuentaBancos view=null;
 	private Banco myCuenta=null;
 	private BancosDao myDao=null;
-	private int filaPulsada=-1;
+	private final int filaPulsada=-1;
 	
 	public CtlBancosLista(ViewListaCuentaBancos v){
 		view=v;

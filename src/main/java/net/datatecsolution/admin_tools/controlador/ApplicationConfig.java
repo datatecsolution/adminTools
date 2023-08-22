@@ -20,11 +20,11 @@ public class ApplicationConfig {
     public static final ApplicationConfig INSTANCE;
 
     // configuration properties with defaults
-    private int number = 0;
-    private String text = "default";
+    private final int number = 0;
+    private final String text = "default";
     @XmlElementWrapper
     @XmlElement(name = "text")
-    private List<String> texts = new ArrayList<>(Arrays.asList("default1", "default2"));
+    private final List<String> texts = new ArrayList<>(Arrays.asList("default1", "default2"));
 
     ApplicationConfig() {
     }

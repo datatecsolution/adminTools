@@ -6,7 +6,7 @@ import java.awt.*;
 public class BotonesApp extends JButton {
 	private static final int ancho=128;
 	private static final int alto=45;
-	private static Dimension dim=new Dimension(ancho,alto);
+	private static final Dimension dim=new Dimension(ancho,alto);
 	private static Font myFon;
 	public boolean add=false;
 	

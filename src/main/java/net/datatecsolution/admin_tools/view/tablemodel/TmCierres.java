@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmCierres extends TablaModelo {
-	private String []columnNames={"Fecha","Cajero","Turno","T Efectivo","T Tarjeta","T Credito","ISV15","ISV18","Total"};
-	private List<CierreCaja> cierres = new ArrayList<CierreCaja>();
+	private final String []columnNames={"Fecha","Cajero","Turno","T Efectivo","T Tarjeta","T Credito","ISV15","ISV18","Total"};
+	private final List<CierreCaja> cierres = new ArrayList<CierreCaja>();
 	
 	public void agregar(CierreCaja cierre) {
 		cierres.add(cierre);

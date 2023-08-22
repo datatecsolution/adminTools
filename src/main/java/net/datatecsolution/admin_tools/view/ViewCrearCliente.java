@@ -9,16 +9,16 @@ import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 import javax.swing.*;
 
 public class ViewCrearCliente extends JDialog{
-	private JTextField txtNombre;
-	private JTextField txtDireccion;
-	private JTextField txtTelefono;
-	private JTextField txtMovil;
-	private JTextField txtRtn;
+	private final JTextField txtNombre;
+	private final JTextField txtDireccion;
+	private final JTextField txtTelefono;
+	private final JTextField txtMovil;
+	private final JTextField txtRtn;
 	
-	private BotonCancelar btnCancelar;
-	private BotonActualizar btnActualizar;
-	private BotonGuardar btnGuardar;
-	private JTextField txtVendedor;
+	private final BotonCancelar btnCancelar;
+	private final BotonActualizar btnActualizar;
+	private final BotonGuardar btnGuardar;
+	private final JTextField txtVendedor;
 	
 	public ViewCrearCliente() {
 		

@@ -20,11 +20,11 @@ public class ViewListaProveedor extends ViewTabla {
 	
 	protected JButton btnLimpiar;
 	
-	private JRadioButton rdbtnNombre;
-	private JRadioButton rdbtnDireccion;
+	private final JRadioButton rdbtnNombre;
+	private final JRadioButton rdbtnDireccion;
 	
-	private BotonReporte btnReporte;
-	private BotonCuenta btnCuenta;
+	private final BotonReporte btnReporte;
+	private final BotonCuenta btnCuenta;
 	
 	
 	

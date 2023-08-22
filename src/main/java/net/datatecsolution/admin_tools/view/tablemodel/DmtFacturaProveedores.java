@@ -17,7 +17,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 	final private String []columnNames= {
 			"Id Articulo", "Nombre", "Cantidad", "Precio Unidad","SubTotal","Impuesto", "Total","P/venta","P/venta 2","P/venta 3","P/costo","IVA incluido?"
 		};
-	private List<DetalleFacturaProveedor> detallesFactura=new ArrayList<DetalleFacturaProveedor>();
+	private final List<DetalleFacturaProveedor> detallesFactura=new ArrayList<DetalleFacturaProveedor>();
 	private double totalCompra=0;
 	
 	public DmtFacturaProveedores(){
@@ -363,9 +363,7 @@ public Class getColumnClass(int columnIndex) {
 
 @Override
 public boolean isCellEditable(int rowIndex, int columnIndex) {
-	boolean resul=false;
-	if(columnIndex==0)
-		resul= true;
+	boolean resul= columnIndex == 0;
 	if(columnIndex==1)
 		resul=false;
 	if(columnIndex==2)

@@ -12,11 +12,11 @@ import java.awt.*;
 
 public class ViewSelectPrecio extends JDialog {
 	
-	private BotonCancelar btnCancelar;
-	private BotonAceptar btnGuardar;
+	private final BotonCancelar btnCancelar;
+	private final BotonAceptar btnGuardar;
 	private JComboBox<PrecioArticulo> cbPrecios;
 	private CbxTmPrecios modeloPrecioCb;
-	private JCheckBox chckbxAplicarAToda;
+	private final JCheckBox chckbxAplicarAToda;
 	
 	public ViewSelectPrecio(Window view){
 		super(view,"Aplicar precio", ModalityType.DOCUMENT_MODAL);

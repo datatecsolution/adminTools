@@ -16,7 +16,7 @@ public class ViewListaCotizacion extends ViewTabla {
 	
 	
 	
-	private JRadioButton rdbtnCliente;
+	private final JRadioButton rdbtnCliente;
 
 	
 	
@@ -24,7 +24,7 @@ public class ViewListaCotizacion extends ViewTabla {
 	
 	
 	
-	private TmFacturas modelo;
+	private final TmFacturas modelo;
 	
 	public ViewListaCotizacion(Window view){
 		

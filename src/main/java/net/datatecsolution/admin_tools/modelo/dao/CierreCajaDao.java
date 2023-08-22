@@ -17,9 +17,9 @@ public class CierreCajaDao extends ModeloDaoBasic {
 	
 	
 	public int idUltimoRequistro=0;
-	private FacturaDao myFacturaDao;
-	private String sqlJoin;
-	private CierreFacturacionDao cierreFacturasDao;
+	private final FacturaDao myFacturaDao;
+	private final String sqlJoin;
+	private final CierreFacturacionDao cierreFacturasDao;
 	public CierreCajaDao(){
 		super("cierre_caja","idCierre");
 		

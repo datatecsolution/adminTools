@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public abstract class App {
 	
-	private static String filename = ".config/config.properties";
+	private static final String filename = ".config/config.properties";
 	
 	
 	//private static OutputStream output = null;

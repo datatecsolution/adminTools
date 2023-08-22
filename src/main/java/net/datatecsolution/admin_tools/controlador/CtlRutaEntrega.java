@@ -23,11 +23,11 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 	
 	private ViewCrearRuta view;
 	private RutaEntrega myRuta;
-	private RutasEntregasDao myDao;
+	private final RutasEntregasDao myDao;
 	private boolean resul=false;
 	private Empleado myEmpleado=null;
-	private EmpleadoDao myEmpleadoDao;
-	private CajaDao cajaDao;
+	private final EmpleadoDao myEmpleadoDao;
+	private final CajaDao cajaDao;
 	private Factura myFactura;
 	private FacturaDao myFacturaDao=null;
 	private int filaPulsada;
@@ -287,7 +287,7 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 	}
 	private boolean validar() {
 		// TODO Auto-generated method stub
-		boolean resul=false;
+		boolean resul= view.getModeloFacturas().getFacturas().size() > 0;
 		/*
 		if(view.getTxtCantidad().getText().trim().length()==0 ){
 			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos","Erro validacion",JOptionPane.ERROR_MESSAGE);
@@ -305,9 +305,6 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 					else{
 							resul=true;
 						}*/
-		if(view.getModeloFacturas().getFacturas().size()>0){
-			resul=true;
-		}
 		return resul;
 	}
 

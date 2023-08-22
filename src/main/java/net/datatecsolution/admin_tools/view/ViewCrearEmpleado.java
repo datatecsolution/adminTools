@@ -10,13 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewCrearEmpleado extends JDialog {
-	private JTextField txtNombre;
-	private JTextField txtApellido;
-	private JTextField txtTelefono;
-	private JTextField txtCorreo;
-	private BotonGuardar btnGuardar;
-	private JButton btnCancelar;
-	private BotonActualizar btnActualizar;
+	private final JTextField txtNombre;
+	private final JTextField txtApellido;
+	private final JTextField txtTelefono;
+	private final JTextField txtCorreo;
+	private final BotonGuardar btnGuardar;
+	private final JButton btnCancelar;
+	private final BotonActualizar btnActualizar;
 	
 	public ViewCrearEmpleado(Window view) {
 		

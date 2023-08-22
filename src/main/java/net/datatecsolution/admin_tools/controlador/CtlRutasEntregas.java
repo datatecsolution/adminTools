@@ -25,9 +25,9 @@ public class CtlRutasEntregas implements ActionListener, MouseListener, ChangeLi
 	private RutaEntrega myRuta=null;
 	//fila selecciona enla lista
 	private int filaPulsada;
-	private CajaDao cajaDao=new CajaDao();
-	private DetalleFacturaDao detalleFacturaDao=new DetalleFacturaDao();
-	private EmpleadoDao empleadoDao=new EmpleadoDao();
+	private final CajaDao cajaDao=new CajaDao();
+	private final DetalleFacturaDao detalleFacturaDao=new DetalleFacturaDao();
+	private final EmpleadoDao empleadoDao=new EmpleadoDao();
 	
 	private UsuarioDao myUsuarioDao=null;
 

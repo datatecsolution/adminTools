@@ -17,10 +17,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CtlSalidasListas implements ActionListener, MouseListener {
-	private ViewListaSalidas view;
+	private final ViewListaSalidas view;
 	
 	
-	private SalidaCajaDao myDao;
+	private final SalidaCajaDao myDao;
 	private SalidaCaja mySalida;
 	private UsuarioDao myUsuarioDao=null;
 	

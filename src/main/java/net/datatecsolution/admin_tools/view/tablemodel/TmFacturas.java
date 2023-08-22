@@ -10,7 +10,7 @@ public class TmFacturas extends TablaModelo {
 	final private String []columnNames= {
 			"Fecha","Cliente", "Telefono", "Total"
 		};
-	private List<Factura> facturas=new ArrayList<Factura>();
+	private final List<Factura> facturas=new ArrayList<Factura>();
 	
 	public Factura getFactura(int row){
 		return facturas.get(row);

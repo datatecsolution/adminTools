@@ -28,14 +28,14 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String bd = "admin_tools";
+	private static final String bd = "admin_tools";
 
-
+/*
 	//LOCAL_PRODUCCION
 	//private static String login = "admin";
-	private static String login = "root";
-	private static String password = "Jdmm123.";
-	private static String server = "127.0.0.1";
+	private static final String login = "root";
+	private static final String password = "Jdmm123.";
+	private static final String server = "127.0.0.1";
 	//private static String server = "192.168.2.115";
 
 
@@ -68,7 +68,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.1.101";
-
+*/
 	//Hotel Venecia
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
@@ -122,8 +122,8 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
-	private static String driver="com.mysql.cj.jdbc.Driver";
+	private static final String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
+	private static final String driver="com.mysql.cj.jdbc.Driver";
 
 
 
