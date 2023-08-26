@@ -42,7 +42,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	private boolean unirCanItem=true;
+	private boolean unirCanItem=false;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -403,6 +403,13 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			//JOptionPane.showMessageDialog(view,"La accion es: "+action);
 			if(action == 0){
 
+				JPasswordField pfs = new JPasswordField();
+				int action2 = JOptionPane.showConfirmDialog(view, pfs,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
+				if(action2 >= 0){
+					String pwd = new String(pfs.getPassword());
+
+					//comprabacion del permiso administrativo
+					if (myUsuarioDao.comprobarAdmin(pwd)) {
 
 
 					this.facturaOrdenesDao.eliminar(eliminarTem);
@@ -419,6 +426,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 					view.getBtnsGuardador().deleteAll();
 
 					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+					}
+				}
 
 			}
 			
@@ -893,7 +902,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F7:
 						
-						double maxDescuento=5;
+						double maxDescuento=25;
 						//configuracion del panel descuento
 						JPanel panelDescuento=new JPanel();
 						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -932,7 +941,7 @@ public void calcularTotales(){
 										
 										if(filaPulsada>=0){
 											
-											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-5%");
+											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
 											JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 											//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 											String seleccionadoDescuento=descuento.getText();
@@ -987,7 +996,7 @@ public void calcularTotales(){
 											    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 											    	this.calcularTotales();
 										    	}else{
-										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 5%", "Error", JOptionPane.ERROR_MESSAGE);
+										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 25%", "Error", JOptionPane.ERROR_MESSAGE);
 										    	}
 										    }else{
 										    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1048,7 +1057,7 @@ public void calcularTotales(){
 								
 								if(filaPulsada>=0){
 									
-									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-5%");
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
 									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 									String seleccionadoDescuento=descuento.getText();
@@ -1103,7 +1112,7 @@ public void calcularTotales(){
 									    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 									    	this.calcularTotales();
 								    	}else{
-								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 5%", "Error", JOptionPane.ERROR_MESSAGE);
+								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 25%", "Error", JOptionPane.ERROR_MESSAGE);
 								    	}
 								    }else{
 								    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1348,8 +1357,18 @@ public void calcularTotales(){
 					
 					case KeyEvent.VK_DELETE:
 						if(filaPulsada>=0){
-							 this.view.getModeloTabla().eliminarDetalle(filaPulsada);
-							 this.calcularTotales();
+							JPasswordField pfs = new JPasswordField();
+							int action2 = JOptionPane.showConfirmDialog(view, pfs,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
+							if(action2 >= 0) {
+								String pwd = new String(pfs.getPassword());
+
+								//comprabacion del permiso administrativo
+								if (myUsuarioDao.comprobarAdmin(pwd)) {
+									this.view.getModeloTabla().eliminarDetalle(filaPulsada);
+									this.calcularTotales();
+								}
+							}
+
 						 }
 						break;
 						

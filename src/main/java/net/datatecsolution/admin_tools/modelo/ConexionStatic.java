@@ -130,7 +130,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String password = "Jdmm1234.";
 	private static String server = "192.168.1.10";
 
-*/
+
 
 
 	//DISTRIBUIDORA SHAROM
@@ -143,7 +143,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "user_pos";
 	private static String password = "Admin123.";
 	private static String server = "192.168.1.25";
-
+*/
 	//VENECIA
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
