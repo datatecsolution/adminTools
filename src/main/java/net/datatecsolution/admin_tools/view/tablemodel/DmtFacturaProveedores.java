@@ -8,9 +8,16 @@ import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import com.toedter.calendar.JDateChooser;
+import org.apache.poi.ss.usermodel.DataFormat;
 
 
 public class DmtFacturaProveedores extends AbstractTableModel {
@@ -217,10 +224,12 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		//JOptionPane.showMessageDialog(null, value);
 
 		String v = null;
-		/*JDateChooser vv;
-		if(columnIndex==11)
-			vv=(JDateChooser) value;
-		else*/
+
+		if(columnIndex==11) {
+			Date vv = (Date) value;
+			v = new SimpleDateFormat("dd/MM/yyyy").format(vv);
+		}
+		else
 			v=(String) value;
 
 
@@ -352,16 +361,18 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 
 		// fireTableCellUpdated(rowIndex, columnIndex);
 	}
-
+/*
 
 	@Override
 	public Class getColumnClass(int columnIndex) {
 		//        return getValueAt(0, columnIndex).getClass();
-		/*if(columnIndex==11)
+		if(columnIndex==11)
 			return JDateChooser.class;
-		else*/
+		else
 			return String.class;
 	}
+
+ */
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {

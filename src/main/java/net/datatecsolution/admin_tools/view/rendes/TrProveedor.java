@@ -1,17 +1,36 @@
 package net.datatecsolution.admin_tools.view.rendes;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import com.toedter.calendar.JDateChooser;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class TrProveedor implements TableCellRenderer {
+public class TrProveedor extends DefaultTableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column) {
+
+		Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		if (!isSelected) {
+			if (row % 2 == 0) {
+				cell.setBackground(new Color(176, 224, 230));
+			} else {
+				cell.setBackground(Color.WHITE);
+			}
+		}else {
+			cell.setBackground(new Color(254, 172, 172));
+		}
+
+		if (column == 1) {
+			//cell.
+		}
+
+		return cell;
 		// TODO Auto-generated method stub
-		JLabel etiqueta = new JLabel();
+		/*JLabel etiqueta = new JLabel();
 		//JCheckBox cbIvaIncluido=new JCheckBox();
 		JDateChooser dateVencimiento = new JDateChooser("dd/MM/yyyy", "##/##/####", '_');
 		
@@ -36,11 +55,11 @@ public class TrProveedor implements TableCellRenderer {
 
 				 }
 
-				 /*
-	        	Boolean uno=(Boolean)value;
-	        	cbIvaIncluido.setSelected(uno);
-	        	cbIvaIncluido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-	        	*/
+
+	        	//Boolean uno=(Boolean)value;
+	        	//cbIvaIncluido.setSelected(uno);
+	        	//cbIvaIncluido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         	 }
         	
         }else if (column == 1) {
@@ -69,7 +88,7 @@ public class TrProveedor implements TableCellRenderer {
         if(column!=11)
         	return etiqueta;
         else
-        	return dateVencimiento;
+        	return dateVencimiento;*/
 		
 		
 	}

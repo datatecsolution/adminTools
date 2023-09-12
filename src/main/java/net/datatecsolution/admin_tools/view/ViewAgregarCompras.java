@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.view;
 
 
 import com.toedter.calendar.JDateChooser;
+import net.datatecsolution.AlternatingColorTableExample;
 import net.datatecsolution.admin_tools.controlador.CtlCompras;
 import net.datatecsolution.admin_tools.view.botones.BotonActualizar;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
@@ -14,7 +15,9 @@ import net.datatecsolution.admin_tools.view.tablemodel.DmtFacturaProveedores;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
+import java.util.Date;
 
 
 public class ViewAgregarCompras extends JDialog {
@@ -185,9 +188,8 @@ public class ViewAgregarCompras extends JDialog {
 
 		//tabla de registro de los proveedores
 		tablaArticulos=new JTable();
+		tablaArticulos.setDefaultRenderer(Object.class, new TrProveedor());
 
-		TrProveedor renderizador = new TrProveedor();
-		tablaArticulos.setDefaultRenderer(String.class, renderizador);
 
 		modelo = new DmtFacturaProveedores();//se crea el modelo de los datos de la tabla
 
@@ -201,6 +203,7 @@ public class ViewAgregarCompras extends JDialog {
 		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(90);	//
 		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(90);	//
 		tablaArticulos.setRowHeight(25);
+		tablaArticulos.getColumnModel().getColumn(11).setCellEditor(new DateCellEditor());
 		//tablaArticulos.getColumnModel().getColumn(6).setPreferredWidth(100);	//
 		//Estitlo para la tabla
 
@@ -359,45 +362,9 @@ public class ViewAgregarCompras extends JDialog {
 		txtTotalimpuesto15.addKeyListener(c);
 		txtTotal.addKeyListener(c);
 		txtSubtotal.addKeyListener(c);
-	
-		/*rdbtnTodos.addItemListener(c);
-		
-		
-		rdbtnId.addActionListener(c);
-		rdbtnId.addItemListener(c);
-		//rdbtnId.getActionCommand();
-		rdbtnId.setActionCommand("ID");
-		
-		rdbtnObservacion.addActionListener(c);
-		rdbtnObservacion.addItemListener(c);
-		rdbtnObservacion.setActionCommand("OBSERVACION");
-		
-		rdbtnMarca.addActionListener(c);
-		rdbtnMarca.addItemListener(c);
-		rdbtnMarca.setActionCommand("MARCA");
-		
-		btnBuscar.addActionListener(c);
-		btnBuscar.setActionCommand("BUSCAR");
-		
-		 btnAgregar.addActionListener(c);
-		 btnAgregar.setActionCommand("INSERTAR");
-		 
-		 btnEliminar.addActionListener(c);
-		 btnEliminar.setActionCommand("ELIMINAR");
-		 
-		 btnLimpiar.addActionListener(c);
-		 btnLimpiar.setActionCommand("LIMPIAR");*/
+
 
 		tablaArticulos.addMouseListener(c);
-		// tablaArticulos.getModel().addTableModelListener(c);
-		/* tablaArticulos.getModel().addTableModelListener(new TableModelListener() {
-
-				@Override
-				public void tableChanged(TableModelEvent e) {
-					// TODO Auto-generated method stub
-					JOptionPane.showMessageDialog(null, "Se modifico el dato en la celda "+e.getColumn()+", "+e.getFirstRow());
-				}
-	        });*/
 		modelo.addTableModelListener(c);
 		//tablaArticulos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tablaArticulos.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -409,5 +376,26 @@ public class ViewAgregarCompras extends JDialog {
 	 */
 	public JTextField getTxtTotalImpusto18() {
 		return txtTotalImpusto18;
+	}
+
+	class DateCellEditor extends AbstractCellEditor implements TableCellEditor {
+		private JDateChooser dateChooser;
+
+		public DateCellEditor() {
+			dateChooser = new JDateChooser("dd/MM/yyyy", "##/##/####", '_');
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			return dateChooser.getDate();
+		}
+
+		@Override
+		public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			if (value instanceof Date) {
+				dateChooser.setDate((Date) value);
+			}
+			return dateChooser;
+		}
 	}
 }
