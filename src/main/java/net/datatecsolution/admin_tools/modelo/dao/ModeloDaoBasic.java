@@ -63,6 +63,10 @@ public abstract class ModeloDaoBasic {
 	protected String getQuerySearch(String campo,String operador){
 		return getQuerySelect()+" join (select "+this.idColumnName+ " from "+this.DbName+"."+this.tableName+" where "+campo+" "+operador+" ? "+((estado!=2) ? " and "+ this.tableName+".estado=?":" ") + " ORDER BY "+this.idColumnName+" desc limit ?,?) tabla2 on ( tabla2."+this.idColumnName+"="+this.tableName+"."+this.idColumnName+") ORDER BY "+this.tableName+"."+this.idColumnName+" DESC ";
 	}
+
+	protected String getQuerySearchFecha(String campo,String operador){
+		return getQuerySelect()+" join (select "+this.idColumnName+ " from "+this.DbName+"."+this.tableName+" where "+campo+" "+operador+"  "+((estado!=2) ? " and "+ this.tableName+".estado=?":" ") + " ORDER BY "+this.idColumnName+" desc limit ?,?) tabla2 on ( tabla2."+this.idColumnName+"="+this.tableName+"."+this.idColumnName+") ORDER BY "+this.tableName+"."+this.idColumnName+" DESC ";
+	}
 	/**
 	 * @param campo de la busque
 	 * @param operador operador para el campo de la busqueda

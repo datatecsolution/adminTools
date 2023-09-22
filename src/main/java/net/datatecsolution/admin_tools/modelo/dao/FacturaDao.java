@@ -530,8 +530,8 @@ public class FacturaDao extends ModeloDaoBasic {
 		boolean existe=false;
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
-			
-			psConsultas = con.prepareStatement(super.getQuerySearch("fecha", "BETWEEN ? and "));
+
+			psConsultas = con.prepareStatement(super.getQuerySearchFecha("DATE_FORMAT(fecha,'%y-%m-%d')", "BETWEEN CAST(? AS DATE) and CAST(? AS DATE) "));
 			
 			psConsultas.setString(1, fecha1);
 			psConsultas.setString(2, fecha2);
