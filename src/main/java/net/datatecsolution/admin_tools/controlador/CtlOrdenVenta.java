@@ -24,53 +24,45 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 	private Articulo myArticulo=null;
 	private ArticuloDao myArticuloDao=null;
 	private PrecioArticuloDao preciosDao=null;
-	private InsumoDao insumoDao=null;
 	private CodBarraDao codBarraDao=null;
-
-
 	private Cliente myCliente=null;
+	private UsuarioDao myUsuarioDao;
+	private InsumoDao insumoDao=null;
+	private Caja cajaDefecto;
+
 	private int filaPulsada=0;
 	private boolean resultado=false;
-	private UsuarioDao myUsuarioDao;
 
 	private int tipoView=1;
 	private int netBuscar=0;
 
-	private DetalleFacturaOrdenDao detallesOrdenDao=null;
 	private FacturaOrdenVentaDao facturaOrdenesDao;
-	private Caja cajaDefecto;
-	private boolean isThereConexion=false;
-
-	private boolean unirCanItem=false;
+	private DetalleFacturaOrdenDao detallesOrdenDao=null;
+	private boolean unirCanItem=true;
 	
 	public CtlOrdenVenta(ViewOrdeneVenta v){
 	
 
-
-
 		view=v;
 		view.conectarContralador(this);
+
 		//se inicializan atributos de la factura
 		myFactura=new Factura();
 		myArticuloDao=new ArticuloDao();
 		clienteDao=new ClienteDao();
 		facturaDao=new FacturaDao();
-		facturaOrdenesDao=new FacturaOrdenVentaDao();
 		preciosDao=new PrecioArticuloDao();
 		codBarraDao=new CodBarraDao();
-		detallesOrdenDao=new DetalleFacturaOrdenDao();
-		insumoDao=new InsumoDao();
-
-		myUsuarioDao=new UsuarioDao();
-
-
 		this.setEmptyView();
+
+		facturaOrdenesDao=new FacturaOrdenVentaDao();
+		detallesOrdenDao=new DetalleFacturaOrdenDao();
+		myUsuarioDao=new UsuarioDao();
+		insumoDao=new InsumoDao();
+		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
 
 		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 		this.tipoView=1;
-
-		cajaDefecto=new Caja(ConexionStatic.getUsuarioLogin().getCajaActiva());
-	
 		
 	}
 
@@ -1368,7 +1360,7 @@ public void calcularTotales(){
 		pane.createDialog(null, "Autorizacion").setVisible(true);
 		return passwordField.getPassword().length == 0 ? null : new String(passwordField.getPassword());
 	}
-	
+
 	public void cargarFacturasPendientes(List<Factura> facturas){
 		
 		
@@ -1390,7 +1382,7 @@ public void calcularTotales(){
 		
 		vistaFacturars.pack();
 		
-		boolean resul=ctlFacturas.buscarCotizaciones(null);
+		boolean resul=ctlFacturas.buscarCotizaciones(view);
 		
 		if(resul){
 			
@@ -1776,33 +1768,38 @@ public void calcularTotales(){
 	private void guardar(){
 		
 		
-		if(view.getModeloTabla().getRowCount()>1){
+		if(view.getModeloTabla().getRowCount()>1) {
 
+			setFactura();
+			myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
+			boolean resulVendedor = false;
 
-					setFactura();
-					myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
+			ViewCargarVenderor viewVendedor =new ViewCargarVenderor(view);
+			CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
+			resulVendedor = ctlVendedor.cargarVendedor();
 
-					boolean resultado=facturaOrdenesDao.registrar(myFactura);
+			if (resulVendedor) {
+				myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
 
-					if(resultado){
-						myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
-						resultado=true;
+				boolean resultado = facturaOrdenesDao.registrar(myFactura);
 
-						this.tipoView=1;
-						//this.view.setVisible(false);
-						//view.addBotonPendiente(myFactura,this);
+				if (resultado) {
+					myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+					resultado = true;
 
-						setEmptyView();
+					this.tipoView = 1;
 
-						view.getBtnsGuardador().deleteAll();
+					setEmptyView();
 
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
-					}else{
-						JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
-					}
+					view.getBtnsGuardador().deleteAll();
+					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
 
-		}else{
-			JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.","ERROR",JOptionPane.ERROR_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(view, "Debe agregar un vendendor a la factura", "Error al guardar", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 	
@@ -2065,7 +2062,7 @@ public void calcularTotales(){
 		view.getModeloTabla().agregarDetalle();
 
 		this.myFactura.resetTotales();
-		
+
 		//conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
 		
