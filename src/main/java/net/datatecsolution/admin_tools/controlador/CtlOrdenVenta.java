@@ -8,7 +8,6 @@ import net.datatecsolution.admin_tools.view.*;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -36,7 +35,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 
 	private int tipoView=1;
 	private int netBuscar=0;
-	
+
 	private DetalleFacturaOrdenDao detallesOrdenDao=null;
 	private FacturaOrdenVentaDao facturaOrdenesDao;
 	private Caja cajaDefecto;
@@ -1140,7 +1139,7 @@ public void calcularTotales(){
 							}
 						}
 
-						
+
 						break;
 					case KeyEvent.VK_F9:
 						if(filaPulsada>=0){
@@ -1732,6 +1731,7 @@ public void calcularTotales(){
 			if(filaPulsada>=0){
 				//JOptionPane.showMessageDialog(view,e.getKeyChar()+" FIla:"+filaPulsada);
 				this.view.getModeloTabla().restarCantidad(filaPulsada);
+				//JOptionPane.showMessageDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
 				this.calcularTotales();
 			}
 		}
@@ -1853,7 +1853,7 @@ public void calcularTotales(){
 	private void buscarArticulo(){
 	
 		//se llama el metodo que mostrar la ventana para buscar el articulo
-		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(SwingUtilities.getWindowAncestor(view));
+		ViewListaArticulo viewListaArticulo=new ViewListaArticulo(view);
 		CtlArticuloBuscar ctlArticulo=new CtlArticuloBuscar(viewListaArticulo);
 		
 		viewListaArticulo.pack();
@@ -1865,6 +1865,7 @@ public void calcularTotales(){
 		boolean resul=ctlArticulo.buscarArticulo(null);
 
 		if(resul){
+			
 			myArticulo=ctlArticulo.getArticulo();
 			double existencia=0;
 			
@@ -2132,8 +2133,83 @@ public void guardarRemoto(){
 	}
 
 
+	public boolean buscarArticuloEnFactura(Articulo art){
+		boolean existe=false;
+		for(int x=0;x<view.getModeloTabla().getDetalles().size();x++){
+			Articulo artLocal=view.getModeloTabla().getDetalles().get(x).getArticulo();
 
-	
+			if(art.getId()==artLocal.getId()){
+				existe=true;
+
+				//String entrada=(String) JOptionPane.showInputDialog(view,"El articula ya esta en la factura. Escriba el cantida a agrgar:",JOptionPane.OK_CANCEL_OPTION, null, null, "9090");
+				//se selecciona el item encontrado
+				int row = x;
+				int col = 1;
+				boolean toggle = false;
+				boolean extend = false;
+				this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
+				this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
+				this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+
+				//se pide el ingreso de la cantidad a agregar
+				String entrada = (String) JOptionPane.showInputDialog(view,
+						"El articula ya esta en la factura. Escriba el cantida a agregar:",
+						"Agregar cantidad\n", JOptionPane.OK_CANCEL_OPTION, null,
+						null, "1");
+
+				//se verfica en la configuracion si se puede facturar sin inventario
+				if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario())
+				{
+					//se registra la cantida en la entrada del usuario
+					BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+
+					BigDecimal newCantidadSaldoItem= new BigDecimal(view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue());
+
+					this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
+					this.calcularTotales();
+
+				}else{//se verfica en la configuracion si se puede facturar con inventario
+
+					if(AbstractJasperReports.isNumberReal(entrada)){
+						//si es un bien se procede de esta manera
+						if(myArticulo.getTipoArticulo()==1){
+							//se extre la exista del producto en el inventario
+							double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+
+
+							//se registra la cantida en la entrada del usuario
+							BigDecimal cantidadSaldoItem=new BigDecimal(entrada);
+
+							//se recoge la nueva cantidad a colocar en el item
+							double cantidad=view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue();
+
+							BigDecimal newCantidadSaldoItem= new BigDecimal(view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue());
+
+
+							//se establece la nueva cantidad
+							this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
+
+
+
+							if(existencia>0.0 && cantidad<=existencia) {
+								this.calcularTotales();
+							}else{
+								JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "+cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()+" del articulo en la bodega "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getDescripcion());
+								view.getModeloTabla().eliminarDetalle(x);
+							}
+						}
+					}//fin de la comprobacion que la estrada es un numero
+				}
+
+
+			}
+
+
+		}
+		return existe;
+	}
+
 	
 	private void selectRowInset(){
 		
@@ -2260,7 +2336,7 @@ public void guardarRemoto(){
 		return this.myFactura;
 	}
 
-	public boolean buscarArticuloEnFactura(Articulo art){
+	/*public boolean buscarArticuloEnFactura(Articulo art){
 		boolean existe=false;
 		for(int x=0;x<view.getModeloTabla().getDetalles().size();x++){
 			Articulo artLocal=view.getModeloTabla().getDetalles().get(x).getArticulo();
@@ -2335,7 +2411,7 @@ public void guardarRemoto(){
 
 		}
 		return existe;
-	}
+	}*/
 
 	private void selectRowInset(int row){
 		int col = 1;
