@@ -526,7 +526,7 @@ public static void createReportVentasArticulo(Connection conn,List<DetalleFactur
 		}
 	}
 
-public static void createReportRuta(Connection conn,RutaEntrega ruta,List<DetalleFactura> ventas){
+public static void createReportRuta(Connection conn,RutaEntrega ruta,List<DetalleFactura> ventas,Integer noFacturas){
 	 
 	
 	Map<String, Object> parametros = new HashMap<String, Object>();
@@ -536,6 +536,7 @@ public static void createReportRuta(Connection conn,RutaEntrega ruta,List<Detall
 	 parametros.put("vendedor", ruta.getVendedor().getCodigo()+" | "+ruta.getVendedor().getNombre()+" "+ruta.getVendedor().getApellido());
 	 
 	 parametros.put("codigo_ruta", ruta.getIdRuta());
+	parametros.put("no_facturas", noFacturas);
 	 parametros.put("bD_admin",facturaDao.getDbNameDefault());
 	 
 	 

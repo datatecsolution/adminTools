@@ -156,6 +156,7 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 				
 				if(verificar==false && verificarLocal==false){
 					view.getModeloFacturasEntregas().agregarFactura(myFactura);
+					view.getLblNoFacturas().setText((""+(view.getModeloFacturas().getFacturas().size())));
 					view.getTxtNofact().setText("");
 					selectRowInset();
 				}else{
@@ -256,7 +257,7 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 			e.printStackTrace();
 		} 
 		//view.getDateFecha().setDate(arg0);
-		
+		view.getLblNoFacturas().setText((""+(view.getModeloFacturas().getFacturas().size())));
 		view.getBtnGuardar().setVisible(false);
 		view.getBtnActualizar().setVisible(true);
 		

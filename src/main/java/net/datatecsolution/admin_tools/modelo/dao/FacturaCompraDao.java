@@ -96,7 +96,8 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 					+ "subtotal15,"
 					+ "subtotal18,"
 					+ "isv18,"
-					+ "fecha_ingreso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,now())",java.sql.Statement.RETURN_GENERATED_KEYS);
+					+ "usuario,"
+					+ "fecha_ingreso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())",java.sql.Statement.RETURN_GENERATED_KEYS);
 			psConsultas.setString(1, fac.getFechaCompra());
 			psConsultas.setBigDecimal(2, fac.getSubTotal());
 			psConsultas.setBigDecimal(3, fac.getTotalImpuesto15());
@@ -110,8 +111,8 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 			psConsultas.setBigDecimal(11, fac.getSubTotal15());
 			psConsultas.setBigDecimal(12, fac.getSubTotal18());
 			psConsultas.setBigDecimal(13, fac.getTotalImpuesto18());
-			
-			
+			psConsultas.setString(14, ConexionStatic.getUsuarioLogin().getUser());
+
 			psConsultas.executeUpdate();
 			res=psConsultas.getGeneratedKeys(); //obtengo las ultimas llaves generadas
 			while(res.next()){

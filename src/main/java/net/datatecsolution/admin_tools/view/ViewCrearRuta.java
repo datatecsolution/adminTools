@@ -15,6 +15,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ViewCrearRuta extends JDialog {
+
+	private  JLabel lblNoFacturas;
 	private BotonGuardar btnGuardar;
 	private BotonCancelar btnCancelar;
 	private JTable tFacturas;
@@ -132,8 +134,22 @@ public class ViewCrearRuta extends JDialog {
 		dateFecha.setBounds(392, 20, 328, 40);
 		getContentPane().add(dateFecha);
 		FlowLayout flowLayout_1 = (FlowLayout) panel.getLayout();
-		//flowLayout_1.setHgap(1);
-		
+
+
+
+		JLabel lblNoFacturasT = new JLabel("Facturas");
+		lblNoFacturasT.setBounds(735, 6, 61, 16);
+		getContentPane().add(lblNoFacturasT);
+
+
+		lblNoFacturas = new JLabel("0");
+		lblNoFacturas.setBounds(745, 20, 328, 40);
+		lblNoFacturas.setFont(new Font("Lucida Grande", Font.BOLD, 18));
+		getContentPane().add(lblNoFacturas);
+
+
+
+
 		
 		this.setSize(800, 610);
 		
@@ -306,5 +322,13 @@ public class ViewCrearRuta extends JDialog {
 	 */
 	public BotonActualizar getBtnActualizar() {
 		return btnActualizar;
+	}
+
+	public JLabel getLblNoFacturas() {
+		return lblNoFacturas;
+	}
+
+	public void setLblNoFacturas(JLabel lblNoFacturas) {
+		this.lblNoFacturas = lblNoFacturas;
 	}
 }
