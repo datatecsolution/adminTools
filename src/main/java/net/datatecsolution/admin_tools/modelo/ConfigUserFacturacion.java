@@ -25,6 +25,10 @@ public class ConfigUserFacturacion {
 
 	private boolean imprReportOrden=false;
 
+	private boolean unirCanItem=false;
+
+	private boolean deleteItemFact=false;
+
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
 	}
@@ -283,6 +287,20 @@ public class ConfigUserFacturacion {
 	public void setImprReportOrden(boolean imprReportOrden) {
 		this.imprReportOrden = imprReportOrden;
 	}
-	
 
+	public boolean isUnirCanItem() {
+		return unirCanItem;
+	}
+
+	public void setUnirCanItem(boolean unirCanItem) {
+		this.unirCanItem = unirCanItem;
+	}
+
+	public boolean isDeleteItemFact() {
+		return deleteItemFact;
+	}
+
+	public void setDeleteItemFact(boolean deleteItemFact) {
+		this.deleteItemFact = deleteItemFact;
+	}
 }

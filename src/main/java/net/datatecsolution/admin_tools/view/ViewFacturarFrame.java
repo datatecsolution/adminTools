@@ -681,6 +681,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		//manager.addKeyEventDispatcher( c);
 		//this.addWindowListener(c);
 		//this.addw
+		this.addInternalFrameListener(c);
 	}
 
 

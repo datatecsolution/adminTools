@@ -10,6 +10,7 @@ public class ViewConfigUser extends JDialog {
 
 
 	private final JToggleButton tglbtnPwdEntrePrecio;
+	private final JLabel lblPosicionItem;
 	private JComboBox<String> cbFacturaContado;
 	private JComboBox<String> cbFormatoCredito;
 	private JToggleButton tglbtnVentVendedor;
@@ -26,6 +27,9 @@ public class ViewConfigUser extends JDialog {
 	private JToggleButton tglbtnObservarSalida;
 	private JToggleButton tglbtnImprimirEntrada;
 	private JToggleButton tglbtnObservarEntrada;
+	private JToggleButton tglbtnImprReportOrden;
+	private JToggleButton tglbtnUnirCanItem;
+	private JToggleButton tglbtnDeleteItemFact;
 	private JLabel lblUsuairo;
 	private JTextField txtUsuario;
 
@@ -41,7 +45,7 @@ public class ViewConfigUser extends JDialog {
 		getContentPane().setBackground(PanelPadre.color1);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(6, 64, 424, 230);
+		tabbedPane.setBounds(6, 64, 424, 260);
 		getContentPane().add(tabbedPane);
 		
 		JPanel panel = new JPanel();
@@ -111,6 +115,17 @@ public class ViewConfigUser extends JDialog {
 		tglbtnPwdEntrePrecio = new JToggleButton("Password entre precios");
 		tglbtnPwdEntrePrecio.setBounds(210, 146, 187, 29);
 		panel_1.add(tglbtnPwdEntrePrecio);
+
+		tglbtnDeleteItemFact = new JToggleButton("Password eliminar item");
+		tglbtnDeleteItemFact.setToolTipText("Establese password para eliminar item agregado a una factura.");
+		tglbtnDeleteItemFact.setBounds(210, 181, 187, 29);
+		panel_1.add(tglbtnDeleteItemFact);
+
+		tglbtnUnirCanItem= new JToggleButton("Unir cantidad item");
+		tglbtnUnirCanItem.setToolTipText("En la factura al agregar un articulo; si este ya se encuetra agregado, pedira aumentar la cantidad, sin crear otro item.");
+		tglbtnUnirCanItem.setBounds(6, 181, 180, 29);
+		panel_1.add(tglbtnUnirCanItem);
+
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setForeground(Color.LIGHT_GRAY);
@@ -137,6 +152,11 @@ public class ViewConfigUser extends JDialog {
 		tglbtnObservarEntrada = new JToggleButton("Observar entrada");
 		tglbtnObservarEntrada.setBounds(6, 146, 203, 29);
 		panel_2.add(tglbtnObservarEntrada);
+
+		tglbtnImprReportOrden = new JToggleButton("Imprimir orden de venta");
+		tglbtnImprReportOrden.setToolTipText("Cuando se emite una factura, mostrara una opcion para imprimir una orden.");
+		tglbtnImprReportOrden.setBounds(6, 181, 203, 29);
+		panel_2.add(tglbtnImprReportOrden);
 		
 		lblUsuairo = new JLabel("Usuario");
 		lblUsuairo.setBounds(17, 6, 61, 16);
@@ -149,15 +169,19 @@ public class ViewConfigUser extends JDialog {
 		txtUsuario.setColumns(10);
 		
 		btnAtras = new JButton("Atras");
-		btnAtras.setBounds(16, 306, 77, 29);
+		btnAtras.setBounds(16, 331, 77, 29);
 		getContentPane().add(btnAtras);
 		
 		btnSig = new JButton("Sig");
-		btnSig.setBounds(102, 306, 76, 29);
+		btnSig.setBounds(102, 331, 76, 29);
 		getContentPane().add(btnSig);
 
+		lblPosicionItem = new JLabel("0 de 10");
+		lblPosicionItem.setBounds(325, 336, 181, 16);
+		getContentPane().add(lblPosicionItem);
+
 		
-		setSize(443,373);
+		setSize(443,400);
 		
 		//centrar la ventana en la pantalla
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -225,6 +249,15 @@ public class ViewConfigUser extends JDialog {
 
 		tglbtnPwdEntrePrecio.addActionListener(c);
 		tglbtnPwdEntrePrecio.setActionCommand("ACTUALIZAR");
+
+		tglbtnUnirCanItem.addActionListener(c);
+		tglbtnUnirCanItem.setActionCommand("ACTUALIZAR");
+
+		tglbtnDeleteItemFact.addActionListener(c);
+		tglbtnDeleteItemFact.setActionCommand("ACTUALIZAR");
+
+		tglbtnImprReportOrden.addActionListener(c);
+		tglbtnImprReportOrden.setActionCommand("ACTUALIZAR");
 
 		cbFacturaContado.addItemListener(c);
 		//cbFacturaContado.setActionCommand("ACTUALIZAR");
@@ -497,5 +530,21 @@ public class ViewConfigUser extends JDialog {
 
 	public JToggleButton getTglbtnPwdEntrePrecio() {
 		return tglbtnPwdEntrePrecio;
+	}
+
+	public JToggleButton getTglbtnImprReportOrden() {
+		return tglbtnImprReportOrden;
+	}
+
+	public JToggleButton getTglbtnUnirCanItem() {
+		return tglbtnUnirCanItem;
+	}
+
+	public JToggleButton getTglbtnDeleteItemFact() {
+		return tglbtnDeleteItemFact;
+	}
+
+	public JLabel getLblPosicionItem() {
+		return lblPosicionItem;
 	}
 }

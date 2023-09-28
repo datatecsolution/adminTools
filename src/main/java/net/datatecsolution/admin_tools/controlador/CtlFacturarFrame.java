@@ -6,6 +6,8 @@ import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
@@ -15,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
+public class CtlFacturarFrame  implements ActionListener, MouseListener, TableModelListener, KeyListener, InternalFrameListener {
 	
 	private ViewFacturarFrame view;
 	private Factura myFactura=null;
@@ -42,7 +44,6 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	private boolean unirCanItem=false;
 	
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
@@ -134,7 +135,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 							//se verifica que la opcion de unir las cantidades en las articulos repetidos
 							boolean unirCantidad=false;
-							if(unirCanItem==true)
+							if(ConexionStatic.getUsuarioLogin().getConfig().isUnirCanItem()==true)
 								unirCantidad=this.buscarArticuloEnFactura(myArticulo);
 							else
 								unirCantidad=false;
@@ -1357,17 +1358,26 @@ public void calcularTotales(){
 					
 					case KeyEvent.VK_DELETE:
 						if(filaPulsada>=0){
-							JPasswordField pfs = new JPasswordField();
-							int action2 = JOptionPane.showConfirmDialog(view, pfs,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
-							if(action2 >= 0) {
-								String pwd = new String(pfs.getPassword());
 
-								//comprabacion del permiso administrativo
-								if (myUsuarioDao.comprobarAdmin(pwd)) {
-									this.view.getModeloTabla().eliminarDetalle(filaPulsada);
-									this.calcularTotales();
+							//activar para redondiar el precio de venta final
+							if(ConexionStatic.getUsuarioLogin().getConfig().isDeleteItemFact()){
+
+								JPasswordField pfs = new JPasswordField();
+								int action2 = JOptionPane.showConfirmDialog(view, pfs,"Escriba el password de admin",JOptionPane.OK_CANCEL_OPTION);
+								if(action2 >= 0) {
+									String pwd = new String(pfs.getPassword());
+									//comprabacion del permiso administrativo
+									if (myUsuarioDao.comprobarAdmin(pwd)) {
+										this.view.getModeloTabla().eliminarDetalle(filaPulsada);
+										this.calcularTotales();
+									}
 								}
+
+							}else {
+								this.view.getModeloTabla().eliminarDetalle(filaPulsada);
+								this.calcularTotales();
 							}
+
 
 						 }
 						break;
@@ -2273,7 +2283,7 @@ public void calcularTotales(){
 
 			//se verifica que la opcion de unir las cantidades en las articulos repetidos
 			boolean unirCantidad=false;
-			if(unirCanItem==true)
+			if(ConexionStatic.getUsuarioLogin().getConfig().isUnirCanItem()==true)
 				unirCantidad=this.buscarArticuloEnFactura(myArticulo);
 			else
 				unirCantidad=false;
@@ -2768,51 +2778,6 @@ public void guardarRemotoCredito(){
 		//this.view.getModeloTabla().fireTableDataChanged();
 	}
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		//facturaDao.desconectarBD();
-		//this.clienteDao.desconectarBD();
-		//this.myArticuloDao.desconectarBD();
-		//this.myFactura.setIdFactura(-1);
-		this.view.setVisible(false);
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public void cargarFacturaView(){
 		
@@ -3252,6 +3217,11 @@ public void guardarRemotoCredito(){
 		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
 		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
 		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+
+	}
+	@Override
+	public void internalFrameClosing(InternalFrameEvent e) {
+		this.guardar();
 
 	}
 

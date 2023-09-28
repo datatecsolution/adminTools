@@ -28,6 +28,7 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		myDao=new ConfigUserFactDao();
 		configs=myDao.todos();
 		setUserNext();
+		view.getBtnAtras().setEnabled(false);
 		view.setVisible(true);
 	}
 
@@ -44,7 +45,11 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 					view.getBtnSig().setEnabled(false);
 					view.getBtnAtras().setEnabled(true);
 
+				}else {
+					view.getBtnSig().setEnabled(true);
+					view.getBtnAtras().setEnabled(true);
 				}
+				view.getLblPosicionItem().setText(selector+1+" de "+configs.size()+" usuarios");
 			}
 
 		}
@@ -62,7 +67,11 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 				if(selector==0){
 					view.getBtnSig().setEnabled(true);
 					view.getBtnAtras().setEnabled(false);
+				}else {
+					view.getBtnSig().setEnabled(true);
+					view.getBtnAtras().setEnabled(true);
 				}
+				view.getLblPosicionItem().setText(selector+1+" de "+configs.size()+" usuarios");
 			}
 
 		}
@@ -156,6 +165,9 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		configEnPantalla.setAgregarClienteCredito(view.getTglbtnAddClienteCredito().isSelected());
 		configEnPantalla.setImprReportCategCierre(view.getTglbtnCategoriaEnCierre().isSelected());
 		configEnPantalla.setPwdEntrePrecio(view.getTglbtnPwdEntrePrecio().isSelected());
+		configEnPantalla.setUnirCanItem(view.getTglbtnUnirCanItem().isSelected());
+		configEnPantalla.setDeleteItemFact(view.getTglbtnDeleteItemFact().isSelected());
+		configEnPantalla.setImprReportOrden(view.getTglbtnImprReportOrden().isSelected());
 
 	}
 

@@ -80,7 +80,13 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(usuario,formato_factura,ventana_vendedor,pwd_descuento,pwd_precio,descuento_porcentaje,ventana_observaciones,precio_redondiar,facturar_sin_inventario,impr_report_categ_cierre,impr_report_salida,show_report_salida,impr_report_entrada,show_report_entrada,activar_busqueda_facturacion,pwd_entre_precio) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", java.sql.Statement.RETURN_GENERATED_KEYS);
+			super.psConsultas=conn.prepareStatement(super.getQueryInsert()+"(" +
+																					" usuario,formato_factura,ventana_vendedor,pwd_descuento,pwd_precio, " +
+																					" descuento_porcentaje,ventana_observaciones,precio_redondiar,facturar_sin_inventario, " +
+																					" impr_report_categ_cierre,impr_report_salida,show_report_salida,impr_report_entrada, " +
+																					" show_report_entrada,activar_busqueda_facturacion,pwd_entre_precio, imp_report_order, " +
+																					" unir_can_item, delete_item_fact" +
+																					") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", java.sql.Statement.RETURN_GENERATED_KEYS);
 			super.psConsultas.setString(1, config.getUsuario());
 			super.psConsultas.setString(2, config.getFormatoFactura());
 			super.psConsultas.setBoolean( 3, config.isVentanaVendedor());
@@ -98,6 +104,9 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			super.psConsultas.setBoolean(14, config.isShowReportEntrada());
 			super.psConsultas.setBoolean(15, config.isActivarBusquedaFacturacion());
 			super.psConsultas.setBoolean(16, config.isPwdEntrePrecio());
+			super.psConsultas.setBoolean(17, config.isImprReportOrden());
+			super.psConsultas.setBoolean(18, config.isUnirCanItem());
+			super.psConsultas.setBoolean(19, config.isDeleteItemFact());
 			
 			
 
@@ -226,7 +235,11 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			
 			//JOptionPane.showMessageDialog(null, "Datos Caja en modelo dao:"+caja.toString(),"Exito",JOptionPane.INFORMATION_MESSAGE);
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET ventana_vendedor=?,pwd_descuento=?,pwd_precio=?,descuento_porcentaje=?,ventana_observaciones=?, precio_redondiar=? ,facturar_sin_inventario=?,impr_report_categ_cierre=?,impr_report_salida=?,show_report_salida=?,impr_report_entrada=?,show_report_entrada=?,activar_busqueda_facturacion=?, agregar_cliente_credito=?, pwd_entre_precio=? WHERE usuario=?");
+			super.psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET ventana_vendedor=?,pwd_descuento=?,pwd_precio=?,descuento_porcentaje=?,ventana_observaciones=?, " +
+																						" precio_redondiar=? ,facturar_sin_inventario=?,impr_report_categ_cierre=?,impr_report_salida=?,show_report_salida=?, " +
+																						" impr_report_entrada=?,show_report_entrada=?,activar_busqueda_facturacion=?, agregar_cliente_credito=?, pwd_entre_precio=?, " +
+																						" imp_report_order=?, unir_can_item=?, delete_item_fact=? " +
+																				" WHERE usuario=?");
 			super.psConsultas.setBoolean( 1, config.isVentanaVendedor());
 			super.psConsultas.setBoolean( 2, config.isPwdDescuento());
 			super.psConsultas.setBoolean( 3, config.isPwdPrecio());
@@ -246,8 +259,11 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			super.psConsultas.setBoolean(14, config.isAgregarClienteCredito());
 
 			super.psConsultas.setBoolean(15, config.isPwdEntrePrecio());
+			super.psConsultas.setBoolean(16, config.isImprReportOrden());
+			super.psConsultas.setBoolean(17, config.isUnirCanItem());
+			super.psConsultas.setBoolean(18, config.isDeleteItemFact());
 			
-			super.psConsultas.setString(16, config.getUsuario());
+			super.psConsultas.setString(19, config.getUsuario());
 			psConsultas.executeUpdate();
 			return true;
 			
@@ -314,6 +330,10 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setActivarBusquedaFacturacion(res.getBoolean("activar_busqueda_facturacion"));
 				config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
 				config.setPwdPrecio(res.getBoolean("pwd_precio"));
+				config.setImprReportOrden(res.getBoolean("imp_report_order"));
+				config.setUnirCanItem(res.getBoolean("unir_can_item"));
+				config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
+
 
 
 				
@@ -401,6 +421,9 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setFormatoFacturaCredito(res.getString("formato_factura_credito"));
 				config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
 				config.setPwdPrecio(res.getBoolean("pwd_precio"));
+				config.setImprReportOrden(res.getBoolean("imp_report_order"));
+				config.setUnirCanItem(res.getBoolean("unir_can_item"));
+				config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
 
 				
 				configs.add(config);
@@ -482,6 +505,9 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 					config.setAgregarClienteCredito(res.getBoolean("agregar_cliente_credito"));
 					config.setFormatoFacturaCredito(res.getString("formato_factura_credito"));
 					config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
+					config.setImprReportOrden(res.getBoolean("imp_report_order"));
+					config.setUnirCanItem(res.getBoolean("unir_can_item"));
+					config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
 					
 					
 					
