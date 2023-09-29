@@ -10,7 +10,7 @@ public class TrConfigUsers2 extends JCheckBox implements TableCellRenderer {
 	
 	 Font normal = new Font( "Arial",Font.PLAIN,12 );
 	 Font negrilla = new Font( "Helvetica",Font.BOLD,12);
-	 Font cursiva = new Font( "Times new roman",Font.ITALIC,12 );
+	 Font cursiva = new Font( "Tz",Font.ITALIC,12 );
 	 private JComponent component = new JCheckBox();
 	 
 	 public TrConfigUsers2() {

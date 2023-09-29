@@ -3219,9 +3219,40 @@ public void guardarRemotoCredito(){
 		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
 
 	}
+
+	@Override
+	public void internalFrameOpened(InternalFrameEvent e) {
+
+	}
+
 	@Override
 	public void internalFrameClosing(InternalFrameEvent e) {
 		this.guardar();
+
+	}
+
+	@Override
+	public void internalFrameClosed(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameIconified(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameDeiconified(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameActivated(InternalFrameEvent e) {
+
+	}
+
+	@Override
+	public void internalFrameDeactivated(InternalFrameEvent e) {
 
 	}
 

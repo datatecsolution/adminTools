@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.modelo;
 
+import net.datatecsolution.Principal;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
 import net.datatecsolution.admin_tools.modelo.dao.SalidaCajaDao;
 import net.sf.jasperreports.engine.*;
@@ -22,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
+import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -1172,14 +1174,21 @@ public static void createReportVentasCategoria(Connection conn,CierreCaja cierre
 	
 	public static void createReportFacturaCarta( Connection conn,Integer idFactura, String  obrs )
 	{
+		// Obtener la ubicación del archivo JAR
+		String jarPath = Principal.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		// Obtener el directorio padre del JAR
+		String directorioJAR = new File(jarPath).getParent();
+		// Construir la ruta del logo
+		String rutaLogo = directorioJAR + File.separator + "logo.png";
+
 		
 		 Map parametros = new HashMap();
 		 parametros.put("numero_factura",idFactura);
 		 parametros.put("observacion",obrs);
+		parametros.put("path_logo",rutaLogo);
 		 
 		 if(ConexionStatic.getUsuarioLogin().getCajaActiva()!=null){
 			 parametros.put("bD_facturacion",ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd());
-			// JOptionPane.showMessageDialog(null,ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd());
 		 }
 		 parametros.put("bD_admin",facturaDao.getDbNameDefault());
 		  

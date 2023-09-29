@@ -28,6 +28,7 @@
 	<parameter name="bD_facturacion" class="java.lang.String"/>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<parameter name="observacion" class="java.lang.String"/>
+	<parameter name="path_logo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
 	`detalle_factura`.`numero_factura` AS `numero_factura_detalle`,
@@ -359,7 +360,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="52" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout"/>
 			<subreport>
 				<reportElement stretchType="RelativeToTallestObject" x="-28" y="0" width="612" height="41" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
@@ -393,6 +394,10 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$P{observacion}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="-2" y="0" width="72" height="70" uuid="508a454a-af27-46cd-a5c9-7e805dcb1dd2"/>
+				<imageExpression><![CDATA[$P{path_logo}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
