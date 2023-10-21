@@ -394,10 +394,6 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$P{observacion}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="-2" y="0" width="72" height="70" uuid="508a454a-af27-46cd-a5c9-7e805dcb1dd2"/>
-				<imageExpression><![CDATA[$P{path_logo}]]></imageExpression>
-			</image>
 		</band>
 	</title>
 	<pageHeader>
