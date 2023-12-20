@@ -374,6 +374,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 
  */
 
+
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		boolean resul=false;

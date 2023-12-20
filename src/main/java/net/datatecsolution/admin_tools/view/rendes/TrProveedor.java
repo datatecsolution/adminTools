@@ -24,8 +24,11 @@ public class TrProveedor extends DefaultTableCellRenderer {
 			cell.setBackground(new Color(254, 172, 172));
 		}
 
-		if (column == 1) {
-			//cell.
+		if (column == 0 || column == 2  || column==11) {
+			setHorizontalAlignment(SwingConstants.CENTER);
+		}
+		if (column == 3 || column == 4) {
+			setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 
 		return cell;

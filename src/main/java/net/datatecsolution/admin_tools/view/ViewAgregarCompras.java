@@ -70,7 +70,7 @@ public class ViewAgregarCompras extends JDialog {
 		this.getContentPane().setBackground(color3);
 
 		JPanel panelInfoCompra = new PanelPadre();
-		panelInfoCompra.setBounds(10, 11, 1184, 80);
+		panelInfoCompra.setBounds(10, 11, 1350, 80);
 		panelInfoCompra.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		getContentPane().add(panelInfoCompra);
 		panelInfoCompra.setLayout(null);
@@ -91,79 +91,79 @@ public class ViewAgregarCompras extends JDialog {
 		panelInfoCompra.add(lblNoFactura);
 
 		txtNofactura = new JTextField();
-		txtNofactura.setBounds(149, 36, 102, 31);
+		txtNofactura.setBounds(149, 36, 192, 31);
 		panelInfoCompra.add(txtNofactura);
 		txtNofactura.setColumns(10);
 
 		grupoOpciones = new ButtonGroup();
 		rdbtnCredito = new JRadioButton("");
-		rdbtnCredito.setBounds(327, 41, 40, 23);
+		rdbtnCredito.setBounds(437, 42, 40, 23);
 		grupoOpciones.add(rdbtnCredito);
 		panelInfoCompra.add(rdbtnCredito);
 
 		rdbtnContado = new JRadioButton("");
 		rdbtnContado.setSelected(true);
-		rdbtnContado.setBounds(261, 41, 40, 23);
+		rdbtnContado.setBounds(371, 42, 40, 23);
 		grupoOpciones.add(rdbtnContado);
 		panelInfoCompra.add(rdbtnContado);
 
 		lblFechaVencimiento = new JLabel("Vencimiento");
-		lblFechaVencimiento.setBounds(392, 19, 90, 14);
+		lblFechaVencimiento.setBounds(502, 20, 90, 14);
 		panelInfoCompra.add(lblFechaVencimiento);
 
 		dateVencFactura = new JDateChooser();
 		dateVencFactura.setDateFormatString("dd-MM-yyyy");
-		dateVencFactura.setBounds(392, 37, 129, 31);
+		dateVencFactura.setBounds(502, 38, 129, 31);
 		dateVencFactura.setEnabled(false);
 		panelInfoCompra.add(dateVencFactura);
 
 		JLabel lblDepartementoDeLa = new JLabel("Departemento de la compra");
-		lblDepartementoDeLa.setBounds(531, 19, 200, 14);
+		lblDepartementoDeLa.setBounds(641, 20, 200, 14);
 		panelInfoCompra.add(lblDepartementoDeLa);
 
 		lblContado = new JLabel("Contado");
-		lblContado.setBounds(251, 18, 61, 16);
+		lblContado.setBounds(361, 19, 61, 16);
 		panelInfoCompra.add(lblContado);
 
 		lblCredito = new JLabel("Credito");
-		lblCredito.setBounds(317, 18, 61, 16);
+		lblCredito.setBounds(427, 19, 61, 16);
 		panelInfoCompra.add(lblCredito);
 
 
 		cbxDepart = new JComboBox();
 		cbxDepart.setModel(modeloCbx);
-		cbxDepart.setBounds(531, 37, 210, 31);
+		cbxDepart.setBounds(641, 38, 210, 31);
 		panelInfoCompra.add(cbxDepart);
 
 		JLabel lblNombreProveedor = new JLabel("Proveedor");
-		lblNombreProveedor.setBounds(745, 19, 104, 14);
+		lblNombreProveedor.setBounds(855, 20, 104, 14);
 		panelInfoCompra.add(lblNombreProveedor);
 
 		txtNombreproveedor = new JTextField();
-		txtNombreproveedor.setBounds(789, 37, 292, 31);
+		txtNombreproveedor.setBounds(899, 38, 292, 31);
 		panelInfoCompra.add(txtNombreproveedor);
 		txtNombreproveedor.setEditable(false);
 		txtNombreproveedor.setColumns(10);
 
 		txtIdProveedor = new JTextField();
 		txtIdProveedor.setText("ID");
-		txtIdProveedor.setBounds(745, 37, 45, 31);
+		txtIdProveedor.setBounds(855, 38, 45, 31);
 		panelInfoCompra.add(txtIdProveedor);
 		txtIdProveedor.setToolTipText("Id Proveedor");
 		txtIdProveedor.setColumns(10);
 
 		btnBuscar = new JButton("...");
-		btnBuscar.setBounds(1080, 36, 32, 29);
+		btnBuscar.setBounds(1190, 37, 32, 29);
 		panelInfoCompra.add(btnBuscar);
 
 		chckbxIVAincluido = new JCheckBox("");
 		chckbxIVAincluido.setToolTipText("Incluir impuesto en factura?");
 		chckbxIVAincluido.setSelected(true);
-		chckbxIVAincluido.setBounds(1136, 36, 32, 23);
+		chckbxIVAincluido.setBounds(1269, 36, 32, 23);
 		panelInfoCompra.add(chckbxIVAincluido);
 
-		JLabel lblIVAincluido = new JLabel("I/V");
-		lblIVAincluido.setBounds(1140, 17, 25, 16);
+		JLabel lblIVAincluido = new JLabel("Imp/Venta");
+		lblIVAincluido.setBounds(1250, 18, 71, 16);
 		panelInfoCompra.add(lblIVAincluido);
 
 		//botones
@@ -195,26 +195,31 @@ public class ViewAgregarCompras extends JDialog {
 
 
 		tablaArticulos.setModel(modelo);
-		tablaArticulos.getColumnModel().getColumn(0).setPreferredWidth(100);     //Tama�o de las columnas de las tablas
-		tablaArticulos.getColumnModel().getColumn(1).setPreferredWidth(200);	//
-		tablaArticulos.getColumnModel().getColumn(2).setPreferredWidth(70);	//
-		tablaArticulos.getColumnModel().getColumn(3).setPreferredWidth(90);	//
-		tablaArticulos.getColumnModel().getColumn(4).setPreferredWidth(90);	//
-		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(90);	//
-		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(90);	//
+		tablaArticulos.getColumnModel().getColumn(0).setPreferredWidth(50);     //Tama�o de las columnas de las tablas
+		tablaArticulos.getColumnModel().getColumn(1).setPreferredWidth(250);	//
+		tablaArticulos.getColumnModel().getColumn(2).setPreferredWidth(50);	//
+		tablaArticulos.getColumnModel().getColumn(3).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(4).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(5).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(6).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(7).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(8).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(9).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(10).setPreferredWidth(70);	//
+		tablaArticulos.getColumnModel().getColumn(11).setPreferredWidth(100);	//
 		tablaArticulos.setRowHeight(25);
 		tablaArticulos.getColumnModel().getColumn(11).setCellEditor(new DateCellEditor());
 		//tablaArticulos.getColumnModel().getColumn(6).setPreferredWidth(100);	//
 		//Estitlo para la tabla
 
 		JScrollPane scrollPane = new JScrollPane(tablaArticulos);
-		scrollPane.setBounds(10, 103, 1184, 511);
+		scrollPane.setBounds(10, 103, 1350, 511);
 		scrollPane.setBackground(color3);
 		scrollPane.getViewport().setBackground(color3);
 		getContentPane().add(scrollPane);
 
 		panel = new PanelPadre();
-		panel.setBounds(333, 626, 861, 64);
+		panel.setBounds(499, 626, 861, 64);
 		getContentPane().add(panel);
 		panel.setLayout(null);
 
@@ -267,7 +272,7 @@ public class ViewAgregarCompras extends JDialog {
 		///DetalleFacturaProveedor uno= new DetalleFacturaProveedor();
 
 		//modelo.agregarDetalle(uno);
-		this.setSize(1200, 737);
+		this.setSize(1366, 768);
 
 		//centrar la ventana en la pantalla
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
