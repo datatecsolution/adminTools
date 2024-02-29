@@ -348,6 +348,11 @@ public class ViewAgregarCompras extends JDialog {
 		rdbtnContado.addKeyListener(c);
 
 
+		chckbxIVAincluido.addActionListener(c);
+		chckbxIVAincluido.setActionCommand("CAL_IMPUESTO");
+		chckbxIVAincluido.addKeyListener(c);
+
+
 		this.rdbtnCredito.addActionListener(c);
 		this.rdbtnCredito.setActionCommand("CREDITO");
 		rdbtnCredito.addKeyListener(c);
