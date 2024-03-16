@@ -41,6 +41,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 							+ " detalle_factura_compra . precio, "
 							+ " detalle_factura_compra . cantidad, "
 							+ " detalle_factura_compra . impuesto, "
+							+ " detalle_factura_compra . fecha_venc, "
 							+ " detalle_factura_compra . subtotal, "
 							+ " detalle_factura_compra . agrega_kardex, "
 							+ " detalle_factura_compra . codigo_bodega, "
@@ -64,7 +65,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 		
 		try{
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(super.getQueryInsert() +" (numero_compra,codigo_articulo,precio,cantidad,impuesto,subtotal,codigo_bodega) VALUES (?,?,?,?,?,?,?)");
+			psConsultas=conn.prepareStatement(super.getQueryInsert() +" (numero_compra,codigo_articulo,precio,cantidad,impuesto,subtotal,codigo_bodega,fecha_venc) VALUES (?,?,?,?,?,?,?,?)");
 			psConsultas.setInt(1, noCompra);
 			psConsultas.setInt(2, detalle.getArticulo().getId());
 			psConsultas.setBigDecimal(3, detalle.getPrecioCompra());
@@ -72,6 +73,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 			psConsultas.setBigDecimal(5, detalle.getImpuesto());
 			psConsultas.setBigDecimal(6, detalle.getSubTotal());
 			psConsultas.setInt(7, codBodega);
+			psConsultas.setInt(8, codBodega);
 			psConsultas.executeUpdate();
 			
 		

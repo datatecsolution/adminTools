@@ -436,10 +436,10 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		fireTableDataChanged();
 
 	}
-	public void setImpIncluido(boolean v){
-		for(int x=0;x<detallesFactura.size();x++){
-			if(detallesFactura.get(x).getArticulo().getId()==-1){
-				detallesFactura.get(x).setIvaIncludo(v);
+	public void setImpIncluido(boolean vvv){
+		for(int xx=0;xx<detallesFactura.size();xx++){
+			if(detallesFactura.get(xx).getArticulo().getId()!=-1){
+				detallesFactura.get(xx).setIvaIncludo(vvv);
 			}
 		}
 	}
