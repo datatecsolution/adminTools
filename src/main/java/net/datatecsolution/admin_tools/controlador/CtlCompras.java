@@ -207,7 +207,6 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 			break;
 			case "CAL_IMPUESTO":
 
-				JOptionPane.showMessageDialog(view,"Se calcula de nuevo impuesto "+view.getChckbxIVAincluido().isSelected());
 				if(view.getChckbxIVAincluido().isSelected()){
 					view.getModelo().setImpIncluido(true);
 				}else {

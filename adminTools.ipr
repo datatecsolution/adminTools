@@ -195,28 +195,28 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: avalon-framework:avalon-framework-impl:4.2.0">
+    <library name="Gradle: avalon-framework:avalon-framework-impl:4.2.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/avalon-framework/avalon-framework-impl/4.2.0/4da1db18947eb6950abb7ad79253011b9aec0e48/avalon-framework-impl-4.2.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: bouncycastle:bcmail-jdk14:138">
+    <library name="Gradle: bouncycastle:bcmail-jdk14:138" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/bouncycastle/bcmail-jdk14/138/14ff2dfec8578f5f6838c4d6a77a86789afe5382/bcmail-jdk14-138.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: bouncycastle:bcprov-jdk14:138">
+    <library name="Gradle: bouncycastle:bcprov-jdk14:138" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/bouncycastle/bcprov-jdk14/138/de366c3243a586eb3c0e2bcde1ed9bb1bfb985ff/bcprov-jdk14-138.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.10.0">
+    <library name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.10.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.10.0/e01cfd93b80d6773b3f757c78e756c9755b47b81/jackson-annotations-2.10.0.jar!/" />
       </CLASSES>
@@ -225,7 +225,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.10.0/c8be836b340e2bf48c335cfd68765ab867cfd088/jackson-annotations-2.10.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.fasterxml.jackson.core:jackson-core:2.10.0">
+    <library name="Gradle: com.fasterxml.jackson.core:jackson-core:2.10.0" external-system-id="GRADLE">
       <ANNOTATIONS>
         <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/externalAnnotations/com/fasterxml/jackson/core/jackson-core/2.9.6-an1/jackson-core-2.9.6-an1-annotations.zip!/" />
       </ANNOTATIONS>
@@ -237,7 +237,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.10.0/379d754e510e25111a823428636be68773fc73c9/jackson-core-2.10.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.10.0">
+    <library name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.10.0" external-system-id="GRADLE">
       <ANNOTATIONS>
         <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/externalAnnotations/com/fasterxml/jackson/core/jackson-databind/2.9.6-an1/jackson-databind-2.9.6-an1-annotations.zip!/" />
       </ANNOTATIONS>
@@ -249,7 +249,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.10.0/465988edbcc098cebd769e2ef110ce57661a27a4/jackson-databind-2.10.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.code.findbugs:jsr305:3.0.2">
+    <library name="Gradle: com.google.code.findbugs:jsr305:3.0.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar!/" />
       </CLASSES>
@@ -258,7 +258,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/b19b5927c2c25b6c70f093767041e641ae0b1b35/jsr305-3.0.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.errorprone:error_prone_annotations:2.3.2">
+    <library name="Gradle: com.google.errorprone:error_prone_annotations:2.3.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.3.2/d1a0c5032570e0f64be6b4d9c90cdeb103129029/error_prone_annotations-2.3.2.jar!/" />
       </CLASSES>
@@ -267,7 +267,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.3.2/6e986bccd3d116d8bc1aaac8534d068ea8edd2ae/error_prone_annotations-2.3.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.guava:failureaccess:1.0.1">
+    <library name="Gradle: com.google.guava:failureaccess:1.0.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar!/" />
       </CLASSES>
@@ -276,7 +276,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1d064e61aad6c51cc77f9b59dc2cccc78e792f5a/failureaccess-1.0.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.guava:guava:28.1-jre">
+    <library name="Gradle: com.google.guava:guava:28.1-jre" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/28.1-jre/b0e91dcb6a44ffb6221b5027e12a5cb34b841145/guava-28.1-jre.jar!/" />
       </CLASSES>
@@ -285,14 +285,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/28.1-jre/26f4fcbf06334df7a5091daa120682f252052957/guava-28.1-jre-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava">
+    <library name="Gradle: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/b421526c5f297295adef1c886e5246c39d4ac629/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: com.google.j2objc:j2objc-annotations:1.3">
+    <library name="Gradle: com.google.j2objc:j2objc-annotations:1.3" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/1.3/ba035118bc8bac37d7eff77700720999acd9986d/j2objc-annotations-1.3.jar!/" />
       </CLASSES>
@@ -301,7 +301,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.j2objc/j2objc-annotations/1.3/d26c56180205cbb50447c3eca98ecb617cf9f58b/j2objc-annotations-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.google.protobuf:protobuf-java:3.11.4">
+    <library name="Gradle: com.google.protobuf:protobuf-java:3.11.4" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/3.11.4/7ec0925cc3aef0335bbc7d57edfd42b0f86f8267/protobuf-java-3.11.4.jar!/" />
       </CLASSES>
@@ -310,7 +310,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/3.11.4/1e3a86dde8ecf9410e23f22a67ad062316fe94a/protobuf-java-3.11.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.itextpdf:itextpdf:5.5.4">
+    <library name="Gradle: com.itextpdf:itextpdf:5.5.4" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.itextpdf/itextpdf/5.5.4/7dd57cfb40e2fb5c4e4df33cfca0b9a936a81863/itextpdf-5.5.4.jar!/" />
       </CLASSES>
@@ -319,7 +319,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.itextpdf/itextpdf/5.5.4/f60dfe0d957ebea12ff2145ef42d235932d7bcfa/itextpdf-5.5.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.lowagie:itext:2.1.7">
+    <library name="Gradle: com.lowagie:itext:2.1.7" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.lowagie/itext/2.1.7/892bfb3e97074a61123b3b2d7caa2db112750864/itext-2.1.7.jar!/" />
       </CLASSES>
@@ -328,7 +328,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.lowagie/itext/2.1.7/c4a56ee84b87e8737e6b7769fcfeb97019003a14/itext-2.1.7-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.toedter:jcalendar:1.4">
+    <library name="Gradle: com.toedter:jcalendar:1.4" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.toedter/jcalendar/1.4/180cf82b37b0c1324e7de33bd0114be7d86678cd/jcalendar-1.4.jar!/" />
       </CLASSES>
@@ -337,7 +337,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.toedter/jcalendar/1.4/3d7b88aa467e7f5845273e130e6e2dc72c86a5a9/jcalendar-1.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-beanutils:commons-beanutils:1.9.4">
+    <library name="Gradle: commons-beanutils:commons-beanutils:1.9.4" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.4/d52b9abcd97f38c81342bb7e7ae1eee9b73cba51/commons-beanutils-1.9.4.jar!/" />
       </CLASSES>
@@ -346,7 +346,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.4/f00e0ba867d1810f255876631ab440e0725a9af0/commons-beanutils-1.9.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-cli:commons-cli:1.0">
+    <library name="Gradle: commons-cli:commons-cli:1.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.0/6dac9733315224fc562f6268df58e92d65fd0137/commons-cli-1.0.jar!/" />
       </CLASSES>
@@ -355,7 +355,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.0/fc9b2f6fb941aadf5ea34f68c983b0e6bfbf2ca7/commons-cli-1.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-codec:commons-codec:1.13">
+    <library name="Gradle: commons-codec:commons-codec:1.13" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.13/3f18e1aa31031d89db6f01ba05d501258ce69d2c/commons-codec-1.13.jar!/" />
       </CLASSES>
@@ -364,7 +364,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.13/226247b40160f2892fa4c7851b5b913d5d10912d/commons-codec-1.13-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-collections:commons-collections:3.2.2">
+    <library name="Gradle: commons-collections:commons-collections:3.2.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar!/" />
       </CLASSES>
@@ -373,7 +373,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/78c50ebda5784937ca1615fc0e1d0cb35857d572/commons-collections-3.2.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-digester:commons-digester:2.1">
+    <library name="Gradle: commons-digester:commons-digester:2.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-digester/commons-digester/2.1/73a8001e7a54a255eef0f03521ec1805dc738ca0/commons-digester-2.1.jar!/" />
       </CLASSES>
@@ -382,7 +382,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-digester/commons-digester/2.1/32d198e5ebef012249b225118c7cb9caae56c4d8/commons-digester-2.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-io:commons-io:1.3.1">
+    <library name="Gradle: commons-io:commons-io:1.3.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.1/b90b6ac57cf27a2858eaa490d02ba7945d18ca7b/commons-io-1.3.1.jar!/" />
       </CLASSES>
@@ -391,14 +391,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.1/10e13eb33d8c2c55a2517ca47d109626520e4e59/commons-io-1.3.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: commons-lang:commons-lang:1.0">
+    <library name="Gradle: commons-lang:commons-lang:1.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/1.0/ac4ab3b02823ea2997c163433d9d44132bd2446a/commons-lang-1.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: commons-logging:commons-logging:1.2">
+    <library name="Gradle: commons-logging:commons-logging:1.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar!/" />
       </CLASSES>
@@ -407,7 +407,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/ecf26c7507d67782a3bbd148d170b31dfad001aa/commons-logging-1.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: javax.inject:javax.inject:1">
+    <library name="Gradle: javax.inject:javax.inject:1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar!/" />
       </CLASSES>
@@ -418,14 +418,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/a00123f261762a7c5e0ec916a2c7c8298d29c400/javax.inject-1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: junit:junit:3.7">
+    <library name="Gradle: junit:junit:3.7" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/3.7/e64f01b90744bda704f21ac10c5f16deba64e4b4/junit-3.7.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: junit:junit:4.12">
+    <library name="Gradle: junit:junit:4.12" external-system-id="GRADLE">
       <ANNOTATIONS>
         <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/externalAnnotations/junit/junit/4.12-an1/junit-4.12-an1-annotations.zip!/" />
       </ANNOTATIONS>
@@ -439,7 +439,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: mysql:mysql-connector-java:8.0.21">
+    <library name="Gradle: mysql:mysql-connector-java:8.0.21" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/mysql/mysql-connector-java/8.0.21/53fd3a0887667aae7e40a3439fff2d03d93ec4c2/mysql-connector-java-8.0.21.jar!/" />
       </CLASSES>
@@ -448,7 +448,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/mysql/mysql-connector-java/8.0.21/7878429c883524323db6adaa8ea076067e060609/mysql-connector-java-8.0.21-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: net.sf.barcode4j:barcode4j:2.1">
+    <library name="Gradle: net.sf.barcode4j:barcode4j:2.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.barcode4j/barcode4j/2.1/4b38b2219c0d522fcea8238493f2ea3e238ef529/barcode4j-2.1.jar!/" />
       </CLASSES>
@@ -457,14 +457,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.barcode4j/barcode4j/2.1/b052c91d3c8e12ecdae595b172252320b59f85c2/barcode4j-2.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: net.sf.jasperreports:jasperreports-fonts:6.14.0">
+    <library name="Gradle: net.sf.jasperreports:jasperreports-fonts:6.14.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.jasperreports/jasperreports-fonts/6.14.0/6be0981b5bdf3390d79f7dfad3ce46ad324662ac/jasperreports-fonts-6.14.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: net.sf.jasperreports:jasperreports-metadata:6.14.0">
+    <library name="Gradle: net.sf.jasperreports:jasperreports-metadata:6.14.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.jasperreports/jasperreports-metadata/6.14.0/31a3c40d350855a1fed8d3b2f79b5ff7a8dd116d/jasperreports-metadata-6.14.0.jar!/" />
       </CLASSES>
@@ -473,7 +473,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.jasperreports/jasperreports-metadata/6.14.0/e3eba774fdffe08cbf79a8a922634550a8938c6f/jasperreports-metadata-6.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: net.sf.jasperreports:jasperreports:6.14.0">
+    <library name="Gradle: net.sf.jasperreports:jasperreports:6.14.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.jasperreports/jasperreports/6.14.0/db6d3dcb6d32682a3a7df1a1eb5ff984f5c373c9/jasperreports-6.14.0.jar!/" />
       </CLASSES>
@@ -482,14 +482,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.jasperreports/jasperreports/6.14.0/577a44f2b0a9369a92d588f745c10e71c0067095/jasperreports-6.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.ant:ant-launcher:1.7.1">
+    <library name="Gradle: org.apache.ant:ant-launcher:1.7.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant-launcher/1.7.1/a9cbbcefbbb5e7f97596045268243a8c1c7aafca/ant-launcher-1.7.1.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="Gradle: org.apache.ant:ant:1.7.1">
+    <library name="Gradle: org.apache.ant:ant:1.7.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.7.1/1d33711018e7649a8427fff62a87f94f4e7d310f/ant-1.7.1.jar!/" />
       </CLASSES>
@@ -498,7 +498,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.7.1/c94ffbfe67f4cd1042d44d25f253b8ce4252cb12/ant-1.7.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.commons:commons-collections4:4.4">
+    <library name="Gradle: org.apache.commons:commons-collections4:4.4" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-collections4/4.4/62ebe7544cb7164d87e0637a2a6a2bdc981395e8/commons-collections4-4.4.jar!/" />
       </CLASSES>
@@ -507,7 +507,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-collections4/4.4/6260e416ff273ee938b31b0a8e512a367b1ee500/commons-collections4-4.4-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.commons:commons-dbcp2:2.7.0">
+    <library name="Gradle: org.apache.commons:commons-dbcp2:2.7.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-dbcp2/2.7.0/ac3c5077659b4b9140e8fa63e855e0437fe94357/commons-dbcp2-2.7.0.jar!/" />
       </CLASSES>
@@ -516,7 +516,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-dbcp2/2.7.0/40e49625e8ccfb008f99cd4bc9babcf43756bac3/commons-dbcp2-2.7.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.commons:commons-lang3:3.11">
+    <library name="Gradle: org.apache.commons:commons-lang3:3.11" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.11/68e9a6adf7cf8eb7e9d31bbc554c7c75eeaac568/commons-lang3-3.11.jar!/" />
       </CLASSES>
@@ -525,7 +525,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.11/24014867e470db3942db53b17a4902f4215d5ea8/commons-lang3-3.11-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.commons:commons-math3:3.6.1">
+    <library name="Gradle: org.apache.commons:commons-math3:3.6.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.6.1/e4ba98f1d4b3c80ec46392f25e094a6a2e58fcbf/commons-math3-3.6.1.jar!/" />
       </CLASSES>
@@ -534,7 +534,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-math3/3.6.1/8fab23986ea8886af34818daf32a718e81dc98ba/commons-math3-3.6.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.commons:commons-pool2:2.7.0">
+    <library name="Gradle: org.apache.commons:commons-pool2:2.7.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-pool2/2.7.0/7f9ccfaaf76b0ba8b4200480971a170364a9c361/commons-pool2-2.7.0.jar!/" />
       </CLASSES>
@@ -543,7 +543,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-pool2/2.7.0/d4eabcd9a2ddb810f0417b0e3c67c3dbb5734ad0/commons-pool2-2.7.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.poi:poi:4.1.1">
+    <library name="Gradle: org.apache.poi:poi:4.1.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi/4.1.1/c915f1a426213a8450fb473b5b3adb63f5ac1017/poi-4.1.1.jar!/" />
       </CLASSES>
@@ -552,7 +552,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi/4.1.1/45d063946e80a2d08a209bebc7d87c7ad8d6d2cb/poi-4.1.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-anim:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-anim:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.9/bf5a87c6647e4b0c454facc0278c64f4199717fc/batik-anim-1.9.jar!/" />
       </CLASSES>
@@ -561,7 +561,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.9/ea2fc28cbe11ab267841e9291b001cc7381c3bdc/batik-anim-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-awt-util:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-awt-util:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.9/855cbcf158a0ae62ce85f2705a9bfccd4e99ede7/batik-awt-util-1.9.jar!/" />
       </CLASSES>
@@ -570,7 +570,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.9/be1e6daea2a214d3de6c6f070560974086d6baea/batik-awt-util-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-bridge:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-bridge:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.9/fb7509c68f90e64a45f8ceece187a211415640c1/batik-bridge-1.9.jar!/" />
       </CLASSES>
@@ -579,7 +579,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.9/688165e0562485c36c7b9a3ba876ff042913b721/batik-bridge-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-constants:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-constants:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.9/24cae622672dedddd18951b193a83c12bfe33241/batik-constants-1.9.jar!/" />
       </CLASSES>
@@ -588,7 +588,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-constants/1.9/169e3ea8513e5b52212bf877347a6785e5b5f003/batik-constants-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-css:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-css:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.9/3eb0bdc9dedd2e33e7ace50e01eab16741fcb689/batik-css-1.9.jar!/" />
       </CLASSES>
@@ -597,7 +597,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.9/39994d892857c45e5ca4770b5c12434ddae7a2ac/batik-css-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-dom:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-dom:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.9/96e8edbf08358f84f7c9dc5778797203f0feb59c/batik-dom-1.9.jar!/" />
       </CLASSES>
@@ -606,7 +606,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.9/bb615e73b7443c3591dae6dce06f0ba20961b78d/batik-dom-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-ext:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-ext:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.9/da90c9656f651df691c602285aa1ba40463326c1/batik-ext-1.9.jar!/" />
       </CLASSES>
@@ -615,7 +615,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.9/4127c3c00aa547c32a7a62e34c7aacc256105208/batik-ext-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-gvt:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-gvt:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.9/58fc30896e7afdcc1e5af4e557fcc0e735c5072a/batik-gvt-1.9.jar!/" />
       </CLASSES>
@@ -624,7 +624,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.9/2048fb3770faec2828f02711999a9f65d77c75c4/batik-gvt-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-i18n:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-i18n:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.9/c83bf01767ec26ad24df7277d2dc845c3f4fe0f2/batik-i18n-1.9.jar!/" />
       </CLASSES>
@@ -633,7 +633,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-i18n/1.9/f9bbd3be9470cad1d3fb5575fc54fc4a1512fb92/batik-i18n-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-parser:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-parser:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.9/1f57aca8fc9f47431bf637a34097e3797458a211/batik-parser-1.9.jar!/" />
       </CLASSES>
@@ -642,7 +642,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.9/3e9cb72531faab7f643b97687996a916b1972b39/batik-parser-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-script:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-script:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.9/4476562c724df213cd44d4ee292e1438d04cb7a7/batik-script-1.9.jar!/" />
       </CLASSES>
@@ -651,7 +651,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.9/61a40ddfe9c43e9946dcda9f2b4798e47e9932eb/batik-script-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-svg-dom:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-svg-dom:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.9/c6535d0a6656f18706fbe68796cd803aae5d1ec6/batik-svg-dom-1.9.jar!/" />
       </CLASSES>
@@ -660,7 +660,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.9/52474f54aafbf9da93dce7b020beb795a64eb215/batik-svg-dom-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-util:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-util:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.9/c96247c6b0b4909b0a515577f67622e9190b8f8/batik-util-1.9.jar!/" />
       </CLASSES>
@@ -669,7 +669,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.9/4adb4cd58acfb4b27d4f1ca19c223ba323b33ef8/batik-util-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:batik-xml:1.9">
+    <library name="Gradle: org.apache.xmlgraphics:batik-xml:1.9" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.9/ea56fceb9d20e5edf416651135e027fc8fbdb45f/batik-xml-1.9.jar!/" />
       </CLASSES>
@@ -678,7 +678,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.9/d7ad29fc654d70f3174ffb393c236d79019a1ed4/batik-xml-1.9-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.apache.xmlgraphics:xmlgraphics-commons:2.2">
+    <library name="Gradle: org.apache.xmlgraphics:xmlgraphics-commons:2.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.2/89f22650b8b8a5ac91207bf58190df852d97415a/xmlgraphics-commons-2.2.jar!/" />
       </CLASSES>
@@ -687,7 +687,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/xmlgraphics-commons/2.2/dff64d41ec575a0479df722a5cd08b1b9f1fa9a5/xmlgraphics-commons-2.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.bouncycastle:bcmail-jdk14:1.38">
+    <library name="Gradle: org.bouncycastle:bcmail-jdk14:1.38" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcmail-jdk14/1.38/14ff2dfec8578f5f6838c4d6a77a86789afe5382/bcmail-jdk14-1.38.jar!/" />
       </CLASSES>
@@ -696,7 +696,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcmail-jdk14/1.38/a330bbe03efd892e3515e3f407dfba73f8568612/bcmail-jdk14-1.38-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.bouncycastle:bcprov-jdk14:1.38">
+    <library name="Gradle: org.bouncycastle:bcprov-jdk14:1.38" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk14/1.38/de366c3243a586eb3c0e2bcde1ed9bb1bfb985ff/bcprov-jdk14-1.38.jar!/" />
       </CLASSES>
@@ -705,7 +705,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcprov-jdk14/1.38/f256abfe9445a97cfab36c9c6ef1414b81a60093/bcprov-jdk14-1.38-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.bouncycastle:bctsp-jdk14:1.38">
+    <library name="Gradle: org.bouncycastle:bctsp-jdk14:1.38" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bctsp-jdk14/1.38/4821122f8390d15f4b5ee652621e2a2bb1f1bf16/bctsp-jdk14-1.38.jar!/" />
       </CLASSES>
@@ -714,7 +714,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bctsp-jdk14/1.38/aeb07f434ed0e0a497c794cbf7b863fd2d4a5a17/bctsp-jdk14-1.38-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.checkerframework:checker-qual:2.8.1">
+    <library name="Gradle: org.checkerframework:checker-qual:2.8.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/2.8.1/eb2e8ab75598548cc8acf9a1ca227e480e01881e/checker-qual-2.8.1.jar!/" />
       </CLASSES>
@@ -723,7 +723,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/2.8.1/4b07e85f804e861360ee09ddd4550bc6b3fcfcad/checker-qual-2.8.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.codehaus.castor:castor-core:1.4.1">
+    <library name="Gradle: org.codehaus.castor:castor-core:1.4.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.castor/castor-core/1.4.1/b973333a7ce1b8017dccba68068023c9d17f9872/castor-core-1.4.1.jar!/" />
       </CLASSES>
@@ -732,7 +732,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.castor/castor-core/1.4.1/81bca28867f437cd7abcb502582a990d6a4c69b3/castor-core-1.4.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.codehaus.castor:castor-xml:1.4.1">
+    <library name="Gradle: org.codehaus.castor:castor-xml:1.4.1" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.castor/castor-xml/1.4.1/2cee800a008291305ac4f3a67b674f9c6cb1d07a/castor-xml-1.4.1.jar!/" />
       </CLASSES>
@@ -741,7 +741,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.castor/castor-xml/1.4.1/9e56ee09bf0e081a930fb96e875533d7a2e4870f/castor-xml-1.4.1-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.18">
+    <library name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.18" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.mojo/animal-sniffer-annotations/1.18/f7aa683ea79dc6681ee9fb95756c999acbb62f5d/animal-sniffer-annotations-1.18.jar!/" />
       </CLASSES>
@@ -750,7 +750,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.mojo/animal-sniffer-annotations/1.18/dff084acf1ff3ff9145b1708c566787d2c82dd0/animal-sniffer-annotations-1.18-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.eclipse.jdt:ecj:3.21.0">
+    <library name="Gradle: org.eclipse.jdt:ecj:3.21.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/ecj/3.21.0/d06974eec06892e5594bdb8fbbc95cd81f1c57b2/ecj-3.21.0.jar!/" />
       </CLASSES>
@@ -759,7 +759,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/ecj/3.21.0/a143919dc9978bdf5977f04b19bc50cee00aa862/ecj-3.21.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.hamcrest:hamcrest-core:1.3">
+    <library name="Gradle: org.hamcrest:hamcrest-core:1.3" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar!/" />
       </CLASSES>
@@ -770,7 +770,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.javapos:javapos:1.14.0">
+    <library name="Gradle: org.javapos:javapos:1.14.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javapos/javapos/1.14.0/f407b83e2f00d300c6913c41f4df3d8d8aa0e2a2/javapos-1.14.0.jar!/" />
       </CLASSES>
@@ -779,7 +779,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javapos/javapos/1.14.0/98eb8c5a3771c7b376846a19ee15b72a487f995b/javapos-1.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jfree:jcommon:1.0.23">
+    <library name="Gradle: org.jfree:jcommon:1.0.23" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jcommon/1.0.23/a316f336ca996e0c6bec4e4fbd49be8f5e1c3968/jcommon-1.0.23.jar!/" />
       </CLASSES>
@@ -788,7 +788,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jcommon/1.0.23/76c1fec968d3f6e55cf9bea2855ad33d085a6b6/jcommon-1.0.23-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.jfree:jfreechart:1.0.19">
+    <library name="Gradle: org.jfree:jfreechart:1.0.19" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jfreechart/1.0.19/ba9ee7dbb2e4c57a6901c79f614ed2dea9cc0e20/jfreechart-1.0.19.jar!/" />
       </CLASSES>
@@ -797,7 +797,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jfree/jfreechart/1.0.19/5aae69aa497ce4ea82b59317102a09c5abc91ba1/jfreechart-1.0.19-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.scream3r:jssc:2.8.0">
+    <library name="Gradle: org.scream3r:jssc:2.8.0" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scream3r/jssc/2.8.0/7e8d93052a8743a7937a6d46854057ac1ce876c1/jssc-2.8.0.jar!/" />
       </CLASSES>
@@ -806,7 +806,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scream3r/jssc/2.8.0/d3e51b3dec3f4b4b76895c236a1ab1cdf6176bd9/jssc-2.8.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: xalan:serializer:2.7.2">
+    <library name="Gradle: xalan:serializer:2.7.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/24247f3bb052ee068971393bdb83e04512bb1c3c/serializer-2.7.2.jar!/" />
       </CLASSES>
@@ -815,7 +815,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xalan/serializer/2.7.2/fe9c3d37a49238fac9d4d6c4f5bbd8c334da787a/serializer-2.7.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: xalan:xalan:2.7.2">
+    <library name="Gradle: xalan:xalan:2.7.2" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/d55d3f02a56ec4c25695fe67e1334ff8c2ecea23/xalan-2.7.2.jar!/" />
       </CLASSES>
@@ -824,7 +824,7 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xalan/xalan/2.7.2/fe9c3d37a49238fac9d4d6c4f5bbd8c334da787a/xalan-2.7.2-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: xml-apis:xml-apis-ext:1.3.04">
+    <library name="Gradle: xml-apis:xml-apis-ext:1.3.04" external-system-id="GRADLE">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis-ext/1.3.04/41a8b86b358e87f3f13cf46069721719105aff66/xml-apis-ext-1.3.04.jar!/" />
       </CLASSES>

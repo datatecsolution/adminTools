@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component jdk="1.8" jdk_type="JavaSDK">
+<component inheritJdk="true">
 	<contentEntry url="file://$MODULE_DIR$/src/main"/>
 	<lib name="Gradle: net.sf.jasperreports:jasperreports-fonts:6.14.0" scope="RUNTIME"/>
 	<levels>

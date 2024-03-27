@@ -65,7 +65,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 		
 		try{
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(super.getQueryInsert() +" (numero_compra,codigo_articulo,precio,cantidad,impuesto,subtotal,codigo_bodega,fecha_venc) VALUES (?,?,?,?,?,?,?,?)");
+			psConsultas=conn.prepareStatement(super.getQueryInsert() +" (numero_compra,codigo_articulo,precio,cantidad,impuesto,subtotal,codigo_bodega,fecha_venc) VALUES (?,?,?,?,?,?,?,STR_TO_DATE(?, '%d/%m/%Y'))");
 			psConsultas.setInt(1, noCompra);
 			psConsultas.setInt(2, detalle.getArticulo().getId());
 			psConsultas.setBigDecimal(3, detalle.getPrecioCompra());
@@ -73,7 +73,7 @@ public class DetalleFacturaProveedorDao extends ModeloDaoBasic{
 			psConsultas.setBigDecimal(5, detalle.getImpuesto());
 			psConsultas.setBigDecimal(6, detalle.getSubTotal());
 			psConsultas.setInt(7, codBodega);
-			psConsultas.setInt(8, codBodega);
+			psConsultas.setString(8, detalle.getDateVencimiento());
 			psConsultas.executeUpdate();
 			
 		

@@ -6,11 +6,14 @@ import net.datatecsolution.admin_tools.modelo.CodBarra;
 import net.datatecsolution.admin_tools.modelo.DetalleFacturaProveedor;
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,12 +37,10 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 	}
 
 	public void agregarDetalle(){
-		//JOptionPane.showMessageDialog(null,detallesFactura.size() );
+
 		for(int x=0;x<detallesFactura.size();x++){
 
-			//JOptionPane.showMessageDialog(null,detallesFactura.get(x).getArticulo() );
 			if(detallesFactura.get(x).getArticulo().getId()<0){
-				//JOptionPane.showMessageDialog(null,detallesFactura.get(x).getArticulo()+ "..Eliminando");
 				detallesFactura.remove(x);
 
 			}
@@ -47,7 +48,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		DetalleFacturaProveedor uno =new DetalleFacturaProveedor();
 		detallesFactura.add(uno);
 		fireTableDataChanged();
-		//JOptionPane.showMessageDialog(null,detallesFactura.size() );
 	}
 	public void setTotalCompra(double t){
 		totalCompra+=t;
@@ -193,7 +193,30 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 						return null;
 
 				case 11:
-					return detallesFactura.get(rowIndex).getDateVencimiento();
+
+					// Define el formato de la cadena de fecha
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+					try {
+						//fecha por defecto
+						LocalDate fechaDef = LocalDate.parse("01/01/2000", formatter);
+
+						// Convierte la cadena de fecha a LocalDate
+						LocalDate fecha = LocalDate.parse(detallesFactura.get(rowIndex).getDateVencimiento(), formatter);
+
+						if(fecha.isEqual(fechaDef)){
+							return "";
+						}else{
+							return detallesFactura.get(rowIndex).getDateVencimiento();
+						}
+					} catch (DateTimeParseException e) {
+						// Maneja la excepción si la cadena de fecha no tiene el formato correcto
+						System.out.println("Error: Formato de fecha incorrecto.");
+						e.printStackTrace();
+					}
+
+
+
 
 				default:
 					return null;
@@ -233,7 +256,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 			v=(String) value;
 
 
-		//JOptionPane.showMessageDialog(null, "Columan"+columnIndex+" fila"+rowIndex);
 		switch(columnIndex){
 			case 0:
 				/*
@@ -263,7 +285,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 
 				detallesFactura.get(rowIndex).setCantidad(new BigDecimal(v));
 				fireTableCellUpdated(rowIndex, columnIndex);
-				//fireTableDataChanged();
 				break;
 			case 3:
 				detallesFactura.get(rowIndex).setPrecioCompra(new BigDecimal(v));
@@ -277,7 +298,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 
 				break;
 			case 7:
-				//BigDecimal
 				detallesFactura.get(rowIndex).getArticulo().setPrecioVenta(new Double(v));
 				fireTableCellUpdated(rowIndex, columnIndex);
 				break;
@@ -301,7 +321,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 					precioVent2.setCodigoPrecio(2);
 					precioVent2.setPrecio(new BigDecimal(v));
 					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent2);
-					//JOptionPane.showMessageDialog(null,"El articulo no tiene precio de costo.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 				}
 
 				break;
@@ -324,7 +343,6 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 					precioVent3.setCodigoPrecio(3);
 					precioVent3.setPrecio(new BigDecimal(v));
 					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent3);
-					//JOptionPane.showMessageDialog(null,"El articulo no tiene precio de costo.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 				}
 
 				break;
@@ -347,32 +365,41 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 					precioCosto2.setCodigoPrecio(4);
 					precioCosto2.setPrecio(new BigDecimal(v));
 					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioCosto2);
-					//JOptionPane.showMessageDialog(null,"El articulo no tiene precio de costo.","Error en articulo",JOptionPane.ERROR_MESSAGE);
 				}
 
 				break;
 			case 11:
-				detallesFactura.get(rowIndex).setDateVencimiento(v);
-				//
-				fireTableCellUpdated(rowIndex, columnIndex);
+
+
+				// Define el formato de la cadena de fecha
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+				try {
+					// Convierte la cadena de fecha a LocalDate
+					LocalDate fecha = LocalDate.parse(v, formatter);
+
+					// Obtiene la fecha actual
+					LocalDate fechaActual = LocalDate.now();
+
+					// Compara la fecha ingresada con la fecha actual
+					if (fecha.isBefore(fechaActual)) {
+						JOptionPane.showMessageDialog(null,"La fecha de vencimientos debe ser una valida.","Error validacion",JOptionPane.ERROR_MESSAGE);
+					} else {
+
+							detallesFactura.get(rowIndex).setDateVencimiento(v);
+							fireTableCellUpdated(rowIndex, columnIndex);
+					}
+				} catch (DateTimeParseException e) {
+					// Maneja la excepción si la cadena de fecha no tiene el formato correcto
+					System.out.println("Error: Formato de fecha incorrecto.");
+					e.printStackTrace();
+				}
+
 				break;
 		}
 
 
-		// fireTableCellUpdated(rowIndex, columnIndex);
 	}
-/*
-
-	@Override
-	public Class getColumnClass(int columnIndex) {
-		//        return getValueAt(0, columnIndex).getClass();
-		if(columnIndex==11)
-			return JDateChooser.class;
-		else
-			return String.class;
-	}
-
- */
 
 
 	@Override
