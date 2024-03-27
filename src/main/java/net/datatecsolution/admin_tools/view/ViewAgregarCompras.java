@@ -2,7 +2,6 @@ package net.datatecsolution.admin_tools.view;
 
 
 import com.toedter.calendar.JDateChooser;
-import net.datatecsolution.AlternatingColorTableExample;
 import net.datatecsolution.admin_tools.controlador.CtlCompras;
 import net.datatecsolution.admin_tools.view.botones.BotonActualizar;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
@@ -59,6 +58,7 @@ public class ViewAgregarCompras extends JDialog {
 
 	public ViewAgregarCompras(Window view) {
 		super(view,"Registrar Compras", ModalityType.DOCUMENT_MODAL);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // Evita que se cierre la ventana al hacer clic en el botón de cierre
 		getContentPane().setLayout(null);
 		modeloCbx=new CbxTmDepartamento();
 

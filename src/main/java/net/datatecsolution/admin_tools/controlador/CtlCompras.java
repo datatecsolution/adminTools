@@ -674,8 +674,12 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
-		this.view.setVisible(false);
+
+		int option = JOptionPane.showConfirmDialog(view, "¿Seguro que quieres salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+		if (option == JOptionPane.YES_OPTION) {
+			// Realizar acciones adicionales si se confirma la salida
+			view.setVisible(false);
+		}
 	}
 
 	@Override
