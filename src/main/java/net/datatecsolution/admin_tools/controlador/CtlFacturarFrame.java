@@ -903,7 +903,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F7:
 						
-						double maxDescuento=25;
+						double maxDescuento=35;
 						//configuracion del panel descuento
 						JPanel panelDescuento=new JPanel();
 						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -942,7 +942,7 @@ public void calcularTotales(){
 										
 										if(filaPulsada>=0){
 											
-											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
+											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-35%");
 											JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 											//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 											String seleccionadoDescuento=descuento.getText();
