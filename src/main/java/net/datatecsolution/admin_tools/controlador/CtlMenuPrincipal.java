@@ -370,10 +370,17 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 				
 			case "SALIDASCAJAS":
-				
+
 				ViewListaSalidas viewSalidas=new ViewListaSalidas(view);
 				CtlSalidasListas ctlSalidas=new CtlSalidasListas(viewSalidas);
 				break;
+			case "REPORTE_X_VENCER":
+				ViewFiltroRepVenc viewFiltroRepVenc=new ViewFiltroRepVenc(view);
+				CtlFiltroRepVenc ctlFiltroRepVenc=new CtlFiltroRepVenc(viewFiltroRepVenc,null);
+				break;
+
+
+
 		}
 		
 	}

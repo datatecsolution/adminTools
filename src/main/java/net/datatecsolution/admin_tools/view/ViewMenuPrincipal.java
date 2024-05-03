@@ -13,6 +13,7 @@ public class ViewMenuPrincipal extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JLabel usuario = new JLabel("Usuario:");
+	private JMenuItem mntmReporteVenc;
 	private JMenuItem mntmProveedores;
 	private JMenuItem mntmArticulos;
 	private JMenuItem mntmCategorias;
@@ -131,6 +132,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmGestionCompas = new JMenuItem("Gestion compras");
 		mnCompras.add(mntmGestionCompas);
+
+		mntmReporteVenc = new JMenuItem("Reporte x vencer");
+		mnCompras.add(mntmReporteVenc);
 		
 		JMenu mnCuentasPorCobrar = new JMenu("Cuentas por cobrar");
 		menuBar.add(mnCuentasPorCobrar);
@@ -312,6 +316,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");
+
+		mntmReporteVenc.addActionListener(c);
+		mntmReporteVenc.setActionCommand("REPORTE_X_VENCER");
 		
 	}
 	public JLabel getLblUserName(){
