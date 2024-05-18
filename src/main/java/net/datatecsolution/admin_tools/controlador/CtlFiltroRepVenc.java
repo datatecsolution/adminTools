@@ -4,8 +4,9 @@ import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.CajaDao;
 import net.datatecsolution.admin_tools.modelo.dao.DetalleFacturaDao;
 import net.datatecsolution.admin_tools.view.ViewFiltroRepVenc;
-import net.datatecsolution.admin_tools.view.ViewFiltroRepVentasCategoria;
+import net.datatecsolution.admin_tools.view.ViewListaCategorias;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,30 +15,18 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 	private ViewFiltroRepVenc view;
 	private Categoria categoriaReporte=null;
-	private DetalleFacturaDao detalleFacturaDao;
-
-	private CajaDao cajasDao;
-	private List<DetalleFactura> detalles=new ArrayList<DetalleFactura>();
-
-	private List<Caja> listCajas=null;
-	private String date1;
-	private String date2;
-	public CtlFiltroRepVenc(ViewFiltroRepVenc v, Categoria a){
+	private Departamento bodegaReporte;
+	public CtlFiltroRepVenc(ViewFiltroRepVenc v){
 		
 		view =v;
 		view.conectarCtl(this);
-
-		categoriaReporte=a;
-		cajasDao=new CajaDao() ;
-		detalleFacturaDao=new DetalleFacturaDao();
-		listCajas=cajasDao.todosList();
-//		view.getTxtArticulo().setText(a.getDescripcion());
+		bodegaReporte=new Departamento();
+		bodegaReporte.setId(1);//si implementamos la seleccion de la bodega se debe eleminar este
 		
 		view.setVisible(true);
 		
@@ -54,69 +43,25 @@ public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 		switch(comando){
 		
 			case "GENERAR":
-				
-					Caja una=null;
-					detalles.clear();
-					for(int x=0;x<this.listCajas.size();x++){
-						
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-						//date1 = sdf.format(this.view.getBuscar1().getDate());
-						//date2 = sdf.format(this.view.getBuscar2().getDate());
+				if(categoriaReporte==null){
+					JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+					break;
+				}
+				if(categoriaReporte.getDescripcion()!=null || categoriaReporte.getId()!=0) {
 
-						//para volcar los detalles de una factura determinada
-						List<DetalleFactura> unDetalle=new ArrayList<DetalleFactura>();
-
-						detalleFacturaDao.getDetallesFactura(listCajas.get(x), unDetalle, categoriaReporte, date1, date2);
-
-						//se vuelcan los datos en el detalle condesado donde solo se incluye una vez el producto
-						//recorremos las detalles de la factura
-						for(int xx=0; xx<unDetalle.size();xx++){
-
-							int filaDetalleEncontra=-1;
-							//se extre el articulo del detalle
-							Articulo unArt=unDetalle.get(xx).getArticulo();
-
-							//se recorre los detalles del informe condesando en busca del mismo articulo
-							for(int yy=0;yy<detalles.size();yy++){
-
-								if(unArt.getId()==detalles.get(yy).getArticulo().getId()){
-									filaDetalleEncontra=yy;
-									break;
-								}
-							}
-
-							//se filtra si ya esta
-							if(filaDetalleEncontra==-1){//sino esta el articulo en el reporte se agrega normal
-								detalles.add(unDetalle.get(xx));
-							}else{//si existe el articulo se suma la cantidad y el total a ya existente
-								BigDecimal newCantida=detalles.get(filaDetalleEncontra).getCantidad().add(unDetalle.get(xx).getCantidad());
-								BigDecimal newTotal=detalles.get(filaDetalleEncontra).getTotal().add(unDetalle.get(xx).getTotal());
-								detalles.get(filaDetalleEncontra).setCantidad(newCantida);
-								detalles.get(filaDetalleEncontra).setTotal(newTotal);
-
-							}
-
-						}
-
-
-
-
-
-
-
-						una=listCajas.get(x);
-					}
 					try {
-						
-						AbstractJasperReports.createReportVentasCategoria(ConexionStatic.getPoolConexion().getConnection(),detalles,categoriaReporte,date1,date2);
-						
+
+						AbstractJasperReports.createReportArticulosXvencer(ConexionStatic.getPoolConexion().getConnection(), categoriaReporte, bodegaReporte.getId(), (Integer) view.getSpDias().getValue());
+
 						//AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
 					} catch (SQLException eee) {
 						// TODO Auto-generated catch block
 						eee.printStackTrace();
 					}
-					
+				}else {
+					JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+				}
 			break;
 		}
 		
@@ -136,7 +81,25 @@ public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 		switch(e.getKeyCode()){
 		
 		case KeyEvent.VK_F1:
-			//buscarEmpleado();
+			ViewListaCategorias viewListaM=new ViewListaCategorias(view);
+			CtlCategoriaBuscar ctl=new CtlCategoriaBuscar(viewListaM);
+			viewListaM.conectarControladorBusqueda(ctl);
+			//se crea una marca y se llena con la busqueda que selecciona el usuario
+			Categoria myCategoria=ctl.buscarMarca();
+
+			//se compara si el usuario selecciono un marca
+			if(myCategoria.getDescripcion()!=null && myCategoria.getId()!=0){
+				//se pasa la marca buscada y selecciona al nuevo articulo
+				//myArticulo.setCategoria(myCategoria);
+
+				//se muestra el nombre de la marca en la caja de texto
+				view.getTxtCategoria().setText(myCategoria.getDescripcion());
+				categoriaReporte=myCategoria;
+
+			}else{
+				JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+				//myArticulo.getCategoria().setId(-1);
+			}
 			break;
 		}
 		

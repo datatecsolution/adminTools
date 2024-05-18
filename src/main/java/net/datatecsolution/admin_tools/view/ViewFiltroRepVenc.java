@@ -1,9 +1,6 @@
 package net.datatecsolution.admin_tools.view;
 
-import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.controlador.CtlFiltroRepVenc;
-import net.datatecsolution.admin_tools.controlador.CtlFiltroRepVentasArticulo;
-import net.datatecsolution.admin_tools.controlador.CtlFiltroRepVentasCategoria;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 
 import javax.swing.*;
@@ -11,13 +8,13 @@ import java.awt.*;
 
 public class ViewFiltroRepVenc extends JDialog {
 	private JButton btnBuscar;
-	private JTextField txtArticulo;
+	private JTextField txtCategoria;
 	private JSpinner spDias;
 
 
 	public ViewFiltroRepVenc(Window view) {
 		
-		super(view,"Reporte venta articulo", ModalityType.DOCUMENT_MODAL);
+		super(view,"Reporte vencimiento articulos", ModalityType.DOCUMENT_MODAL);
 		setResizable(false);
 		// TODO Auto-generated constructor stub
 		
@@ -30,11 +27,11 @@ public class ViewFiltroRepVenc extends JDialog {
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		getContentPane().setLayout(null);
 		
-		txtArticulo = new JTextField();
-		txtArticulo.setEditable(false);
-		txtArticulo.setBounds(18, 24, 404, 26);
-		getContentPane().add(txtArticulo);
-		txtArticulo.setColumns(10);
+		txtCategoria = new JTextField("F1 para buscar la categoria");
+		txtCategoria.setEditable(false);
+		txtCategoria.setBounds(18, 24, 404, 26);
+		getContentPane().add(txtCategoria);
+		txtCategoria.setColumns(10);
 		
 		JLabel lblEmpleado = new JLabel("Categoria");
 		lblEmpleado.setFont(new Font("Lucida Grande", Font.BOLD, 13));
@@ -70,15 +67,15 @@ public class ViewFiltroRepVenc extends JDialog {
 	/**
 	 * @return the txtEmpleado
 	 */
-	public JTextField getTxtArticulo() {
-		return txtArticulo;
+	public JTextField getTxtCategoria() {
+		return txtCategoria;
 	}
 	
 	public void conectarCtl(CtlFiltroRepVenc c){
 		btnBuscar.addActionListener( c);
 		btnBuscar.setActionCommand("GENERAR");
 		
-		txtArticulo.addKeyListener(c);
+		txtCategoria.addKeyListener(c);
 		btnBuscar.addKeyListener(c);
 		
 		spDias.addKeyListener(c);

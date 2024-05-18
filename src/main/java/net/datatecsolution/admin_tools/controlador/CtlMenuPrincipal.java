@@ -376,7 +376,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 			case "REPORTE_X_VENCER":
 				ViewFiltroRepVenc viewFiltroRepVenc=new ViewFiltroRepVenc(view);
-				CtlFiltroRepVenc ctlFiltroRepVenc=new CtlFiltroRepVenc(viewFiltroRepVenc,null);
+				CtlFiltroRepVenc ctlFiltroRepVenc=new CtlFiltroRepVenc(viewFiltroRepVenc);
 				break;
 
 

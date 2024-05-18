@@ -84,6 +84,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static InputStream articulosPrecios=null;
 	private static InputStream entradasBanco=null;
 	private static InputStream ordenCarta=null;
+	private static InputStream articuloXvencer=null;
 
 	
 	
@@ -133,6 +134,7 @@ public abstract class AbstractJasperReports implements Runnable
 	private static JasperReport reportArticulosPrecios;
 	private static JasperReport reportEntradasBanco;
 	private static JasperReport reportOrdenCarta;
+	private static JasperReport reportArticulosXvencer;
 	
 	
 	private static final Pattern numberPattern=Pattern.compile("-?\\d+");
@@ -218,6 +220,8 @@ public abstract class AbstractJasperReports implements Runnable
 		entradasBanco=AbstractJasperReports.class.getResourceAsStream("/reportes/entradas_bancos.jasper");
 
 		ordenCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/orden_carta.jasper");
+
+		articuloXvencer=AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteArticulosXvencer.jasper");
 		
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject( factura );
@@ -280,6 +284,8 @@ public abstract class AbstractJasperReports implements Runnable
 			reportEntradasBanco=(JasperReport) JRLoader.loadObject(entradasBanco);
 
 			reportOrdenCarta=(JasperReport) JRLoader.loadObject(ordenCarta);
+
+			reportArticulosXvencer=(JasperReport) JRLoader.loadObject(articuloXvencer);
 			
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -511,9 +517,32 @@ public static void createReportVentasArticulo(Connection conn,List<DetalleFactur
 		try {
 			if(reportVentasCategoriaTotal!=null)
 				reportFilled = JasperFillManager.fillReport( reportVentasCategoriaTotal, parametros, conn );
-				//reportFilled = JasperFillManager.fillReport( reportComisiones, parametros, new JREmptyDataSource() );
+				//reportFilled = JasperFillManager.fillReport( reportComisiones, parametros, new JREmptyDataSource() );createReportArticulosXvencer
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
+		} catch (JRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public static void createReportArticulosXvencer(Connection conn,Categoria cat,Integer codBodega, Integer dias){
+
+		Map parametros = new HashMap();
+		parametros.put("usuario", ConexionStatic.getUsuarioLogin().getUser());
+		//parametros.put("categoria", cat.getDescripcion());
+		parametros.put("codigo_categoria", cat.getId());
+		parametros.put("bodega", codBodega);
+		parametros.put("dias", dias);
+
+		try {
+			reportFilled = JasperFillManager.fillReport( reportArticulosXvencer, parametros, conn );
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
