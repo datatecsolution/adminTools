@@ -44,7 +44,8 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 	private Caja cajaDefecto;
 	private boolean isThereConexion=false;
 
-	
+	private Integer bandera=0;
+
 	
 	public CtlFacturarFrame(ViewFacturarFrame v ,List<ViewFacturarFrame> ven){
 	
@@ -997,7 +998,7 @@ public void calcularTotales(){
 											    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 											    	this.calcularTotales();
 										    	}else{
-										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 25%", "Error", JOptionPane.ERROR_MESSAGE);
+										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 35%", "Error", JOptionPane.ERROR_MESSAGE);
 										    	}
 										    }else{
 										    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1046,7 +1047,7 @@ public void calcularTotales(){
 								}//fin comprobacion del usuario admin
 							}//fin de la captura del pwd del usuario
 							
-						}else{
+						}else{//sino es necesario el password para el descuento
 							
 
 							
@@ -1058,7 +1059,7 @@ public void calcularTotales(){
 								
 								if(filaPulsada>=0){
 									
-									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-25%");
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-35%");
 									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE); 
 									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 									String seleccionadoDescuento=descuento.getText();
@@ -1113,7 +1114,7 @@ public void calcularTotales(){
 									    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 									    	this.calcularTotales();
 								    	}else{
-								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 25%", "Error", JOptionPane.ERROR_MESSAGE);
+								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 35%", "Error", JOptionPane.ERROR_MESSAGE);
 								    	}
 								    }else{
 								    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2087,8 +2088,13 @@ public void calcularTotales(){
 		return resultado;
 	}
 	private void cobrar(){
-		
+
+
+		CajaDao cajasDao=new CajaDao();
+		ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
+
 		isThereConexion =ConexionStatic.isDbConnected();
+
 		//verificamos si existe la conexion a la base de datos
 		if(isThereConexion){
 			
@@ -2180,7 +2186,12 @@ public void calcularTotales(){
 							
 							//se procesa el resultado del cierre de caja
 							if (resl) {
-								
+
+
+								if(myCliente.getId()==1 && bandera<1){
+									Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
+								}
+
 								this.guardarFactura();
 							}else {
 								JOptionPane.showMessageDialog(view,
@@ -2221,6 +2232,11 @@ public void calcularTotales(){
 										boolean resl = setCierre();
 										//se procesa el resultado del cierre de caja
 										if (resl) {
+
+											if(myCliente.getId()==1  && bandera<1){
+												//se coloca caja por defecto
+												Caja caja=ConexionStatic.getUsuarioLogin().nextCaja();
+											}
 											this.guardarFactura();
 										}else {
 											JOptionPane.showMessageDialog(view,
@@ -3077,6 +3093,22 @@ public void guardarRemotoCredito(){
 
 						}
 					}
+
+
+					//se coloca caja por defecto
+					CajaDao cajasDao=new CajaDao();
+					ConexionStatic.getUsuarioLogin().setCajas(cajasDao.getCajasUsuario(ConexionStatic.getUsuarioLogin()));
+
+
+					if(bandera>1){
+						bandera=0;
+					}
+					else{
+						if(myCliente.getId()==1)
+							bandera++;
+					}
+
+
 
 					String cambioEfectivo=myFactura.getCambio().toString();
 					String pago=myFactura.getPago().toString();
