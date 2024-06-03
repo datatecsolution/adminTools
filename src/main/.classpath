@@ -72,5 +72,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Gradle: commons-io:commons-io:1.3.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Gradle: junit:junit:3.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Gradle: net.sf.jasperreports:jasperreports-fonts:6.14.0"/>
-	<classpathentry kind="output" path="/AdminTools/build/classes/java/main"/>
+	<classpathentry kind="output" path="/Users/jdmayorga/IdeaProjects/adminTools/build/classes/java/main"/>
 </classpath>

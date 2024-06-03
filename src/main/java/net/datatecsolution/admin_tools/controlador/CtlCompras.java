@@ -202,8 +202,11 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				//this.view.getDateCompra().cleanup();
 				break;
 			case "CANCELAR":
-				//this.conexion.desconectar();
-				this.view.setVisible(false);
+				int option = JOptionPane.showConfirmDialog(view, "¿Seguro que quieres salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					this.view.setVisible(false);
+				}
+
 			break;
 			case "CAL_IMPUESTO":
 
