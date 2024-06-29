@@ -8,11 +8,9 @@ import net.datatecsolution.admin_tools.view.*;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
@@ -844,7 +842,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F7:
 
-						double maxDescuento=5;
+						double maxDescuento=40;
 						//configuracion del panel descuento
 						JPanel panelDescuento=new JPanel();
 						panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -883,7 +881,7 @@ public void calcularTotales(){
 
 										if(filaPulsada>=0){
 
-											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-5%");
+											etiqueta.setText("Escriba el porcentaje(%) de descuento 1-40%");
 											JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE);
 											//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 											String seleccionadoDescuento=descuento.getText();
@@ -897,6 +895,17 @@ public void calcularTotales(){
 										    	if(bdDescuento<=maxDescuento){
 
 										    		if(aplicarTodo==false){
+
+														//se aplica precio base a todos al item de la factura selecciono
+														//se busca el precio general del producto para aplicarlo al item o items selecionados
+														PrecioArticulo precioGeneral =this.preciosDao.getPrecioArticulo(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId(),1);
+
+														//si el articulo tiene precio general se agrega
+														if(precioGeneral!=null){
+															//set del precio precio general
+															this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(precioGeneral);
+														}
+
 											    		BigDecimal cantidad=this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad();
 														BigDecimal precioVenta= new BigDecimal(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPrecioVenta());
 														//se calcula el total del item
@@ -918,6 +927,14 @@ public void calcularTotales(){
 										    				if(detalle.getArticulo().getId()!=-1)
 										    					if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
 
+																	//se aplica precio base a todos los intenten de la factura
+																	//se busca el precio general del producto para aplicarlo al item o items selecionados
+																	PrecioArticulo precioGeneral =this.preciosDao.getPrecioArticulo(detalle.getArticulo().getId(),1);
+
+																	//si el articulo tiene precio general se agrega
+																	if(precioGeneral!=null) {
+																		detalle.getArticulo().setPrecio(precioGeneral);
+																	}
 
 										    						BigDecimal cantidad=detalle.getCantidad();
 																	BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
@@ -938,7 +955,7 @@ public void calcularTotales(){
 											    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 											    	this.calcularTotales();
 										    	}else{
-										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 5%", "Error", JOptionPane.ERROR_MESSAGE);
+										    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 40%", "Error", JOptionPane.ERROR_MESSAGE);
 										    	}
 										    }else{
 										    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -987,11 +1004,7 @@ public void calcularTotales(){
 								}//fin comprobacion del usuario admin
 							}//fin de la captura del pwd del usuario
 
-						}else{
-
-
-
-
+						}else{ //sino es necesario el pwd del administrador para el descuento
 
 							//si el descuento es un porcentaje
 							if(ConexionStatic.getUsuarioLogin().getConfig().isDescPorcentaje()){
@@ -999,7 +1012,7 @@ public void calcularTotales(){
 
 								if(filaPulsada>=0){
 
-									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-5%");
+									etiqueta.setText("Escriba el porcentaje(%) de descuento 1-40%");
 									JOptionPane.showMessageDialog ( view,  panelDescuento,  "Descuento",JOptionPane.INFORMATION_MESSAGE);
 									//String seleccionadoDescuento=JOptionPane.showInputDialog(view,"Escriba el porcentaje(%) de descuento 1-55%",JOptionPane.QUESTION_MESSAGE);
 									String seleccionadoDescuento=descuento.getText();
@@ -1012,7 +1025,20 @@ public void calcularTotales(){
 
 								    	if(bdDescuento<=maxDescuento){
 
-								    		if(aplicarTodo==false){
+
+
+								    		if(aplicarTodo==false){//se se selecciono que el descuento solo se aplicara a una fila
+
+												//se aplica precio base a todos al item de la factura selecciono
+												//se busca el precio general del producto para aplicarlo al item o items selecionados
+												PrecioArticulo precioGeneral =this.preciosDao.getPrecioArticulo(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId(),1);
+
+												//si el articulo tiene precio general se agrega
+												if(precioGeneral!=null){
+													//set del precio precio general
+													this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(precioGeneral);
+												}
+
 									    		BigDecimal cantidad=this.view.getModeloTabla().getDetalle(filaPulsada).getCantidad();
 												BigDecimal precioVenta= new BigDecimal(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPrecioVenta());
 												//se calcula el total del item
@@ -1024,16 +1050,27 @@ public void calcularTotales(){
 												BigDecimal des=totalItem.multiply(new BigDecimal(desc));
 
 												this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+
+												this.selectRowInset(filaPulsada);
+
 								    		}else{
 
 								    			//se recorren los item de la factura aplicando el descuento
 								    			for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+
 								    				DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
 
-								    				//dfsdf
 								    				if(detalle.getArticulo().getId()!=-1)
 								    					if(detalle.getCantidad().doubleValue()!=0 && detalle.getArticulo().getPrecioVenta()!=0){
 
+															//se aplica precio base a todos los intenten de la factura
+															//se busca el precio general del producto para aplicarlo al item o items selecionados
+															PrecioArticulo precioGeneral =this.preciosDao.getPrecioArticulo(detalle.getArticulo().getId(),1);
+
+															//si el articulo tiene precio general se agrega
+															if(precioGeneral!=null) {
+																detalle.getArticulo().setPrecio(precioGeneral);
+															}
 
 								    						BigDecimal cantidad=detalle.getCantidad();
 															BigDecimal precioVenta= new BigDecimal(detalle.getArticulo().getPrecioVenta());
@@ -1054,7 +1091,7 @@ public void calcularTotales(){
 									    	//this.view.getModeloTabla().getDetalle(filaPulsada).setDescuento(bdDescuento);//.getArticulo().setPrecioVenta(new Double(entrada));
 									    	this.calcularTotales();
 								    	}else{
-								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 5%", "Error", JOptionPane.ERROR_MESSAGE);
+								    		JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 40%", "Error", JOptionPane.ERROR_MESSAGE);
 								    	}
 								    }else{
 								    	JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1296,14 +1333,16 @@ public void calcularTotales(){
 									if(myUsuarioDao.comprobarAdmin(pwd)){
 
 										if(filaPulsada>=0){
-											 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
-											 this.calcularTotales();
-											 selectRowInset(filaPulsada);
+											this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(0));
+											this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
+											this.calcularTotales();
+											selectRowInset(filaPulsada);
 										}
 									}
 								}
 							}else{
 								if(filaPulsada>=0){
+									 this.view.getModeloTabla().getDetalle(filaPulsada).setDescuentoItem(new BigDecimal(0));
 									 this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
 									 this.calcularTotales();
 									selectRowInset(filaPulsada);
@@ -1445,7 +1484,7 @@ public void calcularTotales(){
 			}
 
 		//para aplicar un precio en especifico
-		if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_UP){
+		if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_D){
 
 
 			JPasswordField pfs = new JPasswordField();
