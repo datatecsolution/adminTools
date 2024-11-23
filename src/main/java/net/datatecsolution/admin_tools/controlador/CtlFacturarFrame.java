@@ -68,7 +68,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		
 		this.setEmptyView();
 		
-		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+		cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 		this.tipoView=1;
 		
 		this.setCierre();
@@ -103,7 +103,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				
 				view.getBtnsGuardador().deleteAll();
 				
-				cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+				cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 			}
 		}
 		//JOptionPane.showMessageDialog(view, "paso de celdas"+comando);
@@ -418,7 +418,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 					view.getBtnsGuardador().deleteAll();
 
-					cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+					cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 
 			}
 			
@@ -465,7 +465,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 							
 							view.getBtnsGuardador().deleteAll();
 							
-							cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+							cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 							//view.setVisible(false);
 							
 							
@@ -491,11 +491,10 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		this.myFactura=fact;
 		
 		//se configura la caja donde se guardo la factura
-		Caja caja=ConexionStatic.getUsuarioLogin().setCajaActica(fact.getCodigoCaja());
-		//JOptionPane.showMessageDialog(view, caja.toString());
+		//Caja caja=ConexionStatic.getUsuarioLogin().setCajaActica(fact.getCodigoCaja());
 		
-		ViewModuloFacturar frame = (ViewModuloFacturar)view.getTopLevelAncestor();
-		frame.btnCaja.setText(caja.getDescripcion());
+		//ViewModuloFacturar frame = (ViewModuloFacturar)view.getTopLevelAncestor();
+		//frame.btnCaja.setText(caja.getDescripcion());
 		
 		
 		myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(numeroFactura));
@@ -868,7 +867,7 @@ public void calcularTotales(){
 						break;
 						
 					case KeyEvent.VK_F3:
-							buscarCliente();
+						buscarOrden();
 						break;
 						
 					case KeyEvent.VK_F4:
@@ -884,7 +883,7 @@ public void calcularTotales(){
 						
 					case KeyEvent.VK_F5:
 						view.getBtnsGuardador().deleteAll();
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 						break;
 						
 					case KeyEvent.VK_F6:
@@ -2007,7 +2006,7 @@ public void calcularTotales(){
 						
 						view.getBtnsGuardador().deleteAll();
 						
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 					}else{
 						JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar", JOptionPane.ERROR_MESSAGE);
 					}
@@ -2035,7 +2034,7 @@ public void calcularTotales(){
 		
 		view.getBtnsGuardador().deleteAll();
 		
-		cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+		cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 		
 		//view.addBotonPendiente(myFactura,this);
 		
@@ -2069,12 +2068,17 @@ public void calcularTotales(){
 				boolean resulVendedor=false;
 				
 				//activas para cuando se necesite un vendedor
-				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){
-					ViewCargarVenderor viewVendedor=new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
-					CtlCargarVendedor ctlVendedor=new CtlCargarVendedor(viewVendedor);
-					
-					 resulVendedor=ctlVendedor.cargarVendedor();
-					 myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
+				if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){//se comprueba que esta acticada la ventana de vendedor
+
+					if(myFactura.getVendedor().getCodigo()<1) {//si la ventana de vendedor esta activa y el vendedor es por defecto de es system entonces muestra la seleccion de vendedor
+						ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
+						CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
+
+						resulVendedor = ctlVendedor.cargarVendedor();
+						myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
+					}else{
+						resulVendedor=true;
+					}
 				}else{
 						if(myFactura.getVendedor().getCodigo()<1){
 							Empleado uno=new Empleado();
@@ -2219,7 +2223,7 @@ public void calcularTotales(){
 		
 			//para cargar las ordenes de compra
 			view.getBtnsGuardador().deleteAll();
-			cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+			cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 			
 		}//fin de la verificacion de la conexion de la base de datos
 		
@@ -2438,6 +2442,7 @@ public void calcularTotales(){
 		view.getModeloTabla().agregarDetalle();
 
 		this.myFactura.resetTotales();
+		this.myFactura.setVendedor(new Empleado());
 		
 		//conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
@@ -2467,6 +2472,41 @@ public void calcularTotales(){
 		this.view.getTxtBuscar().requestFocusInWindow();
 		
 	}
+	private void buscarOrden(){
+		//se crea la vista para buscar los cliente
+		ViewListaOrdenes viewListaOrdenes=new ViewListaOrdenes (SwingUtilities.getWindowAncestor(view));
+		CtlOrdenesBuscar ctlBuscarOrden=new CtlOrdenesBuscar(viewListaOrdenes);
+
+		viewListaOrdenes.pack();
+		ctlBuscarOrden.view.getTxtBuscar().setText("");
+		ctlBuscarOrden.view.getTxtBuscar().selectAll();
+		view.getTxtBuscar().requestFocusInWindow();
+
+		boolean resul=ctlBuscarOrden.buscarCliente(null);
+		//se comprueba si le regreso un articulo valido
+		if(resul){
+			this.myFactura=ctlBuscarOrden.getOrden();
+
+
+			myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(myFactura.getIdFactura()));
+
+			cargarFacturaView();
+			this.calcularTotales();
+			this.view.getBtnGuardar().setEnabled(false);
+			this.view.getBtnActualizar().setEnabled(true);
+			this.view.getModeloTabla().agregarDetalle();
+			tipoView=2;
+
+		}else{
+			//JOptionPane.showMessageDialog(view, "No se encontro el cliente");
+//			this.view.getTxtIdcliente().setText("1");
+//			this.view.getTxtNombrecliente().setText("Consumidor final");
+
+		}
+		viewListaOrdenes.dispose();
+		ctlBuscarOrden=null;
+	}
+
 	private void buscarCliente(){
 		//se crea la vista para buscar los cliente
 		ViewListaClientes viewListaCliente=new ViewListaClientes (SwingUtilities.getWindowAncestor(view));
@@ -2547,7 +2587,7 @@ public void guardarLocal(){
 						
 						view.getBtnsGuardador().deleteAll();
 						
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 						//view.setVisible(false);
 						
 						
@@ -2617,7 +2657,7 @@ public void guardarRemoto(){
 						
 						view.getBtnsGuardador().deleteAll();
 						
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 					}
 					//myFactura.
 				} catch (SQLException e) {
@@ -3120,14 +3160,17 @@ public void guardarRemotoCredito(){
 						
 						Factura eliminarTem=new Factura();
 						eliminarTem.setIdFactura(idFacturaTemporal);
-						
-						this.facturaOrdenesDao.eliminar(eliminarTem);
+
+						//se elimina la orden
+						//this.facturaOrdenesDao.eliminar(eliminarTem);
+
+						this.facturaOrdenesDao.cambiarEstado(eliminarTem,3);
 						
 						setEmptyView();
 						
 						view.getBtnsGuardador().deleteAll();
 						
-						cargarFacturasPendientes(facturaOrdenesDao.facturasEnProceso());
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 						//view.setVisible(false);
 						
 						

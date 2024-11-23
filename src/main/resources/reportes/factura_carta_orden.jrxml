@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="factura_carta" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -677,7 +677,7 @@ WHERE
 		</band>
 	</detail>
 	<summary>
-		<band height="119">
+		<band height="161">
 			<frame>
 				<reportElement mode="Opaque" x="2" y="0" width="552" height="110" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -926,6 +926,13 @@ WHERE
 					<text><![CDATA[Original: Cliente     Copia: Emisor]]></text>
 				</staticText>
 			</frame>
+			<textField>
+				<reportElement x="0" y="103" width="550" height="12" uuid="6c768b45-650d-4c6c-805c-cf6c9b3431f8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Observaciones:  "+$F{observacion}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

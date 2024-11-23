@@ -43,15 +43,13 @@ public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 		switch(comando){
 		
 			case "GENERAR":
-				if(categoriaReporte==null){
-					JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+				if(view.getTxtCategoria().getText().isEmpty()){
+					JOptionPane.showMessageDialog(this.view,"Debe escribir una categoria","Error",JOptionPane.ERROR_MESSAGE);
 					break;
 				}
-				if(categoriaReporte.getDescripcion()!=null || categoriaReporte.getId()!=0) {
-
 					try {
 
-						AbstractJasperReports.createReportArticulosXvencer(ConexionStatic.getPoolConexion().getConnection(), categoriaReporte, bodegaReporte.getId(), (Integer) view.getSpDias().getValue());
+						AbstractJasperReports.createReportArticulosXvencer(ConexionStatic.getPoolConexion().getConnection(), view.getTxtCategoria().getText(), bodegaReporte.getId(), (Integer) view.getSpDias().getValue());
 
 						//AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
@@ -59,9 +57,7 @@ public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 						// TODO Auto-generated catch block
 						eee.printStackTrace();
 					}
-				}else {
-					JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
-				}
+
 			break;
 		}
 		
@@ -81,25 +77,25 @@ public class CtlFiltroRepVenc implements ActionListener, KeyListener  {
 		switch(e.getKeyCode()){
 		
 		case KeyEvent.VK_F1:
-			ViewListaCategorias viewListaM=new ViewListaCategorias(view);
-			CtlCategoriaBuscar ctl=new CtlCategoriaBuscar(viewListaM);
-			viewListaM.conectarControladorBusqueda(ctl);
-			//se crea una marca y se llena con la busqueda que selecciona el usuario
-			Categoria myCategoria=ctl.buscarMarca();
-
-			//se compara si el usuario selecciono un marca
-			if(myCategoria.getDescripcion()!=null && myCategoria.getId()!=0){
-				//se pasa la marca buscada y selecciona al nuevo articulo
-				//myArticulo.setCategoria(myCategoria);
-
-				//se muestra el nombre de la marca en la caja de texto
-				view.getTxtCategoria().setText(myCategoria.getDescripcion());
-				categoriaReporte=myCategoria;
-
-			}else{
-				JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
-				//myArticulo.getCategoria().setId(-1);
-			}
+//			ViewListaCategorias viewListaM=new ViewListaCategorias(view);
+//			CtlCategoriaBuscar ctl=new CtlCategoriaBuscar(viewListaM);
+//			viewListaM.conectarControladorBusqueda(ctl);
+//			//se crea una marca y se llena con la busqueda que selecciona el usuario
+//			Categoria myCategoria=ctl.buscarMarca();
+//
+//			//se compara si el usuario selecciono un marca
+//			if(myCategoria.getDescripcion()!=null && myCategoria.getId()!=0){
+//				//se pasa la marca buscada y selecciona al nuevo articulo
+//				//myArticulo.setCategoria(myCategoria);
+//
+//				//se muestra el nombre de la marca en la caja de texto
+//				view.getTxtCategoria().setText(myCategoria.getDescripcion());
+//				categoriaReporte=myCategoria;
+//
+//			}else{
+//				JOptionPane.showMessageDialog(this.view,"No seleciono una Categoria");
+//				//myArticulo.getCategoria().setId(-1);
+//			}
 			break;
 		}
 		

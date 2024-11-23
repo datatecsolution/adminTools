@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="orden_carta" printOrder="Horizontal" pageWidth="612" pageHeight="792" columnWidth="556" leftMargin="28" rightMargin="28" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -79,7 +79,8 @@
 	encabezado_factura_temp.subtotal_excento AS subtotal_excento, 
 	encabezado_factura_temp.subtotal15 AS subtotal15, 
 	encabezado_factura_temp.subtotal18 AS subtotal18, 
-	encabezado_factura_temp.isvOtros AS isvOtros
+	encabezado_factura_temp.isvOtros AS isvOtros,
+	encabezado_factura_temp.observacion AS observacion
 FROM
 	encabezado_factura_temp
 	INNER JOIN
@@ -321,6 +322,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.tree.path" value="encabezado_factura_temp"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="observacion" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -411,7 +413,7 @@ WHERE
 				<text><![CDATA[Estado:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="469" y="-1" width="88" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
+				<reportElement x="469" y="-1" width="86" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
@@ -602,8 +604,29 @@ WHERE
 			</frame>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="20">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="1" width="550" height="19" forecolor="#050505" backcolor="#FFFFFF" uuid="78fb6a9f-4d40-4283-96c6-fa3290eab8e4"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="510" y="1" width="40" height="18" forecolor="#030303" uuid="edb6748e-4bd7-44a0-98d1-903bbfeabb75"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="430" y="1" width="80" height="18" forecolor="#030303" uuid="49b5d511-da54-46a0-8e72-58d16a495334"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="9" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
 	<summary>
-		<band height="34">
+		<band height="44">
 			<frame>
 				<reportElement mode="Opaque" x="2" y="0" width="552" height="20" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -640,7 +663,21 @@ WHERE
 					</textElement>
 					<text><![CDATA[Total a pagar]]></text>
 				</staticText>
+				<textField>
+					<reportElement x="-2" y="16" width="150" height="12" uuid="f8208907-31ae-4bbb-bb4c-aeb4b41707d1"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total items:  "+$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
 			</frame>
+			<textField>
+				<reportElement x="0" y="28" width="550" height="12" uuid="ed2f3059-bc8c-4d7a-acc4-3c2cd4fa03e0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Observaciones:  "+$F{observacion}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

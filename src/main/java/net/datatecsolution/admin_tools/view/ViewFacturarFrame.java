@@ -304,7 +304,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		btnCliente = new BotonBuscarClientes();
 		btnCliente.setBackground(color1);
-		btnCliente.setText("F3 Clientes");
+		btnCliente.setText("Clientes");
 		panelAcciones.add(btnCliente);
 		
 		btnGuardar = new BotonGuardar();

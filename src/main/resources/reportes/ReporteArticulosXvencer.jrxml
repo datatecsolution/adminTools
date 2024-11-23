@@ -28,7 +28,7 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="usuario" class="java.lang.String"/>
-	<parameter name="codigo_categoria" class="java.lang.Integer"/>
+	<parameter name="categoria" class="java.lang.String"/>
 	<parameter name="bodega" class="java.lang.Integer"/>
 	<parameter name="dias" class="java.lang.Integer"/>
 	<queryString>
@@ -38,15 +38,18 @@
 	marcas.descripcion AS marca,
 	marcas.codigo_marca AS codigo_marca,
 	detalle_factura_compra.fecha_venc AS fecha_venc,
-	detalle_factura_compra.cantidad as cantidad_compra,
+	SUM(detalle_factura_compra.cantidad)  as cantidad_compra,
 	f_can_saldo_kardex ( articulo.codigo_articulo,  $P{bodega}  ) AS existencia 
 FROM
 	articulo
 	JOIN marcas ON ( marcas.codigo_marca = articulo.codigo_marca )
 	INNER JOIN detalle_factura_compra ON articulo.codigo_articulo = detalle_factura_compra.codigo_articulo 
-WHERE (DATE(detalle_factura_compra.fecha_venc) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL $P{dias} DAY)) AND
-	marcas.codigo_marca = $P{codigo_categoria} 
-      ]]>
+WHERE f_can_saldo_kardex(articulo.codigo_articulo, 1) > 0 and (DATE(detalle_factura_compra.fecha_venc) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL $P{dias} DAY)) AND
+	marcas.descripcion LIKE  $P{categoria} GROUP BY
+	detalle_factura_compra.codigo_articulo, 
+	detalle_factura_compra.fecha_venc
+ORDER BY
+	articulo.articulo ASC]]>
 	</queryString>
 	<field name="codigo_articulo" class="java.lang.Long">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -80,14 +83,14 @@ WHERE (DATE(detalle_factura_compra.fecha_venc) BETWEEN CURDATE() AND DATE_ADD(CU
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{codigo_marca}+" | "+ $F{marca}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{marca}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="2" y="81" width="48" height="16" uuid="8e4e6d7e-6471-4684-947f-9363e796d93c"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Categoria: ]]></text>
+				<text><![CDATA[Busqueda categoria: ]]></text>
 			</staticText>
 			<textField pattern="d MMMM, yyyy">
 				<reportElement x="307" y="80" width="80" height="16" uuid="e84412b4-8b67-4a7a-a8dc-dcb4a561def4"/>

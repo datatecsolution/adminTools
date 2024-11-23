@@ -158,6 +158,7 @@ public abstract class AbstractJasperReports implements Runnable
 		factura= AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket.jasper");
 		//factura2=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_la_copia.jasper");
 		facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta.jasper");
+		//facturaCarta=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_jissell.jasper");
 
 		facturaTiketCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_tiket_credito.jasper");
 		facturaCartaCredito=AbstractJasperReports.class.getResourceAsStream("/reportes/factura_carta_credito.jasper");
@@ -532,12 +533,12 @@ public static void createReportVentasArticulo(Connection conn,List<DetalleFactur
 		}
 	}
 
-	public static void createReportArticulosXvencer(Connection conn,Categoria cat,Integer codBodega, Integer dias){
+	public static void createReportArticulosXvencer(Connection conn,String cat,Integer codBodega, Integer dias){
 
 		Map parametros = new HashMap();
 		parametros.put("usuario", ConexionStatic.getUsuarioLogin().getUser());
 		//parametros.put("categoria", cat.getDescripcion());
-		parametros.put("codigo_categoria", cat.getId());
+		parametros.put("categoria", "%"+cat+"%");
 		parametros.put("bodega", codBodega);
 		parametros.put("dias", dias);
 

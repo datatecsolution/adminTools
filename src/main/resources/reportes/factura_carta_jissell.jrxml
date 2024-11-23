@@ -359,16 +359,8 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="52" splitType="Stretch">
+		<band height="68" splitType="Stretch">
 			<property name="com.jaspersoft.studio.layout"/>
-			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="-28" y="0" width="612" height="41" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
-				<subreportParameter name="bD_admin">
-					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["reportes/factura_carta_datos_empresa.jasper"]]></subreportExpression>
-			</subreport>
 			<subreport>
 				<reportElement positionType="Float" x="590" y="-40" width="30" height="15" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="2ad4c72a-649b-4099-a8b4-c8df1b7f12f4"/>
 				<subreportParameter name="cod_rango">
@@ -393,12 +385,54 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$P{observacion}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="556" height="22" uuid="c4c45080-37c1-4471-9fa0-994050e361ee"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SURTIDORA YISSELL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="16" width="556" height="12" uuid="31259b57-764d-40f8-bb79-b90425815dbe"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bo. Alvarado, Esquina opuesta a la iglesia catolica, La Ceiba, Atlantida"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="26" width="556" height="14" uuid="6325f532-b4a5-42b7-8153-3593db35fc93"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RTN: 01011993031114"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="36" width="556" height="14" uuid="472b4978-0b47-49cc-b257-88d75660b4cf"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telefono: 8928-1155"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="45" width="556" height="14" uuid="8ecb6e25-4729-4340-91ee-5254167b890c"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Correo: yisselleper0493@gmail.com"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="54" width="556" height="14" uuid="27d92ce2-2fef-4805-a85e-121d7ae82123"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Prop. AMPARO YISSELL PERDOMO AYALA"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="53">
 			<staticText>
-				<reportElement x="-2" y="-8" width="554" height="18" uuid="d0e188af-db58-4839-b458-52760f7e0db2"/>
+				<reportElement x="-2" y="-3" width="554" height="18" uuid="d0e188af-db58-4839-b458-52760f7e0db2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
@@ -701,9 +735,9 @@ WHERE
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="119">
+		<band height="107">
 			<frame>
-				<reportElement mode="Opaque" x="2" y="0" width="552" height="118" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
+				<reportElement mode="Opaque" x="2" y="0" width="552" height="96" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -943,26 +977,12 @@ WHERE
 					<text><![CDATA[Registro SAG #: NA]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="-1" y="90" width="150" height="12" uuid="06d9b4cf-3f66-4c4d-bfd7-83b35faa8975"/>
+					<reportElement x="-1" y="90" width="336" height="12" uuid="06d9b4cf-3f66-4c4d-bfd7-83b35faa8975"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Original: Cliente     Copia: Emisor]]></text>
 				</staticText>
-				<textField>
-					<reportElement x="0" y="103" width="550" height="12" uuid="e9cfc2e4-0e00-497c-b1d6-86ce75800b1e"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Observaciones:  "+$F{observacion}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="150" y="90" width="150" height="12" uuid="b69a10fc-1041-4a27-ae8a-a4746d3de42f"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Total items:  "+$V{REPORT_COUNT}]]></textFieldExpression>
-				</textField>
 			</frame>
 		</band>
 	</summary>

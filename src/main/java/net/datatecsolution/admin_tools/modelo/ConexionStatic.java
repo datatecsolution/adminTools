@@ -32,10 +32,10 @@ public abstract class ConexionStatic implements Runnable{
 
 /*
 	//LOCAL_PRODUCCION
-	//private static String login = "admin";
-	private static String login = "root";
-	//private static String password = "Jdmm123?";
-	private static String password = "Jdmm123.";
+	private static String login = "admin";
+	//private static String login = "root";
+	private static String password = "Jdmm123?";
+	//private static String password = "Jdmm123.";
 	private static String server = "127.0.0.1";
 	//private static String server = "192.168.1.133";
 
@@ -110,7 +110,7 @@ public abstract class ConexionStatic implements Runnable{
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
 	private static String server = "192.168.100.110";
-*/
+
 	//Farmacia San Ramon
 	private static String login = "admin";
 	private static String password = "Jdmm123?";
@@ -132,11 +132,12 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-
+*/
 	//DISTRIBUIDORA SHAROM
 	private static String login = "admin";
 	private static String password = "ronLsnta123.";
-	private static String server = "192.168.10.102";
+	//private static String server = "192.168.88.254";
+	private static String server = "201.190.38.238";
 
 /*
 	//MISCELANIAS W&C
@@ -174,7 +175,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
+	private static String url = "jdbc:mysql://"+server+":3333/"+bd+"?serverTimezone=GMT-6";
 	private static String driver="com.mysql.cj.jdbc.Driver";
 
 

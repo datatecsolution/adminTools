@@ -56,85 +56,99 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 		// TODO Auto-generated method stub
 		
 		String comando=e.getActionCommand();
+		Integer permiso=ConexionStatic.getUsuarioLogin().getTipoPermiso();
 		
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		switch(comando){
 		
 		case "RUTAS_ENTREGAS":
-			
-			ViewListaRutasEntregas viewListaRutasEntregas=new ViewListaRutasEntregas(view);
-			CtlRutasEntregas ctlRutasEntregas=new CtlRutasEntregas(viewListaRutasEntregas);
-			viewListaRutasEntregas.dispose();
-			viewListaRutasEntregas=null;
-			ctlRutasEntregas=null;
+			if(permiso==1 || permiso==4) {
+				ViewListaRutasEntregas viewListaRutasEntregas = new ViewListaRutasEntregas(view);
+				CtlRutasEntregas ctlRutasEntregas = new CtlRutasEntregas(viewListaRutasEntregas);
+				viewListaRutasEntregas.dispose();
+				viewListaRutasEntregas = null;
+				ctlRutasEntregas = null;
+			}
 			break;
 		  
 		case "FACT_VENCIDAS":
-			ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(view);
-			CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
+			if(permiso==1 || permiso==4) {
+				ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(view);
+				CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
+
+			}
+
 			break;
 		case "APLICAR_INTERES_FACT":
-			int resul=JOptionPane.showConfirmDialog(view, "Desea aplicar los interes a las facturas vencidas?");
-			if(resul==0){
-				boolean res=facturaDao.aplicarInteresVenc();
-				if(res){
-					JOptionPane.showMessageDialog(null,"Se aplicaron los intereses a las facturas vencidas.","Transaccion completada.",JOptionPane.INFORMATION_MESSAGE);
+			if(permiso==4) {
+				int resul=JOptionPane.showConfirmDialog(view, "Desea aplicar los interes a las facturas vencidas?");
+				if(resul==0){
+					boolean res=facturaDao.aplicarInteresVenc();
+					if(res){
+						JOptionPane.showMessageDialog(null,"Se aplicaron los intereses a las facturas vencidas.","Transaccion completada.",JOptionPane.INFORMATION_MESSAGE);
+					}
 				}
 			}
 			break;
 		
 		case "CONFIG_USUARIOS":
-			ViewConfigUser viewConfigUser=new ViewConfigUser(view);
-			CtlConfigUser ctlConfigUser=new CtlConfigUser(viewConfigUser);
-			
-			viewConfigUser.dispose();
-			viewConfigUser=null;
-			ctlConfigUser=null;
-			/*
-			ViewListaConfigsUsuarios viewListaConfigsUsuarios=new ViewListaConfigsUsuarios(view);
-			 ((JComponent) viewListaConfigsUsuarios.getTabla().getDefaultRenderer(Boolean.class)).setOpaque(true);
-			CtlConfigUsuariosLista ctlConfigUsuariosLista=new CtlConfigUsuariosLista(viewListaConfigsUsuarios);
-			viewListaConfigsUsuarios.dispose();
-			viewListaConfigsUsuarios=null;
-			ctlConfigUsuariosLista=null;*/
-		
+
+			if(permiso==4) {
+				ViewConfigUser viewConfigUser=new ViewConfigUser(view);
+				CtlConfigUser ctlConfigUser=new CtlConfigUser(viewConfigUser);
+
+				viewConfigUser.dispose();
+				viewConfigUser=null;
+				ctlConfigUser=null;
+			}
+
 		break;
 		
 		
 		case "DEPOSITOS_Y_RETIROS":
-			ViewCuentaBanco viewMovimientoBanco=new ViewCuentaBanco(view);
-			CtlCuentasBanco ctlMovimientoBanco=new CtlCuentasBanco(viewMovimientoBanco);
-			viewMovimientoBanco.dispose();
-			viewMovimientoBanco=null;
-			ctlMovimientoBanco=null;
+			if(permiso==4) {
+				ViewCuentaBanco viewMovimientoBanco=new ViewCuentaBanco(view);
+				CtlCuentasBanco ctlMovimientoBanco=new CtlCuentasBanco(viewMovimientoBanco);
+				viewMovimientoBanco.dispose();
+				viewMovimientoBanco=null;
+				ctlMovimientoBanco=null;
+			}
+
 			
 		break;
 		case "ENTRADASCAJAS":
-			ViewListaEntradas viewEntradasCaja=new ViewListaEntradas(view);
-			CtlEntradasListas ctlEntradasCaja=new CtlEntradasListas(viewEntradasCaja);
-			viewEntradasCaja.dispose();
-			viewEntradasCaja=null;
-			ctlEntradasCaja=null;
+			if(permiso==4) {
+				ViewListaEntradas viewEntradasCaja=new ViewListaEntradas(view);
+				CtlEntradasListas ctlEntradasCaja=new CtlEntradasListas(viewEntradasCaja);
+				viewEntradasCaja.dispose();
+				viewEntradasCaja=null;
+				ctlEntradasCaja=null;
+			}
 			break;
 		
 		case "VENTASUSUARIOS":
-				
-			ViewFiltroComisiones viewVentasUsuarios=new ViewFiltroComisiones(view);
-			CtlFiltroRepVentasUsuarios ctlVentasUsuarios= new CtlFiltroRepVentasUsuarios(viewVentasUsuarios);
-			viewVentasUsuarios.dispose();
-			viewVentasUsuarios=null;
-			ctlVentasUsuarios=null;
-			
+			if(permiso==4) {
+				ViewFiltroComisiones viewVentasUsuarios=new ViewFiltroComisiones(view);
+				CtlFiltroRepVentasUsuarios ctlVentasUsuarios= new CtlFiltroRepVentasUsuarios(viewVentasUsuarios);
+				viewVentasUsuarios.dispose();
+				viewVentasUsuarios=null;
+				ctlVentasUsuarios=null;
+			}
 			break;
 		
 		case "DATOSFACTURACION":
-			ViewListaDatosFacturacion vDatosFacturacion=new ViewListaDatosFacturacion(view);
-			CtlDatosFacturacionLista ctlDatosFacturacion=new CtlDatosFacturacionLista(vDatosFacturacion);
+			if(permiso==4) {
+				ViewListaDatosFacturacion vDatosFacturacion=new ViewListaDatosFacturacion(view);
+				CtlDatosFacturacionLista ctlDatosFacturacion=new CtlDatosFacturacionLista(vDatosFacturacion);
+			}
 			break;
 		case "CAJAS":
-			ViewListaCajas viewAgregarCaja=new ViewListaCajas(view);
-			CtlCajasLista ctlAgregarCaja=new CtlCajasLista(viewAgregarCaja);
+			if(permiso==4) {
+				ViewListaCajas viewAgregarCaja=new ViewListaCajas(view);
+				CtlCajasLista ctlAgregarCaja=new CtlCajasLista(viewAgregarCaja);
+
+			}
 			break;
 		
 		
@@ -156,9 +170,11 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 	
 		
 			case "CUENTASBANCOS":
-				ViewListaCuentaBancos vCuentasBancos=new ViewListaCuentaBancos(view);
-				CtlBancosLista cCuentasBancos=new CtlBancosLista(vCuentasBancos);
-				vCuentasBancos.setVisible(true);
+				if(permiso==4) {
+					ViewListaCuentaBancos vCuentasBancos=new ViewListaCuentaBancos(view);
+					CtlBancosLista cCuentasBancos=new CtlBancosLista(vCuentasBancos);
+					vCuentasBancos.setVisible(true);
+				}
 				break;
 		
 			case "COTIZACIONES":
@@ -174,11 +190,6 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				
 				vPagosProveedores.dispose();
 				cPagoProveedores=null;
-				/*
-					ViewPagoProveedor vPagoProveedores=new ViewPagoProveedor(view);
-					CtlPagoProveedor cPagoProveedores=new CtlPagoProveedor(vPagoProveedores,conexion);
-					vPagoProveedores.dispose();
-					cPagoProveedores=null;*/
 				break;
 				
 			case "REQUISICIONES":
@@ -190,7 +201,6 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 	
 			case "CERRARFACTURACION":
 				try {
-					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
 					AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 4, 0);
 					
 					//this.view.setModal(false);
@@ -231,17 +241,14 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				ctlAgregarCompra=null;
 				break;
 			case "FACTURAR":
-				
-				/*ViewListaFactura vistaFacturars=new ViewListaFactura(this.view);
-				CtlFacturaLista ctlFacturas=new CtlFacturaLista(vistaFacturars,conexion );
-				vistaFacturars.dispose();
-				ctlFacturas=null;*/
-			
-				ViewFacturar vistaFacturar=new ViewFacturar(this.view);
-				vistaFacturar.pack();
-				CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar );
-				vistaFacturar.setVisible(true);
-				JOptionPane.showMessageDialog(view, "Esta opcion solo esta disponible para usuario tipo cajeros");
+				if(permiso==4) {
+					ViewFacturar vistaFacturar=new ViewFacturar(this.view);
+					vistaFacturar.pack();
+					CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar );
+					vistaFacturar.setVisible(true);
+					//JOptionPane.showMessageDialog(view, "Esta opcion solo esta disponible para usuario tipo cajeros");
+				}
+
 		
 				
 				break;
@@ -257,13 +264,15 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				
 				break;
 			case "CLIENTES":
-				ViewListaClientes viewClientes=new ViewListaClientes(view);
-				CtlClienteLista  ctlClientes=new CtlClienteLista(viewClientes);
-				viewClientes.dispose();
-				ctlClientes=null;
+				if(permiso==4) {
+					ViewListaClientes viewClientes=new ViewListaClientes(view);
+					CtlClienteLista  ctlClientes=new CtlClienteLista(viewClientes);
+					viewClientes.dispose();
+					ctlClientes=null;
+				}
 				break;
 			case "BUSCARFACTURAS":
-				
+
 				ViewFacturas viewBuscarFacturas = new ViewFacturas(this.view);
 				CtlFacturas cltBuscarFacturas= new CtlFacturas(viewBuscarFacturas);
 				viewBuscarFacturas.dispose();
@@ -302,25 +311,28 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				ctlProgramarPrecio=null;*/
 				break;
 			case "R_DEI_VENTAS":
-				ViewFiltroRepSarVentas viewFiltroDei=new ViewFiltroRepSarVentas(view);
-				CtlFiltroRepSarVentas ctlFiltroDei=new CtlFiltroRepSarVentas(viewFiltroDei);
+				if(permiso==4) {
+					ViewFiltroRepSarVentas viewFiltroDei=new ViewFiltroRepSarVentas(view);
+					CtlFiltroRepSarVentas ctlFiltroDei=new CtlFiltroRepSarVentas(viewFiltroDei);
+				}
 				break;
 			case "R_DEI_COMPRAS":
-				ViewFiltroRepSarCompras viewFiltroDeiCompras=new ViewFiltroRepSarCompras(view);
-				CtlFiltroRepSarCompras ctlFiltroDeiCompras=new CtlFiltroRepSarCompras(viewFiltroDeiCompras);
+				if(permiso==4) {
+					ViewFiltroRepSarCompras viewFiltroDeiCompras=new ViewFiltroRepSarCompras(view);
+					CtlFiltroRepSarCompras ctlFiltroDeiCompras=new CtlFiltroRepSarCompras(viewFiltroDeiCompras);
+				}
 				break;
 				
 			case "USUARIOS":
-				
-				ViewListaUsuarios viewListaUsuarios=new ViewListaUsuarios(view);
-				CtlUsuariosLista ctlUsuarios=new CtlUsuariosLista(viewListaUsuarios);
-				viewListaUsuarios.dispose();
-				viewListaUsuarios=null;
-				ctlUsuarios=null;
-				/*ViewCrearUsuario viewCrearUsuario=new ViewCrearUsuario(view);
-				CtlUsuario ctlUsuario=new CtlUsuario(viewCrearUsuario, conexion);
-				viewCrearUsuario.setVisible(true);*/
-				
+
+				if(permiso==4) {
+					ViewListaUsuarios viewListaUsuarios=new ViewListaUsuarios(view);
+					CtlUsuariosLista ctlUsuarios=new CtlUsuariosLista(viewListaUsuarios);
+					viewListaUsuarios.dispose();
+					viewListaUsuarios=null;
+					ctlUsuarios=null;
+				}
+
 				break;
 				
 			case "INVENTARIO":
@@ -341,13 +353,15 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				
 				
 			case "CIERRES_CAJA":
-				
-				ViewListaCierresCaja viewCierres=new ViewListaCierresCaja(view);
-				CtlCierresCajaLista ctlCierres=new CtlCierresCajaLista(viewCierres);
-				
-				viewCierres.dispose();
-				viewCierres=null;
-				ctlCierres=null;
+
+				if(permiso==4) {
+					ViewListaCierresCaja viewCierres=new ViewListaCierresCaja(view);
+					CtlCierresCajaLista ctlCierres=new CtlCierresCajaLista(viewCierres);
+
+					viewCierres.dispose();
+					viewCierres=null;
+					ctlCierres=null;
+				}
 				break;
 				
 			case "EMPLEADOS":
@@ -361,18 +375,23 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				
 				break;
 			case "COMISIONES":
-				ViewFiltroComisiones viewComisiones=new ViewFiltroComisiones(view);
-				CtlFiltroRepComisiones ctlComisiones= new CtlFiltroRepComisiones(viewComisiones);
-				viewComisiones.dispose();
-				viewComisiones=null;
-				ctlComisiones=null;
-				
+
+				if(permiso==4) {
+					ViewFiltroComisiones viewComisiones=new ViewFiltroComisiones(view);
+					CtlFiltroRepComisiones ctlComisiones= new CtlFiltroRepComisiones(viewComisiones);
+					viewComisiones.dispose();
+					viewComisiones=null;
+					ctlComisiones=null;
+				}
+
 				break;
 				
 			case "SALIDASCAJAS":
+				if(permiso==4) {
+					ViewListaSalidas viewSalidas=new ViewListaSalidas(view);
+					CtlSalidasListas ctlSalidas=new CtlSalidasListas(viewSalidas);
+				}
 
-				ViewListaSalidas viewSalidas=new ViewListaSalidas(view);
-				CtlSalidasListas ctlSalidas=new CtlSalidasListas(viewSalidas);
 				break;
 			case "REPORTE_X_VENCER":
 				ViewFiltroRepVenc viewFiltroRepVenc=new ViewFiltroRepVenc(view);

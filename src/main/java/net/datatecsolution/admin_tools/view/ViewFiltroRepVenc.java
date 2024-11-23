@@ -27,8 +27,8 @@ public class ViewFiltroRepVenc extends JDialog {
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		getContentPane().setLayout(null);
 		
-		txtCategoria = new JTextField("F1 para buscar la categoria");
-		txtCategoria.setEditable(false);
+		txtCategoria = new JTextField("");
+		//txtCategoria.setEditable(false);
 		txtCategoria.setBounds(18, 24, 404, 26);
 		getContentPane().add(txtCategoria);
 		txtCategoria.setColumns(10);
