@@ -73,7 +73,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 			break;
 		  
 		case "FACT_VENCIDAS":
-			if(permiso==1 || permiso==4) {
+			if(permiso==4) {
 				ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(view);
 				CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
 
@@ -193,10 +193,12 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 				
 			case "REQUISICIONES":
-				ViewListaRequisiciones viewRequiLista=new ViewListaRequisiciones(view);
-				CtlRequisicionesLista ctlRequiLista=new CtlRequisicionesLista(viewRequiLista);
-				viewRequiLista.dispose();
-				ctlRequiLista=null;
+				if(permiso==1 || permiso==4) {
+					ViewListaRequisiciones viewRequiLista = new ViewListaRequisiciones(view);
+					CtlRequisicionesLista ctlRequiLista = new CtlRequisicionesLista(viewRequiLista);
+					viewRequiLista.dispose();
+					ctlRequiLista = null;
+				}
 			break;
 	
 			case "CERRARFACTURACION":
@@ -232,13 +234,15 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				
 				break;
 			case "AGREGARCOMPRAS":
-				ViewAgregarCompras viewAgregarCompras= new ViewAgregarCompras(this.view);
-				CtlCompras ctlAgregarCompra=new CtlCompras(viewAgregarCompras);
-				
-				
-				viewAgregarCompras.dispose();
-				viewAgregarCompras=null;
-				ctlAgregarCompra=null;
+				if(permiso==4) {
+					ViewAgregarCompras viewAgregarCompras = new ViewAgregarCompras(this.view);
+					CtlCompras ctlAgregarCompra = new CtlCompras(viewAgregarCompras);
+
+
+					viewAgregarCompras.dispose();
+					viewAgregarCompras = null;
+					ctlAgregarCompra = null;
+				}
 				break;
 			case "FACTURAR":
 				if(permiso==4) {
@@ -280,11 +284,13 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 				
 			case "LISTAFACTURASCOMPRA":
-				ViewListaFacturasCompra viewFacturasCompra=new ViewListaFacturasCompra(this.view);
-				CtlFacturasCompra ctlFacturasCompra=new CtlFacturasCompra(viewFacturasCompra);
-				viewFacturasCompra.dispose();
-				viewFacturasCompra=null;
-				ctlFacturasCompra=null;
+				if(permiso==4) {
+					ViewListaFacturasCompra viewFacturasCompra = new ViewListaFacturasCompra(this.view);
+					CtlFacturasCompra ctlFacturasCompra = new CtlFacturasCompra(viewFacturasCompra);
+					viewFacturasCompra.dispose();
+					viewFacturasCompra = null;
+					ctlFacturasCompra = null;
+				}
 				break;
 				
 			case "PAGOCLIENTES":

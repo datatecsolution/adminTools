@@ -849,7 +849,7 @@ public class FacturaDao extends ModeloDaoBasic {
 	
 		        Connection con = null;
 		        
-		    	String sql=super.getQuerySelect()+ " where usuario=? ORDER BY numero_factura DESC limit 1";
+		    	String sql=super.getQuerySelect()+ " where encabezado_factura.usuario=? ORDER BY encabezado_factura.numero_factura DESC limit 1";
 		        //Statement stmt = null;
 		    	Factura unaFactura=new Factura();
 				
@@ -1031,10 +1031,10 @@ public class FacturaDao extends ModeloDaoBasic {
 				
 		        Connection con = null;
 		        
-		    	String sql=super.getQuerySelect()+" WHERE	numero_factura >= ? AND usuario = ? ";
+		    	String sql=super.getQuerySelect()+" WHERE	encabezado_factura.numero_factura >= ? AND encabezado_factura.usuario = ? ";
 				
 				ResultSet res=null;
-				
+
 				boolean existe=false;
 				try {
 					con = ConexionStatic.getPoolConexion().getConnection();
@@ -1044,6 +1044,8 @@ public class FacturaDao extends ModeloDaoBasic {
 					psConsultas.setInt(1,registroFacturasCaja.getNoFacturaInicio() );
 					
 					psConsultas.setString(2,ConexionStatic.getUsuarioLogin().getUser());
+
+					System.out.println(psConsultas);
 					
 					res = psConsultas.executeQuery();
 					while(res.next()){

@@ -25,6 +25,8 @@ public class ConfigUserFacturacion {
 
 	private boolean imprReportOrden=false;
 
+	private int copiasFacturas=1;
+
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
 	}
@@ -283,6 +285,13 @@ public class ConfigUserFacturacion {
 	public void setImprReportOrden(boolean imprReportOrden) {
 		this.imprReportOrden = imprReportOrden;
 	}
-	
 
+
+	public int getCopiasFacturas() {
+		return copiasFacturas;
+	}
+
+	public void setCopiasFacturas(int copiasFacturas) {
+		this.copiasFacturas = copiasFacturas;
+	}
 }

@@ -279,7 +279,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			psConsultas.setInt(2, 0);
 			psConsultas.setInt(3, 20);
 
-			System.out.println(psConsultas);
+			//System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
 
 			while(res.next()){

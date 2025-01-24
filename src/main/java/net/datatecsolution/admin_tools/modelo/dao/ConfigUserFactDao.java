@@ -314,6 +314,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setActivarBusquedaFacturacion(res.getBoolean("activar_busqueda_facturacion"));
 				config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
 				config.setPwdPrecio(res.getBoolean("pwd_precio"));
+				config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
 
 
 				
@@ -401,6 +402,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setFormatoFacturaCredito(res.getString("formato_factura_credito"));
 				config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
 				config.setPwdPrecio(res.getBoolean("pwd_precio"));
+				config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
 
 				
 				configs.add(config);
@@ -482,6 +484,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 					config.setAgregarClienteCredito(res.getBoolean("agregar_cliente_credito"));
 					config.setFormatoFacturaCredito(res.getString("formato_factura_credito"));
 					config.setPwdEntrePrecio(res.getBoolean("pwd_entre_precio"));
+					config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
 					
 					
 					
