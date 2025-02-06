@@ -233,6 +233,7 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		
 		view.getBtnActualizar().setVisible(true);
 		view.getBtnGuardar().setVisible(false);
+		view.getTxtUser().setEnabled(false);
 		loadUsuario();
 		view.setVisible(true);
 		return resultaOperacion;

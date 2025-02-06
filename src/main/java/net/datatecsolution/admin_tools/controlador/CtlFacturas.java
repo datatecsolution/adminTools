@@ -238,6 +238,21 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 
 		case "BUSCAR":
 			view.getModelo().setPaginacion();
+
+			//si la busqueda es por vendedor
+			if(this.view.getRdbtnVendedor().isSelected()){
+				if(view.getTxtBuscar().getText().length()!=0)
+					cargarTabla(myFacturaDao.buscarPorVendedor(view.getTxtBuscar().getText(),
+							view.getModelo().getLimiteSuperior(),
+							view.getModelo().getCanItemPag(),
+							view.getCbxCajas().getSelectedItem()));
+				else{
+					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
+					view.getTxtBuscar().requestFocusInWindow();
+				}
+
+			}
+
 			//si la busqueda es por id
 			if(this.view.getRdbtnId().isSelected()){
 				//JOptionPane.showMessageDialog(view, "No se encuentro la factura");
@@ -479,6 +494,20 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 					view.getTxtBuscar().requestFocusInWindow();
 				}
 			}
+
+			//si la busqueda es por vendedor
+			if(this.view.getRdbtnVendedor().isSelected()){
+				if(view.getTxtBuscar().getText().length()!=0)
+					cargarTabla(myFacturaDao.buscarPorVendedor(view.getTxtBuscar().getText(),
+							view.getModelo().getLimiteSuperior(),
+							view.getModelo().getCanItemPag(),
+							view.getCbxCajas().getSelectedItem()));
+				else{
+					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
+					view.getTxtBuscar().requestFocusInWindow();
+				}
+
+			}
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
 		case "LAST":
@@ -512,6 +541,21 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
 					view.getTxtBuscar().requestFocusInWindow();
 				}
+			}
+
+
+			//si la busqueda es por vendedor
+			if(this.view.getRdbtnVendedor().isSelected()){
+				if(view.getTxtBuscar().getText().length()!=0)
+					cargarTabla(myFacturaDao.buscarPorVendedor(view.getTxtBuscar().getText(),
+							view.getModelo().getLimiteSuperior(),
+							view.getModelo().getCanItemPag(),
+							view.getCbxCajas().getSelectedItem()));
+				else{
+					JOptionPane.showMessageDialog(view, "Debe escribir algo en la busqueda","Error en busqueda",JOptionPane.ERROR_MESSAGE);
+					view.getTxtBuscar().requestFocusInWindow();
+				}
+
 			}
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;

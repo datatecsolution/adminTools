@@ -918,6 +918,96 @@ public class FacturaDao extends ModeloDaoBasic {
 					else return null;
 		//return ultimaFacturaUser;
 	}
+
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public List<Factura> buscarPorVendedor(String nombre,int limitInferio, int canItemPag,Object c){
+
+
+		Caja caja=(Caja)c;
+
+		//se cambia la base de datos para las facturas de la caja seleccionada
+		super.DbName=caja.getNombreBd();
+		super.setSqlQuerySelectJoin(getQueryJoin());
+
+		Connection con = null;
+
+
+		List<Factura> facturas=new ArrayList<Factura>();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas = con.prepareStatement(super.getQuerySearchJoin("nombre", "LIKE", "empleados" , "codigo_empleado","codigo_vendedor"));
+
+			psConsultas.setString(1, "%" + nombre + "%");
+			psConsultas.setInt(2, limitInferio);
+			psConsultas.setInt(3, canItemPag);
+
+			//System.out.println(psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while(res.next()){
+				Factura unaFactura=new Factura();
+				existe=true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				//Cliente unCliente=myClienteDao.buscarCliente(res.getInt("codigo_cliente"));
+				Cliente unCliente=new Cliente();
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unaFactura.setCliente(unCliente);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				//unaFactura.setEstado(res.getInt("estado_factura"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+
+				unaFactura.setEstado(res.getString("estado_factura"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setAgregadoAkardex(res.getInt("agrega_kardex"));
+
+				//unaFactura.setDetalles(detallesDao.getDetallesFactura(res.getInt("numero_factura")));
+
+
+				facturas.add(unaFactura);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//se restablece el nombre de la base de datos por defecto
+			super.DbName= DbNameBase;
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return facturas;
+		}
+		else return null;
+
+	}
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public List<Factura> buscarPorNombreCliente(String nombre,int limitInferio, int canItemPag,Object c){
