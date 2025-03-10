@@ -70,94 +70,98 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="119" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<subreport>
-				<reportElement x="-20" y="0" width="612" height="40" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
+				<reportElement x="-20" y="0" width="612" height="30" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
 				<subreportParameter name="bD_admin">
 					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["reportes/factura_carta_datos_empresa.jasper"]]></subreportExpression>
 			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="77">
 			<staticText>
-				<reportElement x="2" y="50" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
+				<reportElement x="2" y="1" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[COTIZACION]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="7" y="105" width="83" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
+				<reportElement x="4" y="59" width="83" height="16" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Nombre Cliente:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="90" y="105" width="172" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
+				<reportElement x="87" y="59" width="172" height="16" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="91" width="73" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
+				<reportElement x="4" y="45" width="73" height="16" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<text><![CDATA[No Cotizacion:]]></text>
+				<text><![CDATA[Numero:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="91" width="182" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
+				<reportElement x="53" y="45" width="182" height="16" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numero_cotizacion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
-				<reportElement x="352" y="91" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<reportElement x="296" y="45" width="132" height="16" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="91" width="89" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
+				<reportElement x="260" y="45" width="36" height="16" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
-				<text><![CDATA[Fecha Cotizacion:]]></text>
+				<text><![CDATA[Fecha:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="307" y="104" width="100" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3"/>
+				<reportElement x="287" y="58" width="180" height="16" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="104" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
+				<reportElement x="260" y="58" width="44" height="16" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[RTN:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="431" y="89" width="46" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
+				<reportElement x="428" y="45" width="46" height="16" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
 				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Estado:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="479" y="89" width="86" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
+				<reportElement x="467" y="45" width="86" height="16" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
 				<textElement>
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
 			</textField>
 		</band>
-	</title>
+	</pageHeader>
 	<columnHeader>
 		<band height="16" splitType="Stretch">
 			<line>

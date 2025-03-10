@@ -75,93 +75,113 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="77" splitType="Stretch">
+		<band height="48" splitType="Stretch">
 			<subreport>
 				<reportElement x="-20" y="0" width="612" height="40" uuid="ff686fc7-3923-4b44-a267-c867a516a422"/>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["factura_carta_datos_empresa.jasper"]]></subreportExpression>
 			</subreport>
-			<staticText>
-				<reportElement x="2" y="50" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[COTIZACION]]></text>
-			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="47">
+		<band height="93">
 			<staticText>
-				<reportElement x="7" y="15" width="83" height="13" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f"/>
-				<textElement>
+				<reportElement x="7" y="67" width="83" height="20" uuid="6df3e918-e6bc-479a-8617-b8f92af3092f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Nombre Cliente:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="90" y="15" width="172" height="13" uuid="40c40b92-4084-479c-8897-0a3c56a34b27"/>
-				<textElement>
+				<reportElement x="90" y="67" width="172" height="20" uuid="40c40b92-4084-479c-8897-0a3c56a34b27">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_cliente}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="7" y="1" width="73" height="13" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c"/>
-				<textElement>
+				<reportElement x="7" y="53" width="73" height="20" uuid="7df0c824-2272-422f-be32-0bf6d685fb4c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[No Cotizacion:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="1" width="182" height="13" uuid="a96c5764-304b-421e-89fa-6d5deb067890"/>
-				<textElement>
+				<reportElement x="80" y="53" width="182" height="20" uuid="a96c5764-304b-421e-89fa-6d5deb067890">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numero_cotizacion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d/M/yy">
-				<reportElement x="352" y="1" width="79" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
-				<textElement>
+				<reportElement x="352" y="53" width="79" height="20" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="1" width="89" height="13" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb"/>
-				<textElement>
+				<reportElement x="263" y="53" width="89" height="20" uuid="3a90ba1f-70be-49e8-9bf0-037953222adb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Fecha Cotizacion:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="307" y="14" width="100" height="13" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3"/>
-				<textElement>
+				<reportElement x="307" y="66" width="100" height="20" uuid="a1ac6d91-bd72-444d-b3df-dbb96107fef3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rtn}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="263" y="14" width="44" height="13" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026"/>
-				<textElement>
+				<reportElement x="263" y="66" width="44" height="20" uuid="20562201-9bdc-43fb-98cc-a8ab02fff026">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[RTN:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="431" y="-1" width="46" height="13" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd"/>
-				<textElement>
+				<reportElement x="431" y="53" width="46" height="20" uuid="2eed5900-bdfd-49d0-8a8a-0c45f86e59fd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<text><![CDATA[Estado:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="479" y="-1" width="86" height="13" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1"/>
-				<textElement>
+				<reportElement x="479" y="53" width="86" height="20" uuid="0b1be6a3-ff21-4bbb-84c1-038ecc23cde1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="2" y="12" width="568" height="25" uuid="1fe4d1b5-b0f4-49d7-bffc-04be762d24bb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COTIZACION32423423]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<columnHeader>
