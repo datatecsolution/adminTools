@@ -11,7 +11,7 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 	private ViewCargarVenderor view=null;
 	private Empleado myEmpleado=null;
 	private EmpleadoDao myDao=null;
-	private boolean Estado=false;
+	private boolean estado =false;
 	public CtlCargarVendedor(ViewCargarVenderor v) {
 		// TODO Auto-generated constructor stub
 		myEmpleado=new Empleado();
@@ -33,7 +33,7 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 			if(myEmpleado!=null){
 				view.getTxtNombre().setText(myEmpleado.getNombre());
 				view.getTxtApellido().setText(myEmpleado.getApellido());
-				this.Estado=true;
+				this.estado =true;
 				
 				view.getTxtNombre().requestFocusInWindow();
 			}else{
@@ -57,7 +57,7 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 
 	private void cobrar() {
 		// TODO Auto-generated method stub
-		if(this.Estado){
+		if(this.estado){
 			this.view.setVisible(false);
 		}else{
 			view.getTxtIdVendedor().setText("");
@@ -100,7 +100,7 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		this.Estado=false;
+		this.estado =false;
 		view.setVisible(false);
 	}
 
@@ -137,14 +137,14 @@ public class CtlCargarVendedor implements ActionListener, KeyListener, WindowLis
 	public boolean cargarVendedor() {
 		// TODO Auto-generated method stub
 		this.view.setVisible(true);
-		return this.Estado;
+		return this.estado;
 	}
 	public Empleado getVendedor(){
 		return myEmpleado;
 	}
 	private void salir() {
 		// TODO Auto-generated method stub
-		Estado=false;
+		estado =false;
 		this.view.setVisible(false);
 	}
 	

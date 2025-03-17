@@ -8,6 +8,7 @@ import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaOrdenVentaDao;
 import net.datatecsolution.admin_tools.view.ViewListaOrdenes;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ public class CtlOrdenesBuscar implements ActionListener ,MouseListener, WindowLi
 		view=v;
 		view.conectarControladorBuscar(this);
 		view.getBtnAgregar().setEnabled(true);
+		view.getBtnEliminar().setEnabled(true);
 		ordenDao =new FacturaOrdenVentaDao();
 		empleadoDao=new EmpleadoDao ();
 		cargarComboBox();
@@ -36,7 +38,7 @@ public class CtlOrdenesBuscar implements ActionListener ,MouseListener, WindowLi
 		//cargarTabla(clienteDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 		//view.setVisible(true);
 	}
-	
+
 	private void cargarComboBox(){
 		//se crea el objeto para obtener de la bd los impuestos
 		//myImpuestoDao=new ImpuestoDao(conexion);
@@ -81,7 +83,7 @@ public boolean buscarCliente(Window v){
 		if(ConexionStatic.getUsuarioLogin().getConfig().isAgregarClienteCredito()){
 			this.view.getBtnAgregar().setEnabled(true);
 		}
-		this.view.getBtnEliminar().setEnabled(false);
+		//this.view.getBtnEliminar().setEnabled(false);
 		this.view.setLocationRelativeTo(v);
 		this.view.setModal(true);
 		view.getTxtBuscar().requestFocusInWindow();
@@ -134,7 +136,7 @@ public boolean buscarCliente(Window v){
 
 				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 
-				}
+			}
 //			if(this.view.getRdbtnRtn().isSelected()){
 //				cargarTabla(clienteDao.buscarPorRtn(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 //				}
@@ -142,7 +144,7 @@ public boolean buscarCliente(Window v){
 			if(this.view.getRdbtnTodos().isSelected()){
 				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 				this.view.getTxtBuscar().setText("");
-				}
+			}
 			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 		
@@ -196,9 +198,6 @@ public boolean buscarCliente(Window v){
 
 
 
-
-
-
 				break;
 		case "NEXT":
 			view.getModelo().netPag();
@@ -206,11 +205,9 @@ public boolean buscarCliente(Window v){
 				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}
             if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre
-				
-//				cargarTabla(clienteDao.buscarPorNombre(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-		        
-				}
-			
+				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+			}
+
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
 		case "LAST":
@@ -218,13 +215,27 @@ public boolean buscarCliente(Window v){
 			if(this.view.getRdbtnTodos().isSelected()){  
 				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}
-			if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre	
-				
-//				cargarTabla(clienteDao.buscarPorNombre(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-		        
-				}
+			if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre
+				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+			}
 			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+			break;
+
+		case "ELIMINAR":
+
+			//Recoger qu� fila se ha pulsadao en la tabla
+			filaPulsada = this.view.getTabla().getSelectedRow();
+			//si seleccion una fila
+			if(filaPulsada>=0) {
+
+				Factura eliminarTem=new Factura();
+				int idFacturaTemporal = this.view.getModelo().getFactura(filaPulsada).getIdFactura();
+				eliminarTem.setIdFactura(idFacturaTemporal);
+				ordenDao.cambiarEstado(eliminarTem,4);
+
+			}
+
 			break;
 		}
 		
@@ -243,7 +254,6 @@ public boolean buscarCliente(Window v){
 			this.view.setVisible(false);
 			//JOptionPane.showMessageDialog(null,myMarca);
 			this.view.dispose();
-			
 		}
 		
 	}

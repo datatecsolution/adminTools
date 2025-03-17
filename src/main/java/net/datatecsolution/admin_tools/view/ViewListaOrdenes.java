@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.view;
 import net.datatecsolution.admin_tools.controlador.CtlClienteBuscar;
 import net.datatecsolution.admin_tools.controlador.CtlClienteLista;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenesBuscar;
+import net.datatecsolution.admin_tools.controlador.CtlOrdenesLista;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.view.botones.BotonCuenta;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
@@ -140,9 +141,15 @@ public class ViewListaOrdenes extends ViewTabla {
 		cbxEmpleados.addActionListener(c);
 		cbxEmpleados.setActionCommand("CAMBIOCOMBOBOX");
 		cbxEmpleados.addKeyListener(c);
+
+		btnAnterior.addActionListener(c);
+		btnAnterior.setActionCommand("LAST");
+
+		btnEliminar.addActionListener(c);
+		btnEliminar.setActionCommand("ELIMINAR");
 		
 	}
-	public void conectarControlador(CtlClienteLista c){
+	public void conectarControlador(CtlOrdenesLista c){
 		btnAgregar.addActionListener(c);
 		btnAgregar.setActionCommand("NUEVO");
 		

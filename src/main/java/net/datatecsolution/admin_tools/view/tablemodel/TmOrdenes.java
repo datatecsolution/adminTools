@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.view.tablemodel;
 
+import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.Factura;
 
@@ -62,7 +63,21 @@ public class TmOrdenes extends TablaModelo {
 			case 5:
 				return facturas.get(rowIndex).getTotal();
 			case 6:
-				return facturas.get(rowIndex).getEstado();
+				if (AbstractJasperReports.isNumber(facturas.get(rowIndex).getEstado()))
+					switch (Integer.parseInt(facturas.get(rowIndex).getEstado())) {
+						case 1:
+							return "Activo";
+						case 2:
+							return "Modificado";
+						case 3:
+							return "Facturado";
+						case 4:
+							return "Eliminado";
+						default:
+							return "No definido";
+					}
+				else
+					return "No definido";
 
 			default:
 				return null;

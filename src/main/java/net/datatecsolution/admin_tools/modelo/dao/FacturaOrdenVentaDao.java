@@ -47,6 +47,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 							+ " encabezado_factura_temp.pago AS pago, "
 							+ " encabezado_factura_temp.descuento AS descuento, "
 							+ " encabezado_factura_temp.observacion AS observacion, "
+							+ " encabezado_factura_temp.estado AS estado, "
 							+ " encabezado_factura_temp.tipo_factura AS tipo_factura, "
 							+ " cliente.rtn AS rtn "
 							+ " FROM "
@@ -549,10 +550,187 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 		else return null;
 	}
 
+	public List<Factura> todosConEliminados(String nombre,int limitInferio, int canItemPag) {
+
+
+		Connection con = null;
+
+
+		List<Factura> facturas=new ArrayList<Factura>();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+
+			psConsultas = con.prepareStatement(super.getQuerySearchJoin("encabezado_factura_temp.estado<3 and codigo_vendedor=? and nombre_cliente", "LIKE", "cliente", "codigo_cliente", "codigo_cliente"));
+
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setString(2, "%" + nombre + "%");
+			psConsultas.setInt(3, limitInferio);
+			psConsultas.setInt(4, canItemPag);
+
+			System.out.println(psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while(res.next()){
+				Factura unaFactura=new Factura();
+				existe=true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				Cliente unCliente=new Cliente();//myClienteDao.buscarCliente(res.getInt("codigo_cliente"));
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+
+				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado=new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+
+				unaFactura.setVendedor(unEmpleado);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				//unaFactura.setEstado(res.getInt("estado_factura"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setSubTotalExcento(res.getBigDecimal("subtotal_excento"));
+				unaFactura.setSubTotal15(res.getBigDecimal("subtotal15"));
+				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
+				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
+				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setObservacion(res.getString("observacion"));
+
+
+				facturas.add(unaFactura);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//se restablece el nombre de la base de datos por defecto
+			super.DbName= DbNameBase;
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return facturas;
+		}
+		else return null;
+
+	}
+
 	@Override
-	public Object buscarPorId(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Factura buscarPorId(int id) {
+
+
+		Connection con = null;
+
+		Factura unaFactura=new Factura();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+
+			psConsultas = con.prepareStatement(super.getQuerySearch("numero_factura", "="));
+
+			//psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(1, id);
+			psConsultas.setInt(2, 0);
+			psConsultas.setInt(3, 1);
+
+			System.out.println(psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while(res.next()){
+
+				existe=true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				Cliente unCliente=new Cliente();//myClienteDao.buscarCliente(res.getInt("codigo_cliente"));
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+
+				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado=new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+
+				unaFactura.setVendedor(unEmpleado);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				//unaFactura.setEstado(res.getInt("estado_factura"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setSubTotalExcento(res.getBigDecimal("subtotal_excento"));
+				unaFactura.setSubTotal15(res.getBigDecimal("subtotal15"));
+				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
+				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
+				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//se restablece el nombre de la base de datos por defecto
+			super.DbName= DbNameBase;
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return unaFactura;
+		}
+		else return null;
+
 	}
 
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
@@ -612,6 +790,101 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
 				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
 				unaFactura.setObservacion(res.getString("observacion"));
+
+
+				facturas.add(unaFactura);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+		}
+		finally
+		{
+			//se restablece el nombre de la base de datos por defecto
+			super.DbName= DbNameBase;
+			try{
+
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return facturas;
+		}
+		else return null;
+
+	}
+
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public List<Factura> buscarPorVendedorCliente(String nombre,int limitInferio, int canItemPag){
+
+
+		Connection con = null;
+
+
+		List<Factura> facturas=new ArrayList<Factura>();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+
+			psConsultas = con.prepareStatement(super.getQuerySearchJoin("codigo_vendedor=? and nombre_cliente", "LIKE", "cliente", "codigo_cliente", "codigo_cliente"));
+
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setString(2, "%" + nombre + "%");
+			psConsultas.setInt(3, limitInferio);
+			psConsultas.setInt(4, canItemPag);
+
+			System.out.println(psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while(res.next()){
+				Factura unaFactura=new Factura();
+				existe=true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				Cliente unCliente=new Cliente();//myClienteDao.buscarCliente(res.getInt("codigo_cliente"));
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+
+				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado=new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+
+				unaFactura.setVendedor(unEmpleado);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				//unaFactura.setEstado(res.getInt("estado_factura"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setSubTotalExcento(res.getBigDecimal("subtotal_excento"));
+				unaFactura.setSubTotal15(res.getBigDecimal("subtotal15"));
+				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
+				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
+				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
 
 
 				facturas.add(unaFactura);

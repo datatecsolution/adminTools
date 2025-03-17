@@ -507,7 +507,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		tipoView=2;
 	}
 
-	private void setFactura(){
+	private boolean setFactura(){
 		
 		//sino se ingreso un cliente en particular que coge el cliente por defecto
 		if(myCliente==null){
@@ -534,19 +534,23 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 
 
 		//agregar vendedor y observaciones
-		boolean resulVendedor=false;
+		boolean verificarAccion=false;
 
 		//activas para cuando se necesite un vendedor
 		if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){//se comprueba que esta acticada la ventana de vendedor
 
-			if(myFactura.getVendedor().getCodigo()<1) {//si la ventana de vendedor esta activa y el vendedor es por defecto de es system entonces muestra la seleccion de vendedor
+			if(myFactura.getVendedor().getCodigo()<1 || myFactura.getPago().doubleValue()==0) {//si la ventana de vendedor esta activa y el vendedor es por defecto de es system entonces muestra la seleccion de vendedor
 				ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 				CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
-				resulVendedor = ctlVendedor.cargarVendedor();
+				verificarAccion = ctlVendedor.cargarVendedor();
+
+				if(!verificarAccion){
+					return verificarAccion;
+				}
 				myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se necesite un vendedor
 			}else{
-				resulVendedor=true;
+				verificarAccion=true;
 			}
 		}else{//sino tiene activa las captura del vendedor se establece un vendedor por defecto
 			if(myFactura.getVendedor().getCodigo()<1){
@@ -554,7 +558,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 				uno.setCodigo(1);
 				myFactura.setVendedor(uno);
 			}
-			resulVendedor=true;
+			verificarAccion=true;
 
 
 		}
@@ -573,7 +577,38 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 			}
 			myFactura.setObservacion(observaciones);
 		}
-	//	2342
+
+		//la ventana de camio solo se mostrara cuando la factura sea al contado
+		if(myFactura.getTipoFactura()==1) {
+			//se muestra la vista para cobrar y introducir el cambio
+			ViewCambioPago viewPago = new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
+			CtlCambioPago ctlPago = new CtlCambioPago(viewPago, myFactura.getTotal());
+			//se muestra y ventana del cobro y se devuelve un resultado del cobro
+			boolean resulPago = ctlPago.pagar();
+			//se procede a verificar si se cobro
+			if (resulPago) {
+				//si la forma de pago fue en efectivo
+				if (ctlPago.getFormaPago() == 1) {
+					myFactura.setPago(ctlPago.getTotalPago());
+					myFactura.setCambio(ctlPago.getCambio());
+					myFactura.setCobroEfectivo(ctlPago.getCobroEfectivo());
+					myFactura.setCobroTarjeta(ctlPago.getCobroTarjeta());
+					myFactura.setTipoPago(1);
+				}
+				//si la forma de pago fue con tarjeta de credito o debito
+				if (ctlPago.getFormaPago() == 2) {
+					myFactura.setPago(myFactura.getTotal());
+					myFactura.setCambio(new BigDecimal(00));
+					myFactura.setTipoPago(2);
+					myFactura.setObservacion(ctlPago.getRefencia());
+				}
+				verificarAccion = true;
+			} else {
+				verificarAccion = false;
+			}
+		}
+
+		return verificarAccion;
 		
 		
 	}
@@ -2179,37 +2214,14 @@ public void calcularTotales(){
 //				{
 				//si la factura es al contado
 				if(view.getRdbtnContado().isSelected()){
-					//se muestra la vista para cobrar y introducir el cambio
-					ViewCambioPago viewPago=new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
-					CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
-					//se muestra y ventana del cobro y se devuelve un resultado del cobro
-					boolean resulPago=ctlPago.pagar();
-					//se procede a verificar si se cobro
-					if(resulPago){
-						//si la forma de pago fue en efectivo
-						if(ctlPago.getFormaPago()==1){
-							myFactura.setPago(ctlPago.getTotalPago());
-							myFactura.setCambio(ctlPago.getCambio());
-							myFactura.setCobroEfectivo(ctlPago.getCobroEfectivo());
-							myFactura.setCobroTarjeta(ctlPago.getCobroTarjeta());
-							myFactura.setTipoPago(1);
-						}
-						//si la forma de pago fue con tarjeta de credito o debito
-						if(ctlPago.getFormaPago()==2){
-							myFactura.setPago(myFactura.getTotal());
-							myFactura.setCambio(new BigDecimal(00));
-							myFactura.setTipoPago(2);
-							myFactura.setObservacion(ctlPago.getRefencia());
-						}
-						setFactura();
-							
-							
-						// se comprueba que sino tiene un cierre de caja
-						// activo lo realice
-						boolean resl = setCierre();
-						//se procesa el resultado del cierre de caja
-						if (resl) {
 
+
+					if(!setFactura())//Se establece los datos para toda la factura y se verifica que no exista ningun error
+						return;//si existe un error se cancela la accion
+					else{
+						// se comprueba que sino tiene un cierre de caja
+						// activo lo realice y se procesa el resultado del cierre de caja
+						if (setCierre()) {
 							this.guardarFactura();
 						}else {
 							JOptionPane.showMessageDialog(view,
@@ -2217,15 +2229,51 @@ public void calcularTotales(){
 									JOptionPane.ERROR_MESSAGE);
 						}
 
-					}//fin de la ventana en cobro
+					}
+//					//se muestra la vista para cobrar y introducir el cambio
+//					ViewCambioPago viewPago=new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
+//					CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
+//					//se muestra y ventana del cobro y se devuelve un resultado del cobro
+//					boolean resulPago=ctlPago.pagar();
+//					//se procede a verificar si se cobro
+//					if(resulPago){
+//						//si la forma de pago fue en efectivo
+//						if(ctlPago.getFormaPago()==1){
+//							myFactura.setPago(ctlPago.getTotalPago());
+//							myFactura.setCambio(ctlPago.getCambio());
+//							myFactura.setCobroEfectivo(ctlPago.getCobroEfectivo());
+//							myFactura.setCobroTarjeta(ctlPago.getCobroTarjeta());
+//							myFactura.setTipoPago(1);
+//						}
+//						//si la forma de pago fue con tarjeta de credito o debito
+//						if(ctlPago.getFormaPago()==2){
+//							myFactura.setPago(myFactura.getTotal());
+//							myFactura.setCambio(new BigDecimal(00));
+//							myFactura.setTipoPago(2);
+//							myFactura.setObservacion(ctlPago.getRefencia());
+//						}
+//
+//						// se comprueba que sino tiene un cierre de caja
+//						// activo lo realice
+//						boolean resl = setCierre();
+//						//se procesa el resultado del cierre de caja
+//						if (resl) {
+//
+//							this.guardarFactura();
+//						}else {
+//							JOptionPane.showMessageDialog(view,
+//									"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
+//									JOptionPane.ERROR_MESSAGE);
+//						}
+//
+//					}//fin de la ventana en cobro
 					
 				} else//fin de la factura al credito
 					if(view.getRdbtnCredito().isSelected()){//si la factura es al contado se procede a guardar e imprimir
 
+						//como la factura es al credito se verifica que el cliente que se selecciono tenga credito
 						if(myCliente!=null &&  myCliente.getTipoCliente()==2){
-							
-							
-							setFactura();
+
 							myFactura.setTipoPago(3);
 							//comprueba que el cliente este registrado
 							//para verificar el credito del cliente
@@ -2239,11 +2287,12 @@ public void calcularTotales(){
 
 							myFactura.setTipoFactura(2);
 
+							if(!setFactura())
+								return;
+
 							// se comprueba que sino tiene un cierre de caja
-							// activo lo realice
-							boolean resl = setCierre();
-							//se procesa el resultado del cierre de caja
-							if (resl) {
+							// activo lo realice y se procesa el resultado del cierre de caja
+							if (setCierre()) {
 								this.guardarFactura();
 							}else {
 								JOptionPane.showMessageDialog(view,

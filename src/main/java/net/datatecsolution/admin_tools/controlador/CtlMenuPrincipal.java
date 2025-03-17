@@ -54,187 +54,187 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
-		String comando=e.getActionCommand();
-		Integer permiso=ConexionStatic.getUsuarioLogin().getTipoPermiso();
-		
+
+		String comando = e.getActionCommand();
+		Integer permiso = ConexionStatic.getUsuarioLogin().getTipoPermiso();
+
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		switch(comando){
-		
-		case "RUTAS_ENTREGAS":
-			if(permiso==1 || permiso==4) {
-				ViewListaRutasEntregas viewListaRutasEntregas = new ViewListaRutasEntregas(view);
-				CtlRutasEntregas ctlRutasEntregas = new CtlRutasEntregas(viewListaRutasEntregas);
-				viewListaRutasEntregas.dispose();
-				viewListaRutasEntregas = null;
-				ctlRutasEntregas = null;
-			}
-			break;
-		  
-		case "FACT_VENCIDAS":
-			if(permiso==4) {
-				ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(view);
-				CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
+		switch (comando) {
 
-			}
+			case "RUTAS_ENTREGAS":
+				if (permiso == 1 || permiso == 4) {
+					ViewListaRutasEntregas viewListaRutasEntregas = new ViewListaRutasEntregas(view);
+					CtlRutasEntregas ctlRutasEntregas = new CtlRutasEntregas(viewListaRutasEntregas);
+					viewListaRutasEntregas.dispose();
+					viewListaRutasEntregas = null;
+					ctlRutasEntregas = null;
+				}
+				break;
 
-			break;
-		case "APLICAR_INTERES_FACT":
-			if(permiso==4) {
-				int resul=JOptionPane.showConfirmDialog(view, "Desea aplicar los interes a las facturas vencidas?");
-				if(resul==0){
-					boolean res=facturaDao.aplicarInteresVenc();
-					if(res){
-						JOptionPane.showMessageDialog(null,"Se aplicaron los intereses a las facturas vencidas.","Transaccion completada.",JOptionPane.INFORMATION_MESSAGE);
+			case "FACT_VENCIDAS":
+				if (permiso == 4) {
+					ViewCuentasFacturas viewCuentasFacturas = new ViewCuentasFacturas(view);
+					CtlCuentasFacturas ctlCuentasFacturas = new CtlCuentasFacturas(viewCuentasFacturas);
+
+				}
+
+				break;
+			case "APLICAR_INTERES_FACT":
+				if (permiso == 4) {
+					int resul = JOptionPane.showConfirmDialog(view, "Desea aplicar los interes a las facturas vencidas?");
+					if (resul == 0) {
+						boolean res = facturaDao.aplicarInteresVenc();
+						if (res) {
+							JOptionPane.showMessageDialog(null, "Se aplicaron los intereses a las facturas vencidas.", "Transaccion completada.", JOptionPane.INFORMATION_MESSAGE);
+						}
 					}
 				}
-			}
-			break;
-		
-		case "CONFIG_USUARIOS":
+				break;
 
-			if(permiso==4) {
-				ViewConfigUser viewConfigUser=new ViewConfigUser(view);
-				CtlConfigUser ctlConfigUser=new CtlConfigUser(viewConfigUser);
+			case "CONFIG_USUARIOS":
 
-				viewConfigUser.dispose();
-				viewConfigUser=null;
-				ctlConfigUser=null;
-			}
+				if (permiso == 4) {
+					ViewConfigUser viewConfigUser = new ViewConfigUser(view);
+					CtlConfigUser ctlConfigUser = new CtlConfigUser(viewConfigUser);
 
-		break;
-		
-		
-		case "DEPOSITOS_Y_RETIROS":
-			if(permiso==4) {
-				ViewCuentaBanco viewMovimientoBanco=new ViewCuentaBanco(view);
-				CtlCuentasBanco ctlMovimientoBanco=new CtlCuentasBanco(viewMovimientoBanco);
-				viewMovimientoBanco.dispose();
-				viewMovimientoBanco=null;
-				ctlMovimientoBanco=null;
-			}
+					viewConfigUser.dispose();
+					viewConfigUser = null;
+					ctlConfigUser = null;
+				}
 
-			
-		break;
-		case "ENTRADASCAJAS":
-			if(permiso==4) {
-				ViewListaEntradas viewEntradasCaja=new ViewListaEntradas(view);
-				CtlEntradasListas ctlEntradasCaja=new CtlEntradasListas(viewEntradasCaja);
-				viewEntradasCaja.dispose();
-				viewEntradasCaja=null;
-				ctlEntradasCaja=null;
-			}
-			break;
-		
-		case "VENTASUSUARIOS":
-			if(permiso==4) {
-				ViewFiltroComisiones viewVentasUsuarios=new ViewFiltroComisiones(view);
-				CtlFiltroRepVentasUsuarios ctlVentasUsuarios= new CtlFiltroRepVentasUsuarios(viewVentasUsuarios);
-				viewVentasUsuarios.dispose();
-				viewVentasUsuarios=null;
-				ctlVentasUsuarios=null;
-			}
-			break;
-		
-		case "DATOSFACTURACION":
-			if(permiso==4) {
-				ViewListaDatosFacturacion vDatosFacturacion=new ViewListaDatosFacturacion(view);
-				CtlDatosFacturacionLista ctlDatosFacturacion=new CtlDatosFacturacionLista(vDatosFacturacion);
-			}
-			break;
-		case "CAJAS":
-			if(permiso==4) {
-				ViewListaCajas viewAgregarCaja=new ViewListaCajas(view);
-				CtlCajasLista ctlAgregarCaja=new CtlCajasLista(viewAgregarCaja);
+				break;
 
-			}
-			break;
-		
-		
-		case "ALERTAEXISTENCIAS":
-			try {
-				//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
-				AbstractJasperReports.createReportAlertaExistencia(ConexionStatic.getPoolConexion().getConnection(), 4);
-				
-				//this.view.setModal(false);
-				//AbstractJasperReports.imprimierFactura();
-				AbstractJasperReports.showViewer(this.view);
-				
-				
-			} catch (SQLException ee) {
-				// TODO Auto-generated catch block
-				ee.printStackTrace();
-			}
-			break;
-	
-		
+
+			case "DEPOSITOS_Y_RETIROS":
+				if (permiso == 4) {
+					ViewCuentaBanco viewMovimientoBanco = new ViewCuentaBanco(view);
+					CtlCuentasBanco ctlMovimientoBanco = new CtlCuentasBanco(viewMovimientoBanco);
+					viewMovimientoBanco.dispose();
+					viewMovimientoBanco = null;
+					ctlMovimientoBanco = null;
+				}
+
+
+				break;
+			case "ENTRADASCAJAS":
+				if (permiso == 4) {
+					ViewListaEntradas viewEntradasCaja = new ViewListaEntradas(view);
+					CtlEntradasListas ctlEntradasCaja = new CtlEntradasListas(viewEntradasCaja);
+					viewEntradasCaja.dispose();
+					viewEntradasCaja = null;
+					ctlEntradasCaja = null;
+				}
+				break;
+
+			case "VENTASUSUARIOS":
+				if (permiso == 4) {
+					ViewFiltroComisiones viewVentasUsuarios = new ViewFiltroComisiones(view);
+					CtlFiltroRepVentasUsuarios ctlVentasUsuarios = new CtlFiltroRepVentasUsuarios(viewVentasUsuarios);
+					viewVentasUsuarios.dispose();
+					viewVentasUsuarios = null;
+					ctlVentasUsuarios = null;
+				}
+				break;
+
+			case "DATOSFACTURACION":
+				if (permiso == 4) {
+					ViewListaDatosFacturacion vDatosFacturacion = new ViewListaDatosFacturacion(view);
+					CtlDatosFacturacionLista ctlDatosFacturacion = new CtlDatosFacturacionLista(vDatosFacturacion);
+				}
+				break;
+			case "CAJAS":
+				if (permiso == 4) {
+					ViewListaCajas viewAgregarCaja = new ViewListaCajas(view);
+					CtlCajasLista ctlAgregarCaja = new CtlCajasLista(viewAgregarCaja);
+
+				}
+				break;
+
+
+			case "ALERTAEXISTENCIAS":
+				try {
+					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
+					AbstractJasperReports.createReportAlertaExistencia(ConexionStatic.getPoolConexion().getConnection(), 4);
+
+					//this.view.setModal(false);
+					//AbstractJasperReports.imprimierFactura();
+					AbstractJasperReports.showViewer(this.view);
+
+
+				} catch (SQLException ee) {
+					// TODO Auto-generated catch block
+					ee.printStackTrace();
+				}
+				break;
+
+
 			case "CUENTASBANCOS":
-				if(permiso==4) {
-					ViewListaCuentaBancos vCuentasBancos=new ViewListaCuentaBancos(view);
-					CtlBancosLista cCuentasBancos=new CtlBancosLista(vCuentasBancos);
+				if (permiso == 4) {
+					ViewListaCuentaBancos vCuentasBancos = new ViewListaCuentaBancos(view);
+					CtlBancosLista cCuentasBancos = new CtlBancosLista(vCuentasBancos);
 					vCuentasBancos.setVisible(true);
 				}
 				break;
-		
+
 			case "COTIZACIONES":
-					ViewListaCotizacion vCotizaciones=new ViewListaCotizacion(view);
-					CtlCotizacionLista cCotizaciones=new CtlCotizacionLista(vCotizaciones);
-					vCotizaciones.setVisible(true);
-					break;
-		
-		
-			case "PAGOPROVEEDORES":
-				ViewListaPagosProveedores vPagosProveedores= new ViewListaPagosProveedores(view);
-				CtlPagosProveedoresLista cPagoProveedores=new CtlPagosProveedoresLista(vPagosProveedores);
-				
-				vPagosProveedores.dispose();
-				cPagoProveedores=null;
+				ViewListaCotizacion vCotizaciones = new ViewListaCotizacion(view);
+				CtlCotizacionLista cCotizaciones = new CtlCotizacionLista(vCotizaciones);
+				vCotizaciones.setVisible(true);
 				break;
-				
+
+
+			case "PAGOPROVEEDORES":
+				ViewListaPagosProveedores vPagosProveedores = new ViewListaPagosProveedores(view);
+				CtlPagosProveedoresLista cPagoProveedores = new CtlPagosProveedoresLista(vPagosProveedores);
+
+				vPagosProveedores.dispose();
+				cPagoProveedores = null;
+				break;
+
 			case "REQUISICIONES":
-				if(permiso==1 || permiso==4) {
+				if (permiso == 1 || permiso == 4) {
 					ViewListaRequisiciones viewRequiLista = new ViewListaRequisiciones(view);
 					CtlRequisicionesLista ctlRequiLista = new CtlRequisicionesLista(viewRequiLista);
 					viewRequiLista.dispose();
 					ctlRequiLista = null;
 				}
-			break;
-	
+				break;
+
 			case "CERRARFACTURACION":
 				try {
 					AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 4, 0);
-					
+
 					//this.view.setModal(false);
 					//AbstractJasperReports.imprimierFactura();
 					AbstractJasperReports.showViewer(this.view);
-					
-					CierreCajaDao cierre=new CierreCajaDao();
-					
-					if(cierre.registrar(new Object())){
+
+					CierreCajaDao cierre = new CierreCajaDao();
+
+					if (cierre.registrar(new Object())) {
 						JOptionPane.showMessageDialog(view, "Se creo el cierre de caja");
 					}
-					
+
 				} catch (SQLException ee) {
 					// TODO Auto-generated catch block
 					ee.printStackTrace();
 				}
 				break;
 			case "PROVEEDORES":
-				ViewListaProveedor viewListaProveedor=new ViewListaProveedor(view);
-				CtlProveedorLista ctlProveedor=new CtlProveedorLista(viewListaProveedor);
+				ViewListaProveedor viewListaProveedor = new ViewListaProveedor(view);
+				CtlProveedorLista ctlProveedor = new CtlProveedorLista(viewListaProveedor);
 				viewListaProveedor.dispose();
-				ctlProveedor=null;
+				ctlProveedor = null;
 				break;
 			case "ARTICULOS":
-				ViewListaArticulo viewListaArticulo=new ViewListaArticulo(view);
-				CtlArticuloLista ctlArticulo =new CtlArticuloLista(viewListaArticulo);
+				ViewListaArticulo viewListaArticulo = new ViewListaArticulo(view);
+				CtlArticuloLista ctlArticulo = new CtlArticuloLista(viewListaArticulo);
 				viewListaArticulo.dispose();
-				ctlArticulo=null;
-				
+				ctlArticulo = null;
+
 				break;
 			case "AGREGARCOMPRAS":
-				if(permiso==4) {
+				if (permiso == 4) {
 					ViewAgregarCompras viewAgregarCompras = new ViewAgregarCompras(this.view);
 					CtlCompras ctlAgregarCompra = new CtlCompras(viewAgregarCompras);
 
@@ -245,46 +245,45 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				}
 				break;
 			case "FACTURAR":
-				if(permiso==4) {
-					ViewFacturar vistaFacturar=new ViewFacturar(this.view);
+				if (permiso == 4) {
+					ViewFacturar vistaFacturar = new ViewFacturar(this.view);
 					vistaFacturar.pack();
-					CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar );
+					CtlFacturar ctlFacturar = new CtlFacturar(vistaFacturar);
 					vistaFacturar.setVisible(true);
 					//JOptionPane.showMessageDialog(view, "Esta opcion solo esta disponible para usuario tipo cajeros");
 				}
 
-		
-				
+
 				break;
 			case "CATEGORIAS":
 				//se crea la lista de categorias
-				ViewListaCategorias vlCategorias=new ViewListaCategorias(this.view);
-				
+				ViewListaCategorias vlCategorias = new ViewListaCategorias(this.view);
+
 				// se crea el control para la view lista marcas
-				CtlCategoriaLista ctlListaCategorias =new CtlCategoriaLista(vlCategorias); 
-				
+				CtlCategoriaLista ctlListaCategorias = new CtlCategoriaLista(vlCategorias);
+
 				vlCategorias.dispose();
-				ctlListaCategorias=null;
-				
+				ctlListaCategorias = null;
+
 				break;
 			case "CLIENTES":
-				if(permiso==4) {
-					ViewListaClientes viewClientes=new ViewListaClientes(view);
-					CtlClienteLista  ctlClientes=new CtlClienteLista(viewClientes);
+				if (permiso == 4) {
+					ViewListaClientes viewClientes = new ViewListaClientes(view);
+					CtlClienteLista ctlClientes = new CtlClienteLista(viewClientes);
 					viewClientes.dispose();
-					ctlClientes=null;
+					ctlClientes = null;
 				}
 				break;
 			case "BUSCARFACTURAS":
 
 				ViewFacturas viewBuscarFacturas = new ViewFacturas(this.view);
-				CtlFacturas cltBuscarFacturas= new CtlFacturas(viewBuscarFacturas);
+				CtlFacturas cltBuscarFacturas = new CtlFacturas(viewBuscarFacturas);
 				viewBuscarFacturas.dispose();
-				cltBuscarFacturas=null;
+				cltBuscarFacturas = null;
 				break;
-				
+
 			case "LISTAFACTURASCOMPRA":
-				if(permiso==4) {
+				if (permiso == 4) {
 					ViewListaFacturasCompra viewFacturasCompra = new ViewListaFacturasCompra(this.view);
 					CtlFacturasCompra ctlFacturasCompra = new CtlFacturasCompra(viewFacturasCompra);
 					viewFacturasCompra.dispose();
@@ -292,18 +291,18 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 					ctlFacturasCompra = null;
 				}
 				break;
-				
+
 			case "PAGOCLIENTES":
-				ViewCxCPagos viewPagoClientes=new ViewCxCPagos(view);
-				CtlFacturaPagos ctlPagoCleintes=new CtlFacturaPagos(viewPagoClientes);
+				ViewCxCPagos viewPagoClientes = new ViewCxCPagos(view);
+				CtlFacturaPagos ctlPagoCleintes = new CtlFacturaPagos(viewPagoClientes);
 				viewPagoClientes.dispose();
-				viewPagoClientes=null;
-				ctlPagoCleintes=null;
+				viewPagoClientes = null;
+				ctlPagoCleintes = null;
 				break;
 			case "LISTAPAGOS":
-				
-				ViewListaPagos viewListaPagos=new ViewListaPagos(view);
-				CtlPagoLista ctlPagoLista =new CtlPagoLista(viewListaPagos);
+
+				ViewListaPagos viewListaPagos = new ViewListaPagos(view);
+				CtlPagoLista ctlPagoLista = new CtlPagoLista(viewListaPagos);
 				viewListaPagos.dispose();
 				//viewListaPagos=null;
 				//ctlPagoLista=null;
@@ -317,97 +316,102 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				ctlProgramarPrecio=null;*/
 				break;
 			case "R_DEI_VENTAS":
-				if(permiso==4) {
-					ViewFiltroRepSarVentas viewFiltroDei=new ViewFiltroRepSarVentas(view);
-					CtlFiltroRepSarVentas ctlFiltroDei=new CtlFiltroRepSarVentas(viewFiltroDei);
+				if (permiso == 4) {
+					ViewFiltroRepSarVentas viewFiltroDei = new ViewFiltroRepSarVentas(view);
+					CtlFiltroRepSarVentas ctlFiltroDei = new CtlFiltroRepSarVentas(viewFiltroDei);
 				}
 				break;
 			case "R_DEI_COMPRAS":
-				if(permiso==4) {
-					ViewFiltroRepSarCompras viewFiltroDeiCompras=new ViewFiltroRepSarCompras(view);
-					CtlFiltroRepSarCompras ctlFiltroDeiCompras=new CtlFiltroRepSarCompras(viewFiltroDeiCompras);
+				if (permiso == 4) {
+					ViewFiltroRepSarCompras viewFiltroDeiCompras = new ViewFiltroRepSarCompras(view);
+					CtlFiltroRepSarCompras ctlFiltroDeiCompras = new CtlFiltroRepSarCompras(viewFiltroDeiCompras);
 				}
 				break;
-				
+
 			case "USUARIOS":
 
-				if(permiso==4) {
-					ViewListaUsuarios viewListaUsuarios=new ViewListaUsuarios(view);
-					CtlUsuariosLista ctlUsuarios=new CtlUsuariosLista(viewListaUsuarios);
+				if (permiso == 4) {
+					ViewListaUsuarios viewListaUsuarios = new ViewListaUsuarios(view);
+					CtlUsuariosLista ctlUsuarios = new CtlUsuariosLista(viewListaUsuarios);
 					viewListaUsuarios.dispose();
-					viewListaUsuarios=null;
-					ctlUsuarios=null;
+					viewListaUsuarios = null;
+					ctlUsuarios = null;
 				}
 
 				break;
-				
+
 			case "INVENTARIO":
 				try {
 					//AbstractJasperReports.createReportFactura( conexion.getPoolConexion().getConnection(), "Cierre_Caja_Saint_Paul.jasper",1 );
 					AbstractJasperReports.createReportInventario(ConexionStatic.getPoolConexion().getConnection(), ConexionStatic.getUsuarioLogin().getUser());
-					
+
 					//this.view.setModal(false);
 					//AbstractJasperReports.imprimierFactura();
 					AbstractJasperReports.showViewer(this.view);
-					
-					
+
+
 				} catch (SQLException ee) {
 					// TODO Auto-generated catch block
 					ee.printStackTrace();
 				}
 				break;
-				
-				
+
+
 			case "CIERRES_CAJA":
 
-				if(permiso==4) {
-					ViewListaCierresCaja viewCierres=new ViewListaCierresCaja(view);
-					CtlCierresCajaLista ctlCierres=new CtlCierresCajaLista(viewCierres);
+				if (permiso == 4) {
+					ViewListaCierresCaja viewCierres = new ViewListaCierresCaja(view);
+					CtlCierresCajaLista ctlCierres = new CtlCierresCajaLista(viewCierres);
 
 					viewCierres.dispose();
-					viewCierres=null;
-					ctlCierres=null;
+					viewCierres = null;
+					ctlCierres = null;
 				}
 				break;
-				
+
 			case "EMPLEADOS":
-				
-				ViewListaEmpleados viewEmpleados=new ViewListaEmpleados(view);
-				CtlEmpleadosLista ctlListaEmpleados=new CtlEmpleadosLista(viewEmpleados);
-				
+
+				ViewListaEmpleados viewEmpleados = new ViewListaEmpleados(view);
+				CtlEmpleadosLista ctlListaEmpleados = new CtlEmpleadosLista(viewEmpleados);
+
 				viewEmpleados.dispose();
-				viewEmpleados=null;
-				ctlListaEmpleados=null;
-				
+				viewEmpleados = null;
+				ctlListaEmpleados = null;
+
 				break;
 			case "COMISIONES":
 
-				if(permiso==4) {
-					ViewFiltroComisiones viewComisiones=new ViewFiltroComisiones(view);
-					CtlFiltroRepComisiones ctlComisiones= new CtlFiltroRepComisiones(viewComisiones);
+				if (permiso == 4) {
+					ViewFiltroComisiones viewComisiones = new ViewFiltroComisiones(view);
+					CtlFiltroRepComisiones ctlComisiones = new CtlFiltroRepComisiones(viewComisiones);
 					viewComisiones.dispose();
-					viewComisiones=null;
-					ctlComisiones=null;
+					viewComisiones = null;
+					ctlComisiones = null;
 				}
 
 				break;
-				
+
 			case "SALIDASCAJAS":
-				if(permiso==4) {
-					ViewListaSalidas viewSalidas=new ViewListaSalidas(view);
-					CtlSalidasListas ctlSalidas=new CtlSalidasListas(viewSalidas);
+				if (permiso == 4) {
+					ViewListaSalidas viewSalidas = new ViewListaSalidas(view);
+					CtlSalidasListas ctlSalidas = new CtlSalidasListas(viewSalidas);
 				}
 
 				break;
 			case "REPORTE_X_VENCER":
-				ViewFiltroRepVenc viewFiltroRepVenc=new ViewFiltroRepVenc(view);
-				CtlFiltroRepVenc ctlFiltroRepVenc=new CtlFiltroRepVenc(viewFiltroRepVenc);
+				ViewFiltroRepVenc viewFiltroRepVenc = new ViewFiltroRepVenc(view);
+				CtlFiltroRepVenc ctlFiltroRepVenc = new CtlFiltroRepVenc(viewFiltroRepVenc);
+				break;
+			case "ORDENES":
+
+				ViewListaOrdenes viewOrdenes = new ViewListaOrdenes(view);
+				CtlOrdenesLista ctlOrdenes = new CtlOrdenesLista(viewOrdenes);
+
 				break;
 
 
-
 		}
-		
+
 	}
 	@Override
 	public void windowOpened(WindowEvent e) {
