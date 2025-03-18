@@ -404,9 +404,15 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 			case "ORDENES":
 
-				ViewListaOrdenes viewOrdenes = new ViewListaOrdenes(view);
-				CtlOrdenesLista ctlOrdenes = new CtlOrdenesLista(viewOrdenes);
 
+				if (permiso == 4) {
+
+					ViewListaOrdenes viewOrdenes = new ViewListaOrdenes(view);
+					CtlOrdenesLista ctlOrdenes = new CtlOrdenesLista(viewOrdenes);
+					viewOrdenes.dispose();
+					viewOrdenes = null;
+					ctlOrdenes = null;
+				}
 				break;
 
 

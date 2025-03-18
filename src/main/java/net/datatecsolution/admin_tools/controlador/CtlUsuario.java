@@ -49,7 +49,11 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 					if(verificar){
 						JOptionPane.showMessageDialog(view, "La caja ya esta asignada al usuario","Error",JOptionPane.ERROR_MESSAGE);
 					}else{
+						//se veficica que no exista otra caja en la lista para poder establece la primera por defecto
+						if(view.getModeloListaCajas().getSize()==0)
+							cListaCajaBuscar.getMyCaja().setActiva(true);
 						view.getModeloListaCajas().addCaja(cListaCajaBuscar.getMyCaja());
+
 					}
 				}
 				
@@ -149,15 +153,25 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		
 		//JOptionPane.showMessageDialog(null, view.getModeloListaCajas().getCajas().size());
 		if(view.getRdbtnAdministrador().isSelected()){
-			myUsuario.setTipoPermiso(1);
+			myUsuario.setTipoPermiso(4);
 			myUsuario.setPermiso("Administrador");
 		}
 		if(view.getRdbtnCajero().isSelected()){
 			myUsuario.setTipoPermiso(2);
 			myUsuario.setPermiso("Cajero");
 		}
-		
-		
+
+		if(view.getRdbtnVendedor().isSelected()){
+			myUsuario.setTipoPermiso(3);
+			myUsuario.setPermiso("Vendedor");
+		}
+		if(view.getRdbtnSupervisor().isSelected()){
+			myUsuario.setTipoPermiso(1);
+			myUsuario.setPermiso("Supervisor");
+		}
+
+
+
 	}
 
 	private boolean validar() {
@@ -211,11 +225,18 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		view.getTxtNombre().setText(myUsuario.getNombre());
 		//view.getTxtApellido().setText(myUsuario.getApellido());
 		
-		if(myUsuario.getTipoPermiso()==1){
+		if(myUsuario.getTipoPermiso()==4){
 			view.getRdbtnAdministrador().setSelected(true);
 		}
 		if(myUsuario.getTipoPermiso()==2){
 			view.getRdbtnCajero().setSelected(true);
+		}
+
+		if(myUsuario.getTipoPermiso()==1){
+			view.getRdbtnSupervisor().setSelected(true);
+		}
+		if(myUsuario.getTipoPermiso()==3){
+			view.getRdbtnVendedor().setSelected(true);
 		}
 		
 		//si tiene cajas asignas se muestran en la view

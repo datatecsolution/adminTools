@@ -162,9 +162,12 @@ public class ViewListaOrdenes extends ViewTabla {
 		
 		rdbtnNombre.addActionListener(c);
 		rdbtnNombre.setActionCommand("ESCRIBIR");
-		
-//		rdbtnRtn.addActionListener(c);
-//		rdbtnRtn.setActionCommand("ESCRIBIR");
+
+		btnImprimir.addActionListener(c);
+		btnImprimir.setActionCommand("IMPRIMIR");
+
+		btnEliminar.addActionListener(c);
+		btnEliminar.setActionCommand("CAMBIAR_ESTADO");
 		
 		btnBuscar.addActionListener(c);
 		btnBuscar.setActionCommand("BUSCAR");
@@ -177,11 +180,7 @@ public class ViewListaOrdenes extends ViewTabla {
 		 
 		 btnAnterior.addActionListener(c);
 		 btnAnterior.setActionCommand("LAST");
-		 
-		 btnImprimir.addActionListener(c);
-		 //btnCuenta.setActionCommand("CUENTACLIENTE");
-		 
-		
+
 		tabla.addMouseListener(c);
 		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}

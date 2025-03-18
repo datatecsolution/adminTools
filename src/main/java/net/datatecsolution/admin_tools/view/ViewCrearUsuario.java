@@ -13,6 +13,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ViewCrearUsuario extends JDialog {
+	private final JRadioButton rdbtnSupervisor;
+	private final JRadioButton rdbtnVendedor;
 	private JTextField txtUsuario;
 	private JTextField txtNombre;
 	//private JTextField txtApellido;
@@ -104,11 +106,21 @@ public class ViewCrearUsuario extends JDialog {
 		pwdRePwd = new JPasswordField();
 		pwdRePwd.setBounds(20, 243, 482, 42);
 		getContentPane().add(pwdRePwd);
-		
+
 		rdbtnAdministrador = new JRadioButton("Administrador");
-		rdbtnAdministrador.setBounds(222, 297, 149, 18);
+		rdbtnAdministrador.setBounds(353, 297, 149, 18);
 		grupoOpciones.add(rdbtnAdministrador);
 		getContentPane().add(rdbtnAdministrador);
+
+		rdbtnSupervisor = new JRadioButton("Supervisor");
+		rdbtnSupervisor.setBounds(240, 297, 111, 18);
+		grupoOpciones.add(rdbtnSupervisor);
+		getContentPane().add(rdbtnSupervisor);
+
+		rdbtnVendedor = new JRadioButton("Vendedor");
+		rdbtnVendedor.setBounds(117, 297, 111, 18);
+		grupoOpciones.add(rdbtnVendedor);
+		getContentPane().add(rdbtnVendedor);
 		
 		rdbtnCajero = new JRadioButton("Cajero");
 		rdbtnCajero.setSelected(true);
@@ -237,5 +249,13 @@ public class ViewCrearUsuario extends JDialog {
 	 */
 	public JPopupMenu getMenuContextual() {
 		return menuContextual;
+	}
+
+	public JRadioButton getRdbtnSupervisor() {
+		return rdbtnSupervisor;
+	}
+
+	public JRadioButton getRdbtnVendedor() {
+		return rdbtnVendedor;
 	}
 }

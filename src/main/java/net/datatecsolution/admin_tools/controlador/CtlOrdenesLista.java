@@ -25,6 +25,14 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 
 	//fila selecciona enla lista
 	private int filaPulsada;
+	//String[] estados = {"Activo", "Modificado", "Facturado", "Eliminado"};
+
+	Estado[] estados = {
+			new Estado(1, "Activo"),
+			new Estado(2, "Modificado"),
+			new Estado(3, "Facturado"),
+			new Estado(4, "Eliminado")
+	};
 
 	public CtlOrdenesLista(ViewListaOrdenes v){
 		view=v;
@@ -83,7 +91,7 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 
 				break;
 			case "ID":
-				JOptionPane.showMessageDialog(view,"Click en busquda por id");
+				JOptionPane.showMessageDialog(view, "Click en busquda por id");
 				break;
 			case "BUSCAR":
 
@@ -141,11 +149,88 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 				}
 				view.getTxtPagina().setText("" + view.getModelo().getNoPagina());
 				break;
-			case "CUENTASCLIENTES":
+			case "IMPRIMIR":
+
+				//Recoger qu� fila se ha pulsadao en la tabla
+				filaPulsada = this.view.getTabla().getSelectedRow();
+				//JOptionPane.showMessageDialog(view, "click en la tabla"+filaPulsada);
+
+				//si seleccion una fila
+				if (filaPulsada >= 0) {
+					int idFacturaTemporal = this.view.getModelo().getFactura(filaPulsada).getIdFactura();
+
+					//se imprime un tike de salida para prueba
+					try {
+						AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(), idFacturaTemporal);
+
+						//AbstractJasperReports.imprimierFactura();
+						AbstractJasperReports.showViewer(view);
+
+
+					} catch (SQLException ee) {
+						// TODO Auto-generated catch block
+						ee.printStackTrace();
+					}
+
+				}
 				break;
-			case "CUENTACLIENTE":
+
+			case "CAMBIAR_ESTADO":
+				//Recoger qu� fila se ha pulsadao en la tabla
+				filaPulsada = this.view.getTabla().getSelectedRow();
+				//JOptionPane.showMessageDialog(view, "click en la tabla"+filaPulsada);
+
+				//si seleccion una fila
+				if (filaPulsada >= 0) {
+					//se captura la factura de la linea seleccioada
+					Factura facturaTemporal = this.view.getModelo().getFactura(filaPulsada);
+					//se excluye el index del estado actual de la factura
+					int indiceExcluir = Integer.parseInt( this.view.getModelo().getFactura(filaPulsada).getEstado());
+
+
+					//se creal el modelo de datos con los estados para el comboBox
+					DefaultComboBoxModel<Estado> modelo = new DefaultComboBoxModel<>();
+					for (Estado estado : estados) {
+						if (estado.getIndice() != indiceExcluir) {
+							modelo.addElement(estado);
+						}
+					}
+					//se crea el JComboBox con los estados
+					JComboBox<Estado> comboBox = new JComboBox<>(modelo);
+
+					//Se muestra el JComboBox en un JOptionPane para seleccionar
+					int opcion = JOptionPane.showConfirmDialog(
+							view,
+							comboBox,
+							"Estado para orden # "+facturaTemporal.getIdFactura(),
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE
+					);
+
+					//si en el JOptionPane se presiono el boton Ok se cambia el estado en la base de datos de la factura
+					if (opcion == JOptionPane.OK_OPTION) {
+						Estado seleccionado = (Estado) comboBox.getSelectedItem();
+						ordenDao.cambiarEstado(facturaTemporal,seleccionado.indice);
+
+						view.getTxtBuscar().setText(facturaTemporal.getIdFactura()+"");
+						view.getRdbtnId().setSelected(true);
+
+
+						view.getBtnBuscar().doClick();
+					}
+				}
+
+
 				break;
 		}
+	}
+	private static int obtenerIndiceOriginal(String seleccion, String[] estados, int indiceExcluir) {
+		for (int i = 0; i < estados.length; i++) {
+			if (i != indiceExcluir && estados[i].equals(seleccion)) {
+				return i;
+			}
+		}
+		return -1; // En caso de error
 	}
 	public void cargarTabla(List<Factura> ordenes){
 
@@ -229,6 +314,29 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	class Estado {
+		private int indice;
+		private String nombre;
+
+		public Estado(int indice, String nombre) {
+			this.indice = indice;
+			this.nombre = nombre;
+		}
+
+		public int getIndice() {
+			return indice;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		@Override
+		public String toString() {
+			return nombre; // Para que JComboBox muestre solo el nombre
+		}
 	}
 
 }
