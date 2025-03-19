@@ -180,7 +180,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[COTIZACION32423423]]></text>
+				<text><![CDATA[COTIZACION]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
