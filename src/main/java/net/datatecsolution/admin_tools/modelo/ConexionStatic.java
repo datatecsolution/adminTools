@@ -136,8 +136,8 @@ public abstract class ConexionStatic implements Runnable{
 	//DISTRIBUIDORA SHAROM
 	private static String login = "admin";
 	private static String password = "ronLsnta123.";
-	//private static String server = "192.168.88.254";
-	private static String server = "201.190.38.238";
+	private static String server = "192.168.88.254";
+	//private static String server = "201.190.38.238";
 
 /*
 	//MISCELANIAS W&C
@@ -175,7 +175,7 @@ public abstract class ConexionStatic implements Runnable{
 
 
 
-	private static String url = "jdbc:mysql://"+server+":3333/"+bd+"?serverTimezone=GMT-6";
+	private static String url = "jdbc:mysql://"+server+":3306/"+bd+"?serverTimezone=GMT-6";
 	private static String driver="com.mysql.cj.jdbc.Driver";
 
 

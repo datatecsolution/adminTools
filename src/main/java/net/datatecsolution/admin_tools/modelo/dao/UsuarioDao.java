@@ -39,7 +39,7 @@ public class UsuarioDao  extends ModeloDaoBasic {
 		
         Connection con = null;
         
-    	String sql=super.getQuerySelect()+" where permiso='administrador' and clave=?";
+    	String sql=super.getQuerySelect()+" where (tipo_permiso=1 or  tipo_permiso=4) and clave=?";
         //Statement stmt = null;
        	List<Factura> facturas=new ArrayList<Factura>();
 		
@@ -51,7 +51,7 @@ public class UsuarioDao  extends ModeloDaoBasic {
 			
 			psConsultas = con.prepareStatement(sql);
 			psConsultas.setString(1, pwd);
-			
+			System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
 			while(res.next()){
 				resultado=true;
