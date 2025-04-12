@@ -539,7 +539,7 @@ public class CtlFacturarFrame  implements ActionListener, MouseListener, TableMo
 		//activas para cuando se necesite un vendedor
 		if(ConexionStatic.getUsuarioLogin().getConfig().isVentanaVendedor()){//se comprueba que esta acticada la ventana de vendedor
 
-			if(myFactura.getVendedor().getCodigo()<1 || myFactura.getPago().doubleValue()==0) {//si la ventana de vendedor esta activa y el vendedor es por defecto de es system entonces muestra la seleccion de vendedor
+			if(myFactura.getVendedor().getCodigo()<1 || myFactura.getPago().doubleValue()==0) {//si la ventana de vendedor esta activa y el vendedor es por defecto de system entonces muestra la seleccion de vendedor
 				ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 				CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
