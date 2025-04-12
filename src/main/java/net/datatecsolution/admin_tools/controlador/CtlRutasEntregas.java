@@ -294,7 +294,7 @@ public class CtlRutasEntregas implements ActionListener, MouseListener, ChangeLi
 				
 				try {
 					
-					AbstractJasperReports.createReportRuta(ConexionStatic.getPoolConexion().getConnection(),unRuta,reportArticuloRuta);
+					AbstractJasperReports.createReportRuta(ConexionStatic.getPoolConexion().getConnection(),unRuta,reportArticuloRuta,unRuta.getFacturas().size());
 					
 					//AbstractJasperReports.imprimierFactura();
 					AbstractJasperReports.showViewer(view);
