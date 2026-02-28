@@ -29,7 +29,10 @@ public class CbxTmEmpleado extends DefaultComboBoxModel{
 		 }
 	
 	public void setLista(Vector<Empleado> im){
-		empleados=im;
+		empleados.clear();
+		for(Empleado e : im){
+			empleados.add(e);
+		}
 	}
 	public void addEmpleado(Empleado m){
 		empleados.addElement(m);

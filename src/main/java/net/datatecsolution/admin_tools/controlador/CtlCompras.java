@@ -75,7 +75,7 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 					myProveedor=ctlProveedoresBuscar.getProveedor();
 					view.getTxtIdProveedor().setText(myProveedor.getId()+"");
 					this.view.getTxtNombreproveedor().setText(myProveedor.getNombre());
-					this.view.gettxtTelefonoProveedor().setText(myProveedor.getTelefono());
+					//this.view.gettxtTelefonoProveedor().setText(myProveedor.getTelefono());
 					this.myFactura.setProveedor(myProveedor);
 				}
 				
@@ -89,14 +89,14 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				myProveedor=myProveedorDao.buscarPorId(Integer.parseInt(this.view.getTxtIdProveedor().getText()));
 				if(myProveedor!=null){
 					this.view.getTxtNombreproveedor().setText(myProveedor.getNombre());
-					this.view.gettxtTelefonoProveedor().setText(myProveedor.getTelefono());
+					//this.view.gettxtTelefonoProveedor().setText(myProveedor.getTelefono());
 					//JOptionPane.showMessageDialog(view, "Intento Buscar Proveedor");
 					this.myFactura.setProveedor(myProveedor);
 				}
 				else{
 					JOptionPane.showMessageDialog(view, "No se encuentro el proveedor");
 					this.view.getTxtNombreproveedor().setText("");
-					this.view.gettxtTelefonoProveedor().setText("");
+					//this.view.gettxtTelefonoProveedor().setText("");
 				}
 				break;
 			case "GUARDARCOMPRA":
@@ -202,9 +202,21 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				//this.view.getDateCompra().cleanup();
 				break;
 			case "CANCELAR":
-				//this.conexion.desconectar();
-				this.view.setVisible(false);
+				int option = JOptionPane.showConfirmDialog(view, "¿Seguro que quieres salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					this.view.setVisible(false);
+				}
+
 			break;
+			case "CAL_IMPUESTO":
+
+				if(view.getChckbxIVAincluido().isSelected()){
+					view.getModelo().setImpIncluido(true);
+				}else {
+					view.getModelo().setImpIncluido(false);
+				}
+				calcularTotales();
+				break;
 		}
 	}
 	
@@ -665,8 +677,12 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
-		this.view.setVisible(false);
+
+		int option = JOptionPane.showConfirmDialog(view, "¿Seguro que quieres salir?", "Confirmar salida", JOptionPane.YES_NO_OPTION);
+		if (option == JOptionPane.YES_OPTION) {
+			// Realizar acciones adicionales si se confirma la salida
+			view.setVisible(false);
+		}
 	}
 
 	@Override

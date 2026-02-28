@@ -37,6 +37,8 @@ public class DetalleFacturaDao extends ModeloDaoBasic {
 				+ " detalle_factura.id, "
 				+ " detalle_factura.agrega_kardex, "
 				+ " detalle_factura.codigo_barra,"
+				+ " encabezado_factura.codigo_cliente,"
+				+ " cliente.nombre_cliente,"
 				+ " IFNULL(precios_articulos.precio_articulo,0) AS precio_costo"
 			+ " FROM "
 				+ super.DbName+".detalle_factura  "
@@ -46,8 +48,10 @@ public class DetalleFacturaDao extends ModeloDaoBasic {
 					+ "JOIN "
 						+ super.DbName+". encabezado_factura "
 							+ "	ON ( detalle_factura . numero_factura  =  encabezado_factura . numero_factura )"
-						
-							+ " LEFT JOIN "+ DbNameBase+".precios_articulos "
+					+ "JOIN "
+						+ DbNameBase+". cliente  "
+							+ "	ON ( encabezado_factura.codigo_cliente  =  cliente.codigo_cliente )"
+					+ " LEFT JOIN "+ DbNameBase+".precios_articulos "
 							+ " on(precios_articulos.codigo_articulo =articulo.codigo_articulo and precios_articulos.codigo_precio = 4)  ";
 		super.setSqlQuerySelectJoin(sqlBaseJoin);
 	}
@@ -384,7 +388,7 @@ public void getDetallesFactura(Caja caja,List<DetalleFactura> detalles,Articulo 
 		psConsultas.setString(2, fecha2);
 		psConsultas.setInt(3, articulo.getId());
 		
-		//System.out.println(psConsultas);
+		System.out.println(psConsultas);
 		res = psConsultas.executeQuery();
 		while(res.next()){
 			DetalleFactura unDetalle=new DetalleFactura();
@@ -398,7 +402,11 @@ public void getDetallesFactura(Caja caja,List<DetalleFactura> detalles,Articulo 
 			articuloDetalle.setId(res.getInt("codigo_articulo"));
 			articuloDetalle.setArticulo(res.getString("articulo"));
 			articuloDetalle.setPrecioVenta(res.getDouble("precio_detalle"));//se estable el precio del articulo
-			unDetalle.setListArticulos(articuloDetalle);//se agrega el articulo al 
+			unDetalle.setListArticulos(articuloDetalle);//se agrega el articulo al
+
+			// se recoge el cliente de la factura para crear el reporte
+			unDetalle.setCodigoCliente(res.getInt("codigo_cliente"));
+			unDetalle.setNombreCliente(res.getString("nombre_cliente"));
 			
 			unDetalle.setArt(res.getString("articulo"));
 			unDetalle.setCodigoArt(res.getInt("codigo_articulo"));

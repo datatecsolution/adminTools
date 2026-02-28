@@ -64,6 +64,8 @@
 		<field name="codigoArt" class="java.lang.Integer"/>
 		<field name="totalVentasCosto" class="java.lang.Double"/>
 		<field name="ganancia" class="java.lang.Double"/>
+		<field name="nombreCliente" class="java.lang.String"/>
+		<field name="codigoCliente" class="java.lang.Integer"/>
 		<variable name="total_v" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[$F{total}]]></variableExpression>
 			<initialValueExpression><![CDATA[0]]></initialValueExpression>
@@ -100,7 +102,7 @@
 				<text><![CDATA[Articulo:]]></text>
 			</staticText>
 			<textField pattern="MMM d, yyyy h:mm:ss a">
-				<reportElement x="39" y="101" width="71" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
+				<reportElement x="39" y="101" width="171" height="13" uuid="9728e7a6-4f41-4354-a5e8-0e638e21fa3d"/>
 				<textElement>
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
@@ -180,7 +182,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="10" isBold="true"/>
 								</textElement>
-								<text><![CDATA[Articulo]]></text>
+								<text><![CDATA[Cliente]]></text>
 							</staticText>
 						</jr:tableHeader>
 						<jr:tableFooter style="Table_TH" height="15" rowSpan="1"/>
@@ -191,7 +193,7 @@
 								<textElement verticalAlignment="Middle">
 									<font fontName="SansSerif" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{codigoArt}+" | "+$F{art}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{codigoCliente}+" | "+$F{nombreCliente}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

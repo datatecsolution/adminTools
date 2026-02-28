@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.modelo;
 
 import java.math.BigDecimal;
+import com.toedter.calendar.JDateChooser;
 
 
 
@@ -13,22 +14,29 @@ public class DetalleFacturaProveedor {
 	private BigDecimal precioCompra=new BigDecimal(0.0);
 	private BigDecimal total=new BigDecimal(0.0);
 	private int codigoBodega=-1;
-	
+
 	private Departamento departamentoOrigen=new Departamento();
 	private Departamento departamentoDestino=new Departamento();
-	
-	private boolean ivaIncludo=true;
-	
-	
 
-	
+	private boolean ivaIncludo=true;
+	private String dateVencimiento = "01/01/2000";
+
+
+
+
+	public String getDateVencimiento() {
+		return dateVencimiento;
+	}
+	public void setDateVencimiento(String dateVencimiento) {
+		this.dateVencimiento = dateVencimiento;
+	}
 	public DetalleFacturaProveedor(){
 		articulo=new Articulo();
 	}
 	public DetalleFacturaProveedor(Articulo a,double c,double i,double t){
-		
+
 	}
-	
+
 	public void setPrecioCompra(BigDecimal p){
 		precioCompra=p;
 	}
@@ -41,21 +49,21 @@ public class DetalleFacturaProveedor {
 	public Articulo getArticulo(){
 		return articulo;
 	}
-	
+
 	public void setCantidad(BigDecimal c){
 		cantidad=c;
 	}
 	public BigDecimal getCantidad(){
 		return cantidad;
 	}
-	
+
 	public void setImpuesto(BigDecimal i){
 		impuesto=i;
 	}
 	public BigDecimal getImpuesto(){
 		return impuesto;
 	}
-	
+
 	public void setSubTotal(BigDecimal t){
 		subTotal=t;
 	}

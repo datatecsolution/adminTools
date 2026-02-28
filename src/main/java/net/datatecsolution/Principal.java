@@ -76,6 +76,8 @@ public class Principal {
         if(login){
             Usuario user=ConexionStatic.getUsuarioLogin();
 
+            Integer permiso=ConexionStatic.getUsuarioLogin().getTipoPermiso();
+
             //se recogen las configuraciones para el usuario
             ConfigUserFactDao configDao=new ConfigUserFactDao();
 
@@ -94,7 +96,7 @@ public class Principal {
 				JOptionPane.showMessageDialog(viewLogin, user.getCajas().get(x).toString());
 			}
 		}*/
-            if(ConexionStatic.getUsuarioLogin().getTipoPermiso()==3){
+            if(permiso==3){
 
                 ViewOrdeneVenta vistaOrdenes=new ViewOrdeneVenta(null);
                 CtlOrdenVenta ctlOrdenes=new CtlOrdenVenta(vistaOrdenes );
@@ -105,7 +107,7 @@ public class Principal {
                 System.exit(0);
                 //boolean resul=ctlFacturas.buscarCotizaciones(null);
             }
-            if(ConexionStatic.getUsuarioLogin().getTipoPermiso()==1){
+            if(permiso==1 || permiso==4){
                 //este manejador de subprocesos el cual permite ejecutar el metodo run de l ctl cada cierta cantida de tiempo
                 ScheduledExecutorService scheduler= Executors.newSingleThreadScheduledExecutor();
 
@@ -127,7 +129,7 @@ public class Principal {
 				CtlMenuPrincipal ctl=new CtlMenuPrincipal(principal,conexion);
 				principal.conectarControlador(ctl);*/
             }
-            if(ConexionStatic.getUsuarioLogin().getTipoPermiso()==2){
+            if(permiso==2){
 				/*
 				ViewFacturar vistaFacturar=new ViewFacturar(null);
 				CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar,conexion );

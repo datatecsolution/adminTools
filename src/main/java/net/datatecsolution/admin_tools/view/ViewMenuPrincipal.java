@@ -13,6 +13,7 @@ public class ViewMenuPrincipal extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final JLabel usuario = new JLabel("Usuario:");
+	private JMenuItem mntmReporteVenc;
 	private JMenuItem mntmProveedores;
 	private JMenuItem mntmArticulos;
 	private JMenuItem mntmCategorias;
@@ -54,6 +55,7 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmAplicarInteresA;
 	private JMenuItem mntmFacturasVencidas;
 	private JMenuItem mntmRutasDeEntregas;
+	private JMenuItem mntmOrdenes;
 	
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
@@ -125,12 +127,18 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmRutasDeEntregas = new JMenuItem("Rutas de entregas");
 		mnFacturacion.add(mntmRutasDeEntregas);
+
+		mntmOrdenes  = new JMenuItem("Ordenes de ventas");
+		mnFacturacion.add(mntmOrdenes);
 		
 		mnCompras = new JMenu("Compras");
 		menuBar.add(mnCompras);
 		
 		mntmGestionCompas = new JMenuItem("Gestion compras");
 		mnCompras.add(mntmGestionCompas);
+
+		mntmReporteVenc = new JMenuItem("Reporte x vencer");
+		mnCompras.add(mntmReporteVenc);
 		
 		JMenu mnCuentasPorCobrar = new JMenu("Cuentas por cobrar");
 		menuBar.add(mnCuentasPorCobrar);
@@ -312,6 +320,12 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");
+
+		mntmReporteVenc.addActionListener(c);
+		mntmReporteVenc.setActionCommand("REPORTE_X_VENCER");
+
+		mntmOrdenes.addActionListener(c);
+		mntmOrdenes.setActionCommand("ORDENES");
 		
 	}
 	public JLabel getLblUserName(){

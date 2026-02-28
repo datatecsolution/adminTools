@@ -20,6 +20,8 @@ public class DetalleFactura {
 	private double precioVentaItem=0;
 	private double totalVentasCosto=0.0;
 	private double ganancia=0.0;
+	private String nombreCliente="";
+	private int codigoCliente=0;
 
 	
 	public void setAccion(boolean d){
@@ -124,4 +126,19 @@ public class DetalleFactura {
 		this.ganancia = ganancia;
 	}
 
+	public String getNombreCliente() {
+		return nombreCliente;
+	}
+
+	public void setNombreCliente(String nombreCliente) {
+		this.nombreCliente = nombreCliente;
+	}
+
+	public int getCodigoCliente() {
+		return codigoCliente;
+	}
+
+	public void setCodigoCliente(int codigoCliente) {
+		this.codigoCliente = codigoCliente;
+	}
 }

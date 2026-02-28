@@ -443,8 +443,8 @@ public void calcularTotales(){
 		this.myRequisicion.setDepartamentoOrigen(depart);
 		this.myRequisicion.setDepartamentoDestino(departDestino);
 		
-		String total=view.getTxtTotal().getText();
-		this.myRequisicion.setTotal(new BigDecimal(total));
+		//String total=view.getTxtTotal().getText();
+		//this.myRequisicion.setTotal(new BigDecimal(total));
 		this.myRequisicion.setDetalles(view.getModelo().getDetalles());
 
 		

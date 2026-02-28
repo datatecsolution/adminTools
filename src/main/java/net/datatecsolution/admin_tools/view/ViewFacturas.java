@@ -21,32 +21,16 @@ public class ViewFacturas extends ViewTabla {
 	
 	private JComboBox<Caja> cbxCajas;
 	private CbxTmCajas modeloListaCajas;
-	
-	
 	private TablaModeloFacturados modelo;
-
-
 	private BotonDevolucion btnDevolucion;
 	private JRadioButton rdbtnCliente;
-	
 
-	public JRadioButton getRdbtnCliente() {
-		return rdbtnCliente;
-	}
-
-	public void setRdbtnCliente(JRadioButton rdbtnCliente) {
-		this.rdbtnCliente = rdbtnCliente;
-	}
 
 	public ViewFacturas(JFrame view) {
 		super(view,"Facturas");
 		FlowLayout flowLayout = (FlowLayout) panelSuperior.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		btnAgregar.setEnabled(false);
-		
-
-	
-	
 		
 		btnEliminar.setToolTipText("Anular Facturas");
 		btnEliminar.setEnabled(true);
@@ -62,6 +46,10 @@ public class ViewFacturas extends ViewTabla {
 		rdbtnCliente = new JRadioButton("Cliente");
 		panelOpcioneBusqueda.add(rdbtnCliente);
 		grupoOpciones.add(rdbtnCliente);
+
+		rdbtnVendedor = new JRadioButton("Vendedor");
+		panelOpcioneBusqueda.add(rdbtnVendedor);
+		grupoOpciones.add(rdbtnVendedor);
 	  
 		rdbtnFecha.setVisible(true);
 		
@@ -170,6 +158,21 @@ public void conectarControlador(CtlFacturas c){
 		return rdbtnTodos;
 		
 	}
+	public JRadioButton getRdbtnVendedor() {
+		return rdbtnVendedor;
+	}
+
+	private JRadioButton rdbtnVendedor;
+
+
+	public JRadioButton getRdbtnCliente() {
+		return rdbtnCliente;
+	}
+
+	public void setRdbtnCliente(JRadioButton rdbtnCliente) {
+		this.rdbtnCliente = rdbtnCliente;
+	}
+
 
 	
 

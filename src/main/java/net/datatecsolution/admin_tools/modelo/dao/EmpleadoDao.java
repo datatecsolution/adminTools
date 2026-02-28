@@ -20,6 +20,69 @@ public class EmpleadoDao extends ModeloDaoBasic {
 		// TODO Auto-generated constructor stub
 		super("empleados","codigo_empleado");
 	}
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	public Vector<Empleado> getVendedoresXusuario(){
+
+
+
+		Connection con = null;
+
+
+
+		Vector<Empleado> vendedores=new Vector<Empleado>();
+
+		ResultSet res=null;
+
+		boolean existe=false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas=con.prepareStatement(super.getQuerySelect()+" where usuario=?");
+			//psConsultas=con.prepareStatement(super.getQuerySearch("usuario", "="));
+			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
+			//psConsultas.setInt(1,1);
+			System.out.println(psConsultas);
+			res = super.psConsultas.executeQuery();
+			while(res.next()){
+				Empleado unEmpleado=new Empleado();
+				existe=true;
+				unEmpleado.setCodigo(res.getInt("codigo_empleado"));
+				unEmpleado.setNombre(res.getString("nombre"));
+				unEmpleado.setApellido(res.getString("apellido"));
+
+
+				vendedores.add(unEmpleado);
+			}
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			System.out.println(e);
+		}
+		finally
+		{
+			try{
+
+				if(res != null) res.close();
+				if(super.psConsultas != null)psConsultas.close();
+				if(con != null) con.close();
+
+
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+				//conexion.desconectar();
+			} // fin de catch
+		} // fin de finally
+
+
+		if (existe) {
+			return vendedores;
+		}
+		else return null;
+
+	}
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para seleccionar todos los articulos>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	public Vector<Empleado> todoEmpleadosVendedores(){
