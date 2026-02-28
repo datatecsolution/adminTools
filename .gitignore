@@ -139,3 +139,7 @@ gradle-app.setting
 # Custom ignores
 bin/
 .vscode/
+
+# macOS
+.DS_Store
+**/.DS_Store
