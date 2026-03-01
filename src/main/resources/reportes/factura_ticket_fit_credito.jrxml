@@ -682,9 +682,9 @@ WHERE
 		</band>
 	</detail>
 	<summary>
-		<band height="284">
+		<band height="328">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="1" width="181" height="278" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
+				<reportElement mode="Opaque" x="0" y="1" width="181" height="319" forecolor="#D0B48E" backcolor="#FFFFFF" uuid="5d8169bd-4a75-48c8-8a68-6d3ad5ba9402"/>
 				<box>
 					<pen lineWidth="0.0" lineStyle="Dashed"/>
 					<topPen lineWidth="1.0" lineStyle="Dashed" lineColor="#1A1818"/>
@@ -793,7 +793,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{cambio}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="0" y="254" width="181" height="14" uuid="af7f8f6e-6ef9-4e34-bd56-44841283a089"/>
+					<reportElement x="0" y="291" width="181" height="14" uuid="af7f8f6e-6ef9-4e34-bd56-44841283a089"/>
 					<textElement textAlignment="Center">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
@@ -807,7 +807,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{total_letras}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement positionType="FixRelativeToBottom" x="0" y="252" width="181" height="1" uuid="dee5e907-082e-4349-9ea0-5920f48dfbe0">
+					<reportElement positionType="FixRelativeToBottom" x="0" y="287" width="181" height="1" uuid="dee5e907-082e-4349-9ea0-5920f48dfbe0">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<graphicElement>
@@ -815,7 +815,7 @@ WHERE
 					</graphicElement>
 				</line>
 				<staticText>
-					<reportElement x="0" y="264" width="181" height="12" uuid="99d487d9-992a-4e78-aa58-dc8f6f987069"/>
+					<reportElement x="0" y="302" width="180" height="12" uuid="99d487d9-992a-4e78-aa58-dc8f6f987069"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
@@ -921,6 +921,16 @@ WHERE
 					<textFieldExpression><![CDATA["Total items:  "+$V{REPORT_COUNT}]]></textFieldExpression>
 				</textField>
 			</frame>
+			<subreport>
+				<reportElement x="-18" y="251" width="208" height="35" uuid="50cd4c3f-e650-4e94-84b9-001c34b5eb0d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="bD_admin">
+					<subreportParameterExpression><![CDATA[$P{bD_admin}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reportes/factura_tiket_datos_credito.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</summary>
 </jasperReport>
