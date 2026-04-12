@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeListener {
-	private ViewListaFacturasCompra view;
+	private final ViewListaFacturasCompra view;
 	private FacturaCompraDao facturaCompraDao=null;
 	private UsuarioDao myUsuarioDao=null;
 	private FacturaCompra myFacturaCompra=null;

@@ -23,9 +23,9 @@ public class CtlEntradaCaja implements ActionListener, KeyListener {
 	
 	private ViewEntradaCaja view;
 	private EntradaCaja myEntrada;
-	private EntradaCajaDao myDao;
+	private final EntradaCajaDao myDao;
 	private boolean resul=false;
-	private BancosDao myFormaPago;
+	private final BancosDao myFormaPago;
 	//private static final Pattern numberPattern=Pattern.compile("-?\\d+");
 
 	public CtlEntradaCaja(ViewEntradaCaja v ) {

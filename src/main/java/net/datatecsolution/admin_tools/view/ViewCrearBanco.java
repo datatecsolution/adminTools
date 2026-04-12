@@ -11,12 +11,12 @@ import java.awt.*;
 
 public class ViewCrearBanco extends JDialog {
 	
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCancelar;
-	private BotonActualizar btnActualizar;
-	private JTextField txtNombre;
-	private JTextField txtNoCuenta;
-	private JComboBox cbTipoCuenta;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
+	private final BotonActualizar btnActualizar;
+	private final JTextField txtNombre;
+	private final JTextField txtNoCuenta;
+	private final JComboBox cbTipoCuenta;
 	
 	
 	

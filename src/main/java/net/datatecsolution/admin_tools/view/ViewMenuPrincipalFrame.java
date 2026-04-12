@@ -7,38 +7,38 @@ import java.awt.*;
 
 public class ViewMenuPrincipalFrame extends JFrame{
 	
-	private JDesktopPane elEscritorio;
+	private final JDesktopPane elEscritorio;
 	private final JLabel usuario = new JLabel("Usuario:");
-	private JMenuItem mntmProveedores;
-	private JMenuItem mntmArticulos;
-	private JMenuItem mntmCategorias;
-	private JMenuItem mntmFacturar;
-	private JMenuItem mntmClientes;
-	private JMenuItem mntmBuscarFacturas;
-	private JLabel lblUserName;
-	private JMenu mnArchivo;
-	private JMenuItem mntmUsuarios;
-	private JMenuItem mntmSalir;
-	private JMenuItem mnRequisiciones;
+	private final JMenuItem mntmProveedores;
+	private final JMenuItem mntmArticulos;
+	private final JMenuItem mntmCategorias;
+	private final JMenuItem mntmFacturar;
+	private final JMenuItem mntmClientes;
+	private final JMenuItem mntmBuscarFacturas;
+	private final JLabel lblUserName;
+	private final JMenu mnArchivo;
+	private final JMenuItem mntmUsuarios;
+	private final JMenuItem mntmSalir;
+	private final JMenuItem mnRequisiciones;
 	
 	
-	private JMenuItem mntmListaPagos;
-	private JMenu mnReportes;
-	private JMenuItem mntmDeclaracionDei;
+	private final JMenuItem mntmListaPagos;
+	private final JMenu mnReportes;
+	private final JMenuItem mntmDeclaracionDei;
 
-	private JMenuItem mntmInventario;
+	private final JMenuItem mntmInventario;
 
-	private JMenuItem mntmCierresDeCaja;
+	private final JMenuItem mntmCierresDeCaja;
 
-	private JMenuItem mntmEmpleados;
-	private JMenuItem mntmComisiones;
-	private JMenu mnCompras;
-	private JMenuItem mntmGestionCompas;
-	private JMenuItem mntmSalidasCaja;
-	private JMenuItem mntmPagoAproveedores;
-	private JMenuItem mntmCotizaciones;
-	private JMenuItem mntmCuentasDeBancos;
-	private JButton btnAlertaExistencia;
+	private final JMenuItem mntmEmpleados;
+	private final JMenuItem mntmComisiones;
+	private final JMenu mnCompras;
+	private final JMenuItem mntmGestionCompas;
+	private final JMenuItem mntmSalidasCaja;
+	private final JMenuItem mntmPagoAproveedores;
+	private final JMenuItem mntmCotizaciones;
+	private final JMenuItem mntmCuentasDeBancos;
+	private final JButton btnAlertaExistencia;
 	
 	public ViewMenuPrincipalFrame() {
 		setTitle("Admin Tools");

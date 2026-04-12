@@ -34,7 +34,7 @@ public class ViewConfigUser extends JDialog {
 	private JTextField txtUsuario;
 
 
-	private JButton btnSig;
+	private final JButton btnSig;
 
 	public ViewConfigUser(Window view) {
 		this.setTitle("Configuracion de usuarios");
@@ -522,7 +522,7 @@ public class ViewConfigUser extends JDialog {
 		return btnAtras;
 	}
 
-	private JButton btnAtras;
+	private final JButton btnAtras;
 
 	public JButton getBtnSig() {
 		return btnSig;

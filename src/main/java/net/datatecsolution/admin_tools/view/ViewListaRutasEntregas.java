@@ -11,7 +11,7 @@ import java.awt.*;
 public class ViewListaRutasEntregas extends ViewTabla {
 	
 	public TmRutasEntregas modelo;
-	private BotonImprimirSmall btnImprimir;
+	private final BotonImprimirSmall btnImprimir;
 		
 	
 	

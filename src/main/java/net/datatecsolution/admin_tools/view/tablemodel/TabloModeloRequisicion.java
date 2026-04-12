@@ -15,7 +15,7 @@ public class TabloModeloRequisicion extends AbstractTableModel  {
 			"Id Articulo", "Nombre", "Cantidad", "Precio Unidad", "Total"
 		};
 	
-	private List<DetalleFacturaProveedor> detallesRequi=new ArrayList<DetalleFacturaProveedor>();
+	private final List<DetalleFacturaProveedor> detallesRequi=new ArrayList<DetalleFacturaProveedor>();
 	
 	
 	public void agregarDetalle(){

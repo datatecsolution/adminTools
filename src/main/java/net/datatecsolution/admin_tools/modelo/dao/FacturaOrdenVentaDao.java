@@ -18,7 +18,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 	private ClienteDao myClienteDao=null;
 	
 	private Integer idFacturaGuardada=null;
-	private String sqlJoin;
+	private final String sqlJoin;
 	
 	
 	public FacturaOrdenVentaDao(){

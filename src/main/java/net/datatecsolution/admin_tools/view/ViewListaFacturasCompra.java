@@ -14,7 +14,7 @@ public class ViewListaFacturasCompra extends ViewTabla {
 	
 	protected BotonImprimirSmall btnImprimir;
 	
-	private TablaModeloFacturasCompra modelo;
+	private final TablaModeloFacturasCompra modelo;
 	
 	private JRadioButton rdbtnProveedor;
 

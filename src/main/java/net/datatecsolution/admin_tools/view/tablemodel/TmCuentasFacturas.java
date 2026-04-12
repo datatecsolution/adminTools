@@ -10,7 +10,7 @@ public class TmCuentasFacturas  extends TablaModelo {
 	final private String []columnNames= {
 			"No Factura","Fecha Venc","Fecha Ultimo Pago","Cliente", "Telefono", "Saldo Factura"
 		};
-	private List<CuentaFactura> cuentas=new ArrayList<CuentaFactura>();
+	private final List<CuentaFactura> cuentas=new ArrayList<CuentaFactura>();
 	
 	
 	

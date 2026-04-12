@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CtlPagosProveedoresLista implements ActionListener, MouseListener, ChangeListener, WindowListener {
 	
-	private ViewListaPagosProveedores view;
+	private final ViewListaPagosProveedores view;
 	
 	private ReciboPagoProveedor myRecibo=null;
 	private ReciboPagoProveedoresDao reciboDao=null;

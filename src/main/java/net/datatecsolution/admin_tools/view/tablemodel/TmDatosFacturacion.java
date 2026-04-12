@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmDatosFacturacion extends TablaModelo {
-	private String []columnNames={"Codigo","CAI","Fact Inicial","Fact Final","Codigo Facturacion","Cant Otorgada","Fecha Limite","Observacion"};
-	private List<DatosFacturacion> datosFs = new ArrayList<DatosFacturacion>();
+	private final String []columnNames={"Codigo","CAI","Fact Inicial","Fact Final","Codigo Facturacion","Cant Otorgada","Fecha Limite","Observacion"};
+	private final List<DatosFacturacion> datosFs = new ArrayList<DatosFacturacion>();
 	
 	public void agregar(DatosFacturacion c) {
 		datosFs.add(c);

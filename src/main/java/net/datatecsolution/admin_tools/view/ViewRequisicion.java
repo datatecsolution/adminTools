@@ -17,26 +17,26 @@ import java.awt.event.WindowEvent;
 
 public class ViewRequisicion extends JDialog {
 	
-	private JPanel panelAcciones;
-	private JPanel panelBuscar;
-	private JPanel panelDatosFactura;
+	private final JPanel panelAcciones;
+	private final JPanel panelBuscar;
+	private final JPanel panelDatosFactura;
 	
-	private JTable tableDetalle;
-	private TabloModeloRequisicion modeloTabla;
-	private JLabel label;
-	private JTextField txtFecha;
-	private JLabel lblDepartamento;
+	private final JTable tableDetalle;
+	private final TabloModeloRequisicion modeloTabla;
+	private final JLabel label;
+	private final JTextField txtFecha;
+	private final JLabel lblDepartamento;
 	
-	private JTextField txtBuscar;
-	private JTextField txtTotal;
-	private CbxTmDepartamento cbxModeloOrigen;
-	private CbxTmDepartamento cbxModeloDestino;
-	private JComboBox cbxDepatOrigen;
-	private JComboBox cbxDepartDestino;
+	private final JTextField txtBuscar;
+	private final JTextField txtTotal;
+	private final CbxTmDepartamento cbxModeloOrigen;
+	private final CbxTmDepartamento cbxModeloDestino;
+	private final JComboBox cbxDepatOrigen;
+	private final JComboBox cbxDepartDestino;
 	
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCerrar;
-	private BotonBuscar1 btnBuscar;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscar1 btnBuscar;
 
 	
 	

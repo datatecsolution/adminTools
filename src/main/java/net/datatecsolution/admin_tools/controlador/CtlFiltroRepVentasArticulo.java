@@ -16,12 +16,12 @@ import java.util.Date;
 import java.util.List;
 
 public class CtlFiltroRepVentasArticulo implements ActionListener, KeyListener  {
-	private ViewFiltroRepVentasArticulo view;
+	private final ViewFiltroRepVentasArticulo view;
 	private Articulo articuloReporte=null;
-	private DetalleFacturaDao detalleFacturaDao;
+	private final DetalleFacturaDao detalleFacturaDao;
 	
-	private CajaDao cajasDao;
-	private List<DetalleFactura> detalles=new ArrayList<DetalleFactura>();
+	private final CajaDao cajasDao;
+	private final List<DetalleFactura> detalles=new ArrayList<DetalleFactura>();
 	
 	private List<Caja> listCajas=null;
 	private String date1;

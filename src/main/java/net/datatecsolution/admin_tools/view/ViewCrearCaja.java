@@ -12,15 +12,15 @@ import java.awt.*;
 
 public class ViewCrearCaja extends JDialog {
 	
-	private JTextArea txtAreaDescripcion;
+	private final JTextArea txtAreaDescripcion;
 	
-	private BotonCancelar btnCancelar;
-	private BotonActualizar btnActualizar;
-	private BotonGuardar btnGuardar;
-	private JLabel lblBodega;
+	private final BotonCancelar btnCancelar;
+	private final BotonActualizar btnActualizar;
+	private final BotonGuardar btnGuardar;
+	private final JLabel lblBodega;
 
-	private JComboBox cbxDepart;
-	private CbxTmDepartamento modeloCbx;
+	private final JComboBox cbxDepart;
+	private final CbxTmDepartamento modeloCbx;
 	
 	public ViewCrearCaja(Window view){
 		super(view,"Agregar caja", ModalityType.DOCUMENT_MODAL);

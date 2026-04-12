@@ -11,13 +11,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewCrearProveedor extends JDialog {
-	private JTextField txtNombre;
-	private JTextField txtTelefono;
-	private JTextField txtCelular;
-	private JTextArea txtrDireccion;
-	private BotonCancelar btnCancelar;
-	private BotonGuardar btnGuardar;
-	private BotonActualizar btnActualizar;
+	private final JTextField txtNombre;
+	private final JTextField txtTelefono;
+	private final JTextField txtCelular;
+	private final JTextArea txtrDireccion;
+	private final BotonCancelar btnCancelar;
+	private final BotonGuardar btnGuardar;
+	private final BotonActualizar btnActualizar;
 	private int id;
 	private Proveedor myProveedor;
 	

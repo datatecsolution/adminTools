@@ -9,9 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewFiltroRepCierreVentaDetalleCateg extends  JDialog {
-	private JButton btnBuscar;
-	private JComboBox<Categoria> cbxCajas;
-	private CbxTmCategoria modeloListaCajas;
+	private final JButton btnBuscar;
+	private final JComboBox<Categoria> cbxCajas;
+	private final CbxTmCategoria modeloListaCajas;
 
 	public ViewFiltroRepCierreVentaDetalleCateg(Window view) {
 		

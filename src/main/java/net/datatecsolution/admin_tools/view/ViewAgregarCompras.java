@@ -24,35 +24,37 @@ public class ViewAgregarCompras extends JDialog {
 	 * Vista para ingresar las facturasd el la compra
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField txtIdProveedor;
-	private JTextField txtNombreproveedor;
+	private final JTextField txtIdProveedor;
+	private final JTextField txtNombreproveedor;
+	protected JPanel panelProveedor;
+	private JTextField txtTelefonoProveedor;
 
-	private JTable tablaArticulos;
-	private DmtFacturaProveedores modelo;
-	private JTextField txtNofactura;
-	private ButtonGroup grupoOpciones;
-	private JRadioButton rdbtnCredito;
-	private JRadioButton rdbtnContado;
+	private final JTable tablaArticulos;
+	private final DmtFacturaProveedores modelo;
+	private final JTextField txtNofactura;
+	private final ButtonGroup grupoOpciones;
+	private final JRadioButton rdbtnCredito;
+	private final JRadioButton rdbtnContado;
 
 
-	private BotonCancelar btnCancelar;
-	private BotonGuardar btnGuardar;
-	private BotonActualizar btnActualizar;
+	private final BotonCancelar btnCancelar;
+	private final BotonGuardar btnGuardar;
+	private final BotonActualizar btnActualizar;
 
-	private JDateChooser dateCompra;
-	private JDateChooser dateVencFactura;
-	private JTextField txtTotalimpuesto15;
-	private JTextField txtTotal;
-	private JLabel lblFechaVencimiento;
-	private JTextField txtSubtotal;
+	private final JDateChooser dateCompra;
+	private final JDateChooser dateVencFactura;
+	private final JTextField txtTotalimpuesto15;
+	private final JTextField txtTotal;
+	private final JLabel lblFechaVencimiento;
+	private final JTextField txtSubtotal;
 
-	private CbxTmDepartamento modeloCbx;
-	private JComboBox cbxDepart;
-	private JLabel lblContado;
-	private JLabel lblCredito;
-	private JButton btnBuscar;
-	private JTextField txtTotalImpusto18;
-	private JPanel panel;
+	private final CbxTmDepartamento modeloCbx;
+	private final JComboBox cbxDepart;
+	private final JLabel lblContado;
+	private final JLabel lblCredito;
+	private final JButton btnBuscar;
+	private final JTextField txtTotalImpusto18;
+	private final JPanel panel;
 	private JCheckBox chckbxIVAincluido;
 
 

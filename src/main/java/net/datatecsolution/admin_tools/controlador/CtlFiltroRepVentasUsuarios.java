@@ -17,11 +17,11 @@ import java.util.List;
 public class CtlFiltroRepVentasUsuarios implements ActionListener {
 	
 	
-	private ViewFiltroComisiones view;
-	private CajaDao cajasDao;
-	private FacturaDao facturaDao;
-	private UsuarioDao usuarioDao;
-	private List<Comision> ventas= new ArrayList<Comision>();
+	private final ViewFiltroComisiones view;
+	private final CajaDao cajasDao;
+	private final FacturaDao facturaDao;
+	private final UsuarioDao usuarioDao;
+	private final List<Comision> ventas= new ArrayList<Comision>();
 	private List<Empleado> empleados;
 
 	public CtlFiltroRepVentasUsuarios(ViewFiltroComisiones v) {

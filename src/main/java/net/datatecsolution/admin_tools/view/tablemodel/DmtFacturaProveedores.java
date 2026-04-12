@@ -28,7 +28,7 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 	final private String []columnNames= {
 			"Id Articulo", "Nombre", "Cantidad", "Precio Unidad","SubTotal","Impuesto", "Total","P/venta","P/venta 2","P/venta 3","P/costo","Fecha Venc."
 	};
-	private List<DetalleFacturaProveedor> detallesFactura=new ArrayList<DetalleFacturaProveedor>();
+	private final List<DetalleFacturaProveedor> detallesFactura=new ArrayList<DetalleFacturaProveedor>();
 	private double totalCompra=0;
 
 	public DmtFacturaProveedores(){

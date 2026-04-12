@@ -15,9 +15,9 @@ import java.sql.SQLException;
 import java.util.Date;
 
 public class CtlFiltroRepSalidas implements ActionListener, KeyListener  {
-	private ViewFiltroSalidas view;
+	private final ViewFiltroSalidas view;
 	private Empleado myEmpleado=null;
-	private EmpleadoDao myEmpleadoDao;
+	private final EmpleadoDao myEmpleadoDao;
 	
 	
 	public CtlFiltroRepSalidas(ViewFiltroSalidas v){

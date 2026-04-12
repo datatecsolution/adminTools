@@ -9,11 +9,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewArticuloExistencias extends JDialog {
-	private JButton btnGuardar;
-	private JTextField txtArticulo;
-	private JTextField txtBodega;
-	private JTextField txtExistencia;
-	private BotonCancelar btnCancelar;
+	private final JButton btnGuardar;
+	private final JTextField txtArticulo;
+	private final JTextField txtBodega;
+	private final JTextField txtExistencia;
+	private final BotonCancelar btnCancelar;
 
 	public ViewArticuloExistencias(Window view) {
 		

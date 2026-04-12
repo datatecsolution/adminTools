@@ -9,8 +9,8 @@ import java.util.List;
 
 public class TmPrecios extends AbstractTableModel {
 	
-	private String []columnNames={"Tipo Precio","Precio"};
-	private List<PrecioArticulo> precios = new ArrayList<PrecioArticulo>();
+	private final String []columnNames={"Tipo Precio","Precio"};
+	private final List<PrecioArticulo> precios = new ArrayList<PrecioArticulo>();
 	
 	public void agregarPrecio(PrecioArticulo precio) {
 		precios.add(precio);
@@ -84,12 +84,10 @@ public class TmPrecios extends AbstractTableModel {
     }
 	 @Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean resul=false;
+		boolean resul= columnIndex == 1;
 		/*if(columnIndex==0)
 			resul= true;*/
 		
-		if(columnIndex==1)
-			resul=true;
 		/*if(columnIndex==6)
 			resul=true;*/
 	

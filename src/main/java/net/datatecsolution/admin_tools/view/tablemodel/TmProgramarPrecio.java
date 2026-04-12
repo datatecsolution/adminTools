@@ -12,8 +12,8 @@ public class TmProgramarPrecio extends AbstractTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1222;
-	private String []columnNames={"Id","Nombre","Marca","Precio Venta"};
-	private List<Articulo> articulos = new ArrayList<Articulo>();
+	private final String []columnNames={"Id","Nombre","Marca","Precio Venta"};
+	private final List<Articulo> articulos = new ArrayList<Articulo>();
 	
 	
 	public void agregarArticulo(Articulo articulo) {
@@ -115,11 +115,9 @@ public class TmProgramarPrecio extends AbstractTableModel {
 	
 	@Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean resul=false;
+		boolean resul= columnIndex == 3;
 		
 		
-		if(columnIndex==3)
-			resul=true;
 		/*if(columnIndex==6)
 			resul=true;*/
 	

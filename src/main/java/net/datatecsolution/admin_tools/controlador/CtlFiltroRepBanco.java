@@ -17,12 +17,12 @@ import java.util.Date;
 import java.util.Vector;
 
 public class CtlFiltroRepBanco implements ActionListener, KeyListener  {
-	private ViewFiltroSaldoBanco view;
+	private final ViewFiltroSaldoBanco view;
 	
-	private CuentaBanco myCuentaBanco;
-	private CuentaBancosDao myCuentaBancoDao;
+	private final CuentaBanco myCuentaBanco;
+	private final CuentaBancosDao myCuentaBancoDao;
 
-	private BancosDao myBancoDao;
+	private final BancosDao myBancoDao;
 	
 	
 	

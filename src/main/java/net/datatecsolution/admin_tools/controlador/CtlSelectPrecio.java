@@ -11,7 +11,7 @@ import java.awt.event.KeyListener;
 
 public class CtlSelectPrecio implements ActionListener, KeyListener {
 	
-	private ViewSelectPrecio view;
+	private final ViewSelectPrecio view;
 	private PrecioArticuloDao preciosDao=null;
 	private PrecioArticulo myPrecio=new PrecioArticulo();
 	

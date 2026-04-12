@@ -15,7 +15,7 @@ public class RequisicionDao extends ModeloDaoBasic {
 	
 	
 	private String sqlBaseJoin=null;
-	private DetalleRequisicionDao detallesDao;
+	private final DetalleRequisicionDao detallesDao;
 
 	public RequisicionDao() {
 		super("encabezado_requisicion","codigo_requisicion");

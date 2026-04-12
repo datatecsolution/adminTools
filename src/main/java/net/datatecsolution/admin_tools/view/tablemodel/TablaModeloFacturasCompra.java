@@ -12,7 +12,7 @@ public class TablaModeloFacturasCompra extends TablaModelo {
 		};
 	
 	
-	private List<FacturaCompra> facturas=new ArrayList<FacturaCompra>();
+	private final List<FacturaCompra> facturas=new ArrayList<FacturaCompra>();
 	
 	public FacturaCompra getFactura(int row){
 		return facturas.get(row);

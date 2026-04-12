@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmCajas extends TablaModelo {
-	private String []columnNames={"codigo","descricion","Ubicacion"};
-	private List<Caja> cajas = new ArrayList<Caja>();
+	private final String []columnNames={"codigo","descricion","Ubicacion"};
+	private final List<Caja> cajas = new ArrayList<Caja>();
 	
 	public void agregar(Caja c) {
 		cajas.add(c);

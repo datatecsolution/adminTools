@@ -10,11 +10,11 @@ import java.awt.*;
 
 public class ViewFiltroComisiones extends JDialog {
 	
-	private JDateChooser dCBuscar1;
-	private JDateChooser dCBuscar2;
-	private JButton btnBuscar;
-	private JSpinner spPorcentaje;
-	private SpinnerNumberModel modelJs;
+	private final JDateChooser dCBuscar1;
+	private final JDateChooser dCBuscar2;
+	private final JButton btnBuscar;
+	private final JSpinner spPorcentaje;
+	private final SpinnerNumberModel modelJs;
 
 	public ViewFiltroComisiones(Window view) {
 		

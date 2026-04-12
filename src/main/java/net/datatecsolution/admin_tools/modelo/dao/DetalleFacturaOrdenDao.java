@@ -16,8 +16,8 @@ public class DetalleFacturaOrdenDao extends ModeloDaoBasic {
 	
 	
 	
-	private String sqlBaseJoin;
-	private PrecioArticuloDao preciosDao=new PrecioArticuloDao();
+	private final String sqlBaseJoin;
+	private final PrecioArticuloDao preciosDao=new PrecioArticuloDao();
 	
 	public DetalleFacturaOrdenDao(){
 		super("detalle_factura_temp","id");

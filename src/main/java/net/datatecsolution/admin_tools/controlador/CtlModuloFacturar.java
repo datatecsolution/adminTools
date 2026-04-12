@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 
 public class CtlModuloFacturar  implements ActionListener{
 	
-	private ViewModuloFacturar view;
-	private Conexion conexion;
+	private final ViewModuloFacturar view;
+	private final Conexion conexion;
 	
 	public CtlModuloFacturar(ViewModuloFacturar v,Conexion conn){
 		view=v;

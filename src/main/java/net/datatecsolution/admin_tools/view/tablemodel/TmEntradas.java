@@ -9,8 +9,8 @@ import java.util.List;
 public class TmEntradas extends TablaModelo {
 	
 	
-	private String []columnNames={"Id","Concepto","Fecha","Cantidad","Estado"};
-	private List<EntradaCaja> entradas = new ArrayList<EntradaCaja>();
+	private final String []columnNames={"Id","Concepto","Fecha","Cantidad","Estado"};
+	private final List<EntradaCaja> entradas = new ArrayList<EntradaCaja>();
 	
 	
 	public void agregar(EntradaCaja a) {

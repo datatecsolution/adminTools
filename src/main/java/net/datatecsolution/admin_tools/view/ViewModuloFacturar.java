@@ -15,21 +15,21 @@ import java.util.List;
 
 public class ViewModuloFacturar extends JFrame {
 	
-	private JDesktopPane elEscritorio;
+	private final JDesktopPane elEscritorio;
 	
-	private List<ViewFacturarFrame> ventanas=new ArrayList<ViewFacturarFrame>();
-	private BotonAgregar btnAgregar;
-	private BotonSalida btnSalidas;
-	private BotonCliente btnClientes;
-	private BotonProveedor btnProveedores;
+	private final List<ViewFacturarFrame> ventanas=new ArrayList<ViewFacturarFrame>();
+	private final BotonAgregar btnAgregar;
+	private final BotonSalida btnSalidas;
+	private final BotonCliente btnClientes;
+	private final BotonProveedor btnProveedores;
 	public BotonesApp btnCaja;
 	public BotonesApp btnUsuario;
 
-	private BotonDescuento btnDescuento;
+	private final BotonDescuento btnDescuento;
 
-	private BotonPrecio btnPrecio;
+	private final BotonPrecio btnPrecio;
 
-	private BotonCantidad btnCantidad;
+	private final BotonCantidad btnCantidad;
 
 	public ViewModuloFacturar() {
 		super( "Facturacion" );

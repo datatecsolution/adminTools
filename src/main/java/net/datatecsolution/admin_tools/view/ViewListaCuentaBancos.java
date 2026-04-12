@@ -10,11 +10,11 @@ import java.awt.*;
 
 public class ViewListaCuentaBancos extends ViewTabla {
 	
-	private TmBanco modelo;
+	private final TmBanco modelo;
 	protected JButton btnLimpiar;
 	
-	private JRadioButton rdbtnNombre;
-	private JRadioButton rdbtnNoCuenta;
+	private final JRadioButton rdbtnNombre;
+	private final JRadioButton rdbtnNoCuenta;
 
 	public ViewListaCuentaBancos(Window view) {
 		super(view, "Cuentas de Bancos");

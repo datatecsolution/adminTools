@@ -20,7 +20,7 @@ import java.util.List;
 public class CtlPagoLista implements ActionListener, MouseListener, ChangeListener, WindowListener  {
 	
 	
-	private ViewListaPagos view;
+	private final ViewListaPagos view;
 	private ReciboPagoDao reciboDao=null;
 	private ReciboPago myRecibo=null;
 	

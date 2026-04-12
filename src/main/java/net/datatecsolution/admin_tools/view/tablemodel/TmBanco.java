@@ -7,8 +7,8 @@ import java.util.List;
 
 
 public class TmBanco extends TablaModelo {
-	private String []columnNames={"Codigo","Nombre","No Cuenta","Tipo Cuenta"};
-	private List<Banco> cuentas=new ArrayList<Banco>();
+	private final String []columnNames={"Codigo","Nombre","No Cuenta","Tipo Cuenta"};
+	private final List<Banco> cuentas=new ArrayList<Banco>();
 	
 	
 	public void agregar(Banco cuenta){

@@ -16,9 +16,9 @@ import java.sql.SQLException;
 import java.util.Date;
 
 public class CtlFiltroRepPagos implements ActionListener, KeyListener  {
-	private ViewFiltroPagos view;
+	private final ViewFiltroPagos view;
 	private Cliente myCliente=null;
-	private ClienteDao myClienteDao;
+	private final ClienteDao myClienteDao;
 	
 	
 	public CtlFiltroRepPagos(ViewFiltroPagos v){

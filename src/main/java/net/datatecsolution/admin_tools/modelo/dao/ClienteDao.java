@@ -18,7 +18,7 @@ public class ClienteDao extends ModeloDaoBasic {
 	
 	private String sqlBaseJoin=null;
 	
-	private EmpleadoDao empleadoDao=new EmpleadoDao();
+	private final EmpleadoDao empleadoDao=new EmpleadoDao();
 	
 	public ClienteDao(){
 		

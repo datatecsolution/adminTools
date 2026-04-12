@@ -14,26 +14,26 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ViewCobro extends JDialog {
-	private TmFacturasPago modelo;
-	private JPanel panelAcciones;
-	private JPanel panelDatosFactura;
-	private JLabel lblCodigoCliente;
-	private JTextField txtIdcliente;
-	private JTextField txtNombrecliente;
+	private final TmFacturasPago modelo;
+	private final JPanel panelAcciones;
+	private final JPanel panelDatosFactura;
+	private final JLabel lblCodigoCliente;
+	private final JTextField txtIdcliente;
+	private final JTextField txtNombrecliente;
 	
 	private ButtonGroup grupoOpciones;
-	private BotonCancelar btnCerrar;
-	private BotonBuscarClientes btnCliente;
-	private BotonCobrar btnCobrar;
-	private JLabel lblNombreCliente;
-	private JTextField txtLimitecredito;
-	private JTextField txtSaldocliente;
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscarClientes btnCliente;
+	private final BotonCobrar btnCobrar;
+	private final JLabel lblNombreCliente;
+	private final JTextField txtLimitecredito;
+	private final JTextField txtSaldocliente;
 	
 	
-	private JTextField txtTotal;
-	private JLabel lblTotal;
-	private JTable tFacturas;
-	private TmFacturasCredito modeloFacturas;
+	private final JTextField txtTotal;
+	private final JLabel lblTotal;
+	private final JTable tFacturas;
+	private final TmFacturasCredito modeloFacturas;
 
 	public ViewCobro(Window view) {
 		

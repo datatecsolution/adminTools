@@ -23,13 +23,13 @@ public class ViewListaPrecioProgramar  extends JDialog{
 	protected BotonAgregar btnAgregar;
 	protected BotonEliminar btnEliminar;
 	protected BotonImprimirSmall btnImprimir;
-	private ButtonGroup grupoOpciones; // grupo de botones que contiene los botones de opci�n
+	private final ButtonGroup grupoOpciones; // grupo de botones que contiene los botones de opci�n
 	
 	
 	
-	private JTable tablaArticulo;
+	private final JTable tablaArticulo;
 	
-	private TmProgramarPrecio modelo;
+	private final TmProgramarPrecio modelo;
 
 	public ViewListaPrecioProgramar(Window view) {
 		miEsquema=new BorderLayout();

@@ -21,12 +21,12 @@ public class CtlMovimientoBanco implements ActionListener, KeyListener {
 	
 	private ViewMovimientoBanco view;
 	private MovimientoBanco myMovimiento;
-	private MovimientoBancoDao myDao;
+	private final MovimientoBancoDao myDao;
 	private boolean resul=false;
 	
 
 	
-	private BancosDao myFormaPago;
+	private final BancosDao myFormaPago;
 
 	public CtlMovimientoBanco(ViewMovimientoBanco v ) {
 		// TODO Auto-generated constructor stub

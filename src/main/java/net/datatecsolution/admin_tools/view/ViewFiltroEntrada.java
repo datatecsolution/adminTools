@@ -13,12 +13,12 @@ public class ViewFiltroEntrada extends JDialog {
 
 
 
-	private JDateChooser dCBuscar1;
-	private JButton btnBuscar;
+	private final JDateChooser dCBuscar1;
+	private final JButton btnBuscar;
 	//private JTextField txtCta;
-	private JDateChooser dCBuscar2;
-	private CbxTmCuentasBancos modeloCuentasBancos;
-	private JComboBox<Banco> cbFormaPago;
+	private final JDateChooser dCBuscar2;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
+	private final JComboBox<Banco> cbFormaPago;
 
 	public ViewFiltroEntrada(Window view) {
 		

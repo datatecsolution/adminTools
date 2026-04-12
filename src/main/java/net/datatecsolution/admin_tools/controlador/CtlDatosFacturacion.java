@@ -17,11 +17,11 @@ import java.util.Date;
 
 public class CtlDatosFacturacion implements ActionListener {
 	
-	private ViewCrearDatosFacturacion view;
+	private final ViewCrearDatosFacturacion view;
 	
 	private DatosFacturacion myDatosF=new DatosFacturacion();
-	private CajaDao cajaDao;
-	private DatosFacturacionDao myDatosFdao;
+	private final CajaDao cajaDao;
+	private final DatosFacturacionDao myDatosFdao;
 	private boolean resultaOperacion=false;
 	
 	public CtlDatosFacturacion(ViewCrearDatosFacturacion v){

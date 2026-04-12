@@ -28,7 +28,7 @@ public abstract class ViewTablaFrame extends JInternalFrame {
 	protected BotonEliminar btnEliminar;
 	protected JTextField txtBuscar;
 	//protected JTextField txtBuscar;
-	private JTextField txtBuscar2;
+	private final JTextField txtBuscar2;
 	
 	
 	protected JRadioButton rdbtnId;
@@ -57,17 +57,17 @@ public abstract class ViewTablaFrame extends JInternalFrame {
 
 
 
-	private JLabel label;
+	private final JLabel label;
 
 
 
-	private JLabel label_1;
+	private final JLabel label_1;
 	protected PanelPadre panel;
 	protected BotonBuscar btnBuscar;
-	private Dimension dim;
+	private final Dimension dim;
 	
-	private int anchoVentana=800;
-	private int altoVentana=565;
+	private final int anchoVentana=800;
+	private final int altoVentana=565;
 	
 	public ViewTablaFrame(String string, boolean b, boolean c, boolean d, boolean e){
 		super( string,  b,  c,  d,  e );

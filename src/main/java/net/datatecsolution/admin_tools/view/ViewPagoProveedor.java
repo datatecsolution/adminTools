@@ -17,28 +17,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ViewPagoProveedor extends JDialog {
-	private TmFacturasPago modelo;
-	private JPanel panelAcciones;
-	private JPanel panelDatosFactura;
-	private JLabel lblCodigoCliente;
-	private JTextField txtIdProveedor;
-	private JTextField txtNombreProveedor;
+	private final TmFacturasPago modelo;
+	private final JPanel panelAcciones;
+	private final JPanel panelDatosFactura;
+	private final JLabel lblCodigoCliente;
+	private final JTextField txtIdProveedor;
+	private final JTextField txtNombreProveedor;
 	
 	private ButtonGroup grupoOpciones;
-	private BotonCancelar btnCerrar;
-	private BotonBuscarProveedor btnProveedor;
-	private BotonCobrar btnPagar;
-	private JLabel lblNombreCliente;
-	private JTextField txtSaldoProveedor;
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscarProveedor btnProveedor;
+	private final BotonCobrar btnPagar;
+	private final JLabel lblNombreCliente;
+	private final JTextField txtSaldoProveedor;
 	
 	
-	private JTextField txtTotal;
-	private JLabel lblTotal;
-	private PanelPadre panelDatosPago;
-	private JTextField txtObservacion;
-	private JLabel lblFormaDePago;
-	private CbxTmCuentasBancos modeloCuentasBancos;
-	private JComboBox<Banco> cbFormaPago;
+	private final JTextField txtTotal;
+	private final JLabel lblTotal;
+	private final PanelPadre panelDatosPago;
+	private final JTextField txtObservacion;
+	private final JLabel lblFormaDePago;
+	private final CbxTmCuentasBancos modeloCuentasBancos;
+	private final JComboBox<Banco> cbFormaPago;
 
 	public ViewPagoProveedor(Window view) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewPagoProveedor.class.getResource("/drawable/logo_2.png")));

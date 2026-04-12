@@ -4,7 +4,7 @@ import javax.swing.table.AbstractTableModel;
 
 public abstract class TablaModelo extends AbstractTableModel{
 
-	private static int cantItemPag=20;
+	private static final int cantItemPag=20;
 	private int limiteSuperior=0;
 	private int noPagina=1;
 	

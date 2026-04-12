@@ -10,9 +10,9 @@ import java.util.List;
 
 public class CtlCajasBuscar extends CtlGenerico implements ActionListener, MouseListener,WindowListener, ItemListener {
 	
-	private ViewListaCajas view;
+	private final ViewListaCajas view;
 
-	private CajaDao myDao;
+	private final CajaDao myDao;
 	
 	private Caja myCaja;
 	

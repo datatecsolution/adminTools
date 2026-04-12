@@ -26,7 +26,7 @@ import java.util.List;
 public class UsuarioDao  extends ModeloDaoBasic {
 	private int idRegistrado=-1;
 	
-	private CajaDao cajasDao;
+	private final CajaDao cajasDao;
 	
 	public UsuarioDao(){
 		super( "usuario","id");

@@ -10,9 +10,9 @@ import java.awt.*;
 
 public class ViewListaSalidas extends ViewTabla {
 	
-	private TmSalidas modelo;
-	private JRadioButton rdbtnEmpleado;
-	private BotonReporte btnReporte;
+	private final TmSalidas modelo;
+	private final JRadioButton rdbtnEmpleado;
+	private final BotonReporte btnReporte;
 
 	public ViewListaSalidas(Window view) {
 		// TODO Auto-generated constructor stub

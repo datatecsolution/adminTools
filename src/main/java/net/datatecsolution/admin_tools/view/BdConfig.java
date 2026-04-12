@@ -8,13 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BdConfig extends JDialog {
-	private JTextField txtUrl;
+	private final JTextField txtUrl;
 	private JPasswordField tpfClave;
-	private JTextField txtUser;
-	private JTextField txtPwd;
-	private JTextField txtDataBase;
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCancelar;
+	private final JTextField txtUser;
+	private final JTextField txtPwd;
+	private final JTextField txtDataBase;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCancelar;
 	
 	
 	public BdConfig(Window v) {

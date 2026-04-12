@@ -14,10 +14,10 @@ import java.util.List;
 
 public class CtlProveedorLista  implements ActionListener, MouseListener, WindowListener,ItemListener {
 	public ViewCrearProveedor viewProveedor;
-	private ViewListaProveedor view;
+	private final ViewListaProveedor view;
 	
 	private Proveedor myProveedor;
-	private ProveedorDao myProveedorDao;
+	private final ProveedorDao myProveedorDao;
 	
 	private int idProveedor;
 	private int filaTabla;

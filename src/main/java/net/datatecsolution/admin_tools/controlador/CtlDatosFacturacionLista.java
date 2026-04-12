@@ -16,10 +16,10 @@ import java.util.List;
 
 public class CtlDatosFacturacionLista implements ActionListener, MouseListener {
 	
-	private ViewListaDatosFacturacion view;
+	private final ViewListaDatosFacturacion view;
 	
-	private DatosFacturacionDao myDatosFdao;
-	private CajaDao cajaDao;
+	private final DatosFacturacionDao myDatosFdao;
+	private final CajaDao cajaDao;
 	//fila selecciona enla lista
 	private int filaPulsada;
 	public CtlDatosFacturacionLista(ViewListaDatosFacturacion v){

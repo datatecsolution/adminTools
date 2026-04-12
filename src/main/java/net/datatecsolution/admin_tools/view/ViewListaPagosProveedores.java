@@ -17,7 +17,7 @@ protected BotonImprimirSmall btnImprimir;
 	
 	
 	
-	private TmPagosProveedores modelo;
+	private final TmPagosProveedores modelo;
 
 
 	public ViewListaPagosProveedores(Window view) {

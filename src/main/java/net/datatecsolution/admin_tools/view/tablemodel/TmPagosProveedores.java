@@ -10,7 +10,7 @@ public class TmPagosProveedores extends TablaModelo {
 	final private String []columnNames= {
 			"Fecha","No Recibo", "Proveedor", "Total","Forma de pago"};
 	
-	private List<ReciboPagoProveedor> pagos=new ArrayList<ReciboPagoProveedor>();
+	private final List<ReciboPagoProveedor> pagos=new ArrayList<ReciboPagoProveedor>();
 	
 	
 	@Override

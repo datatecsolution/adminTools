@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 
 public class CtlCategoria implements ActionListener {
 	
-	private ViewCrearCategoria viewMarca;
+	private final ViewCrearCategoria viewMarca;
 	private CategoriaDao myMarcaDao;
 	private Categoria myMarca;
 	

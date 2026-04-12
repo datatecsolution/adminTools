@@ -20,7 +20,7 @@ import java.util.List;
 
 public class CtlCotizacionLista implements ActionListener, MouseListener {
 	
-	private Conexion conexion=null;
+	private final Conexion conexion=null;
 	private ViewListaCotizacion view=null;
 	private CotizacionDao myFacturaDao=null;
 	private int filaPulsada;

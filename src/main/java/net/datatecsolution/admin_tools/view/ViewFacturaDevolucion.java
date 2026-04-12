@@ -14,54 +14,54 @@ import java.awt.*;
 public class ViewFacturaDevolucion extends JDialog {
 	
 	protected BorderLayout miEsquema;
-	private JTable tableDetalle;
-	private TmDevoluciones modeloTabla;
+	private final JTable tableDetalle;
+	private final TmDevoluciones modeloTabla;
 	
 	protected JTextField txtBuscar;
 	protected JTextField txtArticulo;
 	protected JTextField txtPrecio;
 	
-	private JPanel panelAcciones;
-	private JPanel panelDatosFactura;
+	private final JPanel panelAcciones;
+	private final JPanel panelDatosFactura;
 	protected JPanel panelBuscar;
 	private JPanel panelNorte;
-	private JLabel lblFecha;
-	private JTextField txtFechafactura;
-	private JLabel lblCodigoCliente;
-	private JTextField txtIdcliente;
-	private JTextField txtNombrecliente;
+	private final JLabel lblFecha;
+	private final JTextField txtFechafactura;
+	private final JLabel lblCodigoCliente;
+	private final JTextField txtIdcliente;
+	private final JTextField txtNombrecliente;
 	
-	private ButtonGroup grupoOpciones;
-	private JRadioButton rdbtnCredito;
-	private JRadioButton rdbtnContado;
+	private final ButtonGroup grupoOpciones;
+	private final JRadioButton rdbtnCredito;
+	private final JRadioButton rdbtnContado;
 	
-	private JTextField txtSubtotal;
-	private JLabel lblSubtotal;
-	private JTextField txtImpuesto;
-	private JLabel lblImpuesto;
-	private JTextField txtTotal;
-	private JLabel lblTotal;
-	private JLabel lblNombreCliente;
-	private JLabel lblContado;
-	private JLabel lblCredito;
+	private final JTextField txtSubtotal;
+	private final JLabel lblSubtotal;
+	private final JTextField txtImpuesto;
+	private final JLabel lblImpuesto;
+	private final JTextField txtTotal;
+	private final JLabel lblTotal;
+	private final JLabel lblNombreCliente;
+	private final JLabel lblContado;
+	private final JLabel lblCredito;
 	
-	private BotonGuardar btnGuardar;
-	private BotonCancelar btnCerrar;
-	private BotonBuscar1 btnBuscar;
-	private BotonBuscarClientes btnCliente;
-	private BotonCobrar btnCobrar;
-	private JButton btnCierreCaja;
+	private final BotonGuardar btnGuardar;
+	private final BotonCancelar btnCerrar;
+	private final BotonBuscar1 btnBuscar;
+	private final BotonBuscarClientes btnCliente;
+	private final BotonCobrar btnCobrar;
+	private final JButton btnCierreCaja;
 	
-	private JTextField txtDescuento;
+	private final JTextField txtDescuento;
 	
-	private BotonActualizar btnActualizar;
-	private JTextField txtImpuesto18;
-	private JButton btnPendientes;
+	private final BotonActualizar btnActualizar;
+	private final JTextField txtImpuesto18;
+	private final JButton btnPendientes;
 	
-	private JTextField txtRtn;
+	private final JTextField txtRtn;
 	
 	
-	private JTextField txtCaja;
+	private final JTextField txtCaja;
 	private JPanel panel;
 	private JPanel panel_1;
 

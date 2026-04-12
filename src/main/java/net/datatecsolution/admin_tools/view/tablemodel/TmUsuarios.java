@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TmUsuarios extends TablaModelo {
-	private String []columnNames={"Usuario","Nombre","Tipo Usuario"};
-	private List<Usuario> usuarios = new ArrayList<Usuario>();
+	private final String []columnNames={"Usuario","Nombre","Tipo Usuario"};
+	private final List<Usuario> usuarios = new ArrayList<Usuario>();
 	
 	public void agregar(Usuario user) {
 		usuarios.add(user);

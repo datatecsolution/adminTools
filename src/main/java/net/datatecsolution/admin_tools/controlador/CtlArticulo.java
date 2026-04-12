@@ -20,11 +20,11 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 	
 	
 	public ViewCrearArticulo view;
-	private ArticuloDao myArticuloDao;
+	private final ArticuloDao myArticuloDao;
 	private Articulo myArticulo=new Articulo();
 	private boolean resultaOperacion=false;
 	private ImpuestoDao myImpuestoDao;
-	private InsumoDao insumoDao;
+	private final InsumoDao insumoDao;
 	private PrecioArticuloDao precioDao=null;
 
 	
@@ -305,7 +305,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 				//se estable que si exite el codigo de barra
 				existeCodigo=true;
 				//JOptionPane.showMessageDialog(view, "El codigo de barra '"+codigo+"' ya esta asignado al articulo.\n"+articuloBusqueda.toString());
-				JOptionPane.showMessageDialog(view, "El codigo de barra '"+codigo+"' ya esta asignado al articulo.\n"+articuloBusqueda.toString(), "Error al guardar articulo", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(view, "El codigo de barra '"+codigo+"' ya esta asignado al articulo.\n"+ articuloBusqueda, "Error al guardar articulo", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}

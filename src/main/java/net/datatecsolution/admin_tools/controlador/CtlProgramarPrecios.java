@@ -14,8 +14,8 @@ import java.util.List;
 public class CtlProgramarPrecios implements ActionListener, MouseListener, ChangeListener, WindowListener {
 	
 	private ViewListaPrecioProgramar view =null;
-	private Articulo myArticulo;
-	private ArticuloDao myArticuloDao;
+	private final Articulo myArticulo;
+	private final ArticuloDao myArticuloDao;
 	
 	//fila selecciona enla lista
 	private int filaPulsada;

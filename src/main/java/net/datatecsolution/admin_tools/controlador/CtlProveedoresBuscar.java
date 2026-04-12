@@ -14,7 +14,7 @@ public class CtlProveedoresBuscar implements ActionListener ,MouseListener, Wind
 	
 	private Proveedor myProveedor=null;
 	private ProveedorDao myDao=null;
-	private ViewListaProveedor view;
+	private final ViewListaProveedor view;
 
 	private boolean resultado=false;
 	private int filaPulsada=-1;

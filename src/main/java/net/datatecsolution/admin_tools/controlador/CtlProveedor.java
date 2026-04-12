@@ -16,7 +16,7 @@ public class CtlProveedor implements ActionListener, WindowListener {
 	private Proveedor myProveedor; // se crea un proveedor-modelo para realizar las operacions basicas
 	
 	boolean verificadorAcualizacion=false;
-	private ProveedorDao myProveedorDao;
+	private final ProveedorDao myProveedorDao;
 	boolean resultaOperacion=false;
 	
 	public CtlProveedor(ViewCrearProveedor view){

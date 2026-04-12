@@ -19,12 +19,12 @@ import java.util.Date;
 
 public class CtlCompras implements ActionListener,MouseListener,TableModelListener, WindowListener,KeyListener {
 	public ViewAgregarCompras view;
-	private ArticuloDao myArticuloDao;
+	private final ArticuloDao myArticuloDao;
 	private Articulo myArticulo;
 	private Proveedor myProveedor;
-	private ProveedorDao myProveedorDao;
+	private final ProveedorDao myProveedorDao;
 	private FacturaCompra myFactura;
-	private FacturaCompraDao myFacturaDao;
+	private final FacturaCompraDao myFacturaDao;
 	private DepartamentoDao deptDao=null;
 	private PrecioArticuloDao preciosDao=null;
 	

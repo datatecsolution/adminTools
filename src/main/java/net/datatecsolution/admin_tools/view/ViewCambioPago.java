@@ -8,18 +8,18 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewCambioPago extends JDialog {
-	private JTextField txtEfectivo;
-	private JTextField txtCambio;
+	private final JTextField txtEfectivo;
+	private final JTextField txtCambio;
 	//private final ToggleGroup grupo;
 	//private ButtonGroup grupoOpciones;
 	
 	//private JToggleButton tglbtnEfectivo;
 	//private JToggleButton tglbtnTarjetaCredito;
 	
-	private JTextField txtReferenciatarjeta;
-	private BotonCobrar btnCobrar;
-	private BotonCancelar btnCerrar;
-	private JLabel lblTarjetaCreditodebito;
+	private final JTextField txtReferenciatarjeta;
+	private final BotonCobrar btnCobrar;
+	private final BotonCancelar btnCerrar;
+	private final JLabel lblTarjetaCreditodebito;
 	
 	public ViewCambioPago(Window v) {
 		

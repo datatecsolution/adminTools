@@ -15,7 +15,7 @@ public class KardexDao {
 	private PreparedStatement insertarNuevoMovimiento=null;
 	private PreparedStatement insertarNuevo=null;
 	
-	private String ultimoRistro="SELECT "
+	private final String ultimoRistro="SELECT "
 			+ " v_kardex.can_saldo, "
 			+ "v_kardex.precio_saldo, "
 			+ "v_kardex.total_saldo,"
@@ -30,7 +30,7 @@ public class KardexDao {
 			+ " v_kardex.cod DESC LIMIT 1";
 	
 	
-	private String ultimoReee="SELECT"
+	private final String ultimoReee="SELECT"
 			+ "`articulo_kardex`.`codigo_kardex` AS `codigo_kardex`,"
 			+ "`articulo_kardex`.`codigo_articulo` AS `codigo_articulo`,"
 			+ "`articulo_kardex`.`codigo_bodega` AS `codigo_bodega`,"

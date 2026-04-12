@@ -14,10 +14,10 @@ import java.util.List;
 
 public class CtlFiltroRepCierreVentasDetalleCateg implements ActionListener {
 	
-	private ViewFiltroRepCierreVentaDetalleCateg view;
-	private CategoriaDao categoriaDao;
+	private final ViewFiltroRepCierreVentaDetalleCateg view;
+	private final CategoriaDao categoriaDao;
 	private CierreCaja elCierre=null;
-	private DetalleFacturaDao detalleFacturaDao=new DetalleFacturaDao();
+	private final DetalleFacturaDao detalleFacturaDao=new DetalleFacturaDao();
 
 	public CtlFiltroRepCierreVentasDetalleCateg(ViewFiltroRepCierreVentaDetalleCateg v,CierreCaja c) {
 		// TODO Auto-generated constructor stub

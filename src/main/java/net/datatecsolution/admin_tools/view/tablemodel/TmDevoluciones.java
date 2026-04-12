@@ -13,7 +13,7 @@ public class TmDevoluciones extends AbstractTableModel {
 	final private String []columnNames= {
 			 "Articulo", "Precio Unidad", "Cantidad","SubTotal","Impuesto","Descuento", "Total","Devolucion?"
 		};
-	private List<DetalleFactura> detallesFactura=new ArrayList<DetalleFactura>();
+	private final List<DetalleFactura> detallesFactura=new ArrayList<DetalleFactura>();
 	
 	public void agregarDetalle(){
 		//JOptionPane.showMessageDialog(null,detallesFactura.size() );
@@ -206,13 +206,9 @@ public class TmDevoluciones extends AbstractTableModel {
 	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		boolean resul=false;
-		
-		
-		if(columnIndex==7)
-			resul=true;
-		
-		
+		boolean resul= columnIndex == 7;
+
+
 		return resul;
 	}
 	

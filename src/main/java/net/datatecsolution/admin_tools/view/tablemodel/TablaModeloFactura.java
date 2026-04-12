@@ -14,7 +14,7 @@ public class TablaModeloFactura extends AbstractTableModel {
 	final private String []columnNames= {
 			"Articulo", "Precio Unidad", "Cantidad","SubTotal","Impuesto","Descuento", "Total"
 		};
-	private List<DetalleFactura> detallesFactura=new ArrayList<DetalleFactura>();
+	private final List<DetalleFactura> detallesFactura=new ArrayList<DetalleFactura>();
 	
 	public void agregarDetalle(){
 		//JOptionPane.showMessageDialog(null,detallesFactura.size() );

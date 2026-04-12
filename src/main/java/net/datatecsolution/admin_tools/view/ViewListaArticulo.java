@@ -24,23 +24,23 @@ public class ViewListaArticulo extends ViewTabla {
 	protected JButton btnLimpiar;
 	
 	
-	private JRadioButton rdbtnMarca;
+	private final JRadioButton rdbtnMarca;
 
-	private TmArticulo modelo;
+	private final TmArticulo modelo;
 	
 	
 	
-	private BotonKardex btnKardex;
-	private BotonCuenta btnInventario;
-
-
-	private JRadioButton rdbtnArticulo;
-	private JComboBox<Departamento> cbxDepart;
-	
-	private CbxTmDepartamento modeloCbx;
+	private final BotonKardex btnKardex;
+	private final BotonCuenta btnInventario;
 
 
-	private BotonExistencia btnExistecia;
+	private final JRadioButton rdbtnArticulo;
+	private final JComboBox<Departamento> cbxDepart;
+	
+	private final CbxTmDepartamento modeloCbx;
+
+
+	private final BotonExistencia btnExistecia;
 	
 	
 	
@@ -48,8 +48,8 @@ public class ViewListaArticulo extends ViewTabla {
 	
 
 	
-	private JPopupMenu menuContextual; // permite al usuario seleccionar el color
-	private JMenuItem mntmReporteVenta;
+	private final JPopupMenu menuContextual; // permite al usuario seleccionar el color
+	private final JMenuItem mntmReporteVenta;
 
 
 	

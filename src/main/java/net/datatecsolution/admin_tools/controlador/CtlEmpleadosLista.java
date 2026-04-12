@@ -13,8 +13,8 @@ import java.awt.event.MouseListener;
 import java.util.List;
 
 public class CtlEmpleadosLista implements ActionListener, MouseListener {
-	private ViewListaEmpleados view;
-	private EmpleadoDao myDao;
+	private final ViewListaEmpleados view;
+	private final EmpleadoDao myDao;
 	private int filaPulsada;
 	private Empleado myEmpleado;
 	

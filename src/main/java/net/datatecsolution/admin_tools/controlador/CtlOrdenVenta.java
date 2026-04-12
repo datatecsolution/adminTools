@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
 	
-	private ViewOrdeneVenta view;
+	private final ViewOrdeneVenta view;
 	private Factura myFactura=null;
 	private FacturaDao facturaDao=null;//=new FacturaDao();
 
@@ -30,12 +30,12 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 	private Caja cajaDefecto;
 
 	private int filaPulsada=0;
-	private boolean resultado=false;
+	private final boolean resultado=false;
 
 	private int tipoView=1;
 	private int netBuscar=0;
 
-	private FacturaOrdenVentaDao facturaOrdenesDao;
+	private final FacturaOrdenVentaDao facturaOrdenesDao;
 	private DetalleFacturaOrdenDao detallesOrdenDao=null;
 	private boolean unirCanItem=true;
 	

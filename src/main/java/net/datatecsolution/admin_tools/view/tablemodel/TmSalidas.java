@@ -9,8 +9,8 @@ import java.util.List;
 public class TmSalidas extends TablaModelo {
 	
 	
-	private String []columnNames={"Id","Concepto","Entregado a","Fecha","Cantidad","Estado"};
-	private List<SalidaCaja> salidas = new ArrayList<SalidaCaja>();
+	private final String []columnNames={"Id","Concepto","Entregado a","Fecha","Cantidad","Estado"};
+	private final List<SalidaCaja> salidas = new ArrayList<SalidaCaja>();
 	
 	
 	public void agregar(SalidaCaja a) {

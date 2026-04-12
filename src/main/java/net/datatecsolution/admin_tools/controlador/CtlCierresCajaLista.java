@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CtlCierresCajaLista extends MouseAdapter implements ActionListener, MouseListener {
-	private ViewListaCierresCaja view;
-	private CierreCajaDao myDao;
+	private final ViewListaCierresCaja view;
+	private final CierreCajaDao myDao;
 	private int filaPulsada;
 	private CierreCaja myCierre;
-	private FacturaDao facturaDao=new FacturaDao();
+	private final FacturaDao facturaDao=new FacturaDao();
 	
 
 	public CtlCierresCajaLista(ViewListaCierresCaja v) {

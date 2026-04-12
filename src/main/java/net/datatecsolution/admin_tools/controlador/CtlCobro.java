@@ -26,7 +26,7 @@ public class CtlCobro implements ActionListener, KeyListener {
 	private ReciboPagoDao myReciboDao=null;
 	private CuentaFacturaDao cuentaFacturaDao=null;
 	private CuentaXCobrarFacturaDao cuentaXCobrarFacturaDao=null;
-	private List<CuentaXCobrarFactura> cuentasFacturas=new ArrayList<CuentaXCobrarFactura>();
+	private final List<CuentaXCobrarFactura> cuentasFacturas=new ArrayList<CuentaXCobrarFactura>();
 	
 	private boolean resul=false;
 

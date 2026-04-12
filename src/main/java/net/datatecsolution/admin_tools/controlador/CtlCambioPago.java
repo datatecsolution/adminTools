@@ -17,7 +17,7 @@ public class CtlCambioPago implements ActionListener,ItemListener, WindowListene
 	private int formaPago=1;
 	private String refencia;
 	
-	private BigDecimal total;
+	private final BigDecimal total;
 	private BigDecimal totalCobro;
 	
 	

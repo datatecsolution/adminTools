@@ -19,10 +19,10 @@ public class ViewFacturas extends ViewTabla {
 	
 	
 	
-	private JComboBox<Caja> cbxCajas;
-	private CbxTmCajas modeloListaCajas;
-	private TablaModeloFacturados modelo;
-	private BotonDevolucion btnDevolucion;
+	private final JComboBox<Caja> cbxCajas;
+	private final CbxTmCajas modeloListaCajas;
+	private final TablaModeloFacturados modelo;
+	private final BotonDevolucion btnDevolucion;
 	private JRadioButton rdbtnCliente;
 
 

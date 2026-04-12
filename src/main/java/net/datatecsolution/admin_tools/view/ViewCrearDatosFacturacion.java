@@ -15,24 +15,24 @@ import java.awt.*;
 public class ViewCrearDatosFacturacion extends JDialog {
 	
 	
-	private BotonCancelar btnCancelar;
-	private BotonActualizar btnActualizar;
-	private BotonGuardar btnGuardar;
-	private JLabel lblCaja;
-	private JComboBox<Caja> cbCaja;
-	private JLabel lblFacturaInicial;
-	private JTextField txtFacturaInicial;
-	private JLabel lblFacturaFinal;
-	private JTextField txtFacturaFinal;
-	private JLabel lblCodigoDeFacturacion;
-	private JTextField txtCodigoFacturacion;
-	private JLabel lblCantidadSolicitada;
-	private JTextField txtCantidadOtorgada;
-	private JDateChooser fechaLimite;
-	private JLabel lblFechaLimite;
-	private CbxTmCajas modeloListaCajas;
-	private JLabel lblCai;
-	private JTextField txtCai;
+	private final BotonCancelar btnCancelar;
+	private final BotonActualizar btnActualizar;
+	private final BotonGuardar btnGuardar;
+	private final JLabel lblCaja;
+	private final JComboBox<Caja> cbCaja;
+	private final JLabel lblFacturaInicial;
+	private final JTextField txtFacturaInicial;
+	private final JLabel lblFacturaFinal;
+	private final JTextField txtFacturaFinal;
+	private final JLabel lblCodigoDeFacturacion;
+	private final JTextField txtCodigoFacturacion;
+	private final JLabel lblCantidadSolicitada;
+	private final JTextField txtCantidadOtorgada;
+	private final JDateChooser fechaLimite;
+	private final JLabel lblFechaLimite;
+	private final CbxTmCajas modeloListaCajas;
+	private final JLabel lblCai;
+	private final JTextField txtCai;
 	
 	public ViewCrearDatosFacturacion(Window view) {
 		

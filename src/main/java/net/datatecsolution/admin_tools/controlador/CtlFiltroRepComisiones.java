@@ -19,11 +19,11 @@ import java.util.Vector;
 public class CtlFiltroRepComisiones implements ActionListener {
 	
 	
-	private ViewFiltroComisiones view;
-	private CajaDao cajasDao;
-	private FacturaDao facturaDao;
-	private EmpleadoDao empleadoDao;
-	private List<Comision> comisiones= new ArrayList<Comision>();
+	private final ViewFiltroComisiones view;
+	private final CajaDao cajasDao;
+	private final FacturaDao facturaDao;
+	private final EmpleadoDao empleadoDao;
+	private final List<Comision> comisiones= new ArrayList<Comision>();
 	private List<Empleado> empleados;
 	List<Caja> cajas;
 	DevolucionesDao devolucionesDao= new DevolucionesDao();

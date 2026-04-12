@@ -11,10 +11,10 @@ public class ViewFiltroPagos extends JDialog {
 	
 
 	
-	private JDateChooser dCBuscar1;
-	private JButton btnBuscar;
-	private JTextField txtCliente;
-	private JDateChooser dCBuscar2;
+	private final JDateChooser dCBuscar1;
+	private final JButton btnBuscar;
+	private final JTextField txtCliente;
+	private final JDateChooser dCBuscar2;
 
 	public ViewFiltroPagos(Window view) {
 		

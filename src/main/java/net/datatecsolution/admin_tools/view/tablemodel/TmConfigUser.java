@@ -12,7 +12,7 @@ public class TmConfigUser extends TablaModelo {
 	final private String []columnNames= {
 			"Usuario", "Formato Fact", "Ventana Vendedor", "PWD Desc","PWD Precio","Desc %", "Ventana Obs","Redondiar Precio","Fact Sin/Inv"
 		};
-	private List<ConfigUserFacturacion> configs=new ArrayList<ConfigUserFacturacion>();
+	private final List<ConfigUserFacturacion> configs=new ArrayList<ConfigUserFacturacion>();
 	
 	
 	public TmConfigUser(){

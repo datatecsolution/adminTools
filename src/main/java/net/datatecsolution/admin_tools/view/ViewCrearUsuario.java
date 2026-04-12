@@ -15,29 +15,29 @@ import java.awt.*;
 public class ViewCrearUsuario extends JDialog {
 	private final JRadioButton rdbtnSupervisor;
 	private final JRadioButton rdbtnVendedor;
-	private JTextField txtUsuario;
-	private JTextField txtNombre;
+	private final JTextField txtUsuario;
+	private final JTextField txtNombre;
 	//private JTextField txtApellido;
-	private JPasswordField pwdPwd;
-	private JPasswordField pwdRePwd;
-	private BotonGuardar btnGuardar;
-	private JRadioButton rdbtnCajero;
-	private JRadioButton rdbtnAdministrador;
-	private BotonCancelar btnCancelar;
-	private ButtonGroup grupoOpciones;
-	private BotonActualizar btnActualizar;
-	private JList lCajas;
+	private final JPasswordField pwdPwd;
+	private final JPasswordField pwdRePwd;
+	private final BotonGuardar btnGuardar;
+	private final JRadioButton rdbtnCajero;
+	private final JRadioButton rdbtnAdministrador;
+	private final BotonCancelar btnCancelar;
+	private final ButtonGroup grupoOpciones;
+	private final BotonActualizar btnActualizar;
+	private final JList lCajas;
 	
-	private ListaModeloCajas modeloListaCajas;
-	private JButton btnAgregar;
+	private final ListaModeloCajas modeloListaCajas;
+	private final JButton btnAgregar;
 	
 	
-	private JMenuItem mntmEliminar;
+	private final JMenuItem mntmEliminar;
 	
 
 	
-	private JPopupMenu menuContextual; // permite al usuario seleccionar el color
-	private JMenuItem mntmDefault;
+	private final JPopupMenu menuContextual; // permite al usuario seleccionar el color
+	private final JMenuItem mntmDefault;
 
 	
 	

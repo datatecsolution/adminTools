@@ -5,7 +5,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 public class SoloLetras extends JFrame {
      
-    private JTextField caja = new JTextField();
+    private final JTextField caja = new JTextField();
      
     public SoloLetras() {
     super("Solo dejo escribir letras");

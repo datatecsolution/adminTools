@@ -8,8 +8,8 @@ import java.util.List;
 
 public class TablaModeloProveedor extends TablaModelo {
 	
-	private String []columnNames={"Id","Nombre","Telefono","Celular","Saldo"};
-	private List<Proveedor> proveedores = new ArrayList<Proveedor>();
+	private final String []columnNames={"Id","Nombre","Telefono","Celular","Saldo"};
+	private final List<Proveedor> proveedores = new ArrayList<Proveedor>();
 	
 	
 	public void agregarProveedor(Proveedor proveedor) {

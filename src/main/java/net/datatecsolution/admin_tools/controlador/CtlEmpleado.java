@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
 
 public class CtlEmpleado implements ActionListener {
 	
-	private ViewCrearEmpleado view;
+	private final ViewCrearEmpleado view;
 	
 	
 	private Empleado myEmpleado;
-	private EmpleadoDao myDao;
+	private final EmpleadoDao myDao;
 	private boolean resultaOperacion;
 	
 	public CtlEmpleado(ViewCrearEmpleado v){

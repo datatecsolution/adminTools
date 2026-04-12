@@ -17,7 +17,7 @@ public class ReciboPagoProveedoresDao extends ModeloDaoBasic {
 	private CuentaPorPagarDao myCuentaPagarDao=null;
 	
 	public int idUltimoRecibo=0;
-	private String sqlBaseJoin;
+	private final String sqlBaseJoin;
 	
 
 	public ReciboPagoProveedoresDao() {

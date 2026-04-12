@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.util.Vector;
 public class CbxTmDepartamento extends DefaultComboBoxModel {
 	
-	private Vector<Departamento> depts=new Vector<Departamento>();
+	private final Vector<Departamento> depts=new Vector<Departamento>();
 
 	public CbxTmDepartamento() {
 		// TODO Auto-generated constructor stub

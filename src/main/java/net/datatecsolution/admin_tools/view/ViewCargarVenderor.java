@@ -10,18 +10,18 @@ import java.awt.*;
 
 public class ViewCargarVenderor extends JDialog {
 	
-	private JTextField txtEfectivo;
-	private JTextField txtCambio;
+	private final JTextField txtEfectivo;
+	private final JTextField txtCambio;
 	//private final ToggleGroup grupo;
-	private ButtonGroup grupoOpciones;
+	private final ButtonGroup grupoOpciones;
 	
-	private JToggleButton tglbtnEfectivo;
-	private JPanel panel;
-	private BotonCobrar btnCobrar;
-	private BotonCancelar btnCerrar;
-	private JPanel panel_2;
-	private JLabel lblApellido;
-	private JTextField txtApellido;
+	private final JToggleButton tglbtnEfectivo;
+	private final JPanel panel;
+	private final BotonCobrar btnCobrar;
+	private final BotonCancelar btnCerrar;
+	private final JPanel panel_2;
+	private final JLabel lblApellido;
+	private final JTextField txtApellido;
 
 	public ViewCargarVenderor(Window v) {
 		super(v,"Seleccione bombero", ModalityType.DOCUMENT_MODAL);

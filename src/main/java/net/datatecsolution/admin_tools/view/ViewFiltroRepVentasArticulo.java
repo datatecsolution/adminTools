@@ -11,10 +11,10 @@ public class ViewFiltroRepVentasArticulo extends JDialog {
 	
 
 	
-	private JDateChooser dCBuscar1;
-	private JButton btnBuscar;
-	private JTextField txtArticulo;
-	private JDateChooser dCBuscar2;
+	private final JDateChooser dCBuscar1;
+	private final JButton btnBuscar;
+	private final JTextField txtArticulo;
+	private final JDateChooser dCBuscar2;
 
 	public ViewFiltroRepVentasArticulo(Window view) {
 		

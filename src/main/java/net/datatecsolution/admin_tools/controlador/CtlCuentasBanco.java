@@ -17,13 +17,13 @@ public class CtlCuentasBanco implements ActionListener,MouseListener, WindowList
 	
 	
 	private CuentaBanco myCuentaBanco;
-	private CuentaBancosDao myCuentaBancoDao;
+	private final CuentaBancosDao myCuentaBancoDao;
 	
 	//fila selecciona enla lista
 	private int filaPulsada;
 
 
-	private BancosDao myBancoDao;
+	private final BancosDao myBancoDao;
 	
 	
 	public CtlCuentasBanco(ViewCuentaBanco v){

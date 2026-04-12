@@ -7,9 +7,9 @@ import java.util.List;
 
 public class TmRequisicionesEncabezados extends TablaModelo {
 	
-	private String []columnNames={"codigo","Fecha","De","Para","Total","Estado"};
+	private final String []columnNames={"codigo","Fecha","De","Para","Total","Estado"};
 	
-	private List<Requisicion> requisiciones=new ArrayList<Requisicion>();
+	private final List<Requisicion> requisiciones=new ArrayList<Requisicion>();
 
 	public TmRequisicionesEncabezados() {
 		// TODO Auto-generated constructor stub

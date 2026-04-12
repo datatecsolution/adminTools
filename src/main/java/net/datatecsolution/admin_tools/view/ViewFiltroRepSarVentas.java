@@ -11,11 +11,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewFiltroRepSarVentas extends  JDialog {
-	private JButton btnBuscar;
-	private JMonthChooser monthChooser;
-	private JYearChooser yearChooser;
-	private JComboBox<Caja> cbxCajas;
-	private CbxTmCajas modeloListaCajas;
+	private final JButton btnBuscar;
+	private final JMonthChooser monthChooser;
+	private final JYearChooser yearChooser;
+	private final JComboBox<Caja> cbxCajas;
+	private final CbxTmCajas modeloListaCajas;
 
 	public ViewFiltroRepSarVentas(Window view) {
 		

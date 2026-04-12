@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CierreFacturacionDao extends ModeloDaoBasic{
 
-	private String sqlJoin;
+	private final String sqlJoin;
 	public CierreFacturacionDao() {
 		super("cierre_facturacion", "id");
 		// TODO Auto-generated constructor stub
