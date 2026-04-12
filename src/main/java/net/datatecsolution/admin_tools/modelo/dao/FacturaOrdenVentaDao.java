@@ -188,6 +188,8 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			psConsultas.setInt(2, 0);
 			psConsultas.setInt(3, 20);
 			res = psConsultas.executeQuery();
+
+			System.out.println(psConsultas);
 			
 			while(res.next()){
 				Factura unaFactura=new Factura();
