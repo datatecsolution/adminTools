@@ -91,7 +91,7 @@ public class ViewLogin extends JDialog{
 
 		btnConfig = new JButton("...");
 		btnConfig.setBounds(0, 227, 29, 23);
-		btnConfig.setVisible(false);
+		btnConfig.setVisible(true);
 		panel_1.add(btnConfig);
 
 

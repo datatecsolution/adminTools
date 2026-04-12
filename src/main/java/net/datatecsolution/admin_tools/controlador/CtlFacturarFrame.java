@@ -43,6 +43,7 @@ public class CtlFacturarFrame
 	private boolean isThereConexion = false;
 
 	private Integer bandera = 0;
+	private boolean unirCanItem=true;
 
 	public CtlFacturarFrame(ViewFacturarFrame v, List<ViewFacturarFrame> ven) {
 
