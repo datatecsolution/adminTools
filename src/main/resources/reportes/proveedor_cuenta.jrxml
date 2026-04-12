@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.1.final using JasperReports Library version 6.20.1-7584acb244139816654f64e2fd57a00d3e31921e  -->
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_cuentas_proveedor" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="df013db5-f76e-44d3-b0df-bcbc46d93160">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -9,15 +9,19 @@
 	<property name="ireport.x" value="15"/>
 	<property name="ireport.y" value="96"/>
 	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Wendy Local"/>
-	<style name="Title" fontName="SansSerif" fontSize="50" isBold="true"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="local"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true"/>
 	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
-	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Column header" backcolor="#FAE2A5" fontName="Arial" fontSize="12" isBold="true"/>
 	<style name="Detail" fontName="Arial" fontSize="12"/>
 	<style name="Row" mode="Transparent">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
-			<style backcolor="#E6DAC3"/>
+			<style backcolor="#F5E8C6"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
+			<style backcolor="#FCF8E8"/>
 		</conditionalStyle>
 	</style>
 	<parameter name="codigo_proveedor" class="java.lang.Integer">
@@ -25,13 +29,30 @@
 	</parameter>
 	<parameter name="bD_admin" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select
-*
-from
-$P!{bD_admin}.v_saldo_proveedor
+		<![CDATA[SELECT
+	`cuentas_por_pagar`.`codigo_reguistro` AS `codigo_reguistro`,
+	`cuentas_por_pagar`.`fecha` AS `fecha`,
+	`cuentas_por_pagar`.`codigo_proveedor` AS `codigo_proveedor`,
+	`cuentas_por_pagar`.`descripcion` AS `descripcion`,
+	`cuentas_por_pagar`.`debito` AS `debito`,
+	`cuentas_por_pagar`.`credito` AS `credito`,
+	`cuentas_por_pagar`.`saldo` AS `saldo`,
+	`proveedor`.`nombre_proveedor` AS `nombre_proveedor`,
+	`proveedor`.`telefono` AS `telefono`,
+	`proveedor`.`celular` AS `celular`,
+	`proveedor`.`direccion` AS `direccion` 
+FROM
+	
+		$P!{bD_admin}.`cuentas_por_pagar`
+		JOIN  $P!{bD_admin}.`proveedor` ON 
+				`cuentas_por_pagar`.`codigo_proveedor` = `proveedor`.`codigo_proveedor` 
+			
+
 
 where
-codigo_proveedor= $P{codigo_proveedor}]]>
+`proveedor`.codigo_proveedor= $P{codigo_proveedor}
+ORDER BY
+	`cuentas_por_pagar`.`codigo_reguistro` asc]]>
 	</queryString>
 	<field name="codigo_reguistro" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_reguistro"/>
@@ -130,8 +151,8 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<textFieldExpression><![CDATA[$F{codigo_proveedor}+" | "+$F{nombre_proveedor}]]></textFieldExpression>
 			</textField>
 			<textField pattern="d MMMM, yyyy">
-				<reportElement x="239" y="13" width="90" height="13" uuid="4d1e2d95-c9f8-44e3-a8ab-28f582d1153b"/>
-				<textElement>
+				<reportElement x="5" y="13" width="564" height="13" uuid="4d1e2d95-c9f8-44e3-a8ab-28f582d1153b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
@@ -147,7 +168,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement style="Column header" x="138" y="0" width="189" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
+				<reportElement style="Column header" mode="Opaque" x="90" y="0" width="237" height="15" forecolor="#030303" uuid="6754685d-6437-47f3-b59f-16c8525a9d66"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -160,7 +181,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<text><![CDATA[Descripcion]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="56" y="0" width="82" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
+				<reportElement style="Column header" mode="Opaque" x="30" y="0" width="60" height="15" forecolor="#030303" uuid="a193b6af-c46b-4f01-9db3-91d7a0159a24"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -173,7 +194,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="327" y="0" width="81" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
+				<reportElement style="Column header" mode="Opaque" x="327" y="0" width="81" height="15" forecolor="#030303" uuid="db89b4fe-2010-469d-8892-93072362eb72"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -186,7 +207,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<text><![CDATA[Debito]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="408" y="0" width="81" height="15" forecolor="#030303" uuid="c8ec5707-c458-4c27-82e2-c61e23e1f4e2"/>
+				<reportElement style="Column header" mode="Opaque" x="408" y="0" width="81" height="15" forecolor="#030303" uuid="c8ec5707-c458-4c27-82e2-c61e23e1f4e2"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -199,7 +220,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<text><![CDATA[Credito]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2" y="0" width="54" height="15" forecolor="#030303" uuid="c44486bd-95fe-41d2-bacb-b7e098b7558f"/>
+				<reportElement style="Column header" mode="Opaque" x="2" y="0" width="28" height="15" forecolor="#030303" uuid="c44486bd-95fe-41d2-bacb-b7e098b7558f"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
@@ -212,7 +233,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 				<text><![CDATA[No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="489" y="0" width="81" height="15" forecolor="#030303" uuid="514d96b8-a6f5-47f7-87e2-081bf5b84ce1"/>
+				<reportElement style="Column header" mode="Opaque" x="489" y="0" width="81" height="15" forecolor="#030303" uuid="514d96b8-a6f5-47f7-87e2-081bf5b84ce1"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -227,34 +248,32 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15">
+		<band height="15" splitType="Stretch">
 			<frame>
-				<reportElement x="2" y="0" width="568" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+				<reportElement style="Row" mode="Opaque" x="2" y="0" width="568" height="15" uuid="529420a8-a8c1-440a-9fca-131fe2bec725"/>
 				<textField textAdjust="StretchHeight">
-					<reportElement style="Detail" x="136" y="0" width="189" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
+					<reportElement style="Detail" x="88" y="0" width="237" height="15" uuid="d298e5d7-9187-4cad-a98e-6e65ab264562"/>
 					<box leftPadding="3" rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement>
-						<font fontName="SansSerif" size="11"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" pattern="dd/MM/yy">
-					<reportElement style="Detail" x="54" y="0" width="82" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
+					<reportElement style="Detail" x="28" y="0" width="60" height="15" uuid="dda20ac8-36df-4619-b0db-4ed038010d62"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#666666"/>
 					</box>
-					<textElement textAlignment="Center">
-						<font fontName="SansSerif" size="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 				</textField>
@@ -266,7 +285,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
@@ -279,21 +298,21 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight">
-					<reportElement style="Detail" x="0" y="0" width="54" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
+					<reportElement style="Detail" x="0" y="0" width="28" height="15" uuid="e483dce5-a317-474f-bc22-8da95cd240d3"/>
 					<box>
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Center">
-						<font fontName="SansSerif" size="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo_reguistro}]]></textFieldExpression>
 				</textField>
@@ -305,7 +324,7 @@ codigo_proveedor= $P{codigo_proveedor}]]>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="11"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{debito}]]></textFieldExpression>

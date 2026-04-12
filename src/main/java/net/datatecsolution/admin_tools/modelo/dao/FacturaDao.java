@@ -243,6 +243,7 @@ public class FacturaDao extends ModeloDaoBasic {
 				// y se registra su saldo
 				CuentaFactura unaCuentaFactura = new CuentaFactura();
 				unaCuentaFactura.setCaja(ConexionStatic.getUsuarioLogin().getCajaActiva());
+				myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
 				unaCuentaFactura.setCliente(myFactura.getCliente());
 				unaCuentaFactura.setFactura(myFactura);
 				// se crea la cuenta por la factura
@@ -265,7 +266,7 @@ public class FacturaDao extends ModeloDaoBasic {
 						cuenta.setDebito(myFactura.getTotal());
 						cuenta.setSaldo(new BigDecimal(0));
 						cuenta.setDescripcion("Pago por saldo a favor del cliente");
-						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+						cuentaXCobrarFacturaDao.reguistrarDebitoYaProcesado(cuenta);
 
 					} else {
 
@@ -278,7 +279,7 @@ public class FacturaDao extends ModeloDaoBasic {
 								.subtract(ultima.getSaldo().multiply(new BigDecimal(-1))).doubleValue())
 								.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 						cuenta.setDescripcion("Pago por saldo a favor del cliente");
-						cuentaXCobrarFacturaDao.reguistrarDebito(cuenta);
+						cuentaXCobrarFacturaDao.reguistrarDebitoYaProcesado(cuenta);
 
 					}
 

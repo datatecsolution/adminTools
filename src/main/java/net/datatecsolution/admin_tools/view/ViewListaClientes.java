@@ -138,6 +138,11 @@ public class ViewListaClientes extends ViewTabla {
 		cbxEmpleados.addActionListener(c);
 		cbxEmpleados.setActionCommand("CAMBIOCOMBOBOX");
 		cbxEmpleados.addKeyListener(c);
+
+		btnLimpiar.addActionListener(c);
+		btnLimpiar.setActionCommand("EDITAR");
+		btnLimpiar.addKeyListener(c);
+
 		
 	}
 	public void conectarControlador(CtlClienteLista c){

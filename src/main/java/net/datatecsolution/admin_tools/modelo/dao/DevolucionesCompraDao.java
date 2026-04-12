@@ -47,7 +47,7 @@ public class DevolucionesCompraDao extends ModeloDaoBasic {
 			psConsultas.setBigDecimal(4, detalle.getCantidad());
 			psConsultas.setBigDecimal(5, detalle.getImpuesto());
 			psConsultas.setBigDecimal(6, detalle.getSubTotal());
-			psConsultas.setBigDecimal(7, detalle.getTotal());
+			psConsultas.setBigDecimal(7, detalle.getSubTotal().add(detalle.getImpuesto()));
 			psConsultas.setInt(8, detalle.getCodigoBodega());
 			psConsultas.executeUpdate();
 			

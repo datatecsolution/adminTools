@@ -85,6 +85,10 @@ public abstract class AbstractJasperReports implements Runnable {
 	private static InputStream entradasBanco = null;
 	private static InputStream ordenCarta = null;
 	private static InputStream articuloXvencer = null;
+	private static InputStream devolucionCompra = null;
+	private static InputStream cobroCajaFactura = null;
+	private static InputStream pagosClientesVendedor = null;
+	private static InputStream cuentaFacturaMora;
 
 	private static JasperReport reportFactura;
 	private static JasperReport reportCotizacion;
@@ -133,6 +137,10 @@ public abstract class AbstractJasperReports implements Runnable {
 	private static JasperReport reportEntradasBanco;
 	private static JasperReport reportOrdenCarta;
 	private static JasperReport reportArticulosXvencer;
+	private static JasperReport reportDevolucionCompra;
+	private static JasperReport reportCobroCajaFactura;
+	private static JasperReport reportPagosClienteVendedor;
+	private static JasperReport reportCuentaFacturaMora;
 
 	private static final Pattern numberPattern = Pattern.compile("-?\\d+");
 	private static final Pattern numberPatternReal = Pattern.compile("\\d+([.]\\d+)?");
@@ -219,6 +227,11 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		articuloXvencer = AbstractJasperReports.class.getResourceAsStream("/reportes/ReporteArticulosXvencer.jasper");
 
+		devolucionCompra = AbstractJasperReports.class.getResourceAsStream("/reportes/devoluciones_compra.jasper");
+		cobroCajaFactura = AbstractJasperReports.class.getResourceAsStream("/reportes/cobro_caja_factura.jasper");
+		pagosClientesVendedor = AbstractJasperReports.class.getResourceAsStream("/reportes/pagos_clientes_vendedor.jasper");
+		cuentaFacturaMora = AbstractJasperReports.class.getResourceAsStream("/reportes/reporte_cuenta_factura.jasper");
+
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject(factura);
 			// reportFactura2 = (JasperReport) JRLoader.loadObject( factura2 );
@@ -283,6 +296,11 @@ public abstract class AbstractJasperReports implements Runnable {
 			reportOrdenCarta = (JasperReport) JRLoader.loadObject(ordenCarta);
 
 			reportArticulosXvencer = (JasperReport) JRLoader.loadObject(articuloXvencer);
+
+			reportDevolucionCompra = (JasperReport) JRLoader.loadObject(devolucionCompra);
+			reportCobroCajaFactura = (JasperReport) JRLoader.loadObject(cobroCajaFactura);
+			reportPagosClienteVendedor = (JasperReport) JRLoader.loadObject(pagosClientesVendedor);
+			reportCuentaFacturaMora = (JasperReport) JRLoader.loadObject(cuentaFacturaMora);
 
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -1425,6 +1443,101 @@ public abstract class AbstractJasperReports implements Runnable {
 			JasperExportManager.exportReportToPdfFile(reportFilled, destination);
 		} catch (JRException ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	public static void createReportPagoClienteVendedor(Connection conn, Date fechaMin, Date fechaMax, int codigoCliente) {
+		Map parametros = new HashMap();
+		parametros.put("fecha_min", fechaMin);
+		parametros.put("fecha_max", fechaMax);
+		parametros.put("codigo_vendedor", codigoCliente);
+		parametros.put("bD_admin", facturaDao.getDbNameDefault());
+
+		try {
+			reportFilled = JasperFillManager.fillReport(reportPagosClienteVendedor, parametros, conn);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public static void createReportReciboCobroCajaFactura(Connection conn, int id) {
+		Map parametros = new HashMap();
+		parametros.put("no_recibo", id);
+		parametros.put("bD_admin", facturaDao.getDbNameDefault());
+
+		try {
+			reportFilled = JasperFillManager.fillReport(reportCobroCajaFactura, parametros, conn);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public static void createReportDevolucionCompra(Connection conn, Integer idFactura) {
+		Map parametros = new HashMap();
+		parametros.put("numero_factura", idFactura);
+		if (ConexionStatic.getUsuarioLogin().getCajaActiva() != null) {
+			parametros.put("bD_facturacion", ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd());
+			parametros.put("cod_caja", ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
+		}
+		parametros.put("bD_admin", facturaDao.getDbNameDefault());
+
+		try {
+			reportFilled = JasperFillManager.fillReport(reportDevolucionCompra, parametros, conn);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public static void createReportCuentaMora(Connection conn, int rango, int codRuta, int codVendedor, String vendedor, String ruta) {
+		Map parametros = new HashMap();
+		parametros.put("rango_max", rango);
+
+		if (codVendedor == 0) {
+			parametros.put("codigo_ven2", 10000);
+			parametros.put("codigo_vendedor", codVendedor);
+			parametros.put("vendedor", "Todos");
+		} else {
+			parametros.put("codigo_ven2", codVendedor);
+			parametros.put("codigo_vendedor", codVendedor);
+			parametros.put("vendedor", vendedor);
+		}
+
+		if (codRuta == 0) {
+			parametros.put("codigo_ruta2", 10000);
+			parametros.put("codigo_ruta", codRuta);
+			parametros.put("ruta", "Todas");
+		} else {
+			parametros.put("codigo_ruta2", codRuta);
+			parametros.put("codigo_ruta", codRuta);
+			parametros.put("ruta", ruta);
+		}
+
+		parametros.put("bD_admin", facturaDao.getDbNameDefault());
+
+		try {
+			reportFilled = JasperFillManager.fillReport(reportCuentaFacturaMora, parametros, conn);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 	}
 

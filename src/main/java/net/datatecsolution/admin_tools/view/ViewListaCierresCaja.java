@@ -30,7 +30,7 @@ public class ViewListaCierresCaja extends ViewTabla {
 	}
 	public void Init() {
 		
-menuContextual = new JPopupMenu(); // crea el men� contextual
+		menuContextual = new JPopupMenu(); // crea el men� contextual
 		
 		//opcion del menu flotante
 		mntmReporteVentaCategoria = new JMenuItem("Reporte venta categoria");

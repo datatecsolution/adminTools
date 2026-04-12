@@ -2,15 +2,15 @@ package net.datatecsolution.admin_tools.view;
 
 import com.toedter.calendar.JDateChooser;
 import net.datatecsolution.admin_tools.controlador.CtlFiltroRepPagos;
+import net.datatecsolution.admin_tools.controlador.CtlFiltroRepPagosVendedor;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ViewFiltroPagos extends JDialog {
-	
 
-	
+	private final JLabel lblEmpleado;
 	private final JDateChooser dCBuscar1;
 	private final JButton btnBuscar;
 	private final JTextField txtCliente;
@@ -61,7 +61,7 @@ public class ViewFiltroPagos extends JDialog {
 		getContentPane().add(txtCliente);
 		txtCliente.setColumns(10);
 		
-		JLabel lblEmpleado = new JLabel("F1 - Cliente");
+		lblEmpleado = new JLabel("F1 - Cliente");
 		lblEmpleado.setBounds(6, 78, 103, 16);
 		getContentPane().add(lblEmpleado);
 		
@@ -90,6 +90,24 @@ public class ViewFiltroPagos extends JDialog {
 		dCBuscar2.addKeyListener(c);
 		
 		
+	}
+
+	public void conectarCtl(CtlFiltroRepPagosVendedor c){
+
+		lblEmpleado.setText("F1 - Cobrador");
+		this.setTitle("Reporte pagos clientes por cobrador");
+
+
+		btnBuscar.addActionListener( c);
+		btnBuscar.setActionCommand("GENERAR");
+
+		txtCliente.addKeyListener(c);
+		btnBuscar.addKeyListener(c);
+
+		dCBuscar1.addKeyListener(c);
+		dCBuscar2.addKeyListener(c);
+
+
 	}
 
 	/**

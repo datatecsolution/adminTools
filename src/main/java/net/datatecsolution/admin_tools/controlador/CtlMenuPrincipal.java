@@ -62,6 +62,22 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		switch (comando) {
 
+			case "REPORTE_CXC_FACTURA":
+				ViewCuentasFacturasReporte viewCuentasFacturasReporte = new ViewCuentasFacturasReporte(view);
+				CtlCuentasFacturasReporte ctlCuentasFacturasReporte = new CtlCuentasFacturasReporte(viewCuentasFacturasReporte);
+				viewCuentasFacturasReporte.dispose();
+				viewCuentasFacturasReporte = null;
+				ctlCuentasFacturasReporte = null;
+				break;
+
+			case "RUTAS_COBROS":
+				ViewListaRutasCobro viewListaRutasCobro = new ViewListaRutasCobro(view);
+				CtlRutaCobroLista ctlRutaCobroLista = new CtlRutaCobroLista(viewListaRutasCobro);
+				viewListaRutasCobro.dispose();
+				viewListaRutasCobro = null;
+				ctlRutaCobroLista = null;
+				break;
+
 			case "RUTAS_ENTREGAS":
 				if (permiso == 1 || permiso == 4) {
 					ViewListaRutasEntregas viewListaRutasEntregas = new ViewListaRutasEntregas(view);
