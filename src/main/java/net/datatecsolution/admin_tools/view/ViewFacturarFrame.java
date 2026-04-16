@@ -472,7 +472,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		//this.pack();
 		this.rdbtnCredito.setSelected(false);
-		this.rdbtnCredito.setEnabled(false);
 		
 	}
 	

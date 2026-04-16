@@ -299,11 +299,11 @@ switch(e.getKeyCode()){
 				view.getModeloFacturas().resetPago();
 					
 		}else
-			{ 
-				
-				if(view.getTxtNombrecliente().getText().trim().length()==0){
-					
-					JOptionPane.showMessageDialog(view, "El no existe el cliente");
+			{
+
+				if(myCliente==null || view.getTxtNombrecliente().getText().trim().length()==0){
+
+					JOptionPane.showMessageDialog(view, "Debe seleccionar un cliente");
 					
 				}else
 					if(view.getTxtLimiteCredito().getText().trim().length()==0){

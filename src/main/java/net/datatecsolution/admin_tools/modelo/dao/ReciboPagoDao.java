@@ -64,11 +64,14 @@ public class ReciboPagoDao extends ModeloDaoBasic {
 		{
 			con = ConexionStatic.getPoolConexion().getConnection();
 			
-			myRecibo.setCliente(this.myClienteDao.buscarPorId(myRecibo.getCliente().getId()));
-			
+			Cliente clienteRefrescado = this.myClienteDao.buscarPorId(myRecibo.getCliente().getId());
+			if(clienteRefrescado != null) {
+				myRecibo.setCliente(clienteRefrescado);
+			}
+
 			//se establece los saldo en 0
 			myRecibo.setSaldos0();
-			
+
 			//el salado anterio
 			myRecibo.setSaldoAnterior(myClienteDao.getSaldoCliente(myRecibo.getCliente().getId()));
 			

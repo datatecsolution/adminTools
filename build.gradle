@@ -83,5 +83,31 @@ dependencies {
 
 
     compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
+
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '6.5.7'
+}
+
+task dumpSchema(type: JavaExec) {
+    description = 'Genera los baselines SQL leyendo el schema de la conexion activa de ConexionStatic.'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.datatecsolution.admin_tools.modelo.SchemaDumper'
+    standardInput = System.in
+}
+
+task dumpSeed(type: JavaExec) {
+    description = 'Genera src/main/resources/db/seed/common.sql con los datos base leidos de la conexion activa.'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.datatecsolution.admin_tools.modelo.SeedDumper'
+    standardInput = System.in
+}
+
+task bootstrapDatabases(type: JavaExec) {
+    description = 'Crea admin_tools localmente y aplica su baseline Flyway. Las cajas las crea el app desde la UI.'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'net.datatecsolution.admin_tools.modelo.DatabaseBootstrap'
+    standardInput = System.in
 }
 

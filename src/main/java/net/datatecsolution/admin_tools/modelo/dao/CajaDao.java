@@ -102,30 +102,11 @@ public class CajaDao extends ModeloDaoBasic {
 				//se crea la base de datos para la facturacion
 				boolean resul=crearDataBase(caja.getCodigo());
 				
-				//si se creo correctamente la base de datos se crean las tablas y sus triger correpondientes
+				//si se creo correctamente la base de datos, Flyway aplica la baseline versionada
+				//(tablas + triggers + function) parametrizada con el nombre de la caja y su bodega.
 				if(resul){
-						
-					//se crea la tabla encabezado factura
-					crearEncabezadoTabla(caja.getNombreBd());
-					
-					//se crea la tabla detalle de factura
-					this.crearDetalleTabla(caja.getNombreBd());
-					
-					//se crea el trigger para la tabla detalle que maneja el inventario
-					crearTriggerDetalle(caja);
-					
-					//se crea funcion para calcular el costo de la factura
-					this.crearFunctionCostoFact(caja);
-					
-					//se crea la tabla detalle de factura temporar
-					//this.crearDetalleTemTabla(caja.getNombreBd());
-					
-					
-					
-					//se crea la tabla sobre los datos de la facturacion
-					this.crearDatosFacturaTabla(caja.getNombreBd());
-					
-					
+					ConexionStatic.buildSchemaMigrator()
+							.migrateNewCajaDatabase(caja.getNombreBd(), caja.getCodigoBodega());
 				}
 			}
 			//para que actualice el nombre de la base de datos

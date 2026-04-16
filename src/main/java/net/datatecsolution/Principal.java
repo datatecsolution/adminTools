@@ -15,6 +15,8 @@ import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
 import net.datatecsolution.admin_tools.view.*;
 
 
+import net.datatecsolution.admin_tools.modelo.AppLogger;
+
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import java.awt.*;
@@ -31,8 +33,7 @@ public class Principal {
     //private FacturaDao facturaDao=null;
 
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
+        AppLogger.init();
 
         Locale.setDefault(new Locale("es", "HN"));
 

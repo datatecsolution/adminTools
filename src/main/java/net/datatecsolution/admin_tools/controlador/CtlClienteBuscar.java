@@ -394,21 +394,22 @@ public boolean buscarCliente(Window v){
 				
 				
 				cargarTabla(clienteDao.buscarPorNombre(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				
-				this.view.getTabla().setRowSelectionInterval(0	, 0);
-				filaPulsada=0;
-				
-				this.myCliente=view.getModelo().getCliente(0);
+
+				if(this.view.getTabla().getRowCount() > 0) {
+					this.view.getTabla().setRowSelectionInterval(0	, 0);
+					filaPulsada=0;
+					this.myCliente=view.getModelo().getCliente(0);
+				}
 			}
-			
+
 			//si esta activado las busqueda por Marca
-			if(this.view.getRdbtnRtn().isSelected()){  
+			if(this.view.getRdbtnRtn().isSelected()){
 				cargarTabla(clienteDao.buscarPorNombre(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				this.view.getTabla().setRowSelectionInterval(0	, 0);
-				filaPulsada=0;
-				
-				
-				this.myCliente=view.getModelo().getCliente(0);
+				if(this.view.getTabla().getRowCount() > 0) {
+					this.view.getTabla().setRowSelectionInterval(0	, 0);
+					filaPulsada=0;
+					this.myCliente=view.getModelo().getCliente(0);
+				}
 			}
 			
 			//si esta activado la busqueda por id

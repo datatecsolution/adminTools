@@ -638,6 +638,29 @@ public class CtlFacturarFrame
 
 	}
 
+	private void setFacturaBasica() {
+		if (myCliente == null) {
+			myCliente = new Cliente();
+			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
+			myCliente.setNombre(this.view.getTxtNombrecliente().getText());
+			myCliente.setRtn(view.getTxtRtn().getText());
+		}
+
+		if (this.view.getRdbtnContado().isSelected()) {
+			myFactura.setTipoFactura(1);
+			myFactura.setEstadoPago(1);
+		}
+
+		if (this.view.getRdbtnCredito().isSelected()) {
+			myFactura.setTipoFactura(2);
+			myFactura.setEstadoPago(0);
+		}
+
+		myFactura.setCliente(myCliente);
+		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
+		myFactura.setFecha(facturaDao.getFechaSistema());
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -2131,7 +2154,7 @@ public class CtlFacturarFrame
 	private void guardar() {
 
 		if (view.getModeloTabla().getRowCount() > 1) {
-			setFactura();
+			setFacturaBasica();
 			myFactura.setCodigoCaja(ConexionStatic.getUsuarioLogin().getCajaActiva().getCodigo());
 
 			boolean resulVendedor = false;
@@ -2161,6 +2184,9 @@ public class CtlFacturarFrame
 			}
 
 			if (resulVendedor) {// verifica si ingreso el codigo del bomber
+				System.err.println("[DEBUG guardar] vendedor codigo: " + myFactura.getVendedor().getCodigo());
+				System.err.println("[DEBUG guardar] codigoCaja: " + myFactura.getCodigoCaja());
+				System.err.println("[DEBUG guardar] usuario: " + ConexionStatic.getUsuarioLogin().getUser());
 
 				boolean resultado = facturaOrdenesDao.registrar(myFactura);
 
@@ -2191,8 +2217,7 @@ public class CtlFacturarFrame
 	}
 
 	private void actualizar() {
-		// TODO Auto-generated method stub
-		setFactura();
+		setFacturaBasica();
 		facturaOrdenesDao.actualizar(myFactura);
 		// this.view.setVisible(false);
 		// giu

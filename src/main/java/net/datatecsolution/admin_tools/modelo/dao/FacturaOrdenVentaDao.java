@@ -276,13 +276,23 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			//psConsultas = con.prepareStatement(super.getQuerySelect()+" where empleados.usuario=?;");
 			//psConsultas = con.prepareStatement(super.getQuerySearch(" empleados.usuario ", "="));
 
-			psConsultas = con.prepareStatement(super.getQuerySearchJoin("estado<3 and empleados.usuario", "=", "empleados", "codigo_empleado", "codigo_vendedor"));
-			//psConsultas = con.prepareStatement(super.getQuerySearchJoin(campo, operador, tableJoin, campoTableJoin, campoJoin)
+			String sqlOrdenes = super.getQuerySelect()
+				+ " JOIN (SELECT encabezado_factura_temp.numero_factura FROM "
+				+ super.DbName + ".encabezado_factura_temp LEFT JOIN "
+				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
+				+ "WHERE encabezado_factura_temp.estado < 3 "
+				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
+				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
+				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
+			psConsultas = con.prepareStatement(sqlOrdenes);
 			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(2, 0);
-			psConsultas.setInt(3, 20);
+			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setInt(3, 0);
+			psConsultas.setInt(4, 20);
 
-			//System.out.println(psConsultas);
+			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] SQL: " + psConsultas);
+			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] usuario: " + ConexionStatic.getUsuarioLogin().getUser());
 			res = psConsultas.executeQuery();
 
 			while(res.next()){

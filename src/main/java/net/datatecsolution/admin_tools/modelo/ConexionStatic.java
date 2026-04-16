@@ -23,10 +23,10 @@ public abstract class ConexionStatic implements Runnable {
 
 	// LOCAL_PRODUCCION
 	//private static String login = "admin";
-	//private static String login = "root";
-	//private static String password = "Jdmm123?";
-	//private static String password = "Jdmm123.";
-	//private static String server = "127.0.0.1";
+	private static String login = "root";
+	// private static String password = "Jdmm123?";
+	private static String password = "Jdmm123.";
+	private static String server = "127.0.0.1";
 	// private static String server = "192.168.1.110";
 
 	/*
@@ -120,12 +120,12 @@ public abstract class ConexionStatic implements Runnable {
 	 * private static String server = "192.168.1.10";
 	 * 
 	 */
-	 //DISTRIBUIDORA SHAROM
-	 private static String login = "admin";
-	 private static String password = "ronLsnta123.";
-	 //private static String server = "192.168.88.254";
-	 private static String server = "201.190.38.238";
-	 /*
+	// DISTRIBUIDORA SHAROM
+	//private static String login = "admin";
+	//private static String password = "ronLsnta123.";
+	// private static String server = "192.168.88.254";
+	//private static String server = "201.190.38.238";
+	/*
 	 * 
 	 * //MISCELANIAS W&C
 	 * private static String login = "user_pos";
@@ -159,7 +159,8 @@ public abstract class ConexionStatic implements Runnable {
 	 * 
 	 */
 
-	private static String url = "jdbc:mysql://" + server + ":3333/" + bd + "?serverTimezone=GMT-6";
+	private static String url = "jdbc:mysql://" + server + ":3306/" + bd + "?serverTimezone=GMT-6";
+	private static String urlTemplate = "jdbc:mysql://" + server + ":3306/%s?serverTimezone=GMT-6";
 	private static String driver = "com.mysql.cj.jdbc.Driver";
 
 	private static Usuario usuarioLogin = null;
@@ -174,7 +175,22 @@ public abstract class ConexionStatic implements Runnable {
 
 	public static void conectarBD() {
 		poolConexiones = setDataSource("mysql");
+		aplicarMigraciones();
+	}
 
+	private static void aplicarMigraciones() {
+		try {
+			buildSchemaMigrator().migrateAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+					"No se pudieron aplicar las migraciones de la base de datos:\n" + e.getMessage(),
+					"Error al migrar el esquema", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static SchemaMigrator buildSchemaMigrator() {
+		return new SchemaMigrator(urlTemplate, login, password, driver);
 	}
 
 	public static boolean getNivelFact() {
@@ -193,6 +209,12 @@ public abstract class ConexionStatic implements Runnable {
 	public static DataSource getPoolConexion() {
 		return ConexionStatic.poolConexiones;
 	}
+
+	static String getServer() { return server; }
+	static String getLogin() { return login; }
+	static String getPassword() { return password; }
+	static String getDriver() { return driver; }
+	static String getUrlTemplate() { return urlTemplate; }
 
 	public void setUsuario(Usuario u) {
 		ConexionStatic.usuarioLogin = u;
