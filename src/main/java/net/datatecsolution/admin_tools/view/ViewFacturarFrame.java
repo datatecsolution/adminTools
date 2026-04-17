@@ -78,9 +78,28 @@ public class ViewFacturarFrame extends JInternalFrame {
 	private final JMenuItem mntmEliminar;
 	private final JMenuItem mntmImprimir;
 	private final JPopupMenu menuContextual;
+	private final Color colorNormal;
+	private static final Color COLOR_EDITANDO = new Color(214, 245, 224);
 
 	public JPanel getPanelGuardados() {
 		return panelGuardados;
+	}
+
+	public void setEstadoFactura(boolean editando, int numeroFactura) {
+		TitledBorder border;
+		if (editando) {
+			border = new TitledBorder(new LineBorder(new Color(130, 135, 144)),
+				"Editando Orden #" + numeroFactura, TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0));
+			panelDatosFactura.setBackground(COLOR_EDITANDO);
+		} else {
+			border = new TitledBorder(new LineBorder(new Color(130, 135, 144)),
+				"Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0));
+			panelDatosFactura.setBackground(colorNormal);
+		}
+		panelDatosFactura.setBorder(BorderFactory.createCompoundBorder(
+			border, BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(130, 135, 144))
+		));
+		panelDatosFactura.repaint();
 	}
 
 	public ViewFacturarFrame(String string, boolean b, boolean c, boolean d, boolean e) {
@@ -103,6 +122,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		miEsquema=new BorderLayout();
 		Color color1 =new Color(60, 179, 113);
 		Color color3 =Color.decode("#d4f4ff");
+		colorNormal = color3;
 		Color color4 =Color.decode("#f4fbfe");
 		
 		
@@ -116,7 +136,8 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelAcciones.setPreferredSize(new Dimension(140,128));
 		panelAcciones.setBackground(color3);
 		panelNorte=new JPanel();
-		panelNorte.setBackground(color1);
+		panelNorte.setBackground(color3);
+		panelNorte.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
 		getContentPane().add(panelNorte, BorderLayout.NORTH);
 		panelNorte.setLayout(new BorderLayout(0, 0));
 				
@@ -131,13 +152,14 @@ public class ViewFacturarFrame extends JInternalFrame {
 		tableDetalle = new JTable();
 		tableDetalle.setModel(modeloTabla);
 		tableDetalle.setDefaultRenderer(String.class, renderizador);
-		tableDetalle.getColumnModel().getColumn(0).setPreferredWidth(420);	//
-		tableDetalle.getColumnModel().getColumn(1).setPreferredWidth(80);
-		tableDetalle.getColumnModel().getColumn(2).setPreferredWidth(80);
-		tableDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
-		tableDetalle.getColumnModel().getColumn(4).setPreferredWidth(80);
-		tableDetalle.getColumnModel().getColumn(5).setPreferredWidth(80);
-		tableDetalle.getColumnModel().getColumn(6).setPreferredWidth(100);
+		tableDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		tableDetalle.getColumnModel().getColumn(0).setPreferredWidth(400);
+		tableDetalle.getColumnModel().getColumn(1).setPreferredWidth(120);
+		tableDetalle.getColumnModel().getColumn(2).setPreferredWidth(100);
+		tableDetalle.getColumnModel().getColumn(3).setPreferredWidth(100);
+		tableDetalle.getColumnModel().getColumn(4).setPreferredWidth(100);
+		tableDetalle.getColumnModel().getColumn(5).setPreferredWidth(100);
+		tableDetalle.getColumnModel().getColumn(6).setPreferredWidth(180);
 		
 		tableDetalle.setRowHeight(30);
 		tableDetalle.setToolTipText("Use +/- para cantidades, Delete para eliminar, F7 descuento, F8 precio");
@@ -151,10 +173,14 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelNorte.add(panel_2, BorderLayout.WEST);
 		
 		lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(ViewFacturarFrame.class.getResource("/drawable/logo_facturar.png")));
+		ImageIcon logoOriginal = new ImageIcon(ViewFacturarFrame.class.getResource("/drawable/logo_facturar.png"));
+		int logoAlto = 55;
+		int logoAncho = logoOriginal.getIconWidth() * logoAlto / logoOriginal.getIconHeight();
+		lblLogo.setIcon(new ImageIcon(logoOriginal.getImage().getScaledInstance(logoAncho, logoAlto, Image.SCALE_SMOOTH)));
 		panel_2.add(lblLogo);
 		
 		panel_1 = new JPanel();
+		panel_1.setBackground(color3);
 		panel_1.setLayout(new BorderLayout(0, 0));
 		panelNorte.add(panel_1, BorderLayout.CENTER);
 		
@@ -162,10 +188,13 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		
 		panelDatosFactura=new JPanel();
-		panel_1.add(panelDatosFactura, BorderLayout.CENTER);
+		panel_1.add(panelDatosFactura, BorderLayout.NORTH);
 		panelDatosFactura.setBackground(color3);
-		
-		panelDatosFactura.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+
+		panelDatosFactura.setBorder(BorderFactory.createCompoundBorder(
+			new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)),
+			BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(130, 135, 144))
+		));
 		panelDatosFactura.setLayout(new GridLayout(0, 5, 10, 0));
 
 		lblCodigoCliente = new JLabel("Id Cliente");
@@ -232,24 +261,23 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		panelBuscar= new JPanel();
 		panelBuscar.setBackground(color3);
-		panel_1.add(panelBuscar, BorderLayout.SOUTH);
-		panelBuscar.setLayout(new GridLayout(2, 3, 7, 1));
-		
-	
-		
-		JLabel lblBuscar = new JLabel(" Buscar");
+		panelBuscar.setLayout(new BorderLayout(5, 0));
+
+		JLabel lblBuscar = new JLabel(" Buscar:");
 		lblBuscar.setFont(new Font("Georgia", Font.BOLD, 13));
-		lblBuscar.setHorizontalAlignment(SwingConstants.LEFT);
-		lblBuscar.setVerticalAlignment(SwingConstants.BOTTOM);
-		panelBuscar.add(lblBuscar);
-		
+		panelBuscar.add(lblBuscar, BorderLayout.WEST);
+
 		txtBuscar = new JTextField();
 		txtBuscar.setForeground(Color.WHITE);
 		txtBuscar.setBackground(new Color(30, 120, 70));
 		txtBuscar.setToolTipText("Buscar articulo por nombre o codigo de barras");
-		panelBuscar.add(txtBuscar);
-		txtBuscar.setColumns(10);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		txtBuscar.setPreferredSize(new Dimension(0, 30));
+		panelBuscar.add(txtBuscar, BorderLayout.CENTER);
+
+		JPanel panelCentral = new JPanel(new BorderLayout());
+		panelCentral.add(panelBuscar, BorderLayout.NORTH);
+		panelCentral.add(scrollPane, BorderLayout.CENTER);
+		getContentPane().add(panelCentral, BorderLayout.CENTER);
 		
 		getContentPane().add(panelAcciones, BorderLayout.WEST);
 		panelAcciones.setLayout(new GridLayout(9, 1, 0, 0));
@@ -342,12 +370,12 @@ public class ViewFacturarFrame extends JInternalFrame {
 		lblDescuento.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblDescuento);
 		
-		lblImpuesto = new JLabel("Impuesto 6");
+		lblImpuesto = new JLabel("Impuesto 15");
 		lblImpuesto.setFont(new Font("Georgia", Font.BOLD, 13));
 		lblImpuesto.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblImpuesto);
 		
-		JLabel lblImpuesto_1 = new JLabel("Impuesto 10");
+		JLabel lblImpuesto_1 = new JLabel("Impuesto 18");
 		lblImpuesto_1.setFont(new Font("Georgia", Font.BOLD, 13));
 		lblImpuesto_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblImpuesto_1);

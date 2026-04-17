@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,94 +47,44 @@ public class ViewModuloFacturar extends JFrame {
 		barra.add(btnAgregar);
 		
 		btnDescuento =new BotonDescuento();
-		btnDescuento.addActionListener(new ActionListener() {
-			
-
-			@SuppressWarnings("deprecation")
-			public void actionPerformed(ActionEvent e) {
-				
-				ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
-				if(activo!=null){
-					KeyEvent key = new KeyEvent(btnDescuento, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_F7);
-					activo.getCtl().keyPressed(key);
-				}
-			}
+		btnDescuento.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().aplicarDescuento();
 		});
 		barra.add(btnDescuento);
-		
-		btnPrecio=new BotonPrecio();
-		btnPrecio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
 
-				ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
-				if(activo!=null){
-					KeyEvent key = new KeyEvent(btnPrecio, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_F8);
-					activo.getCtl().keyPressed(key);
-				}
-			}
+		btnPrecio=new BotonPrecio();
+		btnPrecio.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().modificarPrecio();
 		});
 		barra.add(btnPrecio);
-		
-		btnCantidad=new BotonCantidad();
-		btnCantidad.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
 
-				ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
-				if(activo!=null){
-					KeyEvent key = new KeyEvent(btnCantidad, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_F9);
-					activo.getCtl().keyPressed(key);
-				}
-			}
+		btnCantidad=new BotonCantidad();
+		btnCantidad.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().modificarCantidad();
 		});
 		barra.add(btnCantidad);
-		
+
 		btnClientes = new BotonCliente();
-		btnClientes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-/*
-				ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(null);
-				CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(viewCuentasFacturas);
-
-
-				viewCuentasFacturas.dispose();
-				ctlCuentasFacturas=null;
-
- */
-				ViewCobro viewCobro=new ViewCobro(null);
-				CtlCobro ctlCobro=new CtlCobro(viewCobro);
-				
-				viewCobro.dispose();
-				viewCobro=null;
-				ctlCobro=null;
-
-			}
+		btnClientes.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().abrirCobros();
 		});
 		barra.add(btnClientes);
-		
+
 		btnProveedores = new BotonProveedor();
-		btnProveedores.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				ViewPagoProveedor vPagoProveedores=new ViewPagoProveedor(null);
-				vPagoProveedores.getCbFormaPago().setEnabled(false);
-				CtlPagoProveedor cPagoProveedores=new CtlPagoProveedor(vPagoProveedores);
-				
-				vPagoProveedores.dispose();
-				cPagoProveedores=null;
-			}
+		btnProveedores.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().abrirPagoProveedor();
 		});
 		barra.add(btnProveedores);
-		
-		btnSalidas = new BotonSalida();
-		btnSalidas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ViewSalidaCaja viewSalida = new ViewSalidaCaja(null);
-				CtlSalidaCaja ctlSalida = new CtlSalidaCaja(viewSalida);
 
-				viewSalida.dispose();
-				viewSalida = null;
-				ctlSalida = null;
-			}
+		btnSalidas = new BotonSalida();
+		btnSalidas.addActionListener(e -> {
+			ViewFacturarFrame activo=(ViewFacturarFrame)elEscritorio.getSelectedFrame();
+			if(activo!=null) activo.getCtl().abrirSalidaCaja();
 		});
 		barra.add(btnSalidas);
 		

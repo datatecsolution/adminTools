@@ -78,7 +78,9 @@ El módulo de facturación se compone de **dos clases** que trabajan juntas:
 - Mover el campo de búsqueda justo encima de la tabla de detalle (entre el panelNorte y el scrollPane).
 - Hacerlo más prominente: mayor altura, placeholder text "Buscar artículo por nombre o código...".
 
-**Estado:** Pendiente. Requiere reestructurar paneles.
+**Solucion aplicada:** Campo de búsqueda movido a un panelCentral (BorderLayout.NORTH) justo encima del scrollPane de la tabla. Layout cambiado de GridLayout a BorderLayout con label "Buscar:" a la izquierda y campo expandible al centro.
+
+**Estado:** Corregido.
 
 ---
 
@@ -118,12 +120,9 @@ El módulo de facturación se compone de **dos clases** que trabajan juntas:
 
 El usuario tiene dos formas de llegar a lo mismo, pero ninguna se lo indica.
 
-**Propuesta:**
-- Decidir si estas acciones viven en la barra o en el panel lateral, no en ambos.
-- Si se quedan en la barra: agregar tooltip con el atajo de teclado.
-- Si se mueven al panel lateral: eliminar de la barra para simplificar.
+**Solucion aplicada:** Código duplicado extraído a métodos públicos en CtlFacturarFrame (`abrirCobros()`, `abrirPagoProveedor()`, `abrirSalidaCaja()`). Los botones de la barra y los atajos F10/F11/F12 ahora llaman al mismo método. También se hicieron públicos `aplicarDescuento()`, `modificarPrecio()`, `modificarCantidad()` y se eliminaron los KeyEvent sintéticos (resuelve 2.13). Código muerto comentado eliminado (resuelve 2.14).
 
-**Estado:** Pendiente. Requiere decisión de diseño.
+**Estado:** Corregido.
 
 ---
 
@@ -135,11 +134,9 @@ El usuario tiene dos formas de llegar a lo mismo, pero ninguna se lo indica.
 - Indicador de si la factura actual es **nueva** o se está **editando** una pendiente.
 - Indicador de conexión a base de datos (hoy solo se detecta al cobrar).
 
-**Propuesta reducida:**
-- Cambiar el título del JInternalFrame dinámicamente: "Factura Nueva" vs "Editando Factura #123".
-- Cambiar el color del panelNorte cuando se edita una factura pendiente (ej: tono amarillo suave).
+**Solucion aplicada:** Método `setEstadoFactura(boolean, int)` en ViewFacturarFrame. Factura nueva muestra "Datos Generales" con fondo normal (`#d4f4ff`). Al editar una orden pendiente muestra "Editando Orden #N" con fondo verde claro (`214, 245, 224`) acorde a la paleta. Se llama en 4 puntos del controlador: `setEmptyView()`, `cargarFacturaPendiente()`, `buscarOrden()`, `actualizarFactura()`.
 
-**Estado:** Pendiente.
+**Estado:** Corregido.
 
 ---
 
@@ -168,11 +165,9 @@ El usuario tiene dos formas de llegar a lo mismo, pero ninguna se lo indica.
 
 **Problema:** La columna 0 de la tabla tiene 420px fijos. Al estar maximizada la ventana en un monitor grande, la distribución de columnas se desbalancea.
 
-**Propuesta:**
-- Usar `tableDetalle.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS)` para que las columnas se ajusten al ancho disponible.
-- Redistribuir proporciones: Descripción 40%, Precio 12%, Cantidad 10%, Impuesto 10%, Descuento 10%, Total 18%.
+**Solucion aplicada:** Agregado `AUTO_RESIZE_ALL_COLUMNS`. Proporciones redistribuidas: Artículo 400, Precio 120, Cantidad 100, SubTotal 100, Impuesto 100, Descuento 100, Total 180.
 
-**Estado:** Pendiente.
+**Estado:** Corregido.
 
 ---
 
@@ -224,22 +219,19 @@ Esto acopla la barra de menú al mecanismo de teclado del controlador. Si alguie
 - Llamar directamente al método: `activo.getCtl().aplicarDescuento()`.
 - Lo mismo para F8 → `modificarPrecio()` y F9 → `modificarCantidad()`.
 
-**Estado:** Pendiente.
+**Solucion aplicada:** Resuelto como parte de 2.5. Botones de la barra llaman directamente a `aplicarDescuento()`, `modificarPrecio()`, `modificarCantidad()`.
+
+**Estado:** Corregido.
 
 ---
 
-### 2.14 BAJO - Codigo muerto en ViewModuloFacturar
+### 2.14 BAJO - Codigo muerto en ViewModuloFacturar [CORREGIDO]
 
-**Problema:** Bloque de código comentado en el ActionListener de `btnClientes` (líneas 94-102):
-```java
-/* ViewCuentasFacturas viewCuentasFacturas=new ViewCuentasFacturas(null);
-   CtlCuentasFacturas ctlCuentasFacturas=new CtlCuentasFacturas(...); */
-```
-También: comentarios TODO en catch blocks, comentarios de código eliminado.
+**Problema:** Bloque de código comentado en el ActionListener de `btnClientes` (líneas 94-102).
 
-**Propuesta:** Eliminar código comentado.
+**Solucion aplicada:** Resuelto como parte de 2.5. Código comentado eliminado, ActionListeners simplificados a lambdas.
 
-**Estado:** Pendiente.
+**Estado:** Corregido.
 
 ---
 
@@ -275,28 +267,33 @@ También: comentarios TODO en catch blocks, comentarios de código eliminado.
 
 ## 3. Resumen de estado
 
-### Ya corregidos (esta sesion)
+### Ya corregidos
 | # | Cambio | Clase |
 |---|--------|-------|
 | 2.1 | GridLayout totales: `(2,10,-20,-20)` → `(2,5,5,2)` | ViewFacturarFrame |
+| 2.2 | Campo búsqueda reubicado junto a tabla | ViewFacturarFrame |
 | 2.3 | RadioButtons: descartado (diseño intencional) | ViewFacturarFrame |
 | 2.4 | Atajos visibles: F1, Ctrl+G, Ctrl+A | ViewFacturarFrame |
+| 2.5 | Funciones unificadas: llamadas directas a métodos públicos del controlador | Ambas |
+| 2.6 | Indicador de estado nueva/editando orden con color diferenciado | ViewFacturarFrame + CtlFacturarFrame |
 | 2.7 | Tooltips en 13 componentes | ViewFacturarFrame |
 | 2.8 | Contraste de búsqueda mejorado | ViewFacturarFrame |
+| 2.9 | Columnas de tabla proporcionales con AUTO_RESIZE_ALL_COLUMNS | ViewFacturarFrame |
 | 2.10 | Panel pendientes con título y altura | ViewFacturarFrame |
 | 2.11 | Código muerto eliminado | ViewFacturarFrame |
 | 2.12 | Bug scope panelNorte corregido | ViewFacturarFrame |
+| 2.13 | KeyEvent sintético eliminado (resuelto con 2.5) | ViewModuloFacturar |
+| 2.14 | Código muerto limpiado (resuelto con 2.5) | ViewModuloFacturar |
 | 2.15 | Fecha movida a barra de menú | Ambas + CtlFacturarFrame |
+| — | Barra título InternalFrame eliminada | ViewFacturarFrame |
+| — | Logo reducido, separador visual, gap sutil | ViewFacturarFrame |
+| — | Altura uniforme botones texto en barra de menú | ViewModuloFacturar + BotonesApp |
+| — | Foco automático en txtBuscar al abrir ventana | ViewModuloFacturar |
 
 ### Pendientes
-| # | Cambio | Clase | Esfuerzo |
-|---|--------|-------|----------|
-| 2.2 | Reubicar campo de búsqueda | ViewFacturarFrame | Medio |
-| 2.5 | Unificar funciones duplicadas barra/panel | Ambas | Medio |
-| 2.6 | Indicador de estado (nueva/editando) | ViewFacturarFrame | Bajo |
-| 2.9 | Columnas de tabla proporcionales | ViewFacturarFrame | Bajo |
-| 2.13 | Eliminar KeyEvent sintético | ViewModuloFacturar | Bajo |
-| 2.14 | Limpiar código muerto | ViewModuloFacturar | Bajo |
+| # | Cambio | Estado |
+|---|--------|--------|
+| 2.16 | Deuda técnica JDesktopPane/JInternalFrame | Documentado, sin acción planificada |
 
 ---
 

@@ -379,7 +379,7 @@ public class CtlFacturarFrame
 		}
 	}
 
-	private void aplicarDescuento() {
+	public void aplicarDescuento() {
 		double maxDescuento = 35;
 		JPanel panelDescuento = new JPanel();
 		panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -486,7 +486,7 @@ public class CtlFacturarFrame
 		this.calcularTotales();
 	}
 
-	private void modificarPrecio() {
+	public void modificarPrecio() {
 		if (config.isPwdPrecio()) {
 			if (!solicitarPasswordAdmin()) {
 				return;
@@ -502,7 +502,7 @@ public class CtlFacturarFrame
 		}
 	}
 
-	private void modificarCantidad() {
+	public void modificarCantidad() {
 		if (filaPulsada < 0) return;
 
 		String entrada = JOptionPane.showInputDialog(view, "Escriba el cantida");
@@ -588,6 +588,25 @@ public class CtlFacturarFrame
 				this.calcularTotales();
 			}
 		}
+	}
+
+	public void abrirCobros() {
+		ViewCobro viewCobro = new ViewCobro(null);
+		CtlCobro ctlCobro = new CtlCobro(viewCobro);
+		viewCobro.dispose();
+	}
+
+	public void abrirPagoProveedor() {
+		ViewPagoProveedor vPagoProveedores = new ViewPagoProveedor(null);
+		vPagoProveedores.getCbFormaPago().setEnabled(false);
+		CtlPagoProveedor cPagoProveedores = new CtlPagoProveedor(vPagoProveedores);
+		vPagoProveedores.dispose();
+	}
+
+	public void abrirSalidaCaja() {
+		ViewSalidaCaja viewSalida = new ViewSalidaCaja(null);
+		CtlSalidaCaja ctlSalida = new CtlSalidaCaja(viewSalida);
+		viewSalida.dispose();
 	}
 
 	private void seleccionarPrecioEspecifico() {
@@ -755,6 +774,7 @@ public class CtlFacturarFrame
 		this.view.getBtnGuardar().setEnabled(false);
 		this.view.getBtnActualizar().setEnabled(true);
 		this.view.getModeloTabla().agregarDetalle();
+		this.view.setEstadoFactura(true, numeroFactura);
 		tipoView = 2;
 	}
 
@@ -1159,34 +1179,15 @@ public class CtlFacturarFrame
 				break;
 
 			case KeyEvent.VK_F10:
-
-				ViewCobro viewCobro = new ViewCobro(null);
-				CtlCobro ctlCobro = new CtlCobro(viewCobro);
-
-				viewCobro.dispose();
-				viewCobro = null;
-				ctlCobro = null;
-
+				abrirCobros();
 				break;
 
 			case KeyEvent.VK_F11:
-				ViewPagoProveedor vPagoProveedores = new ViewPagoProveedor(null);
-				vPagoProveedores.getCbFormaPago().setEnabled(false);
-				CtlPagoProveedor cPagoProveedores = new CtlPagoProveedor(vPagoProveedores);
-
-				vPagoProveedores.dispose();
-				cPagoProveedores = null;
+				abrirPagoProveedor();
 				break;
 
 			case KeyEvent.VK_F12:
-
-				ViewSalidaCaja viewSalida = new ViewSalidaCaja(null);
-				CtlSalidaCaja ctlSalida = new CtlSalidaCaja(viewSalida);
-
-				viewSalida.dispose();
-				viewSalida = null;
-				ctlSalida = null;
-
+				abrirSalidaCaja();
 				break;
 
 			case KeyEvent.VK_ESCAPE:
@@ -1712,6 +1713,7 @@ public class CtlFacturarFrame
 		this.view.getTxtTotal().setText("0.00");
 		this.myFactura.setObservacion("");
 		this.view.getRdbtnContado().setSelected(true);
+		this.view.setEstadoFactura(false, 0);
 
 		this.view.getTxtBuscar().requestFocusInWindow();
 	}
@@ -1736,6 +1738,7 @@ public class CtlFacturarFrame
 			this.view.getBtnGuardar().setEnabled(false);
 			this.view.getBtnActualizar().setEnabled(true);
 			this.view.getModeloTabla().agregarDetalle();
+			this.view.setEstadoFactura(true, myFactura.getIdFactura());
 			tipoView = 2;
 
 		}
@@ -1844,12 +1847,13 @@ public class CtlFacturarFrame
 	}
 
 	public Factura actualizarFactura(Factura f) {
-	
+
 		this.myFactura = f;
 		cargarFacturaView();
 		this.view.getBtnGuardar().setVisible(false);
 		this.view.getBtnActualizar().setVisible(true);
 		this.view.getModeloTabla().agregarDetalle();
+		this.view.setEstadoFactura(true, f.getIdFactura());
 		tipoView = 2;
 		this.view.setVisible(true);
 
