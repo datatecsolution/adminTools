@@ -417,29 +417,27 @@ public class CtlFacturarFrame
 				Factura eliminarTem = new Factura();
 				eliminarTem.setIdFactura(idFacturaTemporal2);
 
-				JPasswordField pf = new JPasswordField();
-				int action = JOptionPane.showConfirmDialog(view,
-						"Desea eliminar la orden de "
-								+ view.getBtnsGuardador().getFacturaSeleted().getCliente().getNombre() + " ?",
-						"Confirmacion", JOptionPane.OK_CANCEL_OPTION);
-				// JOptionPane.showMessageDialog(view,"La accion es: "+action);
+				JPasswordField pf = crearPasswordConFoco();
+				int action = JOptionPane.showConfirmDialog(view, pf, "Escriba el password de admin",
+						JOptionPane.OK_CANCEL_OPTION);
 				if (action == 0) {
+					String pwd = new String(pf.getPassword());
+					if (myUsuarioDao.comprobarAdmin(pwd)) {
 
-					this.facturaOrdenesDao.eliminar(eliminarTem);
+						this.facturaOrdenesDao.eliminar(eliminarTem);
 
-					this.tipoView = 1;
-					this.view.getBtnGuardar().setEnabled(true);
-					this.view.getBtnActualizar().setEnabled(false);
+						this.tipoView = 1;
+						this.view.getBtnGuardar().setEnabled(true);
+						this.view.getBtnActualizar().setEnabled(false);
 
-					// view.getBtnsGuardador().setFactura(myFactura);
+						setEmptyView();
 
-					// setEmptyView();
-					setEmptyView();
+						view.getBtnsGuardador().deleteAll();
 
-					view.getBtnsGuardador().deleteAll();
-
-					cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
-
+						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+					} else {
+						JOptionPane.showMessageDialog(view, "Password incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 
 				break;
@@ -701,22 +699,21 @@ public class CtlFacturarFrame
 
 	}
 
-	// determina si el evento debe desencadenar el men� contextual
 	private void checkForTriggerEvent(MouseEvent evento) {
 		if (evento.isPopupTrigger()) {
 
-			// se recoge el boton que produjo en evento
 			JToggleButton even = (JToggleButton) evento.getComponent();
-			even.setSelected(true);// se selecciona
+			even.setSelected(true);
 
-			// se consigue el codigo de factura del boton seleccionado
-			int idFacturaTemporal = view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-			// se carga la factura en la view.
+			Factura facturaSeleccionada = view.getBtnsGuardador().getFacturaSeleted();
+			if (facturaSeleccionada == null || facturaSeleccionada.getIdFactura() <= 0) return;
+
+			int idFacturaTemporal = facturaSeleccionada.getIdFactura();
 			this.cargarFacturaPendiente(idFacturaTemporal);
 			this.view.getMenuContextual().show(evento.getComponent(), evento.getX(), evento.getY());
 
 		}
-	} // fin del metodo checkForTriggerEvent
+	}
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
@@ -1015,17 +1012,22 @@ public class CtlFacturarFrame
 				panelDescuento.add(etiqueta);
 
 				JTextField descuento = new JTextField(15);
+				descuento.addAncestorListener(new javax.swing.event.AncestorListener() {
+					public void ancestorAdded(javax.swing.event.AncestorEvent e) {
+						SwingUtilities.invokeLater(() -> descuento.requestFocusInWindow());
+					}
+					public void ancestorRemoved(javax.swing.event.AncestorEvent e) {}
+					public void ancestorMoved(javax.swing.event.AncestorEvent e) {}
+				});
 				panelDescuento.add(descuento);
 				// dfs
 				JCheckBox rememberChk = new JCheckBox("Agregar descuento a todos los items?");
 				panelDescuento.add(rememberChk);
-
-				descuento.requestFocusInWindow();
 				// sdfsdf
 
 				// si es necesario el password para el descuento
 				if (ConexionStatic.getUsuarioLogin().getConfig().isPwdDescuento()) {
-					JPasswordField pfs = new JPasswordField();
+					JPasswordField pfs = crearPasswordConFoco();
 					int action2 = JOptionPane.showConfirmDialog(view, pfs, "Escriba el password de admin",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (action2 < 0) {
@@ -1280,7 +1282,7 @@ public class CtlFacturarFrame
 
 				if (ConexionStatic.getUsuarioLogin().getConfig().isPwdPrecio()) {
 
-					JPasswordField pf = new JPasswordField();
+					JPasswordField pf = crearPasswordConFoco();
 					int action = JOptionPane.showConfirmDialog(view, pf, "Escriba el password de admin",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (action < 0) {
@@ -1330,6 +1332,8 @@ public class CtlFacturarFrame
 				if (filaPulsada >= 0) {
 
 					String entrada = JOptionPane.showInputDialog(view, "Escriba el cantida");
+
+					if (entrada == null || entrada.trim().isEmpty()) break;
 
 					// se verfica en la configuracion si se puede facturar sin inventario
 					if (ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario()) {
@@ -1494,7 +1498,7 @@ public class CtlFacturarFrame
 					// activar para redondiar el precio de venta final
 					if (ConexionStatic.getUsuarioLogin().getConfig().isDeleteItemFact()) {
 
-						JPasswordField pfs = new JPasswordField();
+						JPasswordField pfs = crearPasswordConFoco();
 						int action2 = JOptionPane.showConfirmDialog(view, pfs, "Escriba el password de admin",
 								JOptionPane.OK_CANCEL_OPTION);
 						if (action2 >= 0) {
@@ -1527,7 +1531,7 @@ public class CtlFacturarFrame
 			case KeyEvent.VK_LEFT:
 
 				if (ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()) {
-					JPasswordField pf2 = new JPasswordField();
+					JPasswordField pf2 = crearPasswordConFoco();
 					int action2 = JOptionPane.showConfirmDialog(view, pf2, "Escriba el password de admin",
 							JOptionPane.OK_CANCEL_OPTION);
 					if (action2 < 0) {
@@ -1557,7 +1561,7 @@ public class CtlFacturarFrame
 
 				if (ConexionStatic.getUsuarioLogin().getConfig().isPwdEntrePrecio()) {
 
-					JPasswordField pf3 = new JPasswordField();
+					JPasswordField pf3 = crearPasswordConFoco();
 					int action3 = JOptionPane.showConfirmDialog(view, pf3, "Escriba el password de admin",
 							JOptionPane.OK_CANCEL_OPTION);
 					// String pwd=JOptionPane.showInputDialog(view, "Escriba el password admin",
@@ -1778,7 +1782,7 @@ public class CtlFacturarFrame
 		// para aplicar un precio en especifico
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_UP) {
 
-			JPasswordField pfs = new JPasswordField();
+			JPasswordField pfs = crearPasswordConFoco();
 			int action2 = JOptionPane.showConfirmDialog(view, pfs, "Escriba el password de admin",
 					JOptionPane.OK_CANCEL_OPTION);
 			if (action2 < 0) {
@@ -2151,6 +2155,18 @@ public class CtlFacturarFrame
 
 	}
 
+	private JPasswordField crearPasswordConFoco() {
+		JPasswordField pf = new JPasswordField();
+		pf.addAncestorListener(new javax.swing.event.AncestorListener() {
+			public void ancestorAdded(javax.swing.event.AncestorEvent e) {
+				SwingUtilities.invokeLater(() -> pf.requestFocusInWindow());
+			}
+			public void ancestorRemoved(javax.swing.event.AncestorEvent e) {}
+			public void ancestorMoved(javax.swing.event.AncestorEvent e) {}
+		});
+		return pf;
+	}
+
 	private void guardar() {
 
 		if (view.getModeloTabla().getRowCount() > 1) {
@@ -2445,8 +2461,8 @@ public class CtlFacturarFrame
 		viewListaArticulo.pack();
 		ctlArticulo.view.getTxtBuscar().setText("");
 		ctlArticulo.view.getTxtBuscar().selectAll();
-		view.getTxtBuscar().requestFocusInWindow();
 		viewListaArticulo.conectarControladorBuscar(ctlArticulo);
+		ctlArticulo.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlArticulo.buscarArticulo(null);
 		// dfsdf
@@ -2705,7 +2721,7 @@ public class CtlFacturarFrame
 		viewListaOrdenes.pack();
 		ctlBuscarOrden.view.getTxtBuscar().setText("");
 		ctlBuscarOrden.view.getTxtBuscar().selectAll();
-		view.getTxtBuscar().requestFocusInWindow();
+		ctlBuscarOrden.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarOrden.buscarCliente(null);
 		// se comprueba si le regreso un articulo valido
@@ -2739,7 +2755,7 @@ public class CtlFacturarFrame
 		viewListaCliente.pack();
 		ctlBuscarCliente.view.getTxtBuscar().setText("");
 		ctlBuscarCliente.view.getTxtBuscar().selectAll();
-		view.getTxtBuscar().requestFocusInWindow();
+		ctlBuscarCliente.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarCliente.buscarCliente(null);
 		// se comprueba si le regreso un articulo valido
