@@ -26,7 +26,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 	protected JPanel panelNorte;
 	
 	protected JPanel panel_1;
-	private final JLabel lblFecha;
 	private final JTextField txtFechafactura;
 	private final JLabel lblCodigoCliente;
 	private final JTextField txtIdcliente;
@@ -48,7 +47,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 	
 	private final BotonGuardar btnGuardar;
 	
-	//private List<BotonesApp> btnGuardados= new ArrayList<>();
 	private final ListaBotonesFacturas btnGuardados=new ListaBotonesFacturas();
 	private final BotonCancelar btnCerrar;
 	private final BotonBuscar1 btnBuscar;
@@ -68,9 +66,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 	
 	private final JTextField txtRtn;
 	
-	private JComboBox cbxEmpleados;
-	//se crea el modelo de la lista de los impuestos
-	private final CbxTmEmpleado modeloEmpleado;//=new ComboBoxImpuesto();
+	private final CbxTmEmpleado modeloEmpleado;
 	
 	protected JPanel panel;
 	protected JLabel lblBuscar;
@@ -79,7 +75,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 	private final JPanel panelGuardados;
 	
 	
-	//menu contextual para eliminar las facturas pendientess
 	private final JMenuItem mntmEliminar;
 	private final JMenuItem mntmImprimir;
 	private final JPopupMenu menuContextual;
@@ -90,15 +85,10 @@ public class ViewFacturarFrame extends JInternalFrame {
 
 	public ViewFacturarFrame(String string, boolean b, boolean c, boolean d, boolean e) {
 		super( string,  b,  c,  d,  e );
+		((javax.swing.plaf.basic.BasicInternalFrameUI) getUI()).setNorthPane(null);
+		setBorder(null);
 		
-		//super(view,"Facturar",Dialog.ModalityType.DOCUMENT_MODAL);
-		//setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturarFrame.class.getResource("/view/recursos/logo-admin-tool1.png")));
-		//getContentPane().setLayout(new BorderLayout(0, 0));
-		
-		
-		// crea el menu contextual
-		menuContextual = new JPopupMenu(); 
-		//opcion del menu flotante
+		menuContextual = new JPopupMenu();
 		mntmEliminar = new JMenuItem("Eliminar");
 		mntmImprimir = new JMenuItem("Imprimir");
 		menuContextual.add(mntmEliminar);
@@ -111,9 +101,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		modeloTabla=new TablaModeloFactura();
 		RenderizadorTablaFactura renderizador = new RenderizadorTablaFactura();
 		miEsquema=new BorderLayout();
-		//Color color1 =Color.decode("#0009999");
 		Color color1 =new Color(60, 179, 113);
-		Color color2 =Color.decode("#33cccc");
 		Color color3 =Color.decode("#d4f4ff");
 		Color color4 =Color.decode("#f4fbfe");
 		
@@ -123,15 +111,11 @@ public class ViewFacturarFrame extends JInternalFrame {
 	
 		this.getContentPane().setBackground(color3);
 		
-		//this.setTitle("Articulos");
 		getContentPane().setLayout(miEsquema);
 		panelAcciones=new JPanel();
 		panelAcciones.setPreferredSize(new Dimension(140,128));
 		panelAcciones.setBackground(color3);
-		//panelAcciones.setBounds(20, 11, 178, 459);
-		//panelAcciones.setLayout(null);
-		//panelAcciones.setVisible(false);
-		JPanel panelNorte=new JPanel();
+		panelNorte=new JPanel();
 		panelNorte.setBackground(color1);
 		getContentPane().add(panelNorte, BorderLayout.NORTH);
 		panelNorte.setLayout(new BorderLayout(0, 0));
@@ -146,26 +130,17 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		tableDetalle = new JTable();
 		tableDetalle.setModel(modeloTabla);
-		/*tableDetalle.getTableHeader().setBackground(color1);
-		tableDetalle.getTableHeader().setForeground(Color.WHITE);*/
-	    
-		
-		//tableDetalle.setBackground(color4);
 		tableDetalle.setDefaultRenderer(String.class, renderizador);
-		//tableDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		//tableDetalle.getColumnModel().getColumn(0).setPreferredWidth(50);     //Tama�o de las columnas de las tablas
 		tableDetalle.getColumnModel().getColumn(0).setPreferredWidth(420);	//
-		tableDetalle.getColumnModel().getColumn(1).setPreferredWidth(80);	//
-		tableDetalle.getColumnModel().getColumn(2).setPreferredWidth(80);	//
-		tableDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);	//
-		tableDetalle.getColumnModel().getColumn(4).setPreferredWidth(80);	//
-		tableDetalle.getColumnModel().getColumn(5).setPreferredWidth(80);	//
-		tableDetalle.getColumnModel().getColumn(6).setPreferredWidth(100);	//
+		tableDetalle.getColumnModel().getColumn(1).setPreferredWidth(80);
+		tableDetalle.getColumnModel().getColumn(2).setPreferredWidth(80);
+		tableDetalle.getColumnModel().getColumn(3).setPreferredWidth(80);
+		tableDetalle.getColumnModel().getColumn(4).setPreferredWidth(80);
+		tableDetalle.getColumnModel().getColumn(5).setPreferredWidth(80);
+		tableDetalle.getColumnModel().getColumn(6).setPreferredWidth(100);
 		
 		tableDetalle.setRowHeight(30);
-		//registerEnterKey( );
-		
+		tableDetalle.setToolTipText("Use +/- para cantidades, Delete para eliminar, F7 descuento, F8 precio");
 		JScrollPane scrollPane = new JScrollPane(tableDetalle);
 		
 		scrollPane.setBackground(color3);
@@ -190,15 +165,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panel_1.add(panelDatosFactura, BorderLayout.CENTER);
 		panelDatosFactura.setBackground(color3);
 		
-		//panelDatosFactura.setBackground(Color.WHITE);
 		panelDatosFactura.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Datos Generales", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		//panelDatosFactura.setBounds(196, 11, 802, 84);
-		//panelDatosFactura.setVisible(false);
-		panelDatosFactura.setLayout(new GridLayout(0, 6, 10, 0));
-		lblFecha = new JLabel("Fecha");
-		lblFecha.setFont(new Font("Georgia", Font.BOLD, 13));
-		panelDatosFactura.add(lblFecha);
-		
+		panelDatosFactura.setLayout(new GridLayout(0, 5, 10, 0));
+
 		lblCodigoCliente = new JLabel("Id Cliente");
 		lblCodigoCliente.setFont(new Font("Georgia", Font.BOLD, 13));
 		panelDatosFactura.add(lblCodigoCliente);
@@ -223,24 +192,24 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelDatosFactura.add(lblCredito);
 		
 		txtFechafactura = new JTextField();
-		txtFechafactura.setBackground(color4);
 		txtFechafactura.setEditable(false);
-		panelDatosFactura.add(txtFechafactura);
-		txtFechafactura.setColumns(10);
-		
+		txtFechafactura.setVisible(false);
+
 		txtIdcliente = new JTextField();
 		txtIdcliente.setBackground(color4);
+		txtIdcliente.setToolTipText("Ingrese el codigo del cliente y presione Enter");
 		panelDatosFactura.add(txtIdcliente);
 		txtIdcliente.setColumns(5);
-		
+
 		txtNombrecliente = new JTextField();
 		txtNombrecliente.setBackground(color4);
-		txtNombrecliente.setToolTipText("Nombre Cliente");
+		txtNombrecliente.setToolTipText("Nombre del cliente");
 		panelDatosFactura.add(txtNombrecliente);
 		txtNombrecliente.setColumns(20);
-		
+
 		txtRtn = new JTextField();
 		txtRtn.setBackground(color4);
+		txtRtn.setToolTipText("Registro Tributario Nacional del cliente");
 		panelDatosFactura.add(txtRtn);
 		txtRtn.setColumns(10);
 		
@@ -264,10 +233,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelBuscar= new JPanel();
 		panelBuscar.setBackground(color3);
 		panel_1.add(panelBuscar, BorderLayout.SOUTH);
-		//panelBuscar.setBounds(196, 94, 802, 50);
-		//getContentPane().geti
-		//panelBuscar.setVisible(false);*/
-		
 		panelBuscar.setLayout(new GridLayout(2, 3, 7, 1));
 		
 	
@@ -280,65 +245,70 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		txtBuscar = new JTextField();
 		txtBuscar.setForeground(Color.WHITE);
-		txtBuscar.setBackground(color1);
+		txtBuscar.setBackground(new Color(30, 120, 70));
+		txtBuscar.setToolTipText("Buscar articulo por nombre o codigo de barras");
 		panelBuscar.add(txtBuscar);
 		txtBuscar.setColumns(10);
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		
-		//panelNorte.add(scrollPane);
-		//scrollPane.setBounds(196, 144, 802, 326);
-		//panelNorte
-		
-		//this.setTitle("Facturar");
 		getContentPane().add(panelAcciones, BorderLayout.WEST);
 		panelAcciones.setLayout(new GridLayout(9, 1, 0, 0));
 		
 		btnBuscar = new BotonBuscar1();
 		btnBuscar.setBackground(color1);
+		btnBuscar.setText("F1 Buscar");
+		btnBuscar.setToolTipText("Buscar articulo por descripcion (F1)");
 		panelAcciones.add(btnBuscar);
-		
+
 		btnCobrar = new BotonCobrar();
 		btnCobrar.setBackground(color1);
 		btnCobrar.setText("F2 Cobrar");
+		btnCobrar.setToolTipText("Cobrar y cerrar la factura (F2)");
 		panelAcciones.add(btnCobrar);
-		
+
 		btnCliente = new BotonBuscarClientes();
 		btnCliente.setBackground(color1);
 		btnCliente.setText("Clientes");
+		btnCliente.setToolTipText("Buscar y seleccionar cliente");
 		panelAcciones.add(btnCliente);
-		
+
 		btnGuardar = new BotonGuardar();
 		btnGuardar.setBackground(color1);
-		btnGuardar.setText("Guardar");
+		btnGuardar.setText("Ctrl+G Guardar");
+		btnGuardar.setToolTipText("Guardar factura como pendiente (Ctrl+G)");
 		panelAcciones.add(btnGuardar);
-		
-		btnGuardarCotizacion = new BotonCrearCotizaciones();// new JButton("F5 Pendientes");
+
+		btnGuardarCotizacion = new BotonCrearCotizaciones();
 		btnGuardarCotizacion.setBackground(color1);
 		btnGuardarCotizacion.setText("Crear cotizacion");
+		btnGuardarCotizacion.setToolTipText("Crear una cotizacion de la factura actual");
 		panelAcciones.add(btnGuardarCotizacion);
-		
-		btnGetCotizacion = new BotonPendientes();// new JButton("F5 Pendientes");
+
+		btnGetCotizacion = new BotonPendientes();
 		btnGetCotizacion.setBackground(color1);
 		btnGetCotizacion.setText("Cotizaciones");
+		btnGetCotizacion.setToolTipText("Ver lista de cotizaciones guardadas");
 		panelAcciones.add(btnGetCotizacion);
-		
-		btnCierreCaja = new BotonCierreCaja();// JButton("F6 Cierre");
+
+		btnCierreCaja = new BotonCierreCaja();
 		btnCierreCaja.setBackground(color1);
 		btnCierreCaja.setText("F6 Cierre");
 		btnCierreCaja.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnCierreCaja.setToolTipText("Realizar cierre de caja (F6)");
 		panelAcciones.add(btnCierreCaja);
-		
+
 		btnActualizar=new BotonActualizar();
 		btnActualizar.setEnabled(false);
 		btnActualizar.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnActualizar.setBackground(color1);
-		btnActualizar.setText("Actualizar");
+		btnActualizar.setText("Ctrl+A Actualizar");
+		btnActualizar.setToolTipText("Actualizar factura pendiente (Ctrl+A)");
 		panelAcciones.add(btnActualizar);
-		//btnActualizar.setVisible(false);
-		
+
 		btnCerrar = new BotonCancelar();
 		btnCerrar.setBackground(color1);
 		btnCerrar.setText("Esc Cerrar");
+		btnCerrar.setToolTipText("Cerrar ventana de facturacion (Esc)");
 		panelAcciones.add(btnCerrar);
 
 
@@ -347,29 +317,20 @@ public class ViewFacturarFrame extends JInternalFrame {
 
 		panelGuardados = new JPanel();
 		panelGuardados.setBackground(color3);
-		panelGuardados.setSize(160, 0);
 		panelGuardados.setLayout(new GridLayout(0, 1, 0, 0));
-		//panelGuardados.setLayout(new BoxLayout(panelGuardados, BoxLayout.Y_AXIS));
-
+		panelGuardados.setBorder(new TitledBorder(new LineBorder(new Color(130, 135, 144)), "Pendientes", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
 
 		JScrollPane scrollPane2 = new JScrollPane(panelGuardados, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-		scrollPane2.setSize(160, 0);
-		scrollPane2.setPreferredSize(new Dimension(160,0));
+		scrollPane2.setPreferredSize(new Dimension(160, 100));
 		scrollPane2.setBackground(color3);
 		getContentPane().add(scrollPane2, BorderLayout.EAST);
 
 
 		
-		//getContentPane().setLayout(null);
-		
-		Font myFont=new Font("OCR A Extended", Font.PLAIN, 45);
-		
 		panel = new JPanel();
 		panel.setBackground(color3);
 		getContentPane().add(panel, BorderLayout.SOUTH);
-		panel.setLayout(new GridLayout(2, 10, -20, -20));
-		//lblImpuesto_1.setBounds(424, 490, 82, 14);
+		panel.setLayout(new GridLayout(2, 5, 5, 2));
 		
 		lblSubtotal = new JLabel("SubTotal");
 		lblSubtotal.setFont(new Font("Georgia", Font.BOLD, 13));
@@ -397,7 +358,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panel.add(lblTotal);
 		
 		
-		//lblImpuesto.setBounds(237, 490, 92, 14);
 		
 		
 		txtSubtotal = new JTextField();
@@ -436,9 +396,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		txtImpuesto18.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtImpuesto18.setFont(new Font("Dialog", Font.PLAIN, 35));
 		txtImpuesto18.setEditable(false);
-		//txtImpuesto18.setBounds(424, 506, 171, 44);
-		//txtImpuesto18.setColumns(10);
-		//lblDescuento.setBounds(605, 490, 92, 14);
 		
 		
 		
@@ -453,22 +410,15 @@ public class ViewFacturarFrame extends JInternalFrame {
 		txtTotal.setFont(new Font("Dialog", Font.PLAIN, 35));
 		txtTotal.setText("00");
 		txtTotal.setEditable(false);
-		//txtTotal.setBounds(778, 506, 220, 44);
 		txtTotal.setColumns(8);
 		
 		
-		//setSize(1024, 600);
-		
-		//setSize(this.getToolkit().getScreenSize());
-		setSize(800,600);
-		
-		
-		//this.setPreferredSize(new Dimension(1024, 600));
-		//this.setResizable(false);
-		//centrar la ventana en la pantalla
+		setSize(800, 600);
+		setMinimumSize(new Dimension(800, 600));
+
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-		//this.setMaximizable(true);
+		this.setMaximizable(true);
 		
 		//this.pack();
 		this.rdbtnCredito.setSelected(false);
@@ -486,9 +436,7 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 	}
 	private void actualizarView(CtlFacturarFrame c) {
-		// TODO Auto-generated method stub
 		eliminarBotones();
-		//btnGuardados.deleteAll();
 		
 		for(int x=0;x<btnGuardados.getSize();x++){
 			
@@ -507,9 +455,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 	}
 	public ListaBotonesFacturas getBtnsGuardador(){
 		return btnGuardados;
-	}
-	public JComboBox getCbxEmpleados(){
-		return cbxEmpleados;
 	}
 	public CbxTmEmpleado getModeloEmpleados(){
 		return this.modeloEmpleado;
@@ -586,12 +531,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtBuscar(){
 		return txtBuscar;
 	}
-	/*public JTextField getTxtArticulo(){
-		return txtArticulo;
-	}
-	public JTextField getTxtPrecio(){
-		return txtPrecio;
-	}*/
 	public JPopupMenu getMenuContextual(){
 		return menuContextual;
 		
@@ -616,7 +555,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		tableDetalle.addKeyListener(c);
 		tableDetalle.addMouseListener(c);
 		modeloTabla.addTableModelListener(c);
-		//tableDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableDetalle.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		tableDetalle.setColumnSelectionAllowed(true);
 		tableDetalle.setRowSelectionAllowed(true);
@@ -624,7 +562,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		
 		txtIdcliente.addKeyListener(c);
 		txtNombrecliente.addKeyListener(c);
-		txtFechafactura.addKeyListener(c);
 		
 		btnCierreCaja.addKeyListener(c);
 		btnCierreCaja.addActionListener(c);
@@ -681,14 +618,6 @@ public class ViewFacturarFrame extends JInternalFrame {
 		this.txtTotal.addKeyListener(c);
 		txtBuscar.addKeyListener(c);
 		//txtBuscar.
-		//cbxEmpleados.addKeyListener(c);
-		//txtArticulo.addKeyListener(c);
-		//txtPrecio.addKeyListener(c);
-		//cbxEmpleados.addKeyListener(c);
-		//KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		//manager.addKeyEventDispatcher( c);
-		//this.addWindowListener(c);
-		//this.addw
 		this.addInternalFrameListener(c);
 	}
 

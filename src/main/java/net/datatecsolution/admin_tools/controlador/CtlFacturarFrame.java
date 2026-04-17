@@ -1689,7 +1689,13 @@ public class CtlFacturarFrame
 		this.myFactura.resetTotales();
 		this.myFactura.setVendedor(new Empleado());
 
-		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
+		String fechaSistema = facturaDao.getFechaSistema();
+		view.getTxtFechafactura().setText(fechaSistema);
+		ViewModuloFacturar framePadre = (ViewModuloFacturar) view.getTopLevelAncestor();
+		if (framePadre != null) {
+			framePadre.btnFecha.setText("Fecha: " + fechaSistema);
+			framePadre.btnFecha.revalidate();
+		}
 
 		this.view.getTxtIdcliente().setText("1");
 		this.view.getTxtNombrecliente().setText("Consumidor final");

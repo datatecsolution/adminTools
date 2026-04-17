@@ -24,6 +24,7 @@ public class ViewModuloFacturar extends JFrame {
 	private final BotonProveedor btnProveedores;
 	public BotonesApp btnCaja;
 	public BotonesApp btnUsuario;
+	public BotonesApp btnFecha;
 
 	private final BotonDescuento btnDescuento;
 
@@ -140,13 +141,30 @@ public class ViewModuloFacturar extends JFrame {
 		
 		
 		
+		int alturaBarra = btnAgregar.getPreferredSize().height;
+
 		btnCaja=new BotonesApp();
-		btnCaja.setText("caja: "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDescripcion());
+		btnCaja.setText("Caja: "+ConexionStatic.getUsuarioLogin().getCajaActiva().getDescripcion());
+		btnCaja.setPreferredSize(new Dimension(btnCaja.getPreferredSize().width, alturaBarra));
+		btnCaja.setMaximumSize(new Dimension(btnCaja.getPreferredSize().width, alturaBarra));
 		barra.add(btnCaja);
 
 		btnUsuario=new BotonesApp();
 		btnUsuario.setText("User: "+ConexionStatic.getUsuarioLogin().getUser());
+		btnUsuario.setPreferredSize(new Dimension(btnUsuario.getPreferredSize().width, alturaBarra));
+		btnUsuario.setMaximumSize(new Dimension(btnUsuario.getPreferredSize().width, alturaBarra));
 		barra.add(btnUsuario);
+
+		btnFecha=new BotonesApp(){
+			@Override
+			public void setText(String text) {
+				super.setText(text);
+				Dimension d = getPreferredSize();
+				setMaximumSize(new Dimension(d.width, alturaBarra));
+			}
+		};
+		btnFecha.setText("Fecha: ");
+		barra.add(btnFecha);
 		
 		
 		// establece componente de escucha para el elemento de menú nuevoMarco
@@ -168,6 +186,8 @@ public class ViewModuloFacturar extends JFrame {
 						 CtlFacturarFrame ctlMarco = new CtlFacturarFrame(marco, ventanas);
 
 						 elEscritorio.add(marco); // adjunta marco interno
+						 btnFecha.setText("Fecha: " + marco.getTxtFechafactura().getText());
+						 btnFecha.revalidate();
 
 						 try {
 							 marco.setSelected(true);
@@ -183,6 +203,7 @@ public class ViewModuloFacturar extends JFrame {
 						 ventanas.add(marco);
 						 ctlMarco.actualizarVentanas();
 						 marco.setVisible(true); // muestra marco interno
+						 SwingUtilities.invokeLater(() -> marco.getTxtBuscar().requestFocusInWindow());
 					 }
 
 				 } // fin del método actionPerformed
