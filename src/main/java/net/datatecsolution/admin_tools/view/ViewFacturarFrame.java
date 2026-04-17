@@ -569,6 +569,14 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtIdcliente(){
 		return txtIdcliente;
 	}
+	public void actualizarTotales(net.datatecsolution.admin_tools.modelo.Factura factura) {
+		txtTotal.setText("" + factura.getTotal().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+		txtImpuesto.setText("" + factura.getTotalImpuesto().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+		txtImpuesto18.setText("" + factura.getTotalImpuesto18().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+		txtSubtotal.setText("" + factura.getSubTotal().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+		txtDescuento.setText("" + factura.getTotalDescuento().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+	}
+
 	public TablaModeloFactura getModeloTabla(){
 		return modeloTabla;
 	}

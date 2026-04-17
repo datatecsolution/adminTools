@@ -20,7 +20,7 @@ public class CtlFacturarFrame
 		implements ActionListener, MouseListener, TableModelListener, KeyListener, InternalFrameListener {
 	private ViewFacturarFrame view;
 	private Factura myFactura = null;
-	private FacturaDao facturaDao = null;// =new FacturaDao();
+	private FacturaDao facturaDao = null;
 	private ClienteDao clienteDao = null;
 	private Articulo myArticulo = null;
 	private ArticuloDao myArticuloDao = null;
@@ -54,7 +54,6 @@ public class CtlFacturarFrame
 		ventanas = ven;
 		view = v;
 		view.conectarContralador(this);
-		// se inicializan atributos de la factura
 		myFactura = new Factura();
 		myArticuloDao = new ArticuloDao();
 		clienteDao = new ClienteDao();
@@ -83,25 +82,17 @@ public class CtlFacturarFrame
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		String comando = e.getActionCommand();
 
-		// se filtra el comando para verificar que la accion se genero desde los botones
-		// de las facturas pendientes.
 		if (AbstractJasperReports.isNumber(comando)) {
 			int numeroFactura = Integer.parseInt(comando);
-			// si es un factura guardada
 			if (numeroFactura > 0) {
-
 				cargarFacturaPendiente(numeroFactura);
 			}
-			// si es una nueva factura
 			if (numeroFactura == 0) {
 				this.tipoView = 1;
 				this.view.getBtnGuardar().setEnabled(true);
 				this.view.getBtnActualizar().setEnabled(false);
-
-				// view.getBtnsGuardador().setFactura(myFactura);
 
 				setEmptyView();
 
@@ -110,7 +101,6 @@ public class CtlFacturarFrame
 				cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 			}
 		}
-		// JOptionPane.showMessageDialog(view, "paso de celdas"+comando);
 		switch (comando) {
 
 			case "BUSCARARTICULO2":
@@ -125,7 +115,6 @@ public class CtlFacturarFrame
 
 				break;
 			case "BUSCARARTICULO":
-				// se verfica si esta activo la busqueda de articulo por descripcion
 				if (config.isActivarBusquedaFacturacion()) {
 					this.buscarArticulo();
 				}
@@ -148,8 +137,6 @@ public class CtlFacturarFrame
 				this.cierreCaja();
 				break;
 			case "COTIZACION":
-				// this.showPendientes();
-				// JOptionPane.showMessageDialog(view, "Cliente no encontrado");
 				guardarCotizacion();
 				break;
 			case "GET_COTIZACIONES":
@@ -168,55 +155,34 @@ public class CtlFacturarFrame
 	}
 
 	private void guardarCotizacion() {
-		// TODO Auto-generated method stub
-		// s
 		setFactura();
 		if (validar()) {
 			CotizacionDao cotizacioDao = new CotizacionDao();
-			// sf
 			boolean resultado = cotizacioDao.registrar(myFactura);
 
 			if (resultado) {
 
 				try {
-					/*
-					 * this.view.setVisible(false);
-					 * this.view.dispose();
-					 */
-					// AbstractJasperReports.createReportFactura(
-					// conexion.getPoolConexion().getConnection(),
-					// "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
 					AbstractJasperReports.crearReporteCotizacion(ConexionStatic.getPoolConexion().getConnection(),
 							myFactura.getIdFactura());
 					AbstractJasperReports.showViewer(view);
-					// AbstractJasperReports.imprimierFactura();
 
-					// myFactura=null;
 					setEmptyView();
 
-					// si la view es de actualizacion al cobrar se cierra la view
-					if (this.tipoView == 2) {// dfsfda
-						// myFactura=null;
+					if (this.tipoView == 2) {
 						this.tipoView = 1;
 						this.view.getBtnGuardar().setEnabled(true);
 						this.view.getBtnActualizar().setEnabled(false);
 
-						// this.facturaDao.EliminarTemp(idFacturaTemporal);
 						setEmptyView();
 
 						view.getBtnsGuardador().deleteAll();
 
 						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
-						// view.setVisible(false);
-
 					}
-					// myFactura.
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				// JOptionPane.showMessageDialog(view, "Se guardao la cotizacion con exito",
-				// "Cotizacion", JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(view, "Error al guardar la cotizacion", "Error al guardar",
 						JOptionPane.ERROR_MESSAGE);
@@ -274,10 +240,7 @@ public class CtlFacturarFrame
 		}
 
 		if (myArticulo.getTipoArticulo() == 1) {
-			this.view.getModeloTabla().setArticulo(myArticulo);
-			calcularTotales();
-			this.view.getModeloTabla().agregarDetalle();
-			selectRowInset();
+			agregarArticuloATabla(myArticulo);
 		} else {
 			if (cajaActiva.getCodigo() == this.cajaDefecto.getCodigo()) {
 				this.view.getModeloTabla().setArticulo(myArticulo);
@@ -785,13 +748,6 @@ public class CtlFacturarFrame
 		Factura fact = view.getBtnsGuardador().buscarFactura(numeroFactura);
 		this.myFactura = fact;
 
-		// se configura la caja donde se guardo la factura
-		// Caja
-		// caja=usuario.setCajaActica(fact.getCodigoCaja());
-
-		// ViewModuloFacturar frame = (ViewModuloFacturar)view.getTopLevelAncestor();
-		// frame.btnCaja.setText(caja.getDescripcion());
-
 		myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(numeroFactura));
 
 		cargarFacturaView();
@@ -803,8 +759,6 @@ public class CtlFacturarFrame
 	}
 
 	private boolean setFactura() {
-
-		// sino se ingreso un cliente en particular que coge el cliente por defecto
 		if (myCliente == null) {
 			myCliente = new Cliente();
 			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
@@ -827,16 +781,10 @@ public class CtlFacturarFrame
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
 		myFactura.setFecha(facturaDao.getFechaSistema());
 
-		// agregar vendedor y observaciones
 		boolean verificarAccion = false;
 
-		// activas para cuando se necesite un vendedor
-		if (config.isVentanaVendedor()) {// se comprueba que esta acticada la
-																				// ventana de vendedor
-
-			if (myFactura.getVendedor().getCodigo() < 1) {// si la ventana de vendedor esta activa y el vendedor es por
-															// defecto de system entonces muestra la seleccion de
-															// vendedor
+		if (config.isVentanaVendedor()) {
+			if (myFactura.getVendedor().getCodigo() < 1) {
 				ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 				CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
@@ -845,12 +793,11 @@ public class CtlFacturarFrame
 				if (!verificarAccion) {
 					return verificarAccion;
 				}
-				myFactura.setVendedor(ctlVendedor.getVendedor());// activas para cuando se necesite un vendedor
+				myFactura.setVendedor(ctlVendedor.getVendedor());
 			} else {
 				verificarAccion = true;
 			}
-		} else {// sino tiene activa las captura del vendedor se establece un vendedor por
-				// defecto
+		} else {
 			if (myFactura.getVendedor().getCodigo() < 1) {
 				Empleado uno = new Empleado();
 				uno.setCodigo(1);
@@ -860,9 +807,7 @@ public class CtlFacturarFrame
 
 		}
 
-		// captura las observaciones d ela factura
-		if (config.isVentanaObservaciones()) {// comprueba que tenga activado la
-																					// captura de las observaciones
+		if (config.isVentanaObservaciones()) {
 			String observaciones = "";
 			JTextArea ta = new JTextArea(20, 20);
 			switch (JOptionPane.showConfirmDialog(view, new JScrollPane(ta), "Observaciones de la factura",
@@ -877,16 +822,11 @@ public class CtlFacturarFrame
 			myFactura.setObservacion(observaciones);
 		}
 
-		// la ventana de camio solo se mostrara cuando la factura sea al contado
 		if (myFactura.getTipoFactura() == 1) {
-			// se muestra la vista para cobrar y introducir el cambio
 			ViewCambioPago viewPago = new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
 			CtlCambioPago ctlPago = new CtlCambioPago(viewPago, myFactura.getTotal());
-			// se muestra y ventana del cobro y se devuelve un resultado del cobro
 			boolean resulPago = ctlPago.pagar();
-			// se procede a verificar si se cobro
 			if (resulPago) {
-				// si la forma de pago fue en efectivo
 				if (ctlPago.getFormaPago() == 1) {
 					myFactura.setPago(ctlPago.getTotalPago());
 					myFactura.setCambio(ctlPago.getCambio());
@@ -894,7 +834,6 @@ public class CtlFacturarFrame
 					myFactura.setCobroTarjeta(ctlPago.getCobroTarjeta());
 					myFactura.setTipoPago(1);
 				}
-				// si la forma de pago fue con tarjeta de credito o debito
 				if (ctlPago.getFormaPago() == 2) {
 					myFactura.setPago(myFactura.getTotal());
 					myFactura.setCambio(new BigDecimal(00));
@@ -936,42 +875,38 @@ public class CtlFacturarFrame
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+	
 
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+	
 		checkForTriggerEvent(e); // comprueba el desencadenador
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+	
 		checkForTriggerEvent(e); // comprueba el desencadenador
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+	
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+	
 
 	}
 
 	public void check(MouseEvent e) {
-		if (e.isPopupTrigger()) { // if the event shows the menu
-			// this.view.getListCodigos().setSelectedIndex(this.view.getListCodigos().locationToIndex(e.getPoint()));
-			// //select the item
-			// menuContextual.show(listCodigos, e.getX(), e.getY()); //and show the menu
+		if (e.isPopupTrigger()) {
 		}
-
 	}
 
 	private void checkForTriggerEvent(MouseEvent evento) {
@@ -992,44 +927,34 @@ public class CtlFacturarFrame
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
+	
 
 		int colum = e.getColumn();
 		int row = e.getFirstRow();
-		// JOptionPane.showMessageDialog(view, myArticulo);
-		// JOptionPane.showMessageDialog(view, "paso de celdas");
 		switch (e.getType()) {
 
 			case TableModelEvent.UPDATE:
 
-				// Se recoge el id de la fila marcada
 				int identificador = 0;
 
-				// se ingreso un id o codigo de barra en la tabla
 				if (colum == 0) {
 
 					identificador = (int) this.view.getModeloTabla().getValueAt(row, 0);
 					myArticulo = this.view.getModeloTabla().getDetalle(row).getArticulo();
 					myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
 
-					// se ingreso un codigo de barra y si el articulo en la bd
 					if (myArticulo.getId() == -2) {
 						String cod = this.view.getModeloTabla().getDetalle(row).getArticulo().getCodBarra().get(0)
 								.getCodigoBarra();
 						this.myArticulo = this.myArticuloDao.buscarArticuloBarraCod(cod);
 
-					} else {// sino se ingreso un codigo de barra se busca por id de articulo
+					} else {
 						this.myArticulo = this.myArticuloDao.buscarArticulo(identificador);
 						myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
 					}
 
-					// si se encuentra el articulo por codigo de barra o por id se calcula los
-					// totales y se agrega
 					if (myArticulo != null) {
-
-						// se estable en articulo en la tabla
 						this.view.getModeloTabla().setArticulo(myArticulo, row);
-						// se calcula los totales
 						calcularTotales();
 
 						boolean toggle = false;
@@ -1038,37 +963,24 @@ public class CtlFacturarFrame
 						this.view.getTableDetalle().changeSelection(row, colum, toggle, extend);
 						this.view.getTableDetalle().addColumnSelectionInterval(3, 3);
 
-						// se agrega otra fila en la tabla
-						// this.view.getModeloTabla().agregarDetalle();
-
-					} else {// si no se encuentra
-
+					} else {
 						JOptionPane.showMessageDialog(view, "No se encuentra el articulo");
-						// sino se encuentra se estable un id de -1 para que sea eliminado el articulo
-						// en la tabla
 						this.view.getModeloTabla().getDetalle(row).getArticulo().setId(-1);
-
-						// se agrega la nueva fila de la tabla
 						this.view.getModeloTabla().agregarDetalle();
-
-						// se vuelve a calcular los totales
 						calcularTotales();
 					}
 
 				}
-				// se cambia el precio en la tabla
 				if (colum == 1) {
 					calcularTotales();
 					view.getTxtBuscar().requestFocusInWindow();
 				}
 
-				// se cambia la cantidad en la tabla
 				if (colum == 2) {
 
 					identificador = (int) this.view.getModeloTabla().getValueAt(row, 0);
 					myArticulo = this.view.getModeloTabla().getDetalle(row).getArticulo();
 
-					// se comprueba que exista el producto en el inventario
 					double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
 							cajaActiva.getDetartamento().getId());
 
@@ -1094,16 +1006,11 @@ public class CtlFacturarFrame
 					}
 				}
 
-				// se agrego un descuento a la tabla
 				if (colum == 5) {
 					calcularTotales();
 					view.getTxtBuscar().requestFocusInWindow();
-					// JOptionPane.showMessageDialog(view, "Modifico el Descuento
-					// "+this.view.getModeloTabla().getDetalle(row).getDescuentoItem().setScale(2,
-					// BigDecimal.ROUND_HALF_EVEN).doubleValue());
 				}
 
-				// view.getTxtBuscar().requestFocusInWindow();
 				break;
 
 		}
@@ -1118,9 +1025,15 @@ public class CtlFacturarFrame
 				|| (Character.isDigit(c));
 	}
 
+	private void agregarArticuloATabla(Articulo articulo) {
+		this.view.getModeloTabla().setArticulo(articulo);
+		calcularTotales();
+		this.view.getModeloTabla().agregarDetalle();
+		selectRowInset();
+	}
+
 	public void calcularTotales() {
 
-		// se establecen los totales en cero
 		this.myFactura.resetTotales();
 
 		for (int x = 0; x < view.getModeloTabla().getDetalles().size(); x++) {
@@ -1130,119 +1043,77 @@ public class CtlFacturarFrame
 			if (detalle.getArticulo().getId() != -1)
 				if (detalle.getCantidad().doubleValue() != 0 && detalle.getArticulo().getPrecioVenta() != 0) {
 
-					// dfs
-					// se obtien la cantidad y el precio de compra por unidad
-					BigDecimal cantidad = detalle.getCantidad();
-					BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
+					calcularTotalesDetalle(detalle);
 
-					// se calcula el total del item
-					BigDecimal totalItem = cantidad.multiply(precioVenta);
+				}
 
-					BigDecimal des = detalle.getDescuentoItem();
+		}
 
-					// double desc=detalle.getDescuento()/100;
+		view.actualizarTotales(myFactura);
+		view.getModeloTabla().fireTableDataChanged();
+		this.selectRowInset();
+		view.getTxtBuscar().requestFocusInWindow();
+	}
 
-					// BigDecimal des=totalItem.multiply(new BigDecimal(desc));
+	private void calcularTotalesDetalle(DetalleFactura detalle) {
+		BigDecimal cantidad = detalle.getCantidad();
+		BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
 
-					// detalle.setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+		BigDecimal totalItem = cantidad.multiply(precioVenta);
 
-					totalItem = totalItem.subtract(des.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					// int desc=detalle.getDescuento();
+		BigDecimal des = detalle.getDescuentoItem();
+		totalItem = totalItem.subtract(des.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-					// se obtiene el impuesto del articulo
-					BigDecimal porcentaImpuesto = new BigDecimal(
-							detalle.getArticulo().getImpuestoObj().getPorcentaje());
-					BigDecimal porImpuesto = new BigDecimal(0);
-					porImpuesto = porcentaImpuesto.divide(new BigDecimal(100));
-					porImpuesto = porImpuesto.add(new BigDecimal(1));
-					// new
-					// BigDecimal(((Double.parseDouble(detalle.getArticulo().getImpuestoObj().getPorcentaje())
-					// )/100)+1);
+		BigDecimal porcentaImpuesto = new BigDecimal(
+				detalle.getArticulo().getImpuestoObj().getPorcentaje());
+		BigDecimal porImpuesto = porcentaImpuesto.divide(new BigDecimal(100));
+		porImpuesto = porImpuesto.add(new BigDecimal(1));
 
-					// se calcula el total sin el impuesto;
-					BigDecimal totalsiniva = new BigDecimal("0.0");
-					totalsiniva = totalItem.divide(porImpuesto, 2, BigDecimal.ROUND_HALF_EVEN);// .divide(porImpuesto);//
-																								// (totalItem)/(porcentaImpuesto);
+		BigDecimal totalsiniva = totalItem.divide(porImpuesto, 2, BigDecimal.ROUND_HALF_EVEN);
 
-					// se calcula el total de impuesto del item
-					BigDecimal impuestoItem = totalItem.subtract(totalsiniva);// -totalsiniva;
+		BigDecimal impuestoItem = totalItem.subtract(totalsiniva);
 
-					// se estable el total y impuesto en el modelo
-					myFactura.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		myFactura.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-					if (porcentaImpuesto.intValue() == 0) {
-						myFactura.setSubTotalExcento(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					} else if (porcentaImpuesto.intValue() == 15) {
-						myFactura.setTotalImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setSubTotal15(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					} else if (porcentaImpuesto.intValue() == 18) {
-						myFactura.setTotalImpuesto18(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setSubTotal18(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					}
+		if (porcentaImpuesto.intValue() == 0) {
+			myFactura.setSubTotalExcento(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		} else if (porcentaImpuesto.intValue() == 15) {
+			myFactura.setTotalImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+			myFactura.setSubTotal15(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		} else if (porcentaImpuesto.intValue() == 18) {
+			myFactura.setTotalImpuesto18(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+			myFactura.setSubTotal18(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		}
 
-					// se calcuala el total del impuesto de los articulo que son servicios de
-					// turismo
-					if (detalle.getArticulo().getTipoArticulo() == 3) {
-						BigDecimal totalOtrosImp = new BigDecimal("0.0");
+		if (detalle.getArticulo().getTipoArticulo() == 3) {
+			BigDecimal totalOtrosImp = totalsiniva.multiply(new BigDecimal(0.04));
+			myFactura.setTotalOtrosImpuesto(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+			myFactura.setTotal(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		}
 
-						totalOtrosImp = totalsiniva.multiply(new BigDecimal(0.04));
+		myFactura.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		myFactura.setTotalDescuento(detalle.getDescuentoItem().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 
-						myFactura.setTotalOtrosImpuesto(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-						myFactura.setTotal(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					}
-
-					myFactura.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					// myFactura.getDetalles().add(detalle);
-					myFactura.setTotalDescuento(detalle.getDescuentoItem().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					// myFactura.getDetalles()
-
-					// se establece en la y el impuesto en el item de la vista
-					// detalle.setImpuesto(impuesto2.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					// se establece el total e impuesto en el vista
-					this.view.getTxtTotal().setText("" + myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtImpuesto()
-							.setText("" + myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtImpuesto18()
-							.setText("" + myFactura.getTotalImpuesto18().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtSubtotal()
-							.setText("" + myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-					this.view.getTxtDescuento()
-							.setText("" + myFactura.getTotalDescuento().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-					view.getModeloTabla().fireTableDataChanged();
-					this.selectRowInset();
-
-					view.getTxtBuscar().requestFocusInWindow();
-
-					// this.view.getModelo().fireTableDataChanged();
-				} // fin del if
-
-		} // fin del for
+		detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+	
 
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+	
 
-		// Recoger qu� fila se ha pulsadao en la tabla
 		filaPulsada = this.view.getTableDetalle().getSelectedRow();
 
 		switch (e.getKeyCode()) {
 
 			case KeyEvent.VK_F1:
-				// se verfica si esta activo la busqueda de articulo por descripcion
 				if (config.isActivarBusquedaFacturacion()) {
 					buscarArticulo();
 				}
@@ -1325,7 +1196,6 @@ public class CtlFacturarFrame
 			case KeyEvent.VK_DELETE:
 				if (filaPulsada >= 0) {
 
-					// activar para redondiar el precio de venta final
 					if (config.isDeleteItemFact()) {
 						if (!solicitarPasswordAdmin()) {
 							break;
@@ -1339,12 +1209,10 @@ public class CtlFacturarFrame
 
 			case KeyEvent.VK_DOWN:
 				this.netBuscar++;
-				// this.buscarMasOmenos(netBuscar);
 				break;
 			case KeyEvent.VK_UP:
 				if (netBuscar >= 1) {
 					this.netBuscar--;
-					// this.buscarMasOmenos(netBuscar);
 				}
 				break;
 			case KeyEvent.VK_LEFT:
@@ -1393,7 +1261,7 @@ public class CtlFacturarFrame
 	}
 
 	private void buscarCotizaciones() {
-		// TODO Auto-generated method stub
+	
 		ViewListaCotizacion vistaFacturars = new ViewListaCotizacion(SwingUtilities.getWindowAncestor(view));
 		CtlCotizacionLista ctlFacturas = new CtlCotizacionLista(vistaFacturars);
 
@@ -1408,27 +1276,8 @@ public class CtlFacturarFrame
 
 			this.view.getModeloTabla().agregarDetalle();
 
-			/*
-			 * myArticulo=ctlArticulo.getArticulo();
-			 * //myArticulo=myArticulo1;
-			 * preciosDao=new PrecioArticuloDao(conexion);
-			 * 
-			 * myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.
-			 * getId()));
-			 * myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
-			 * 
-			 * this.view.getModeloTabla().setArticulo(myArticulo);
-			 * //this.view.getModelo().getDetalle(row).setCantidad(1);
-			 * 
-			 * //calcularTotal(this.view.getModeloTabla().getDetalle(row));
-			 * calcularTotales();
-			 * this.view.getModeloTabla().agregarDetalle();
-			 * 
-			 * selectRowInset();
-			 */
 		}
 
-		// myArticulo=null;
 		vistaFacturars.dispose();
 		ctlFacturas = null;
 		vistaFacturars.dispose();
@@ -1436,41 +1285,25 @@ public class CtlFacturarFrame
 	}
 
 	private void cierreCaja() {
-		// TODO Auto-generated method stub
+	
 
 		CierreCajaDao cierreDao = new CierreCajaDao();
+		CierreCaja oldCierre = cierreDao.getCierreUltimoUser();
 
-		CierreCaja oldCierre = new CierreCaja();
-
-		// se consiguie el ultimo cierre del usuario
-		oldCierre = cierreDao.getCierreUltimoUser();
-
-		// se verifica que hay facturas para crear un cierre
 		if (facturaDao.verificarCierre(usuario.getCajas()) && oldCierre.getEstado() == true) {
 
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar = new CtlContarEfectivo(viewContar);
 
-			if (ctlContar.getEstado())// verifica que se ordeno realizar el cierre desde la view de contar dinero
-
-				if (cierreDao.actualizarCierre(ctlContar.getTotal()))// se realiza el cierre y se verifica que todos
-																		// salio bien
+			if (ctlContar.getEstado())
+				if (cierreDao.actualizarCierre(ctlContar.getTotal()))
 				{
-
-					// si esta activado el reporte de ventas por categorias
 					if (config.isImprReportCategCierre()) {
-
-						// se consigue el cierre guardado
 						CierreCaja elCierre = cierreDao.buscarPorId(cierreDao.idUltimoRequistro);
-
-						// se crea el informe de ventas por categorias
 						List<VentasCategoria> ventas = new ArrayList<VentasCategoria>();
-
-						// se extren todas las categorias
 						CategoriaDao categoriaDao = new CategoriaDao();
 						List<Categoria> categorias = categoriaDao.todos();
 
-						// se recorren las categorias y se agregan a reporte de ventas
 						for (int yy = 0; yy < categorias.size(); yy++) {
 							VentasCategoria una = new VentasCategoria();
 							una.setCodigoCategoria(categorias.get(yy).getId());
@@ -1478,15 +1311,10 @@ public class CtlFacturarFrame
 							ventas.add(una);
 						}
 
-						// se consigue los registros de las facturas de los cierre
 						CierreFacturacionDao cierreFacturacioDao = new CierreFacturacionDao();
 						elCierre.setCierreFacturas(cierreFacturacioDao.buscarIdCierre(elCierre.getId()));
 
-						// si existe los registros de los cierres se recororen en busca los totales en
-						// las facturas
 						if (elCierre.getCierreFacturas() != null) {
-
-							// se recorren los registros para sacar los totales de la facturas
 							for (int xx = 0; xx < elCierre.getCierreFacturas().size(); xx++) {
 
 								this.facturaDao.getVentasCategorias(
@@ -1503,9 +1331,7 @@ public class CtlFacturarFrame
 										ConexionStatic.getPoolConexion().getConnection(), elCierre, ventas);
 
 								AbstractJasperReports.imprimierFactura();
-								// AbstractJasperReports.showViewer(view);
 							} catch (SQLException eee) {
-								// TODO Auto-generated catch block
 								eee.printStackTrace();
 							}
 						}
@@ -1525,7 +1351,6 @@ public class CtlFacturarFrame
 						salir();
 
 					} catch (SQLException ee) {
-						// TODO Auto-generated catch block
 						ee.printStackTrace();
 					}
 				} else {
@@ -1538,12 +1363,11 @@ public class CtlFacturarFrame
 			salir();
 		}
 
-		// ConexionStatic.setNivelFac(true);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+	
 
 		filaPulsada = this.view.getTableDetalle().getSelectedRow();
 
@@ -1552,12 +1376,10 @@ public class CtlFacturarFrame
 			this.myCliente = null;
 
 		}
-		// para actulizar factura
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_A) {
 			if (view.getBtnActualizar().isEnabled())
 				actualizar();
 		}
-		// para guardar factura
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
 			if (view.getBtnGuardar().isEnabled())
 				guardar();
@@ -1567,26 +1389,21 @@ public class CtlFacturarFrame
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_UP) {
 			seleccionarPrecioEspecifico();
 		}
-		// para dejar la view para una nueva factura
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
 			setEmptyView();
 		}
 
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P) {
 
-			// se verfica en la configuracion si se puede facturar sin inventario
 			if (config.isFacturarSinInventario()) {
 				Caja caja = usuario.nextCaja();
-				// JOptionPane.showMessageDialog(view, caja.toString());
 
 				ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 				frame.btnCaja.setText(caja.getDescripcion());
 
 			} else {
-				// verificamos que se agregaron articulos a la factura
 				if (view.getModeloTabla().getRowCount() <= 1) {
 					Caja caja = usuario.nextCaja();
-					// JOptionPane.showMessageDialog(view, caja.toString());
 
 					ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 					frame.btnCaja.setText(caja.getDescripcion());
@@ -1604,11 +1421,9 @@ public class CtlFacturarFrame
 			ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 			frame.btnCaja.setText(cajaActiva.getDescripcion());
 		}
-		// Recoger que fila se ha pulsadao en la tabla
 		filaPulsada = this.view.getTableDetalle().getSelectedRow();
 		char caracter = e.getKeyChar();
 
-		// para quitar los simnos mas o numero que ingrese en la busqueda
 		if (e.getComponent() == this.view.getTxtBuscar()) {
 			Character caracter1 = new Character(e.getKeyChar());
 			if (!esValido(caracter1)) {
@@ -1617,53 +1432,14 @@ public class CtlFacturarFrame
 					if (esValido(new Character(view.getTxtBuscar().getText().charAt(i))))
 						texto += view.getTxtBuscar().getText().charAt(i);
 				view.getTxtBuscar().setText(texto);
-				// view.getToolkit().beep();
 			}
 		}
-		/*
-		 * //que no se la fecha de arriba y abajo
-		 * if(e.getKeyCode()!=KeyEvent.VK_DOWN && e.getKeyCode()!= KeyEvent.VK_UP &&
-		 * e.getKeyCode()!= KeyEvent.VK_ENTER)
-		 * 
-		 * //se comprueba que hay algo que buscar
-		 * if(e.getComponent()==this.view.getTxtBuscar()&&view.getTxtBuscar().getText().
-		 * trim().length()!=0){
-		 * 
-		 * myArticuloDao=new ArticuloDao(conexion);
-		 * //JOptionPane.showMessageDialog(view, "2");
-		 * //JOptionPane.showMessageDialog(view, view.getTxtBuscar().getText());
-		 * this.myArticulo=this.myArticuloDao.buscarArticuloNombre(view.getTxtBuscar().
-		 * getText());
-		 * 
-		 * //JOptionPane.showMessageDialog(view, myArticulo);
-		 * if(myArticulo!=null){
-		 * view.getTxtArticulo().setText(myArticulo.getArticulo());
-		 * view.getTxtPrecio().setText("L. "+myArticulo.getPrecioVenta());
-		 * netBuscar=0;
-		 * netBuscar++;
-		 * 
-		 * }
-		 * else{
-		 * myArticulo=null;
-		 * view.getTxtArticulo().setText("");
-		 * view.getTxtPrecio().setText("");
-		 * }
-		 * }
-		 * else{
-		 * myArticulo=null;
-		 * view.getTxtArticulo().setText("");
-		 * view.getTxtPrecio().setText("");
-		 * }
-		 */
-
 		if (caracter == '+') {
 			incrementarCantidad();
 		}
 		if (caracter == '-') {
 			if (filaPulsada >= 0) {
-				// JOptionPane.showMessageDialog(view,e.getKeyChar()+" FIla:"+filaPulsada);
 				this.view.getModeloTabla().restarCantidad(filaPulsada);
-				// JOptionPane.showMessaconfigEnPantalla.setImprReportCategCierre(view.getTglbtnCategoriaEnCierre().isSelected());geDialog(view,view.getModeloTabla().getDetalle(filaPulsada).getCantidad());
 				this.calcularTotales();
 			}
 		}
@@ -1671,7 +1447,7 @@ public class CtlFacturarFrame
 	}
 
 	public void actualizarVentanas() {
-		// TODO Auto-generated method stub
+	
 
 		for (int x = 0; x < ventanas.size(); x++) {
 			if (ConexionStatic.getNivelFact() == true) {
@@ -1682,37 +1458,6 @@ public class CtlFacturarFrame
 		}
 
 	}
-
-	/*
-	 * private void buscarMasOmenos(int p){
-	 * //se comprueba que hay algo que buscar
-	 * if(view.getTxtBuscar().getText().trim().length()!=0){
-	 * 
-	 * myArticuloDao=new ArticuloDao(conexion);
-	 * //JOptionPane.showMessageDialog(view, "2");
-	 * //JOptionPane.showMessageDialog(view, view.getTxtBuscar().getText());
-	 * this.myArticulo=this.myArticuloDao.buscarArticuloNombre(view.getTxtBuscar().
-	 * getText(),p);
-	 * 
-	 * //JOptionPane.showMessageDialog(view, myArticulo);
-	 * if(myArticulo!=null){
-	 * view.getTxtArticulo().setText(myArticulo.getArticulo());
-	 * view.getTxtPrecio().setText("L. "+myArticulo.getPrecioVenta());
-	 * 
-	 * }
-	 * else{
-	 * myArticulo=null;
-	 * view.getTxtArticulo().setText("");
-	 * view.getTxtPrecio().setText("");
-	 * }
-	 * }
-	 * else{
-	 * myArticulo=null;
-	 * view.getTxtArticulo().setText("");
-	 * view.getTxtPrecio().setText("");
-	 * }
-	 * }
-	 */
 
 	private void salir() {
 		this.view.setVisible(false);
@@ -1754,18 +1499,13 @@ public class CtlFacturarFrame
 
 			boolean resulVendedor = false;
 
-			// activas para cuando se necesite un vendedor
-			if (config.isVentanaVendedor()) {// se comprueba que esta acticada la
-																					// ventana de vendedor
-
-				if (myFactura.getVendedor().getCodigo() < 1) {// si la ventana de vendedor esta activa y el vendedor es
-																// por defecto de es system entonces muestra la
-																// seleccion de vendedor
+			if (config.isVentanaVendedor()) {
+				if (myFactura.getVendedor().getCodigo() < 1) {
 					ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
 					CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
 					resulVendedor = ctlVendedor.cargarVendedor();
-					myFactura.setVendedor(ctlVendedor.getVendedor());// activas para cuando se necesite un vendedor
+					myFactura.setVendedor(ctlVendedor.getVendedor());
 				} else {
 					resulVendedor = true;
 				}
@@ -1778,11 +1518,7 @@ public class CtlFacturarFrame
 				resulVendedor = true;
 			}
 
-			if (resulVendedor) {// verifica si ingreso el codigo del bomber
-				System.err.println("[DEBUG guardar] vendedor codigo: " + myFactura.getVendedor().getCodigo());
-				System.err.println("[DEBUG guardar] codigoCaja: " + myFactura.getCodigoCaja());
-				System.err.println("[DEBUG guardar] usuario: " + usuario.getUser());
-
+			if (resulVendedor) {
 				boolean resultado = facturaOrdenesDao.registrar(myFactura);
 
 				if (resultado) {
@@ -1790,8 +1526,6 @@ public class CtlFacturarFrame
 					resultado = true;
 
 					this.tipoView = 1;
-					// this.view.setVisible(false);
-					// view.addBotonPendiente(myFactura,this);
 
 					setEmptyView();
 
@@ -1814,21 +1548,15 @@ public class CtlFacturarFrame
 	private void actualizar() {
 		setFacturaBasica();
 		facturaOrdenesDao.actualizar(myFactura);
-		// this.view.setVisible(false);
-		// giu
 		this.tipoView = 1;
 		this.view.getBtnGuardar().setEnabled(true);
 		this.view.getBtnActualizar().setEnabled(false);
-
-		// view.getBtnsGuardador().setFactura(myFactura);
 
 		setEmptyView();
 
 		view.getBtnsGuardador().deleteAll();
 
 		cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
-
-		// view.addBotonPendiente(myFactura,this);
 
 	}
 
@@ -1840,7 +1568,6 @@ public class CtlFacturarFrame
 			resultado = false;
 		} else if (this.myCliente == null) {
 
-			// JOptionPane.showMessageDialog(view, "Debe agregar el cliente primero");
 			JOptionPane.showMessageDialog(view, "Debe agregar el cliente primero", "Error Validacion",
 					JOptionPane.ERROR_MESSAGE);
 			resultado = false;
@@ -1857,134 +1584,30 @@ public class CtlFacturarFrame
 		usuario.setCajas(cajasDao.getCajasUsuario(usuario));
 		isThereConexion = ConexionStatic.isDbConnected();
 
-		// verificamos si existe la conexion a la base de datos
 		if (isThereConexion) {
 
-			// verificamos que se agregaron articulos a la factura
 			if (view.getModeloTabla().getRowCount() > 1) {
 
-				// boolean resulVendedor=false;
-
-				// //activas para cuando se necesite un vendedor
-				// if(config.isVentanaVendedor()){//se
-				// comprueba que esta acticada la ventana de vendedor
-				//
-				// if(myFactura.getVendedor().getCodigo()<1) {//si la ventana de vendedor esta
-				// activa y el vendedor es por defecto de es system entonces muestra la
-				// seleccion de vendedor
-				// ViewCargarVenderor viewVendedor = new
-				// ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
-				// CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
-				//
-				// resulVendedor = ctlVendedor.cargarVendedor();
-				// myFactura.setVendedor(ctlVendedor.getVendedor());//activas para cuando se
-				// necesite un vendedor
-				// }else{
-				// resulVendedor=true;
-				// }
-				// }else{
-				// if(myFactura.getVendedor().getCodigo()<1){
-				// Empleado uno=new Empleado();
-				// uno.setCodigo(1);
-				// myFactura.setVendedor(uno);
-				// }
-				// resulVendedor=true;
-				//
-				//
-				// }
-				//
-				//
-				// //captura las observaciones d ela factura
-				// if(config.isVentanaObservaciones()){
-				// String observaciones="";
-				// JTextArea ta = new JTextArea(20, 20);
-				//
-				// switch (JOptionPane.showConfirmDialog(view, new
-				// JScrollPane(ta),"Observaciones de la factura",JOptionPane.ERROR_MESSAGE)) {
-				// case JOptionPane.OK_OPTION:
-				// observaciones=ta.getText();
-				// break;
-				// default:
-				// observaciones="NA";
-				// break;
-				// }
-				// myFactura.setObservacion(observaciones);
-				// }
-
-				// if(true)//verifica si ingreso el codigo del bombero
-				// {
-				// si la factura es al contado
 				if (view.getRdbtnContado().isSelected()) {
 
-					if (!setFactura())// Se establece los datos para toda la factura y se verifica que no exista
-										// ningun error
-						return;// si existe un error se cancela la accion
-					else {
-						// se comprueba que sino tiene un cierre de caja
-						// activo lo realice y se procesa el resultado del cierre de caja
-						if (setCierre()) {
-							this.guardarFactura();
-						} else {
-							JOptionPane.showMessageDialog(view,
-									"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
-									JOptionPane.ERROR_MESSAGE);
-						}
+					if (!setFactura())
+						return;
 
+					if (setCierre()) {
+						this.guardarFactura();
+					} else {
+						JOptionPane.showMessageDialog(view,
+								"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
+								JOptionPane.ERROR_MESSAGE);
 					}
-					// //se muestra la vista para cobrar y introducir el cambio
-					// ViewCambioPago viewPago=new
-					// ViewCambioPago(SwingUtilities.getWindowAncestor(view));
-					// CtlCambioPago ctlPago=new CtlCambioPago(viewPago,myFactura.getTotal());
-					// //se muestra y ventana del cobro y se devuelve un resultado del cobro
-					// boolean resulPago=ctlPago.pagar();
-					// //se procede a verificar si se cobro
-					// if(resulPago){
-					// //si la forma de pago fue en efectivo
-					// if(ctlPago.getFormaPago()==1){
-					// myFactura.setPago(ctlPago.getTotalPago());
-					// myFactura.setCambio(ctlPago.getCambio());
-					// myFactura.setCobroEfectivo(ctlPago.getCobroEfectivo());
-					// myFactura.setCobroTarjeta(ctlPago.getCobroTarjeta());
-					// myFactura.setTipoPago(1);
-					// }
-					// //si la forma de pago fue con tarjeta de credito o debito
-					// if(ctlPago.getFormaPago()==2){
-					// myFactura.setPago(myFactura.getTotal());
-					// myFactura.setCambio(new BigDecimal(00));
-					// myFactura.setTipoPago(2);
-					// myFactura.setObservacion(ctlPago.getRefencia());
-					// }
-					//
-					// // se comprueba que sino tiene un cierre de caja
-					// // activo lo realice
-					// boolean resl = setCierre();
-					// //se procesa el resultado del cierre de caja
-					// if (resl) {
-					//
-					// this.guardarFactura();
-					// }else {
-					// JOptionPane.showMessageDialog(view,
-					// "No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
-					// JOptionPane.ERROR_MESSAGE);
-					// }
-					//
-					// }//fin de la ventana en cobro
 
-				} else// fin de la factura al credito
+				} else
 				if (view.getRdbtnCredito().isSelected()) {// si la factura es al contado se procede a guardar e imprimir
 
-					// como la factura es al credito se verifica que el cliente que se selecciono
-					// tenga credito
-					if (myCliente != null && myCliente.getTipoCliente() == 2) {
+						if (myCliente != null && myCliente.getTipoCliente() == 2) {
 
 						myFactura.setTipoPago(3);
-						// comprueba que el cliente este registrado
-						// para verificar el credito del cliente
-						/// BigDecimal saldo=this.myCliente.getSaldoCuenta();
-						/// BigDecimal limite=this.myCliente.getLimiteCredito();
-						/// BigDecimal nuevoSaldo=saldo.add(this.myFactura.getTotal());
 
-						// no se necesita el cambio y pago porque es al credito
 						myFactura.setCambio(new BigDecimal(0));
 						myFactura.setPago(new BigDecimal(0));
 
@@ -1993,11 +1616,8 @@ public class CtlFacturarFrame
 						if (!setFactura())
 							return;
 
-						// se comprueba que sino tiene un cierre de caja
-						// activo lo realice
 						boolean resl = setCierre();
 
-						// se procesa el resultado del cierre de caja
 						if (resl) {
 
 							if (myCliente.getId() == 1 && bandera < 1) {
@@ -2009,26 +1629,21 @@ public class CtlFacturarFrame
 									"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
 									JOptionPane.ERROR_MESSAGE);
 						}
-					} // fin de verificacion del cliente
-					else {
+					} else {
 						JOptionPane.showMessageDialog(view, "El Cliente no tiene cuenta de credito o no ha sido creado",
 								"Error facturar", JOptionPane.ERROR_MESSAGE);
 					}
-				} // fin de la factura al credito
-				// }//sin del if donde se pide el codigo del vendedor
+				}
 
-			} // fin del if donde se verifica que hay articulos que facturar
-			else {
+			} else {
 				JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.", "ERORR",
 						JOptionPane.ERROR_MESSAGE);
 			}
 
-			// para cargar las ordenes de compra
 			view.getBtnsGuardador().deleteAll();
 			cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
 
-		} // fin de la verificacion de la conexion de la base de datos
-
+		}
 	}
 
 	private void buscarArticulo() {
@@ -2067,46 +1682,35 @@ public class CtlFacturarFrame
 	}
 
 	private void setEmptyView() {
-		// se estable la tabla de detalles vacia
 		view.getModeloTabla().setEmptyDetalles();
-
 		myFactura.setCodigoAlter(0);
-		// se agrega una fila vacia a la tabla detalle
 		view.getModeloTabla().agregarDetalle();
 
 		this.myFactura.resetTotales();
 		this.myFactura.setVendedor(new Empleado());
 
-		// conseguir la fecha la facturaa
 		view.getTxtFechafactura().setText(facturaDao.getFechaSistema());
 
-		// se estable un cliente generico para la factura
 		this.view.getTxtIdcliente().setText("1");
 		this.view.getTxtNombrecliente().setText("Consumidor final");
 		view.getTxtRtn().setText("");
 
 		this.myCliente = null;
 		this.myArticulo = null;
-		// myFactura.getCliente()=null;
 
-		// this.view.getTxtArticulo().setText("");
 		this.view.getTxtBuscar().setText("");
 		this.view.getTxtDescuento().setText("");
 		this.view.getTxtImpuesto().setText("0.00");
 		this.view.getTxtImpuesto18().setText("0.00");
-		// this.view.getTxtPrecio().setText("0.00");
 		this.view.getTxtSubtotal().setText("0.00");
 		this.view.getTxtTotal().setText("0.00");
 		this.myFactura.setObservacion("");
 		this.view.getRdbtnContado().setSelected(true);
 
-		// se estable el focus de la view en la caja de texto buscar
 		this.view.getTxtBuscar().requestFocusInWindow();
-
 	}
 
 	private void buscarOrden() {
-		// se crea la vista para buscar los cliente
 		ViewListaOrdenes viewListaOrdenes = new ViewListaOrdenes(SwingUtilities.getWindowAncestor(view));
 		CtlOrdenesBuscar ctlBuscarOrden = new CtlOrdenesBuscar(viewListaOrdenes);
 
@@ -2116,7 +1720,6 @@ public class CtlFacturarFrame
 		ctlBuscarOrden.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarOrden.buscarCliente(null);
-		// se comprueba si le regreso un articulo valido
 		if (resul) {
 			this.myFactura = ctlBuscarOrden.getOrden();
 
@@ -2129,18 +1732,12 @@ public class CtlFacturarFrame
 			this.view.getModeloTabla().agregarDetalle();
 			tipoView = 2;
 
-		} else {
-			// JOptionPane.showMessageDialog(view, "No se encontro el cliente");
-			// this.view.getTxtIdcliente().setText("1");
-			// this.view.getTxtNombrecliente().setText("Consumidor final");
-
 		}
 		viewListaOrdenes.dispose();
 		ctlBuscarOrden = null;
 	}
 
 	private void buscarCliente() {
-		// se crea la vista para buscar los cliente
 		ViewListaClientes viewListaCliente = new ViewListaClientes(SwingUtilities.getWindowAncestor(view));
 
 		CtlClienteBuscar ctlBuscarCliente = new CtlClienteBuscar(viewListaCliente);
@@ -2150,7 +1747,6 @@ public class CtlFacturarFrame
 		ctlBuscarCliente.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarCliente.buscarCliente(null);
-		// se comprueba si le regreso un articulo valido
 		if (resul) {
 
 			myCliente = ctlBuscarCliente.getCliente();
@@ -2159,54 +1755,34 @@ public class CtlFacturarFrame
 			this.view.getTxtRtn().setText(myCliente.getRtn());
 
 		} else {
-			// JOptionPane.showMessageDialog(view, "No se encontro el cliente");
 			this.view.getTxtIdcliente().setText("1");
 			this.view.getTxtNombrecliente().setText("Consumidor final");
-
 		}
 		viewListaCliente.dispose();
 		ctlBuscarCliente = null;
 	}
 
 	public void guardarLocal() {
-
-		// se captura el id de la factura por si la factura es temporal
 		int idFacturaTemporal = myFactura.getIdFactura();
-
-		// se registra la factura
 		boolean resul = facturaDao.registrar(myFactura);
 
-		// se porcesa el resultado de ristrar la factura
 		if (resul) {
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
 
-			if (ConexionStatic.getNivelFact()) {// nivel de facturo 2
+			if (ConexionStatic.getNivelFact()) {
 				try {
-					/*
-					 * this.view.setVisible(false);
-					 * this.view.dispose();
-					 */
-					// AbstractJasperReports.createReportFactura(
-					// conexion.getPoolConexion().getConnection(),
-					// "Factura_Saint_Paul.jasper",myFactura.getIdFactura() );
 					AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 6,
 							myFactura.getIdFactura());
-					// AbstractJasperReports.showViewer(view);
 					AbstractJasperReports.imprimierFactura();
-					// JOptionPane.showMessageDialog(view, "Aqui"+myFactura.toString());
 
-					// muestra en la pantalla el cambio y lo mantiene permanente
-					ViewCambio cambio = new ViewCambio(null);
+						ViewCambio cambio = new ViewCambio(null);
 					cambio.getTxtCambio().setText(myFactura.getCambio().toString());
 					cambio.getTxtEfectivo().setText(myFactura.getPago().toString());
 					cambio.setVisible(true);
 
-					// myFactura=null;
 					setEmptyView();
 
-					// si la view es de actualizacion al cobrar se cierra la view
-					if (this.tipoView == 2) {// dfsfda
-						// myFactura=null;
+					if (this.tipoView == 2) {
 						this.tipoView = 1;
 						this.view.getBtnGuardar().setEnabled(true);
 						this.view.getBtnActualizar().setEnabled(false);
@@ -2221,15 +1797,11 @@ public class CtlFacturarFrame
 						view.getBtnsGuardador().deleteAll();
 
 						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
-						// view.setVisible(false);
-
 					}
-					// myFactura.
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} // fin del nivel de factura
+			}
 
 			setEmptyView();
 
@@ -2238,7 +1810,7 @@ public class CtlFacturarFrame
 					JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
-		} // fin el if donde se guarda la factura
+		}
 
 	}
 
@@ -2252,22 +1824,6 @@ public class CtlFacturarFrame
 		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
 		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
 
-		/* <<<<<<<<<<<<<<<selecionar la ultima fila creada>>>>>>>>>>>>>>> */
-		/*
-		 * int row = this.view.geTableDetalle().getRowCount () - 2;
-		 * JOptionPane.showMessageDialog(view, row);
-		 * /Rectangle rect = this.view.geTableDetalle().getCellRect(row, 0, true);
-		 * this.view.geTableDetalle().scrollRectToVisible(rect);
-		 * this.view.geTableDetalle().clearSelection();
-		 */
-		// this.view.geTableDetalle().setRowSelectionInterval(row, row);
-		// view.geTableDetalle().setRowSelectionInterval(row, row);
-		// view.geTableDetalle().clearSelection();
-		// view.geTableDetalle().addRowSelectionInterval(row,row);
-		// TablaModeloFactura modelo =
-		// (TablaModeloFactura)this.view.geTableDetalle().getModel();
-		// modelo.fireTableDataChanged();
-		// this.view.getModeloTabla().fireTableDataChanged();
 	}
 
 	public void cargarFacturaView() {
@@ -2276,16 +1832,13 @@ public class CtlFacturarFrame
 		this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
 		view.getTxtRtn().setText(myFactura.getCliente().getRtn());
 
-		// se establece el total e impuesto en el vista
-		this.view.getTxtTotal().setText("" + myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		this.view.getTxtImpuesto().setText("" + myFactura.getTotalImpuesto().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		this.view.getTxtSubtotal().setText("" + myFactura.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		view.actualizarTotales(myFactura);
 
 		this.view.getModeloTabla().setDetalles(myFactura.getDetalles());
 	}
 
 	public Factura actualizarFactura(Factura f) {
-		// TODO Auto-generated method stub
+	
 		this.myFactura = f;
 		cargarFacturaView();
 		this.view.getBtnGuardar().setVisible(false);
@@ -2293,8 +1846,6 @@ public class CtlFacturarFrame
 		this.view.getModeloTabla().agregarDetalle();
 		tipoView = 2;
 		this.view.setVisible(true);
-
-		// para controlar que es una actualizacion la que se hace
 
 		return myFactura;
 
@@ -2306,7 +1857,7 @@ public class CtlFacturarFrame
 	}
 
 	public void viewFactura(Factura f) {
-		// TODO Auto-generated method stub
+	
 		this.myFactura = f;
 		cargarFacturaView();
 		this.view.getPanelAcciones().setVisible(false);
@@ -2314,7 +1865,7 @@ public class CtlFacturarFrame
 	}
 
 	public Factura getFactura() {
-		// TODO Auto-generated method stub
+	
 		return this.myFactura;
 	}
 
@@ -2327,149 +1878,41 @@ public class CtlFacturarFrame
 		CierreCajaDao cierreDao = new CierreCajaDao();
 		CierreFacturacionDao cierreFacturasDao = new CierreFacturacionDao();
 
-		CierreCaja oldCierre = new CierreCaja();
+		CierreCaja oldCierre = cierreDao.getCierreUltimoUser();
 
-		// se consiguie el ultimo cierre del usuario
-		oldCierre = cierreDao.getCierreUltimoUser();
-
-		if (oldCierre.getEstado() == false) {// si el ultimo cierre esta hecho
-												// se registras el nuevo aumentando los valores en uno del anterior
-												// cierre
-
-			// cantidad de efectivo inicial de la caja");
+		if (oldCierre.getEstado() == false) {
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar = new CtlContarEfectivo(viewContar);
 
-			// comprobar si se guardo el efectivo inicial
 			if (ctlContar.getEstado()) {
+				CierreCaja newCierre = new CierreCaja();
+				newCierre.setEfectivoInicial(ctlContar.getTotal());
+				newCierre.setUsuario(usuario.getUser());
 
-				CierreCaja newCierre = new CierreCaja();// se crea el nuevo cierre
-
-				newCierre.setEfectivoInicial(ctlContar.getTotal());// se establece el efectivo inicial
-				newCierre.setUsuario(usuario.getUser());// se establece el usuario
-
-				// se recoren las cajas donde el usuario puede facturar para ver los registros
-				// de los ultimos cierre
 				for (int xx = 0; xx < usuario.getCajas().size(); xx++) {
-
-					// se consigue los datos de cierre por cada caja
 					CierreFacturacion unaC = cierreFacturasDao.buscarPorCajaUsuario(
 							usuario.getCajas().get(xx),
 							usuario.getUser());
 
-					// si ya existe el registro se crea uno nuevo incrementando en uno el del
-					// anterior
 					if (unaC != null) {
-						// JOptionPane.showMessageDialog(view, unaC.toString());
-						// se crear los nuevos registros para el cierre nuevo
 						CierreFacturacion una = new CierreFacturacion();
-						// se estraablece la caja
 						una.setCaja(unaC.getCaja());
-
-						una.setNoFacturaInicio(unaC.getNoFacturaFinal() + 1);// se
-																				// estable
-																				// la
-																				// factura
-																				// incial
-																				// sumandole
-																				// uno
-																				// a
-																				// la
-																				// ultima
-																				// factura
-																				// realizada
-																				// por
-																				// el
-																				// usuario
-						una.setUsuario(usuario.getUser());// se establece el usuario
-
-						// se agrega el registro al cierre nuevo
+						una.setNoFacturaInicio(unaC.getNoFacturaFinal() + 1);
+						una.setUsuario(usuario.getUser());
 						newCierre.getCierreFacturas().add(una);
-
-					} else {// sino existe se crea uno comenzando con el numero de factura 1 para esa caja y
-							// usuario
-
-						// se crear los nuevos registros para el cierre nuevo
+					} else {
 						CierreFacturacion una = new CierreFacturacion();
-
-						// se estraablece la caja
 						una.setCaja(usuario.getCajas().get(xx));
-
-						una.setNoFacturaInicio(1);// se
-													// estable
-													// la
-													// factura
-													// incial
-													// en 1
-
-						una.setUsuario(usuario.getUser());// se establece el usuario
-
-						// se agrega el registro al cierre nuevo
+						una.setNoFacturaInicio(1);
+						una.setUsuario(usuario.getUser());
 						newCierre.getCierreFacturas().add(una);
 					}
 				}
 
-				newCierre.setNoSalidaInicial(oldCierre.getNoSalidaFinal() + 1);// se
-																				// estable
-																				// la
-																				// salida
-																				// incial
-																				// sumandole
-																				// uno
-																				// a
-																				// la
-																				// ultima
-																				// salida
-																				// realizada
-																				// por
-																				// el
-																				// usuario
-				newCierre.setNoEntradaInicial(oldCierre.getNoEntradaFinal() + 1);// se
-																					// estable
-																					// la
-																					// entrada
-																					// incial
-																					// sumandole
-																					// uno
-																					// a
-																					// la
-																					// ultima
-																					// salida
-																					// realizada
-																					// por
-																					// el
-																					// usuario
-				newCierre.setNoCobroInicial(oldCierre.getNoCobroFinal() + 1);// se
-																				// estable
-																				// la
-																				// cobros
-																				// incial
-																				// sumandole
-																				// uno
-																				// a
-																				// la
-																				// ultima
-																				// salida
-																				// realizada
-																				// por
-																				// el
-																				// usuario
-				// JOptionPane.showMessageDialog(view, oldCierre.getNoPagoFinal());
-				newCierre.setNoPagoInicial(oldCierre.getNoPagoFinal() + 1);// se
-																			// estable
-																			// la
-																			// pagos
-																			// incial
-																			// sumandole
-																			// uno
-																			// a
-																			// al
-																			// ultimo
-																			// pago
-																			// realizada
-																			// por
-																			// el
-																			// usuario
+				newCierre.setNoSalidaInicial(oldCierre.getNoSalidaFinal() + 1);
+				newCierre.setNoEntradaInicial(oldCierre.getNoEntradaFinal() + 1);
+				newCierre.setNoCobroInicial(oldCierre.getNoCobroFinal() + 1);
+				newCierre.setNoPagoInicial(oldCierre.getNoPagoFinal() + 1);
 				cierreDao.registrarCierre(newCierre);
 				resul = true;
 
@@ -2480,8 +1923,7 @@ public class CtlFacturarFrame
 				resul = false;
 			}
 
-		} // fin de nuevo cierre
-		else {
+		} else {
 			resul = true;
 		}
 
@@ -2490,32 +1932,19 @@ public class CtlFacturarFrame
 	}
 
 	public void guardarFactura() {
-
-		// se captura el id de la factura por si la factura es temporal
 		int idFacturaTemporal = myFactura.getIdFactura();
-
-		// se registra la factura
 		boolean resul = facturaDao.registrar(myFactura);
 
-		// se porcesa el resultado de ristrar la factura
 		if (resul) {
 			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
 			Integer copiasFacturas = config.getCopiasFacturas();
 
-			// erwqrq
-
 			try {
-
-				// si la factura es al contado se imprime con un formato especifico
 				if (myFactura.getTipoFactura() == 1) {
-
-					// si la configuracion de la impresion de la factura es tiket o carta
 					if (config.getFormatoFactura().equals("tiket")) {
-
 						for (int xx = 0; xx < copiasFacturas; xx++) {
 							AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 1,
 									myFactura.getIdFactura());
-							// AbstractJasperReports.showViewer(view);
 							AbstractJasperReports.imprimierFactura();
 						}
 					}
@@ -2526,7 +1955,6 @@ public class CtlFacturarFrame
 								AbstractJasperReports.createReportFacturaCarta(
 										ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),
 										"ORIGINAL");
-								// AbstractJasperReports.showViewer(view);
 								AbstractJasperReports.imprimierFactura();
 							} else {
 								AbstractJasperReports.createReportFacturaCarta(
@@ -2539,29 +1967,20 @@ public class CtlFacturarFrame
 				} // fin de la impresion de la factura carta al contado
 
 				if (myFactura.getTipoFactura() == 2) {
-					// si la configuracion de la impresion de la factura es tiket o carta
 					if (config.getFormatoFacturaCredito().equals("tiket")) {
-
 						for (int xx = 0; xx < copiasFacturas; xx++) {
 							AbstractJasperReports.createReportFacturaTiketCredito(
 									ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura());
-							// AbstractJasperReports.showViewer(view);
-							// AbstractJasperReports.imprimierFactura();
 							AbstractJasperReports.imprimierFactura();
-							// AbstractJasperReports.imprimierFactura();
-
 						}
-
 					}
 
 					if (config.getFormatoFacturaCredito().equals("carta")) {
-
 						for (int xx = 0; xx < copiasFacturas; xx++) {
 							if (xx == 0) {
 								AbstractJasperReports.createReportFacturaCartaCredito(
 										ConexionStatic.getPoolConexion().getConnection(), myFactura.getIdFactura(),
 										"ORIGINAL");
-								// AbstractJasperReports.showViewer(view);
 								AbstractJasperReports.imprimierFactura();
 							} else {
 								AbstractJasperReports.createReportFacturaCartaCredito(
@@ -2578,13 +1997,11 @@ public class CtlFacturarFrame
 					if (resul2 == 0) {
 						AbstractJasperReports.createReportOrden(ConexionStatic.getPoolConexion().getConnection(),
 								myFactura.getIdFactura());
-						// AbstractJasperReports.showViewer(view);
 						AbstractJasperReports.imprimierFactura();
 
 					}
 				}
 
-				// se coloca caja por defecto
 				CajaDao cajasDao = new CajaDao();
 				usuario.setCajas(cajasDao.getCajasUsuario(usuario));
 
@@ -2600,26 +2017,18 @@ public class CtlFacturarFrame
 
 				setEmptyView();
 
-				// muestra en la pantalla el cambio y lo mantiene permanente
 				ViewCambio cambio = new ViewCambio(SwingUtilities.getWindowAncestor(view));
 				cambio.getTxtCambio().setText(cambioEfectivo);
 				cambio.getTxtEfectivo().setText(pago);
 				cambio.setVisible(true);
 
-				// myFactura=null;
-
-				// si la view es de actualizacion al cobrar se cierra la view
-				if (this.tipoView == 2) {// dfsfda
-					// myFactura=null;
+				if (this.tipoView == 2) {
 					this.tipoView = 1;
 					this.view.getBtnGuardar().setEnabled(true);
 					this.view.getBtnActualizar().setEnabled(false);
 
 					Factura eliminarTem = new Factura();
 					eliminarTem.setIdFactura(idFacturaTemporal);
-
-					// se elimina la orden
-					// this.facturaOrdenesDao.eliminar(eliminarTem);
 
 					this.facturaOrdenesDao.cambiarEstado(eliminarTem, 3);
 
@@ -2628,12 +2037,8 @@ public class CtlFacturarFrame
 					view.getBtnsGuardador().deleteAll();
 
 					cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
-					// view.setVisible(false);
-
 				}
-				// myFactura.
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -2644,7 +2049,7 @@ public class CtlFacturarFrame
 					JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
-		} // fin el if donde se guarda la factura
+		}
 
 	}
 
@@ -2656,10 +2061,6 @@ public class CtlFacturarFrame
 			if (art.getId() == artLocal.getId()) {
 				existe = true;
 
-				// String entrada=(String) JOptionPane.showInputDialog(view,"El articula ya esta
-				// en la factura. Escriba el cantida a agrgar:",JOptionPane.OK_CANCEL_OPTION,
-				// null, null, "9090");
-				// se selecciona el item encontrado
 				int row = x;
 				int col = 1;
 				boolean toggle = false;
@@ -2668,15 +2069,12 @@ public class CtlFacturarFrame
 				this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
 				this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
 
-				// se pide el ingreso de la cantidad a agregar
 				String entrada = (String) JOptionPane.showInputDialog(view,
 						"El articula ya esta en la factura. Escriba el cantida a agregar:",
 						"Agregar cantidad\n", JOptionPane.OK_CANCEL_OPTION, null,
 						null, "1");
 
-				// se verfica en la configuracion si se puede facturar sin inventario
 				if (config.isFacturarSinInventario()) {
-					// se registra la cantida en la entrada del usuario
 					BigDecimal cantidadSaldoItem = new BigDecimal(entrada);
 
 					BigDecimal newCantidadSaldoItem = new BigDecimal(
@@ -2685,26 +2083,20 @@ public class CtlFacturarFrame
 					this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
 					this.calcularTotales();
 
-				} else {// se verfica en la configuracion si se puede facturar con inventario
-
+				} else {
 					if (AbstractJasperReports.isNumberReal(entrada)) {
-						// si es un bien se procede de esta manera
 						if (myArticulo.getTipoArticulo() == 1) {
-							// se extre la exista del producto en el inventario
 							double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
 									cajaActiva.getDetartamento().getId());
 
-							// se registra la cantida en la entrada del usuario
 							BigDecimal cantidadSaldoItem = new BigDecimal(entrada);
 
-							// se recoge la nueva cantidad a colocar en el item
 							double cantidad = view.getModeloTabla().getDetalle(x).getCantidad().add(cantidadSaldoItem)
 									.doubleValue();
 
 							BigDecimal newCantidadSaldoItem = new BigDecimal(view.getModeloTabla().getDetalle(x)
 									.getCantidad().add(cantidadSaldoItem).doubleValue());
 
-							// se establece la nueva cantidad
 							this.view.getModeloTabla().getDetalle(x).setCantidad(newCantidadSaldoItem);
 
 							if (existencia > 0.0 && cantidad <= existencia) {
@@ -2719,7 +2111,7 @@ public class CtlFacturarFrame
 								view.getModeloTabla().eliminarDetalle(x);
 							}
 						}
-					} // fin de la comprobacion que la estrada es un numero
+					}
 				}
 
 			}
