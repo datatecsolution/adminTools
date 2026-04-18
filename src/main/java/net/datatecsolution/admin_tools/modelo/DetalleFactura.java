@@ -22,6 +22,7 @@ public class DetalleFactura {
 	private double ganancia=0.0;
 	private String nombreCliente="";
 	private int codigoCliente=0;
+	private String fechaFactura="";
 
 	
 	public void setAccion(boolean d){
@@ -140,5 +141,13 @@ public class DetalleFactura {
 
 	public void setCodigoCliente(int codigoCliente) {
 		this.codigoCliente = codigoCliente;
+	}
+
+	public String getFechaFactura() {
+		return fechaFactura;
+	}
+
+	public void setFechaFactura(String fechaFactura) {
+		this.fechaFactura = fechaFactura;
 	}
 }

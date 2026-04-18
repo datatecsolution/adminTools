@@ -466,8 +466,102 @@ public void getDetallesFactura(Caja caja,List<DetalleFactura> detalles,Articulo 
 	
 }
 
+public void getDetallesFactura(Caja caja, List<DetalleFactura> detalles, Articulo articulo, Empleado vendedor, String fecha1, String fecha2) {
+
+	super.DbName=caja.getNombreBd();
+	setSqlQueryJoin();
+
+	String sql = "SELECT detalle_factura.numero_factura AS numero_factura_detalle, "
+			+ " articulo.articulo, "
+			+ " detalle_factura.precio AS precio_detalle, "
+			+ " detalle_factura.cantidad AS cantidad_detalle, "
+			+ " detalle_factura.impuesto AS impuesto_detalle, "
+			+ " detalle_factura.descuento AS descuento_detalle, "
+			+ " detalle_factura.subtotal AS subtotal_detalle, "
+			+ " detalle_factura.total AS total_detalle, "
+			+ " articulo.codigo_articulo, "
+			+ " detalle_factura.id, "
+			+ " encabezado_factura.codigo_cliente, "
+			+ " cliente.nombre_cliente, "
+			+ " DATE_FORMAT(encabezado_factura.fecha, '%d-%m-%Y') AS fecha_factura, "
+			+ " IFNULL(precios_articulos.precio_articulo,0) AS precio_costo"
+			+ " FROM " + super.DbName + ".detalle_factura "
+			+ " JOIN " + DbNameBase + ".articulo ON (articulo.codigo_articulo = detalle_factura.codigo_articulo) "
+			+ " JOIN " + super.DbName + ".encabezado_factura ON (detalle_factura.numero_factura = encabezado_factura.numero_factura) "
+			+ " JOIN " + DbNameBase + ".cliente ON (encabezado_factura.codigo_cliente = cliente.codigo_cliente) "
+			+ " LEFT JOIN " + DbNameBase + ".precios_articulos ON (precios_articulos.codigo_articulo = articulo.codigo_articulo AND precios_articulos.codigo_precio = 4) "
+			+ " WHERE CAST(encabezado_factura.fecha AS DATE) BETWEEN ? AND ? AND detalle_factura.codigo_articulo=? AND encabezado_factura.codigo_vendedor=? AND encabezado_factura.estado_factura = 'ACT'";
+
+	Connection con = null;
+	ResultSet res=null;
+
+	try {
+		con = ConexionStatic.getPoolConexion().getConnection();
+		psConsultas = con.prepareStatement(sql);
+
+		psConsultas.setString(1, fecha1);
+		psConsultas.setString(2, fecha2);
+		psConsultas.setInt(3, articulo.getId());
+		psConsultas.setInt(4, vendedor.getCodigo());
+
+		res = psConsultas.executeQuery();
+		while(res.next()){
+			DetalleFactura unDetalle=new DetalleFactura();
+			unDetalle.setId(res.getInt("id"));
+			unDetalle.setIdFactura(res.getInt("numero_factura_detalle"));
+			unDetalle.setFechaFactura(res.getString("fecha_factura"));
+
+			Articulo articuloDetalle= new Articulo();
+			articuloDetalle.setId(res.getInt("codigo_articulo"));
+			articuloDetalle.setArticulo(res.getString("articulo"));
+			articuloDetalle.setPrecioVenta(res.getDouble("precio_detalle"));
+			unDetalle.setListArticulos(articuloDetalle);
+
+			unDetalle.setCodigoCliente(res.getInt("codigo_cliente"));
+			unDetalle.setNombreCliente(res.getString("nombre_cliente"));
+
+			unDetalle.setArt(res.getString("articulo"));
+			unDetalle.setCodigoArt(res.getInt("codigo_articulo"));
+			unDetalle.setPrecioVentaItem(res.getDouble("precio_detalle"));
+
+			BigDecimal precioCostoArticulo=new BigDecimal(res.getDouble("precio_costo"));
+			BigDecimal precioCosto=precioCostoArticulo.multiply(res.getBigDecimal("cantidad_detalle"));
+			BigDecimal ganacia=res.getBigDecimal("total_detalle").subtract(precioCosto);
+
+			unDetalle.setTotalVentasCosto(precioCosto.setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
+			unDetalle.setGanancia(ganacia.setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
+
+			unDetalle.setCantidad(res.getBigDecimal("cantidad_detalle"));
+			unDetalle.setImpuesto(res.getBigDecimal("impuesto_detalle"));
+			unDetalle.setSubTotal(res.getBigDecimal("subtotal_detalle"));
+			unDetalle.setDescuentoItem(res.getBigDecimal("descuento_detalle"));
+			unDetalle.setTotal(res.getBigDecimal("total_detalle"));
+
+			detalles.add(unDetalle);
+		 }
+
+		} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+				System.out.println(e);
+		}
+	finally
+	{
+		super.DbName= DbNameBase;
+		try{
+			if(res != null) res.close();
+            if(psConsultas != null)psConsultas.close();
+            if(con != null) con.close();
+			} // fin de try
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+			} // fin de catch
+	} // fin de finally
+
+}
+
 public List<DetalleFactura> getDetallesFactura(Integer idFactura, Caja caja) {
-	
+
 	
 	//se cambia la base de datos para las facturas de la caja seleccionada
 	super.DbName=caja.getNombreBd();

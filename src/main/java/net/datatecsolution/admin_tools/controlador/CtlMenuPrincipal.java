@@ -414,6 +414,12 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				}
 
 				break;
+			case "VENTAS_ART_VENDEDOR":
+				if (permiso == 4) {
+					ViewFiltroRepVentasArtVendedor viewFiltroArtVend = new ViewFiltroRepVentasArtVendedor(view);
+					CtlFiltroRepVentasArtVendedor ctlFiltroArtVend = new CtlFiltroRepVentasArtVendedor(viewFiltroArtVend);
+				}
+				break;
 			case "REPORTE_X_VENCER":
 				ViewFiltroRepVenc viewFiltroRepVenc = new ViewFiltroRepVenc(view);
 				CtlFiltroRepVenc ctlFiltroRepVenc = new CtlFiltroRepVenc(viewFiltroRepVenc);

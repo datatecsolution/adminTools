@@ -58,7 +58,8 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmOrdenes;
 	private JMenuItem mntmRutasDeCobro;
 	private JMenuItem mntmReporteCuentasFacturas;
-	
+	private final JMenuItem mntmVentasArtVendedor;
+
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewMenuPrincipal.class.getResource("/drawable/logo-admin-tool1.png")));
@@ -178,7 +179,10 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmVentasUsuarios = new JMenuItem("Ventas usuarios");
 		mnReportes.add(mntmVentasUsuarios);
-		
+
+		mntmVentasArtVendedor = new JMenuItem("Ventas articulo por vendedor");
+		mnReportes.add(mntmVentasArtVendedor);
+
 		JMenu mnCuentasPorPagar = new JMenu("Cuentas por pagar");
 		menuBar.add(mnCuentasPorPagar);
 		
@@ -331,6 +335,9 @@ public class ViewMenuPrincipal extends JFrame {
 
 		mntmReporteCuentasFacturas.addActionListener(c);
 		mntmReporteCuentasFacturas.setActionCommand("REPORTE_CXC_FACTURA");
+
+		mntmVentasArtVendedor.addActionListener(c);
+		mntmVentasArtVendedor.setActionCommand("VENTAS_ART_VENDEDOR");
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");

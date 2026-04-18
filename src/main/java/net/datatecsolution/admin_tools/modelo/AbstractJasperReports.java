@@ -89,6 +89,7 @@ public abstract class AbstractJasperReports implements Runnable {
 	private static InputStream cobroCajaFactura = null;
 	private static InputStream pagosClientesVendedor = null;
 	private static InputStream cuentaFacturaMora;
+	private static InputStream ventasArticuloVendedor;
 
 	private static JasperReport reportFactura;
 	private static JasperReport reportCotizacion;
@@ -141,6 +142,7 @@ public abstract class AbstractJasperReports implements Runnable {
 	private static JasperReport reportCobroCajaFactura;
 	private static JasperReport reportPagosClienteVendedor;
 	private static JasperReport reportCuentaFacturaMora;
+	private static JasperReport reportVentasArticuloVendedor;
 
 	private static final Pattern numberPattern = Pattern.compile("-?\\d+");
 	private static final Pattern numberPatternReal = Pattern.compile("\\d+([.]\\d+)?");
@@ -231,6 +233,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		cobroCajaFactura = AbstractJasperReports.class.getResourceAsStream("/reportes/cobro_caja_factura.jasper");
 		pagosClientesVendedor = AbstractJasperReports.class.getResourceAsStream("/reportes/pagos_clientes_vendedor.jasper");
 		cuentaFacturaMora = AbstractJasperReports.class.getResourceAsStream("/reportes/reporte_cuenta_factura.jasper");
+		ventasArticuloVendedor = AbstractJasperReports.class.getResourceAsStream("/reportes/ventas_articulo_vendedor.jasper");
 
 		try {
 			reportFactura = (JasperReport) JRLoader.loadObject(factura);
@@ -301,6 +304,7 @@ public abstract class AbstractJasperReports implements Runnable {
 			reportCobroCajaFactura = (JasperReport) JRLoader.loadObject(cobroCajaFactura);
 			reportPagosClienteVendedor = (JasperReport) JRLoader.loadObject(pagosClientesVendedor);
 			reportCuentaFacturaMora = (JasperReport) JRLoader.loadObject(cuentaFacturaMora);
+			reportVentasArticuloVendedor = (JasperReport) JRLoader.loadObject(ventasArticuloVendedor);
 
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
@@ -487,6 +491,34 @@ public abstract class AbstractJasperReports implements Runnable {
 			conn.close();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	public static void createReportVentasArticuloVendedor(Connection conn, List<DetalleFactura> ventas,
+			Articulo articulo, Empleado vendedor, String fecha1, String fecha2) {
+
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("fecha1", fecha1);
+		parametros.put("fecha2", fecha2);
+		parametros.put("articulo", articulo.getArticulo());
+		parametros.put("vendedor", vendedor.toString());
+		parametros.put("bD_admin", facturaDao.getDbNameDefault());
+
+		JRBeanCollectionDataSource ventasJRBean = new JRBeanCollectionDataSource(ventas);
+		parametros.put("ventasDataSource", ventasJRBean);
+
+		try {
+			if (reportVentasArticuloVendedor != null)
+				reportFilled = JasperFillManager.fillReport(reportVentasArticuloVendedor, parametros, conn);
+			else
+				JOptionPane.showMessageDialog(null, "No se encontro el reporte");
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -1363,11 +1395,10 @@ public abstract class AbstractJasperReports implements Runnable {
 		viewer2.setSize(1000, 800);
 		viewer2.setLocationRelativeTo(null);
 
-		JasperViewer viewer3 = new JasperViewer(reportFilled);
-		// viewer2.setTitle("Factura");
-		viewer2.getContentPane().add(viewer3.getContentPane());
+		net.sf.jasperreports.swing.JRViewer jrViewer = new net.sf.jasperreports.swing.JRViewer(reportFilled);
+		jrViewer.setZoomRatio(0.75f);
+		viewer2.getContentPane().add(jrViewer);
 		viewer2.setVisible(true);
-		// viewer.setVisible( true );
 
 	}
 
@@ -1376,11 +1407,10 @@ public abstract class AbstractJasperReports implements Runnable {
 		viewer2.setSize(1000, 800);
 		viewer2.setLocationRelativeTo(null);
 
-		JasperViewer viewer3 = new JasperViewer(reportFilled);
-		// viewer2.setTitle("Factura");
-		viewer2.getContentPane().add(viewer3.getContentPane());
+		net.sf.jasperreports.swing.JRViewer jrViewer = new net.sf.jasperreports.swing.JRViewer(reportFilled);
+		jrViewer.setZoomRatio(0.75f);
+		viewer2.getContentPane().add(jrViewer);
 		viewer2.setVisible(true);
-		// viewer.setVisible( true );
 
 	}
 
