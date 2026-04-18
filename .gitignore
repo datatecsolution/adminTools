@@ -139,6 +139,9 @@ gradle-app.setting
 # Custom ignores
 bin/
 .vscode/
+application.properties
+config.cfg
+connection.dat
 
 # macOS
 .DS_Store

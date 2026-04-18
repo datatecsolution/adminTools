@@ -8,69 +8,79 @@ import java.util.Arrays;
 import java.util.Properties;
 
 public class Cifrado {
-    private static final String clave = "Jfmp123."; // Clave secreta para cifrar/descifrar
+    private static final String CLAVE = "AdminTools2024@Sec";
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
-    private static final byte[] IV = new byte[16]; // Vector de inicialización, puede ser aleatorio
-    private static final String ARCHIVO_CLAVE = System.getProperty("user.dir") + File.separator + "config.cfg";;
+    private static final String ARCHIVO = "connection.dat";
 
-    private SecretKey secretKey;
-    private IvParameterSpec ivParameterSpec;
+    private final SecretKeySpec secretKey;
+    private final IvParameterSpec iv;
 
     public Cifrado() {
         try {
-            // Generamos la clave secreta a partir de la clave proporcionada
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
-            byte[] key = sha.digest(clave.getBytes("UTF-8"));
-            key = Arrays.copyOf(key, 16); // Solo necesitamos los primeros 128 bits
+            byte[] key = sha.digest(CLAVE.getBytes("UTF-8"));
+            key = Arrays.copyOf(key, 16);
             secretKey = new SecretKeySpec(key, ALGORITHM);
 
-            // Creamos el vector de inicialización
-            ivParameterSpec = new IvParameterSpec(IV);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            byte[] ivBytes = Arrays.copyOfRange(sha.digest(key), 0, 16);
+            iv = new IvParameterSpec(ivBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al inicializar cifrado", e);
         }
     }
 
-    public void guardarDatosCifrados(Properties datos) throws Exception{
-        // Crear el archivo de clave si no existe
-        File archivo = new File(ARCHIVO_CLAVE);
-        if (!archivo.exists()) {
-            archivo.createNewFile();
-        }
+    public static String getArchivo() {
+        return ARCHIVO;
+    }
 
+    public static boolean existeArchivo() {
+        return new File(ARCHIVO).exists();
+    }
+
+    public void guardar(Properties datos) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        datos.store(new OutputStreamWriter(baos, "UTF-8"), null);
+        byte[] datosPlanos = baos.toByteArray();
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+        byte[] datosCifrados = cipher.doFinal(datosPlanos);
+
+        FileOutputStream fos = new FileOutputStream(ARCHIVO);
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
-            FileOutputStream fos = new FileOutputStream(archivo);
-            CipherOutputStream cos = new CipherOutputStream(fos, cipher);
-            datos.store(cos, "Datos de conexión a la base de datos cifrados");
-            cos.close();
+            fos.write(datosCifrados);
+            fos.flush();
+        } finally {
             fos.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
-    // Método para recuperar los datos cifrados desde un archivo y decodificarlos
-    public Properties recuperarDatosCifrados()throws Exception {
-        // Verificar si el archivo de clave existe
-        File archivo = new File(ARCHIVO_CLAVE);
+    public Properties cargar() throws Exception {
+        File archivo = new File(ARCHIVO);
         if (!archivo.exists()) {
             return null;
         }
-        Properties datos = new Properties();
+
+        byte[] datosCifrados = new byte[(int) archivo.length()];
+        FileInputStream fis = new FileInputStream(archivo);
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-            FileInputStream fis = new FileInputStream(archivo);
-            CipherInputStream cis = new CipherInputStream(fis, cipher);
-            datos.load(cis);
-            cis.close();
+            int leidos = 0;
+            while (leidos < datosCifrados.length) {
+                int n = fis.read(datosCifrados, leidos, datosCifrados.length - leidos);
+                if (n == -1) break;
+                leidos += n;
+            }
+        } finally {
             fis.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
-        return datos;
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+        byte[] datosPlanos = cipher.doFinal(datosCifrados);
+
+        Properties props = new Properties();
+        props.load(new InputStreamReader(new ByteArrayInputStream(datosPlanos), "UTF-8"));
+        return props;
     }
 }

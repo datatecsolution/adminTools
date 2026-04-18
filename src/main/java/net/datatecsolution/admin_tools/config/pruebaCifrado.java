@@ -25,7 +25,7 @@ public class pruebaCifrado {
         // Recuperamos los datos cifrados desde el archivo
         Properties datosRecuperados = null;
         try {
-            datosRecuperados = cifrado.recuperarDatosCifrados();
+            datosRecuperados = cifrado.cargar();
         } catch (Exception e) {
             e.printStackTrace();
         }

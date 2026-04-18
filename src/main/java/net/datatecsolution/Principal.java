@@ -37,8 +37,7 @@ public class Principal {
 
         Locale.setDefault(new Locale("es", "HN"));
 
-        //se establece la conecion a la base de datos
-        ConexionStatic.conectarBD();
+        configurarConexion();
 
         //se cargan todos los reportes
         AbstractJasperReports.loadFileReport();
@@ -171,4 +170,31 @@ public class Principal {
 
     }
 
+    private static void configurarConexion() {
+        boolean necesitaConfig = !ConexionStatic.existeArchivoConfig();
+
+        if (!necesitaConfig) {
+            ConexionStatic.conectarBD();
+            necesitaConfig = !ConexionStatic.isDbConnected();
+        }
+
+        while (necesitaConfig) {
+            net.datatecsolution.admin_tools.view.BdConfig viewBdConfig =
+                new net.datatecsolution.admin_tools.view.BdConfig(null);
+            net.datatecsolution.admin_tools.controlador.CtlBdConfig ctlBdConfig =
+                new net.datatecsolution.admin_tools.controlador.CtlBdConfig(viewBdConfig);
+            viewBdConfig.dispose();
+
+            if (!ConexionStatic.isConfiguracionCargada() || !ConexionStatic.isDbConnected()) {
+                int opcion = JOptionPane.showConfirmDialog(null,
+                    "No se pudo conectar a la base de datos.\n¿Desea reintentar la configuración?",
+                    "Error de conexión", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if (opcion != JOptionPane.YES_OPTION) {
+                    System.exit(1);
+                }
+            } else {
+                necesitaConfig = false;
+            }
+        }
+    }
 }
