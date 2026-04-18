@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.config.PasswordHasher;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.modelo.Usuario;
@@ -34,29 +35,31 @@ public class UsuarioDao  extends ModeloDaoBasic {
 	}
 	
 	public boolean comprobarAdmin(String pwd){
-		
+
 		boolean resultado=false;
-		
+
         Connection con = null;
-        
-    	String sql=super.getQuerySelect()+" where (tipo_permiso=1 or  tipo_permiso=4) and clave=?";
-        //Statement stmt = null;
-       	List<Factura> facturas=new ArrayList<Factura>();
-		
+
+    	String sql=super.getQuerySelect()+" where (tipo_permiso=1 or tipo_permiso=4)";
+
 		ResultSet res=null;
-		
-		boolean existe=false;
+
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
-			
+
 			psConsultas = con.prepareStatement(sql);
-			psConsultas.setString(1, pwd);
-			System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
 			while(res.next()){
-				resultado=true;
+				String claveAlmacenada = res.getString("clave");
+				if (PasswordHasher.verify(pwd, claveAlmacenada)) {
+					resultado = true;
+					if (!PasswordHasher.isHashed(claveAlmacenada)) {
+						migrarPassword(con, res.getString("usuario"), claveAlmacenada, pwd);
+					}
+					break;
+				}
 			 }
-					
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
@@ -65,24 +68,16 @@ public class UsuarioDao  extends ModeloDaoBasic {
 		finally
 		{
 			try{
-				
 				if(res != null) res.close();
                 if(psConsultas != null)psConsultas.close();
                 if(con != null) con.close();
-                
-				
 				} // fin de try
 				catch ( SQLException excepcionSql )
 				{
 					excepcionSql.printStackTrace();
-					//conexion.desconectar();
 				} // fin de catch
 		} // fin de finally
-		
-		
-		
-	
-		
+
 		return resultado;
 	}
 	
@@ -229,34 +224,42 @@ public class UsuarioDao  extends ModeloDaoBasic {
 	
 	
 	public boolean setLogin(Usuario user) {
-		
+
 		Usuario unUsuario=new Usuario();
 		ResultSet res=null;
 		PreparedStatement buscarUser=null;
 		Connection conn=null;
 		boolean existe=false;
-		
+
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			buscarUser=conn.prepareStatement(super.getQuerySelect()+" WHERE usuario = ? AND clave = ?");
+			buscarUser=conn.prepareStatement(super.getQuerySelect()+" WHERE usuario = ?");
 			buscarUser.setString(1, user.getUser());
-			buscarUser.setString(2, user.getPwd());
 			res = buscarUser.executeQuery();
 			while(res.next()){
+				String claveAlmacenada = res.getString("clave");
+
+				if (!PasswordHasher.verify(user.getPwd(), claveAlmacenada)) {
+					continue;
+				}
+
 				existe=true;
 				unUsuario.setNombre(res.getString("nombre_completo"));
 				unUsuario.setUser(res.getString("usuario"));
-				unUsuario.setPwd(res.getString("clave"));
+				unUsuario.setPwd(claveAlmacenada);
 				unUsuario.setPermiso(res.getString("permiso"));
 				unUsuario.setTipoPermiso(res.getInt("tipo_permiso"));
-				
+
 				unUsuario.setCajas(cajasDao.getCajasUsuario(unUsuario));
-				
-				ConexionStatic.setUsuarioLogin(unUsuario);	
-				
+
+				ConexionStatic.setUsuarioLogin(unUsuario);
+
+				if (!PasswordHasher.isHashed(claveAlmacenada)) {
+					migrarPassword(conn, user.getUser(), claveAlmacenada, user.getPwd());
+				}
 			 }
-				
-					
+
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
@@ -271,12 +274,9 @@ public class UsuarioDao  extends ModeloDaoBasic {
 				catch ( SQLException excepcionSql )
 				{
 				excepcionSql.printStackTrace();
-			//	conexion.desconectar();
 				} // fin de catch
 			} // fin de finally
-		
-			
-		
+
 		return existe;
 			
 		
@@ -473,12 +473,15 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 			
 			psConsultas.setString( 1, myUsuario.getUser() );
 			psConsultas.setString( 2, myUsuario.getNombre()+" "+myUsuario.getApellido() );
-			psConsultas.setString( 3, myUsuario.getPwd());
+			String pwdToStore = PasswordHasher.isHashed(myUsuario.getPwd())
+				? myUsuario.getPwd()
+				: PasswordHasher.hash(myUsuario.getPwd());
+			psConsultas.setString( 3, pwdToStore);
 			psConsultas.setString(4, myUsuario.getPermiso());
 			psConsultas.setInt(5,myUsuario.getTipoPermiso());
-			
+
 			resultado=psConsultas.executeUpdate();
-			
+
 			rs=psConsultas.getGeneratedKeys(); //obtengo las ultimas llaves generadas
 			while(rs.next()){
 				this.setIdRegistrado(rs.getInt(1));
@@ -525,10 +528,12 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET usuario = ?, nombre_completo = ?,clave=? ,permiso = ?, tipo_permiso=? WHERE usuario = ?");
-			//nuevo=con.prepareStatement( "INSERT INTO usuario(usuario,nombre_completo,clave,permiso,tipo_permiso) VALUES (?,?,?,?,?)");
 			psConsultas.setString( 1, myUsuario.getUser() );
 			psConsultas.setString( 2, myUsuario.getNombre()+" "+myUsuario.getApellido() );
-			psConsultas.setString( 3, myUsuario.getPwd());
+			String pwdToStore = PasswordHasher.isHashed(myUsuario.getPwd())
+				? myUsuario.getPwd()
+				: PasswordHasher.hash(myUsuario.getPwd());
+			psConsultas.setString( 3, pwdToStore);
 			psConsultas.setString(4, myUsuario.getPermiso());
 			psConsultas.setInt(5,myUsuario.getTipoPermiso());
 			psConsultas.setString( 6, myUsuario.getUserOld() );
@@ -571,6 +576,25 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 		// TODO Auto-generated method stub
 		return null;
 	}
-		
+
+	private void migrarPassword(Connection conn, String usuario, String claveActual, String passwordPlano) {
+		PreparedStatement ps = null;
+		try {
+			String hashed = PasswordHasher.hash(passwordPlano);
+			ps = conn.prepareStatement("UPDATE usuario SET clave = ? WHERE usuario = ? AND clave = ?");
+			ps.setString(1, hashed);
+			ps.setString(2, usuario);
+			ps.setString(3, claveActual);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }

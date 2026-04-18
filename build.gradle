@@ -85,6 +85,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
 
     compile group: 'org.flywaydb', name: 'flyway-core', version: '6.5.7'
+    compile group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
 }
 
 task dumpSchema(type: JavaExec) {
