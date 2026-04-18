@@ -36,6 +36,7 @@ public class CtlBdConfig implements ActionListener {
 	private void guardar() {
 		Properties props = new Properties();
 		props.setProperty("db.server", view.getTxtUrl().getText().trim());
+		props.setProperty("db.port", view.getTxtPort().getText().trim());
 		props.setProperty("db.login", view.getTxtUser().getText().trim());
 		props.setProperty("db.password", view.getTxtPwd().getText().trim());
 		props.setProperty("db.name", view.getTxtDataBase().getText().trim());
@@ -76,6 +77,7 @@ public class CtlBdConfig implements ActionListener {
 		}
 
 		view.getTxtUrl().setText(props.getProperty("db.server", "127.0.0.1"));
+		view.getTxtPort().setText(props.getProperty("db.port", "3306"));
 		view.getTxtUser().setText(props.getProperty("db.login", "admin"));
 		view.getTxtPwd().setText(props.getProperty("db.password", ""));
 		view.getTxtDataBase().setText(props.getProperty("db.name", "admin_tools"));

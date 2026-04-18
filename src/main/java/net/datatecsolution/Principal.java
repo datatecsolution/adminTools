@@ -185,12 +185,15 @@ public class Principal {
                 new net.datatecsolution.admin_tools.controlador.CtlBdConfig(viewBdConfig);
             viewBdConfig.dispose();
 
-            if (!ConexionStatic.isConfiguracionCargada() || !ConexionStatic.isDbConnected()) {
+            boolean conectado = ConexionStatic.isConfiguracionCargada()
+                && ConexionStatic.isDbConnected();
+
+            if (!conectado) {
                 int opcion = JOptionPane.showConfirmDialog(null,
                     "No se pudo conectar a la base de datos.\n¿Desea reintentar la configuración?",
                     "Error de conexión", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if (opcion != JOptionPane.YES_OPTION) {
-                    System.exit(1);
+                    System.exit(0);
                 }
             } else {
                 necesitaConfig = false;

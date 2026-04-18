@@ -69,11 +69,12 @@ public abstract class ConexionStatic implements Runnable {
 		login = props.getProperty("db.login", "admin");
 		password = props.getProperty("db.password", "");
 		server = props.getProperty("db.server", "127.0.0.1");
+		String port = props.getProperty("db.port", "3306");
 		bd = props.getProperty("db.name", "admin_tools");
 		String timezone = props.getProperty("db.timezone", "GMT-6");
 
-		url = "jdbc:mysql://" + server + ":3306/" + bd + "?serverTimezone=" + timezone;
-		urlTemplate = "jdbc:mysql://" + server + ":3306/%s?serverTimezone=" + timezone;
+		url = "jdbc:mysql://" + server + ":" + port + "/" + bd + "?serverTimezone=" + timezone;
+		urlTemplate = "jdbc:mysql://" + server + ":" + port + "/%s?serverTimezone=" + timezone;
 		configuracionCargada = true;
 	}
 

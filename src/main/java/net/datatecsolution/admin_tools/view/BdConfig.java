@@ -1,102 +1,150 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlBdConfig;
-import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
-import net.datatecsolution.admin_tools.view.botones.BotonGuardar;
+import net.datatecsolution.admin_tools.view.botones.BotonesApp;
+import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class BdConfig extends JDialog {
 	private final JTextField txtUrl;
-	private JPasswordField tpfClave;
+	private final JTextField txtPort;
 	private final JTextField txtUser;
 	private final JTextField txtPwd;
 	private final JTextField txtDataBase;
-	private final BotonGuardar btnGuardar;
-	private final BotonCancelar btnCancelar;
-	
-	
+	private final JButton btnGuardar;
+	private final JButton btnCancelar;
+
 	public BdConfig(Window v) {
-		super(v,"Configuracion de la base de datos", ModalityType.DOCUMENT_MODAL);
+		super(v, "Configuración de base de datos", ModalityType.DOCUMENT_MODAL);
+
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+			BdConfig.class.getResource("/drawable/logo-admin-tool1.png")));
+
+		setUndecorated(true);
 		getContentPane().setLayout(new BorderLayout());
-		this.setSize(450, 400);
-		this.setPreferredSize(new Dimension(450,400));
-		JPanel jpDatos=new JPanel(new GridLayout(0, 2,3,3));
 
+		JPanel panelTitulo = new JPanel();
+		panelTitulo.setBackground(new Color(60, 179, 113));
+		panelTitulo.setPreferredSize(new Dimension(0, 37));
+		panelTitulo.setLayout(new BorderLayout());
+		JLabel lblTitulo = new JLabel("Configuración de Base de Datos");
+		lblTitulo.setForeground(Color.WHITE);
+		lblTitulo.setFont(new Font("Rod", Font.BOLD, 16));
+		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		panelTitulo.add(lblTitulo, BorderLayout.CENTER);
+		getContentPane().add(panelTitulo, BorderLayout.NORTH);
 
-		JLabel lblClave = new JLabel("clave");
-		//jpDatos.add(lblClave);
+		JPanel panelContenido = new PanelPadre();
+		panelContenido.setLayout(null);
+		getContentPane().add(panelContenido, BorderLayout.CENTER);
 
-		tpfClave = new JPasswordField();
-		//jpDatos.add(tpfClave);
-		tpfClave.setColumns(10);
+		Font lblFont = new Font("Tahoma", Font.BOLD, 13);
+		int lblX = 20;
+		int txtX = 160;
+		int txtW = 240;
+		int rowH = 37;
+		int gap = 8;
+		int y = 20;
 
-		JLabel lblServidor = new JLabel("Host name/ip adress");
-		jpDatos.add(lblServidor);
-		
+		JLabel lblServidor = new JLabel("Servidor:");
+		lblServidor.setFont(lblFont);
+		lblServidor.setBounds(lblX, y + 10, 130, 14);
+		panelContenido.add(lblServidor);
+
 		txtUrl = new JTextField();
-		jpDatos.add(txtUrl);
-		txtUrl.setColumns(10);
-		
-		JLabel lblUserName = new JLabel("User name");
-		jpDatos.setBounds(23, 78, 106, 15);
-		jpDatos.add(lblUserName);
-		
+		txtUrl.setBounds(txtX, y, txtW, rowH);
+		panelContenido.add(txtUrl);
+
+		y += rowH + gap;
+
+		JLabel lblPuerto = new JLabel("Puerto:");
+		lblPuerto.setFont(lblFont);
+		lblPuerto.setBounds(lblX, y + 10, 130, 14);
+		panelContenido.add(lblPuerto);
+
+		txtPort = new JTextField();
+		txtPort.setBounds(txtX, y, txtW, rowH);
+		panelContenido.add(txtPort);
+
+		y += rowH + gap;
+
+		JLabel lblUserName = new JLabel("Usuario:");
+		lblUserName.setFont(lblFont);
+		lblUserName.setBounds(lblX, y + 10, 130, 14);
+		panelContenido.add(lblUserName);
+
 		txtUser = new JTextField();
-		jpDatos.add(txtUser);
-		txtUser.setColumns(10);
-		
-		JLabel lblPassword = new JLabel("Password");
-		jpDatos.add(lblPassword);
-		
+		txtUser.setBounds(txtX, y, txtW, rowH);
+		panelContenido.add(txtUser);
+
+		y += rowH + gap;
+
+		JLabel lblPassword = new JLabel("Contraseña:");
+		lblPassword.setFont(lblFont);
+		lblPassword.setBounds(lblX, y + 10, 130, 14);
+		panelContenido.add(lblPassword);
+
 		txtPwd = new JPasswordField();
-		jpDatos.add(txtPwd);
-		txtPwd.setColumns(10);
-		
-		JLabel lblDataBase = new JLabel("Data base");
-		jpDatos.add(lblDataBase);
-		
+		txtPwd.setBounds(txtX, y, txtW, rowH);
+		panelContenido.add(txtPwd);
+
+		y += rowH + gap;
+
+		JLabel lblDataBase = new JLabel("Base de datos:");
+		lblDataBase.setFont(lblFont);
+		lblDataBase.setBounds(lblX, y + 10, 130, 14);
+		panelContenido.add(lblDataBase);
+
 		txtDataBase = new JTextField();
-		jpDatos.add(txtDataBase);
-		txtDataBase.setColumns(10);
-		
-		btnGuardar = new BotonGuardar();
-		jpDatos.add(btnGuardar);
-		
-		btnCancelar = new BotonCancelar();
-		jpDatos.add(btnCancelar);
-		getContentPane().add(jpDatos);
-		//Centrar la ventana de autentificacion en la pantalla
-		Dimension tamFrame=this.getSize();//para obtener las dimensiones del frame
-		Dimension tamPantalla=Toolkit.getDefaultToolkit().getScreenSize();      //para obtener el tamanio de la pantalla
-		setLocation((tamPantalla.width-tamFrame.width)/2, (tamPantalla.height-tamFrame.height)/2);  //para posicionar
-		//setVisible(true);           // Hacer visible al frame 
+		txtDataBase.setBounds(txtX, y, txtW, rowH);
+		panelContenido.add(txtDataBase);
+
+		y += rowH + gap + 10;
+
+		btnGuardar = new BotonesApp("Guardar");
+		btnGuardar.setLocation(80, y);
+		panelContenido.add(btnGuardar);
+
+		btnCancelar = new BotonesApp("Cancelar");
+		btnCancelar.setLocation(260, y);
+		panelContenido.add(btnCancelar);
+
+		y += rowH + 20;
+
+		int totalHeight = 37 + y;
+		setSize(430, totalHeight);
+		setResizable(false);
+
+		Dimension tamPantalla = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation((tamPantalla.width - 430) / 2, (tamPantalla.height - totalHeight) / 2);
 	}
-	public JTextField getTxtDataBase(){
-		return txtDataBase;
-	}
-	
-	public JTextField getTxtPwd(){
-		return txtPwd;
-	}
-	
-	public JTextField getTxtUser(){
-		return txtUser;
-	}
-	
-	public JTextField getTxtUrl(){
+
+	public JTextField getTxtUrl() {
 		return txtUrl;
 	}
-	
-	public void conectarControlador(CtlBdConfig c){
 
-		tpfClave.setActionCommand("CLAVE");
-		tpfClave.addActionListener(c);
+	public JTextField getTxtPort() {
+		return txtPort;
+	}
 
+	public JTextField getTxtUser() {
+		return txtUser;
+	}
+
+	public JTextField getTxtPwd() {
+		return txtPwd;
+	}
+
+	public JTextField getTxtDataBase() {
+		return txtDataBase;
+	}
+
+	public void conectarControlador(CtlBdConfig c) {
 		btnGuardar.setActionCommand("GUARDAR");
 		btnGuardar.addActionListener(c);
-		
+
 		btnCancelar.setActionCommand("CANCELAR");
 		btnCancelar.addActionListener(c);
 	}
