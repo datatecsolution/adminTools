@@ -99,6 +99,11 @@ public class Cliente {
 		return vendedor;
 	}
 	public void setVendedor(Empleado v) {
+		if (v == null) {
+			this.idVendedor = 0;
+			this.vendedor = null;
+			return;
+		}
 		this.idVendedor=v.getCodigo();
 		this.vendedor = v;
 	}
