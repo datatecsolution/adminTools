@@ -110,4 +110,4 @@ Cada fase se puede entregar de forma independiente sin romper funcionalidad.
 ## Rama de trabajo
 
 - **Rama:** `refactor/desacoplar-facturacion`
-- **Base:** `master`
+- **Base:** `master` (commit `a3e68ba`)

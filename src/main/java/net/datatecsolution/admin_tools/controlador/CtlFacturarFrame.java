@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
+import net.datatecsolution.admin_tools.service.FacturacionService;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
@@ -24,7 +25,6 @@ public class CtlFacturarFrame
 	private ClienteDao clienteDao = null;
 	private Articulo myArticulo = null;
 	private ArticuloDao myArticuloDao = null;
-	private PrecioArticuloDao preciosDao = null;
 	private InsumoDao insumoDao = null;
 	private CodBarraDao codBarraDao = null;
 
@@ -36,9 +36,8 @@ public class CtlFacturarFrame
 	private int tipoView = 1;
 	private int netBuscar = 0;
 
-	private DetalleFacturaOrdenDao detallesOrdenDao = null;
 	List<ViewFacturarFrame> ventanas;
-	private FacturaOrdenVentaDao facturaOrdenesDao;
+	private final FacturacionService facturacionService;
 	private Caja cajaDefecto;
 	private boolean isThereConexion = false;
 
@@ -59,11 +58,9 @@ public class CtlFacturarFrame
 		myArticuloDao = new ArticuloDao();
 		clienteDao = new ClienteDao();
 		facturaDao = new FacturaDao();
-		facturaOrdenesDao = new FacturaOrdenVentaDao();
-		preciosDao = new PrecioArticuloDao();
 		codBarraDao = new CodBarraDao();
-		detallesOrdenDao = new DetalleFacturaOrdenDao();
 		insumoDao = new InsumoDao();
+		facturacionService = new FacturacionService();
 
 		myUsuarioDao = new UsuarioDao();
 
@@ -73,7 +70,7 @@ public class CtlFacturarFrame
 
 		this.setEmptyView();
 
-		cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+		cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 		this.tipoView = 1;
 
 		this.setCierre();
@@ -99,7 +96,7 @@ public class CtlFacturarFrame
 
 				view.getBtnsGuardador().deleteAll();
 
-				cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+				cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 			}
 		}
 		switch (comando) {
@@ -179,7 +176,7 @@ public class CtlFacturarFrame
 
 						view.getBtnsGuardador().deleteAll();
 
-						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+						cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -214,7 +211,7 @@ public class CtlFacturarFrame
 			myArticulo.setPrecioVenta((int) Math.round(myArticulo.getPrecioVenta()));
 		}
 
-		myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
+		myArticulo.setPreciosVenta(this.facturacionService.obtenerPreciosSinCosto(myArticulo.getId()));
 
 		boolean unirCantidad = false;
 		if (config.isUnirCanItem())
@@ -370,13 +367,13 @@ public class CtlFacturarFrame
 		eliminarTem.setIdFactura(idFacturaTemporal);
 
 		if (solicitarPasswordAdmin()) {
-			this.facturaOrdenesDao.eliminar(eliminarTem);
+			this.facturacionService.eliminarOrden(eliminarTem);
 			this.tipoView = 1;
 			this.view.getBtnGuardar().setEnabled(true);
 			this.view.getBtnActualizar().setEnabled(false);
 			setEmptyView();
 			view.getBtnsGuardador().deleteAll();
-			cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+			cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 		}
 	}
 
@@ -625,11 +622,11 @@ public class CtlFacturarFrame
 			for (int xx = 0; xx < view.getModeloTabla().getDetalles().size(); xx++) {
 				DetalleFactura detalle = this.view.getModeloTabla().getDetalle(xx);
 				detalle.getArticulo().setPreciosVenta(
-						this.preciosDao.getPreciosArticuloSinCosto(detalle.getArticulo().getId()));
+						this.facturacionService.obtenerPreciosSinCosto(detalle.getArticulo().getId()));
 				if (detalle.getArticulo().getId() != -1) {
 					if (ctlSelectPrecio.getPrecioSelect().getCodigoPrecio() == 4) {
-						PrecioArticulo unPrecio = this.preciosDao
-								.getPrecioArticulo(detalle.getArticulo().getId(), 4);
+						PrecioArticulo unPrecio = this.facturacionService
+								.obtenerPrecioArticulo(detalle.getArticulo().getId(), 4);
 						if (unPrecio != null) {
 							detalle.getArticulo().getPreciosVenta().add(unPrecio);
 							detalle.getArticulo().setPrecio(unPrecio);
@@ -645,11 +642,11 @@ public class CtlFacturarFrame
 		} else {
 			if (filaPulsada >= 0) {
 				view.getModeloTabla().getDetalle(filaPulsada).getArticulo()
-						.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(
+						.setPreciosVenta(this.facturacionService.obtenerPreciosSinCosto(
 								view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId()));
 
 				if (ctlSelectPrecio.getPrecioSelect().getCodigoPrecio() == 4) {
-					PrecioArticulo unPrecio = this.preciosDao.getPrecioArticulo(
+					PrecioArticulo unPrecio = this.facturacionService.obtenerPrecioArticulo(
 							view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId(), 4);
 					if (unPrecio != null) {
 						this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo()
@@ -768,7 +765,7 @@ public class CtlFacturarFrame
 		Factura fact = view.getBtnsGuardador().buscarFactura(numeroFactura);
 		this.myFactura = fact;
 
-		myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(numeroFactura));
+		myFactura.setDetalles(facturacionService.detallesOrdenPendiente(numeroFactura));
 
 		cargarFacturaView();
 		this.calcularTotales();
@@ -800,7 +797,7 @@ public class CtlFacturarFrame
 
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
-		myFactura.setFecha(facturaDao.getFechaSistema());
+		myFactura.setFecha(facturacionService.getFechaSistema());
 		myFactura.setCodigoCaja(cajaActiva.getCodigo());
 
 		boolean verificarAccion = false;
@@ -892,7 +889,7 @@ public class CtlFacturarFrame
 
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
-		myFactura.setFecha(facturaDao.getFechaSistema());
+		myFactura.setFecha(facturacionService.getFechaSistema());
 		myFactura.setCodigoCaja(cajaActiva.getCodigo());
 	}
 
@@ -1056,70 +1053,12 @@ public class CtlFacturarFrame
 	}
 
 	public void calcularTotales() {
-
-		this.myFactura.resetTotales();
-
-		for (int x = 0; x < view.getModeloTabla().getDetalles().size(); x++) {
-
-			DetalleFactura detalle = view.getModeloTabla().getDetalle(x);
-
-			if (detalle.getArticulo().getId() != -1)
-				if (detalle.getCantidad().doubleValue() != 0 && detalle.getArticulo().getPrecioVenta() != 0) {
-
-					calcularTotalesDetalle(detalle);
-
-				}
-
-		}
+		facturacionService.calcularTotales(myFactura, view.getModeloTabla().getDetalles());
 
 		view.actualizarTotales(myFactura);
 		view.getModeloTabla().fireTableDataChanged();
 		this.selectRowInset();
 		view.getTxtBuscar().requestFocusInWindow();
-	}
-
-	private void calcularTotalesDetalle(DetalleFactura detalle) {
-		BigDecimal cantidad = detalle.getCantidad();
-		BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
-
-		BigDecimal totalItem = cantidad.multiply(precioVenta);
-
-		BigDecimal des = detalle.getDescuentoItem();
-		totalItem = totalItem.subtract(des.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-		BigDecimal porcentaImpuesto = new BigDecimal(
-				detalle.getArticulo().getImpuestoObj().getPorcentaje());
-		BigDecimal porImpuesto = porcentaImpuesto.divide(new BigDecimal(100));
-		porImpuesto = porImpuesto.add(new BigDecimal(1));
-
-		BigDecimal totalsiniva = totalItem.divide(porImpuesto, 2, BigDecimal.ROUND_HALF_EVEN);
-
-		BigDecimal impuestoItem = totalItem.subtract(totalsiniva);
-
-		myFactura.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-		if (porcentaImpuesto.intValue() == 0) {
-			myFactura.setSubTotalExcento(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		} else if (porcentaImpuesto.intValue() == 15) {
-			myFactura.setTotalImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			myFactura.setSubTotal15(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		} else if (porcentaImpuesto.intValue() == 18) {
-			myFactura.setTotalImpuesto18(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			myFactura.setSubTotal18(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		}
-
-		if (detalle.getArticulo().getTipoArticulo() == 3) {
-			BigDecimal totalOtrosImp = totalsiniva.multiply(new BigDecimal(0.04));
-			myFactura.setTotalOtrosImpuesto(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			myFactura.setTotal(totalOtrosImp.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		}
-
-		myFactura.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		myFactura.setTotalDescuento(detalle.getDescuentoItem().setScale(2, BigDecimal.ROUND_HALF_EVEN));
-
-		detalle.setSubTotal(totalsiniva.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		detalle.setImpuesto(impuestoItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		detalle.setTotal(totalItem.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 	}
 
 	@Override
@@ -1163,7 +1102,7 @@ public class CtlFacturarFrame
 
 			case KeyEvent.VK_F5:
 				view.getBtnsGuardador().deleteAll();
-				cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+				cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				break;
 
 			case KeyEvent.VK_F6:
@@ -1526,10 +1465,10 @@ public class CtlFacturarFrame
 			}
 
 			if (resulVendedor) {
-				boolean resultado = facturaOrdenesDao.registrar(myFactura);
+				boolean resultado = facturacionService.guardarFacturaTemporal(myFactura);
 
 				if (resultado) {
-					myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+					myFactura.setIdFactura(facturacionService.getIdOrdenGuardada());
 					resultado = true;
 
 					this.tipoView = 1;
@@ -1538,7 +1477,7 @@ public class CtlFacturarFrame
 
 					view.getBtnsGuardador().deleteAll();
 
-					cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+					cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				} else {
 					JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar",
 							JOptionPane.ERROR_MESSAGE);
@@ -1554,7 +1493,7 @@ public class CtlFacturarFrame
 
 	private void actualizar() {
 		setFacturaBasica();
-		facturaOrdenesDao.actualizar(myFactura);
+		facturacionService.actualizarFacturaTemporal(myFactura);
 		this.tipoView = 1;
 		this.view.getBtnGuardar().setEnabled(true);
 		this.view.getBtnActualizar().setEnabled(false);
@@ -1563,7 +1502,7 @@ public class CtlFacturarFrame
 
 		view.getBtnsGuardador().deleteAll();
 
-		cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+		cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 
 	}
 
@@ -1644,7 +1583,7 @@ public class CtlFacturarFrame
 			}
 
 			view.getBtnsGuardador().deleteAll();
-			cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+			cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 
 		}
 	}
@@ -1665,7 +1604,7 @@ public class CtlFacturarFrame
 			myArticulo = ctlArticulo.getArticulo();
 
 			myArticulo.setCodigoBarra(codBarraDao.getCodArticulo(myArticulo.getId()));
-			myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(myArticulo.getId()));
+			myArticulo.setPreciosVenta(this.facturacionService.obtenerPreciosSinCosto(myArticulo.getId()));
 
 			boolean unirCantidad = false;
 			if (config.isUnirCanItem())
@@ -1692,7 +1631,7 @@ public class CtlFacturarFrame
 		this.myFactura.resetTotales();
 		this.myFactura.setVendedor(new Empleado());
 
-		String fechaSistema = facturaDao.getFechaSistema();
+		String fechaSistema = facturacionService.getFechaSistema();
 		view.getTxtFechafactura().setText(fechaSistema);
 		ViewModuloFacturar framePadre = (ViewModuloFacturar) view.getTopLevelAncestor();
 		if (framePadre != null) {
@@ -1733,7 +1672,7 @@ public class CtlFacturarFrame
 		if (resul) {
 			this.myFactura = ctlBuscarOrden.getOrden();
 
-			myFactura.setDetalles(detallesOrdenDao.detallesFacturaPendiente(myFactura.getIdFactura()));
+			myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
 
 			cargarFacturaView();
 			this.calcularTotales();
@@ -1775,10 +1714,10 @@ public class CtlFacturarFrame
 
 	public void guardarLocal() {
 		int idFacturaTemporal = myFactura.getIdFactura();
-		boolean resul = facturaDao.registrar(myFactura);
+		boolean resul = facturacionService.registrarFactura(myFactura);
 
 		if (resul) {
-			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+			myFactura.setIdFactura(facturacionService.getIdFacturaGuardada());
 
 			if (ConexionStatic.getNivelFact()) {
 				try {
@@ -1801,13 +1740,13 @@ public class CtlFacturarFrame
 						Factura eliminarTem = new Factura();
 						eliminarTem.setIdFactura(idFacturaTemporal);
 
-						this.facturaOrdenesDao.eliminar(eliminarTem);
+						this.facturacionService.eliminarOrden(eliminarTem);
 
 						setEmptyView();
 
 						view.getBtnsGuardador().deleteAll();
 
-						cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+						cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -1952,10 +1891,10 @@ public class CtlFacturarFrame
 		}
 
 		Integer idFacturaTemporal = myFactura.getIdFactura();
-		boolean resul = facturaDao.registrar(myFactura);
+		boolean resul = facturacionService.registrarFactura(myFactura);
 
 		if (resul) {
-			myFactura.setIdFactura(facturaDao.getIdFacturaGuardada());
+			myFactura.setIdFactura(facturacionService.getIdFacturaGuardada());
 			Integer copiasFacturas = config.getCopiasFacturas();
 
 			try {
@@ -2056,13 +1995,13 @@ public class CtlFacturarFrame
 					Factura eliminarTem = new Factura();
 					eliminarTem.setIdFactura(idFacturaTemporal);
 
-					this.facturaOrdenesDao.cambiarEstado(eliminarTem, 3);
+					this.facturacionService.cambiarEstadoOrden(eliminarTem, 3);
 
 					setEmptyView();
 
 					view.getBtnsGuardador().deleteAll();
 
-					cargarFacturasPendientes(facturaOrdenesDao.ordenesPorEmpleadosUsuarios());
+					cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
