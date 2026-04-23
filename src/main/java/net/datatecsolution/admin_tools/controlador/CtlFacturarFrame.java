@@ -47,7 +47,7 @@ public class CtlFacturarFrame
 
 	private final Usuario usuario;
 	private final ConfigUserFacturacion config;
-	private final Caja cajaActiva;
+	private Caja cajaActiva;
 
 	public CtlFacturarFrame(ViewFacturarFrame v, List<ViewFacturarFrame> ven) {
 
@@ -800,6 +800,7 @@ public class CtlFacturarFrame
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
 		myFactura.setFecha(facturaDao.getFechaSistema());
+		myFactura.setCodigoCaja(cajaActiva.getCodigo());
 
 		boolean verificarAccion = false;
 
@@ -891,6 +892,7 @@ public class CtlFacturarFrame
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
 		myFactura.setFecha(facturaDao.getFechaSistema());
+		myFactura.setCodigoCaja(cajaActiva.getCodigo());
 	}
 
 	@Override
@@ -1398,6 +1400,7 @@ public class CtlFacturarFrame
 
 			if (config.isFacturarSinInventario()) {
 				Caja caja = usuario.nextCaja();
+				this.cajaActiva = caja;
 
 				ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 				frame.btnCaja.setText(caja.getDescripcion());
@@ -1405,6 +1408,7 @@ public class CtlFacturarFrame
 			} else {
 				if (view.getModeloTabla().getRowCount() <= 1) {
 					Caja caja = usuario.nextCaja();
+					this.cajaActiva = caja;
 
 					ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 					frame.btnCaja.setText(caja.getDescripcion());
@@ -1496,7 +1500,6 @@ public class CtlFacturarFrame
 
 		if (view.getModeloTabla().getRowCount() > 1) {
 			setFacturaBasica();
-			myFactura.setCodigoCaja(cajaActiva.getCodigo());
 
 			boolean resulVendedor = false;
 
