@@ -104,6 +104,11 @@ public class Cliente {
 	}
 	public RutaCobro getRutaCobro(){return rutaCobro;}
 	public void setRutaCobro(RutaCobro v) {
+		if (v == null) {
+			this.idRutaCobro = 0;
+			this.rutaCobro = null;
+			return;
+		}
 		this.idRutaCobro=v.getCodigo();
 		this.rutaCobro = v;
 	}

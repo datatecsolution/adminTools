@@ -41,6 +41,10 @@ public class CbxTmRutasCobro extends DefaultComboBoxModel{
 
 		rutaCobros.add(unaRuta);
 
+		if (im == null) {
+			return;
+		}
+
 		for (RutaCobro emp:im
 		) {
 			rutaCobros.add(emp);
