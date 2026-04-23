@@ -1623,9 +1623,6 @@ public class CtlFacturarFrame
 
 						if (resl) {
 
-							if (myCliente.getId() == 1 && bandera < 1) {
-								Caja caja = usuario.nextCaja();
-							}
 							this.guardarFactura();
 						} else {
 							JOptionPane.showMessageDialog(view,
@@ -1944,6 +1941,11 @@ public class CtlFacturarFrame
 	}
 
 	public void guardarFactura() {
+		if (myCliente != null && myCliente.getId() == 1 && bandera < 1) {
+			usuario.nextCaja();
+			this.cajaActiva = usuario.getCajaActiva();
+		}
+
 		Integer idFacturaTemporal = myFactura.getIdFactura();
 		boolean resul = facturaDao.registrar(myFactura);
 
