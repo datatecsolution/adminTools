@@ -1942,7 +1942,7 @@ public class CtlFacturarFrame
 	}
 
 	public void guardarFactura() {
-		int idFacturaTemporal = myFactura.getIdFactura();
+		Integer idFacturaTemporal = myFactura.getIdFactura();
 		boolean resul = facturaDao.registrar(myFactura);
 
 		if (resul) {

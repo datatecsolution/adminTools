@@ -31,11 +31,27 @@ public class Cifrado {
     }
 
     public static String getArchivo() {
-        return ARCHIVO;
+        return resolverArchivo().getAbsolutePath();
     }
 
     public static boolean existeArchivo() {
-        return new File(ARCHIVO).exists();
+        return resolverArchivo().exists();
+    }
+
+    private static File resolverArchivo() {
+        try {
+            File location = new File(Cifrado.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            File dir = location.isFile() ? location.getParentFile() : location;
+            File junto = new File(dir, ARCHIVO);
+            File legacy = new File(ARCHIVO);
+            if (!junto.exists() && legacy.exists()) {
+                return legacy;
+            }
+            return junto;
+        } catch (Exception e) {
+            return new File(ARCHIVO);
+        }
     }
 
     public void guardar(Properties datos) throws Exception {
@@ -47,7 +63,7 @@ public class Cifrado {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
         byte[] datosCifrados = cipher.doFinal(datosPlanos);
 
-        FileOutputStream fos = new FileOutputStream(ARCHIVO);
+        FileOutputStream fos = new FileOutputStream(resolverArchivo());
         try {
             fos.write(datosCifrados);
             fos.flush();
@@ -57,7 +73,7 @@ public class Cifrado {
     }
 
     public Properties cargar() throws Exception {
-        File archivo = new File(ARCHIVO);
+        File archivo = resolverArchivo();
         if (!archivo.exists()) {
             return null;
         }
