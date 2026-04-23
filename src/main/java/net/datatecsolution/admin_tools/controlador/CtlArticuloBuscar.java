@@ -308,20 +308,26 @@ public class CtlArticuloBuscar implements ActionListener,MouseListener, WindowLi
 			
 			//si esta activado la busqueda por articulo
 			if(this.view.getRdbtnArticulo().isSelected()){
-				
+
+				int rowCount = this.view.getTabla().getRowCount();
+				if (rowCount == 0) {
+					return;
+				}
 				this.filaPulsada=this.view.getTabla().getSelectedRow();
-				
+
 				if(e.getKeyCode()==KeyEvent.VK_DOWN){
 					filaPulsada++;
+					if (filaPulsada >= rowCount) filaPulsada = rowCount - 1;
 					this.view.getTabla().setRowSelectionInterval(0	,filaPulsada);
-					
+
 					myArticulo=view.getModelo().getArticulo(filaPulsada);
-					
-					
+
+
 				}else
 					if(e.getKeyCode()==KeyEvent.VK_UP){
-						
+
 						filaPulsada--;
+						if (filaPulsada < 0) filaPulsada = 0;
 						this.view.getTabla().setRowSelectionInterval(0	, filaPulsada);
 						myArticulo=view.getModelo().getArticulo(filaPulsada);
 					}
