@@ -1584,8 +1584,7 @@ public class CtlFacturarFrame
 
 	private void cobrar() {
 
-		CajaDao cajasDao = new CajaDao();
-		usuario.setCajas(cajasDao.getCajasUsuario(usuario));
+		recargarCajasPreservandoActiva();
 		isThereConexion = ConexionStatic.isDbConnected();
 
 		if (isThereConexion) {
@@ -2015,8 +2014,7 @@ public class CtlFacturarFrame
 					}
 				}
 
-				CajaDao cajasDao = new CajaDao();
-				usuario.setCajas(cajasDao.getCajasUsuario(usuario));
+				recargarCajasPreservandoActiva();
 
 				if (bandera > 1) {
 					bandera = 0;
@@ -2177,6 +2175,29 @@ public class CtlFacturarFrame
 	@Override
 	public void internalFrameDeactivated(InternalFrameEvent e) {
 
+	}
+
+	private void recargarCajasPreservandoActiva() {
+		Caja actual = usuario.getCajaActiva();
+		int codigoActual = actual != null ? actual.getCodigo() : -1;
+
+		CajaDao cajasDao = new CajaDao();
+		usuario.setCajas(cajasDao.getCajasUsuario(usuario));
+
+		if (codigoActual > 0 && usuario.getCajas() != null) {
+			boolean encontrada = false;
+			for (Caja c : usuario.getCajas()) {
+				if (c.getCodigo() == codigoActual) {
+					c.setActiva(true);
+					encontrada = true;
+				} else {
+					c.setActiva(false);
+				}
+			}
+			if (encontrada) {
+				this.cajaActiva = usuario.getCajaActiva();
+			}
+		}
 	}
 
 }
