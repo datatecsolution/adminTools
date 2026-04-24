@@ -38,20 +38,58 @@ public class Cifrado {
         return resolverArchivo().exists();
     }
 
-    private static File resolverArchivo() {
+    private static File directorioConfig() {
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String home = System.getProperty("user.home", ".");
+        File dir;
+        if (os.contains("mac")) {
+            dir = new File(home, "Library/Application Support/AdminTools");
+        } else if (os.contains("win")) {
+            String appdata = System.getenv("APPDATA");
+            dir = (appdata != null && !appdata.isEmpty())
+                    ? new File(appdata, "AdminTools")
+                    : new File(home, "AppData/Roaming/AdminTools");
+        } else {
+            String xdg = System.getenv("XDG_CONFIG_HOME");
+            dir = (xdg != null && !xdg.isEmpty())
+                    ? new File(xdg, "AdminTools")
+                    : new File(home, ".config/AdminTools");
+        }
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+    private static File archivoJuntoAlJar() {
         try {
             File location = new File(Cifrado.class.getProtectionDomain()
                     .getCodeSource().getLocation().toURI());
             File dir = location.isFile() ? location.getParentFile() : location;
-            File junto = new File(dir, ARCHIVO);
-            File legacy = new File(ARCHIVO);
-            if (!junto.exists() && legacy.exists()) {
-                return legacy;
-            }
-            return junto;
+            return new File(dir, ARCHIVO);
         } catch (Exception e) {
-            return new File(ARCHIVO);
+            return null;
         }
+    }
+
+    private static File resolverArchivo() {
+        File preferido = new File(directorioConfig(), ARCHIVO);
+        if (preferido.exists()) {
+            return preferido;
+        }
+        File junto = archivoJuntoAlJar();
+        if (junto != null && junto.exists()) {
+            return junto;
+        }
+        File legacy = new File(ARCHIVO);
+        if (legacy.exists()) {
+            return legacy;
+        }
+        return preferido;
+    }
+
+    private static File destinoEscritura() {
+        return new File(directorioConfig(), ARCHIVO);
     }
 
     public void guardar(Properties datos) throws Exception {
@@ -63,7 +101,7 @@ public class Cifrado {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
         byte[] datosCifrados = cipher.doFinal(datosPlanos);
 
-        FileOutputStream fos = new FileOutputStream(resolverArchivo());
+        FileOutputStream fos = new FileOutputStream(destinoEscritura());
         try {
             fos.write(datosCifrados);
             fos.flush();
