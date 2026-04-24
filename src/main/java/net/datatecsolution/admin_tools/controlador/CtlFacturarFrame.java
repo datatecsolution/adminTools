@@ -1397,7 +1397,7 @@ public class CtlFacturarFrame
 			setEmptyView();
 		}
 
-		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P) {
+		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P && config.isRotacionAutomaticaCajas()) {
 
 			if (config.isFacturarSinInventario()) {
 				Caja caja = usuario.nextCaja();
