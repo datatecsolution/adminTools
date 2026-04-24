@@ -14,11 +14,13 @@ import java.util.Date;
  * Tambien captura excepciones no manejadas (uncaught).
  *
  * Uso: llamar AppLogger.init() al inicio de main(), antes de cualquier otra cosa.
- * Los errores se escriben en: logs/admin_tools_YYYY-MM-DD.log
+ * Los errores se escriben en el directorio estandar por SO para evitar TCC en macOS:
+ *   macOS:   ~/Library/Application Support/AdminTools/logs/admin_tools_YYYY-MM-DD.log
+ *   Windows: %APPDATA%/AdminTools/logs/admin_tools_YYYY-MM-DD.log
+ *   Linux:   $XDG_CONFIG_HOME/AdminTools/logs/ o ~/.config/AdminTools/logs/
  */
 public final class AppLogger {
 
-    private static final String LOG_DIR = "logs";
     private static boolean initialized = false;
 
     private AppLogger() {}
@@ -28,7 +30,7 @@ public final class AppLogger {
         initialized = true;
 
         try {
-            File dir = new File(LOG_DIR);
+            File dir = directorioLogs();
             if (!dir.exists()) dir.mkdirs();
 
             String fecha = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -51,6 +53,26 @@ public final class AppLogger {
         } catch (IOException e) {
             System.err.println("No se pudo inicializar el log a archivo: " + e.getMessage());
         }
+    }
+
+    private static File directorioLogs() {
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String home = System.getProperty("user.home", ".");
+        File base;
+        if (os.contains("mac")) {
+            base = new File(home, "Library/Application Support/AdminTools");
+        } else if (os.contains("win")) {
+            String appdata = System.getenv("APPDATA");
+            base = (appdata != null && !appdata.isEmpty())
+                    ? new File(appdata, "AdminTools")
+                    : new File(home, "AppData/Roaming/AdminTools");
+        } else {
+            String xdg = System.getenv("XDG_CONFIG_HOME");
+            base = (xdg != null && !xdg.isEmpty())
+                    ? new File(xdg, "AdminTools")
+                    : new File(home, ".config/AdminTools");
+        }
+        return new File(base, "logs");
     }
 
     /**
