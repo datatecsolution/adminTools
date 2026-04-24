@@ -1,8 +1,8 @@
 -- Rotación automática de cajas para cliente id=1.
--- Cuando es 1 (default) se preserva la lógica histórica (rota cada 2 facturas
--- de consumidor final). Cuando es 0, el usuario decide la caja manualmente
--- con Ctrl+P.
+-- Default 0 (manual): el cajero decide la caja con Ctrl+P. Si el admin
+-- activa el toggle en la configuración del usuario, se aplica la lógica
+-- histórica (rota cada 2 facturas de consumidor final).
 
 ALTER TABLE `config_user_facturacion`
-    ADD COLUMN `rotacion_automatica_cajas` tinyint NOT NULL DEFAULT 1
+    ADD COLUMN `rotacion_automatica_cajas` tinyint NOT NULL DEFAULT 0
     AFTER `cant_facturas_imprimir`;

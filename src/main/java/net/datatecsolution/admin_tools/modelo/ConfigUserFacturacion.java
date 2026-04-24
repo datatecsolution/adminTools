@@ -32,7 +32,7 @@ public class ConfigUserFacturacion {
 
 	private int copiasFacturas = 1;
 
-	private boolean rotacionAutomaticaCajas = true;
+	private boolean rotacionAutomaticaCajas = false;
 
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
