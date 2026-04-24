@@ -1944,9 +1944,9 @@ public class CtlFacturarFrame
 	}
 
 	public void guardarFactura() {
-		if (config.isRotacionAutomaticaCajas()
-				&& !rotacionManual
-				&& myCliente != null && myCliente.getId() == 1 && bandera < 1) {
+		int clienteId = myCliente != null ? myCliente.getId() : -1;
+		if (RotacionCajas.debeRotarPreGuardar(
+				config.isRotacionAutomaticaCajas(), rotacionManual, clienteId, bandera)) {
 			usuario.nextCaja();
 			this.cajaActiva = usuario.getCajaActiva();
 		}
@@ -2030,13 +2030,9 @@ public class CtlFacturarFrame
 						frameCaja.btnCaja.setText(cajaActiva.getDescripcion());
 					}
 
-					if (myCliente != null && myCliente.getId() == 1) {
-						if (bandera > 1) {
-							bandera = 0;
-						} else {
-							bandera++;
-						}
-					}
+					int clienteIdPost = myCliente != null ? myCliente.getId() : -1;
+					bandera = RotacionCajas.banderaPostGuardar(
+							config.isRotacionAutomaticaCajas(), clienteIdPost, bandera);
 				} else {
 					recargarCajasPreservandoActiva();
 				}
