@@ -43,6 +43,7 @@ public class CtlFacturarFrame
 	private boolean isThereConexion = false;
 
 	private Integer bandera = 0;
+	private boolean rotacionManual = false;
 	private boolean unirCanItem=true;
 
 	private final Usuario usuario;
@@ -1401,6 +1402,7 @@ public class CtlFacturarFrame
 			if (config.isFacturarSinInventario()) {
 				Caja caja = usuario.nextCaja();
 				this.cajaActiva = caja;
+				this.rotacionManual = true;
 
 				ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 				frame.btnCaja.setText(caja.getDescripcion());
@@ -1409,6 +1411,7 @@ public class CtlFacturarFrame
 				if (view.getModeloTabla().getRowCount() <= 1) {
 					Caja caja = usuario.nextCaja();
 					this.cajaActiva = caja;
+					this.rotacionManual = true;
 
 					ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 					frame.btnCaja.setText(caja.getDescripcion());
@@ -1941,7 +1944,7 @@ public class CtlFacturarFrame
 	}
 
 	public void guardarFactura() {
-		if (myCliente != null && myCliente.getId() == 1 && bandera < 1) {
+		if (!rotacionManual && myCliente != null && myCliente.getId() == 1 && bandera < 1) {
 			usuario.nextCaja();
 			this.cajaActiva = usuario.getCajaActiva();
 		}
@@ -2024,6 +2027,7 @@ public class CtlFacturarFrame
 					if (myCliente.getId() == 1)
 						bandera++;
 				}
+				rotacionManual = false;
 
 				String cambioEfectivo = myFactura.getCambio().toString();
 				String pago = myFactura.getPago().toString();
