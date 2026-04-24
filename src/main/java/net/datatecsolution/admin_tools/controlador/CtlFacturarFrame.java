@@ -2021,15 +2021,23 @@ public class CtlFacturarFrame
 					}
 				}
 
-				recargarCajasPreservandoActiva();
-
 				if (config.isRotacionAutomaticaCajas()) {
+					CajaDao cajasDao = new CajaDao();
+					usuario.setCajas(cajasDao.getCajasUsuario(usuario));
+					this.cajaActiva = usuario.getCajaActiva();
+					ViewModuloFacturar frameCaja = (ViewModuloFacturar) view.getTopLevelAncestor();
+					if (cajaActiva != null) {
+						frameCaja.btnCaja.setText(cajaActiva.getDescripcion());
+					}
+
 					if (bandera > 1) {
 						bandera = 0;
 					} else {
 						if (myCliente.getId() == 1)
 							bandera++;
 					}
+				} else {
+					recargarCajasPreservandoActiva();
 				}
 				rotacionManual = false;
 
