@@ -32,6 +32,8 @@ public class ConfigUserFacturacion {
 
 	private int copiasFacturas = 1;
 
+	private boolean rotacionAutomaticaCajas = true;
+
 	public Departamento getDepartEnBusqueda() {
 		return departEnBusqueda;
 	}
@@ -366,5 +368,13 @@ public class ConfigUserFacturacion {
 
 	public void setCopiasFacturas(int copiasFacturas) {
 		this.copiasFacturas = copiasFacturas;
+	}
+
+	public boolean isRotacionAutomaticaCajas() {
+		return rotacionAutomaticaCajas;
+	}
+
+	public void setRotacionAutomaticaCajas(boolean rotacionAutomaticaCajas) {
+		this.rotacionAutomaticaCajas = rotacionAutomaticaCajas;
 	}
 }

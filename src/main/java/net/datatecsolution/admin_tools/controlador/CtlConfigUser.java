@@ -102,6 +102,7 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		view.getTglbtnAddClienteCredito().setSelected(configEnPantalla.isAgregarClienteCredito());
 		view.getTglbtnCategoriaEnCierre().setSelected(configEnPantalla.isImprReportCategCierre());
 		view.getTglbtnPwdEntrePrecio().setSelected(configEnPantalla.isPwdEntrePrecio());
+		view.getTglbtnRotacionAutomatica().setSelected(configEnPantalla.isRotacionAutomaticaCajas());
 
 		for(int x=0;x<view.getCbFormatoCredito().getItemCount();x++){
 			String formato=view.getCbFormatoCredito().getModel().getElementAt(x);
@@ -168,6 +169,7 @@ public class CtlConfigUser implements ActionListener, ItemListener {
 		configEnPantalla.setUnirCanItem(view.getTglbtnUnirCanItem().isSelected());
 		configEnPantalla.setDeleteItemFact(view.getTglbtnDeleteItemFact().isSelected());
 		configEnPantalla.setImprReportOrden(view.getTglbtnImprReportOrden().isSelected());
+		configEnPantalla.setRotacionAutomaticaCajas(view.getTglbtnRotacionAutomatica().isSelected());
 
 	}
 

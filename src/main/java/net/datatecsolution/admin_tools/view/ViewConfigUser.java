@@ -30,6 +30,7 @@ public class ViewConfigUser extends JDialog {
 	private JToggleButton tglbtnImprReportOrden;
 	private JToggleButton tglbtnUnirCanItem;
 	private JToggleButton tglbtnDeleteItemFact;
+	private JToggleButton tglbtnRotacionAutomatica;
 	private JLabel lblUsuairo;
 	private JTextField txtUsuario;
 
@@ -126,7 +127,12 @@ public class ViewConfigUser extends JDialog {
 		tglbtnUnirCanItem.setBounds(6, 181, 180, 29);
 		panel_1.add(tglbtnUnirCanItem);
 
-		
+		tglbtnRotacionAutomatica = new JToggleButton("Rotacion automatica cajas");
+		tglbtnRotacionAutomatica.setToolTipText("Cuando esta activo, las ventas al consumidor final (cliente id=1) rotan automaticamente entre las cajas asignadas. Desactivar para que el cajero elija manualmente la caja con Ctrl+P.");
+		tglbtnRotacionAutomatica.setBounds(6, 216, 391, 29);
+		panel_1.add(tglbtnRotacionAutomatica);
+
+
 		JPanel panel_2 = new JPanel();
 		panel_2.setForeground(Color.LIGHT_GRAY);
 		panel_2.setBackground(PanelPadre.color2);
@@ -255,6 +261,9 @@ public class ViewConfigUser extends JDialog {
 
 		tglbtnDeleteItemFact.addActionListener(c);
 		tglbtnDeleteItemFact.setActionCommand("ACTUALIZAR");
+
+		tglbtnRotacionAutomatica.addActionListener(c);
+		tglbtnRotacionAutomatica.setActionCommand("ACTUALIZAR");
 
 		tglbtnImprReportOrden.addActionListener(c);
 		tglbtnImprReportOrden.setActionCommand("ACTUALIZAR");
@@ -542,6 +551,10 @@ public class ViewConfigUser extends JDialog {
 
 	public JToggleButton getTglbtnDeleteItemFact() {
 		return tglbtnDeleteItemFact;
+	}
+
+	public JToggleButton getTglbtnRotacionAutomatica() {
+		return tglbtnRotacionAutomatica;
 	}
 
 	public JLabel getLblPosicionItem() {

@@ -84,8 +84,8 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 					" descuento_porcentaje,ventana_observaciones,precio_redondiar,facturar_sin_inventario, " +
 					" impr_report_categ_cierre,impr_report_salida,show_report_salida,impr_report_entrada, " +
 					" show_report_entrada,activar_busqueda_facturacion,pwd_entre_precio, imp_report_order, " +
-					" unir_can_item, delete_item_fact" +
-					") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", java.sql.Statement.RETURN_GENERATED_KEYS);
+					" unir_can_item, delete_item_fact, rotacion_automatica_cajas" +
+					") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", java.sql.Statement.RETURN_GENERATED_KEYS);
 			super.psConsultas.setString(1, config.getUsuario());
 			super.psConsultas.setString(2, config.getFormatoFactura());
 			super.psConsultas.setBoolean(3, config.isVentanaVendedor());
@@ -106,6 +106,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			super.psConsultas.setBoolean(17, config.isImprReportOrden());
 			super.psConsultas.setBoolean(18, config.isUnirCanItem());
 			super.psConsultas.setBoolean(19, config.isDeleteItemFact());
+			super.psConsultas.setBoolean(20, config.isRotacionAutomaticaCajas());
 
 			psConsultas.executeUpdate();
 
@@ -236,7 +237,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 					+
 					" impr_report_entrada=?,show_report_entrada=?,activar_busqueda_facturacion=?, agregar_cliente_credito=?, pwd_entre_precio=?, "
 					+
-					" imp_report_order=?, unir_can_item=?, delete_item_fact=? " +
+					" imp_report_order=?, unir_can_item=?, delete_item_fact=?, rotacion_automatica_cajas=? " +
 					" WHERE usuario=?");
 			super.psConsultas.setBoolean(1, config.isVentanaVendedor());
 			super.psConsultas.setBoolean(2, config.isPwdDescuento());
@@ -260,8 +261,9 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 			super.psConsultas.setBoolean(16, config.isImprReportOrden());
 			super.psConsultas.setBoolean(17, config.isUnirCanItem());
 			super.psConsultas.setBoolean(18, config.isDeleteItemFact());
+			super.psConsultas.setBoolean(19, config.isRotacionAutomaticaCajas());
 
-			super.psConsultas.setString(19, config.getUsuario());
+			super.psConsultas.setString(20, config.getUsuario());
 			psConsultas.executeUpdate();
 			return true;
 
@@ -331,6 +333,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setUnirCanItem(res.getBoolean("unir_can_item"));
 				config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
 				config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
+				config.setRotacionAutomaticaCajas(res.getBoolean("rotacion_automatica_cajas"));
 
 				configs.add(config);
 				existe = true;
@@ -417,6 +420,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setUnirCanItem(res.getBoolean("unir_can_item"));
 				config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
 				config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
+				config.setRotacionAutomaticaCajas(res.getBoolean("rotacion_automatica_cajas"));
 
 				configs.add(config);
 				existe = true;
@@ -495,6 +499,7 @@ public class ConfigUserFactDao extends ModeloDaoBasic {
 				config.setUnirCanItem(res.getBoolean("unir_can_item"));
 				config.setDeleteItemFact(res.getBoolean("delete_item_fact"));
 				config.setCopiasFacturas(res.getInt("cant_facturas_imprimir"));
+				config.setRotacionAutomaticaCajas(res.getBoolean("rotacion_automatica_cajas"));
 
 			}
 
