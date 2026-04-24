@@ -2030,11 +2030,12 @@ public class CtlFacturarFrame
 						frameCaja.btnCaja.setText(cajaActiva.getDescripcion());
 					}
 
-					if (bandera > 1) {
-						bandera = 0;
-					} else {
-						if (myCliente.getId() == 1)
+					if (myCliente != null && myCliente.getId() == 1) {
+						if (bandera > 1) {
+							bandera = 0;
+						} else {
 							bandera++;
+						}
 					}
 				} else {
 					recargarCajasPreservandoActiva();
