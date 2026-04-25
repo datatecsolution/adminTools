@@ -97,14 +97,24 @@
 
 **Refactor adicional:** `FacturaDao.verificarCierre(List<Caja>)` instanciaba DAOs internamente (DAO-DAO problem). La orquestación se movió al servicio; en `FacturaDao` solo permanece el query per-caja `verificarCierre(Caja, CierreFacturacion)`.
 
-### Fase 3 - Eliminar duplicación CtlFacturar / CtlFacturarFrame
+### Fase 3 - Eliminar duplicación CtlFacturar / CtlFacturarFrame ✅ COMPLETADA
 
-**Objetivo:** Unificar la lógica duplicada entre ambos controllers.
+**Estado:** Implementada. Se eligió Opción B: el usuario confirmó que `CtlFacturar`/`ViewFacturar` y `CtlMenuPrincipalFrame`/`ViewMenuPrincipalFrame` ya no se usan (la facturación va por `Principal:153 → ViewModuloFacturar → CtlFacturarFrame`).
 
-**Opciones:**
-- **Opción A:** Hacer que `CtlFacturar` delegue a `CtlFacturarFrame` (si aún se usa)
-- **Opción B:** Eliminar `CtlFacturar` y `ViewFacturar` si ya no se usan (el MDI frame los reemplazó)
-- **Opción C:** Ambos controllers usan `FacturacionService`, reduciendo duplicación naturalmente
+**Archivos eliminados:**
+- `CtlFacturar.java` y `ViewFacturar.java`
+- `CtlMenuPrincipalFrame.java` y `ViewMenuPrincipalFrame.java`
+
+**Limpieza de referencias activas:**
+- `CtlMenuPrincipal:FACTURAR` (rama `permiso==4`, muerta en producción)
+- `CtlCotizacionLista:INSERTAR` (no se usa)
+- Bloques comentados en `Principal`, `CtlSalidasListas`, `CtlEntradasListas`
+- `ViewFacturar.class.getResource(...)` para iconos en `ViewFacturaDevolucion`, `ViewModuloFacturar`, `ViewCxCPagos` redirigidos a la clase propia
+- Comentarios obsoletos en `ViewPagoProveedor`, `ViewCobro`, `ViewCobroFactura`
+
+**Pendiente para una posible Fase 3.1 (código muerto adicional detectado):**
+- `CtlFactCredito` + `ViewFactCredito` (solo aparecen en bloques comentados)
+- `CtlModuloFacturar` (solo aparecen en comentarios; `ViewModuloFacturar.conectarContralador` queda sin invocar)
 
 ### Fase 4 - Desacoplar View del Controller
 
