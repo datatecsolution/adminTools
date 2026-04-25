@@ -569,6 +569,25 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtBuscar(){
 		return txtBuscar;
 	}
+	public String getTextoBusqueda() {
+		return txtBuscar.getText();
+	}
+	public void setTextoBusqueda(String texto) {
+		txtBuscar.setText(texto);
+	}
+	public void limpiarBusqueda() {
+		txtBuscar.setText("");
+	}
+	public void enfocarBusqueda() {
+		txtBuscar.requestFocusInWindow();
+	}
+	public void limpiarYEnfocarBusqueda() {
+		txtBuscar.setText("");
+		txtBuscar.requestFocusInWindow();
+	}
+	public void marcarBusquedaNivelFact(boolean nivelFact) {
+		txtBuscar.setBackground(nivelFact ? new Color(250, 0, 0) : new Color(60, 179, 113));
+	}
 	public JPopupMenu getMenuContextual(){
 		return menuContextual;
 		

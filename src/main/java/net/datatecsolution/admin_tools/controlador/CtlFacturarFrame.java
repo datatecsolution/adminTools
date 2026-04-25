@@ -195,18 +195,17 @@ public class CtlFacturarFrame
 	}
 
 	private void agregarArticuloPorCodigo() {
-		if (view.getTxtBuscar().getText().trim().length() == 0 && myArticulo != null) {
+		if (view.getTextoBusqueda().trim().length() == 0 && myArticulo != null) {
 			netBuscar = 0;
 			return;
 		}
 
-		String busca = this.view.getTxtBuscar().getText();
+		String busca = view.getTextoBusqueda();
 		this.myArticulo = this.myArticuloDao.buscarArticuloBarraCod(busca);
 
 		if (myArticulo == null) {
 			JOptionPane.showMessageDialog(view, "No se encontro el articulo");
-			view.getTxtBuscar().setText("");
-			view.getTxtBuscar().requestFocusInWindow();
+			view.limpiarYEnfocarBusqueda();
 			myArticulo = null;
 			netBuscar = 0;
 			return;
@@ -223,7 +222,7 @@ public class CtlFacturarFrame
 			unirCantidad = this.buscarArticuloEnFactura(myArticulo);
 
 		if (unirCantidad) {
-			view.getTxtBuscar().setText("");
+			view.limpiarBusqueda();
 			netBuscar = 0;
 			return;
 		}
@@ -233,7 +232,7 @@ public class CtlFacturarFrame
 		} else {
 			agregarArticuloConInventario();
 		}
-		view.getTxtBuscar().setText("");
+		view.limpiarBusqueda();
 		netBuscar = 0;
 	}
 
@@ -254,7 +253,7 @@ public class CtlFacturarFrame
 				JOptionPane.showMessageDialog(view,
 						"Solo la caja " + cajaDefecto.getDescripcion() + " puede facturar servicios.",
 						"Error en articulo", JOptionPane.ERROR_MESSAGE);
-				view.getTxtBuscar().setText("");
+				view.limpiarBusqueda();
 			}
 		}
 	}
@@ -286,14 +285,14 @@ public class CtlFacturarFrame
 						myArticulo.getArticulo() + " no tiene existencia en "
 								+ cajaActiva.getDetartamento().getDescripcion(),
 						"Error en existencia", JOptionPane.ERROR_MESSAGE);
-				view.getTxtBuscar().setText("");
+				view.limpiarBusqueda();
 			}
 		} else {
 			if (cajaActiva.getCodigo() != this.cajaDefecto.getCodigo()) {
 				JOptionPane.showMessageDialog(view,
 						"Solo la caja " + cajaDefecto.getDescripcion() + " puede facturar servicios.",
 						"Error en articulo", JOptionPane.ERROR_MESSAGE);
-				view.getTxtBuscar().setText("");
+				view.limpiarBusqueda();
 				return;
 			}
 
@@ -327,7 +326,7 @@ public class CtlFacturarFrame
 									+ cajaActiva
 											.getDetartamento().getDescripcion(),
 							"Error en existencia", JOptionPane.ERROR_MESSAGE);
-					view.getTxtBuscar().setText("");
+					view.limpiarBusqueda();
 					break;
 				}
 			}
@@ -985,7 +984,7 @@ public class CtlFacturarFrame
 				}
 				if (colum == 1) {
 					calcularTotales();
-					view.getTxtBuscar().requestFocusInWindow();
+					view.enfocarBusqueda();
 				}
 
 				if (colum == 2) {
@@ -1007,7 +1006,7 @@ public class CtlFacturarFrame
 					if (existencia > 0.0 && cantidad <= existencia) {
 
 						calcularTotales();
-						view.getTxtBuscar().requestFocusInWindow();
+						view.enfocarBusqueda();
 					} else {
 						JOptionPane.showMessageDialog(view,
 								myArticulo.getArticulo() + " no tiene existencia en " + usuario
@@ -1020,7 +1019,7 @@ public class CtlFacturarFrame
 
 				if (colum == 5) {
 					calcularTotales();
-					view.getTxtBuscar().requestFocusInWindow();
+					view.enfocarBusqueda();
 				}
 
 				break;
@@ -1050,7 +1049,7 @@ public class CtlFacturarFrame
 		view.actualizarTotales(myFactura);
 		view.getModeloTabla().fireTableDataChanged();
 		this.selectRowInset();
-		view.getTxtBuscar().requestFocusInWindow();
+		view.enfocarBusqueda();
 	}
 
 	@Override
@@ -1363,11 +1362,12 @@ public class CtlFacturarFrame
 		if (e.getComponent() == this.view.getTxtBuscar()) {
 			Character caracter1 = new Character(e.getKeyChar());
 			if (!esValido(caracter1)) {
+				String entrada = view.getTextoBusqueda();
 				String texto = "";
-				for (int i = 0; i < view.getTxtBuscar().getText().length(); i++)
-					if (esValido(new Character(view.getTxtBuscar().getText().charAt(i))))
-						texto += view.getTxtBuscar().getText().charAt(i);
-				view.getTxtBuscar().setText(texto);
+				for (int i = 0; i < entrada.length(); i++)
+					if (esValido(new Character(entrada.charAt(i))))
+						texto += entrada.charAt(i);
+				view.setTextoBusqueda(texto);
 			}
 		}
 		if (caracter == '+') {
@@ -1385,12 +1385,9 @@ public class CtlFacturarFrame
 	public void actualizarVentanas() {
 	
 
+		boolean nivelFact = ConexionStatic.getNivelFact();
 		for (int x = 0; x < ventanas.size(); x++) {
-			if (ConexionStatic.getNivelFact() == true) {
-				ventanas.get(x).getTxtBuscar().setBackground(new Color(250, 0, 0));
-			} else {
-				ventanas.get(x).getTxtBuscar().setBackground(new Color(60, 179, 113));
-			}
+			ventanas.get(x).marcarBusquedaNivelFact(nivelFact);
 		}
 
 	}
@@ -1635,12 +1632,11 @@ public class CtlFacturarFrame
 		this.myCliente = null;
 		this.myArticulo = null;
 
-		this.view.getTxtBuscar().setText("");
 		view.resetTotales();
 		this.myFactura.setObservacion("");
 		this.view.setEstadoFactura(false, 0);
 
-		this.view.getTxtBuscar().requestFocusInWindow();
+		view.limpiarYEnfocarBusqueda();
 	}
 
 	private void buscarOrden() {
