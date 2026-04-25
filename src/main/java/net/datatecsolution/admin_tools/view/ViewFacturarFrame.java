@@ -4,6 +4,7 @@ import net.datatecsolution.admin_tools.controlador.CtlFacturarFrame;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.botones.*;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
+import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFactura;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.ListaBotonesFacturas;
@@ -582,6 +583,22 @@ public class ViewFacturarFrame extends JInternalFrame {
 			rdbtnContado.setSelected(true);
 		}
 		txtFechafactura.setText(data.getFecha());
+	}
+
+	public FacturaClienteData getClienteData() {
+		int id = 0;
+		try {
+			id = Integer.parseInt(txtIdcliente.getText().trim());
+		} catch (NumberFormatException e) {
+			id = 0;
+		}
+		return new FacturaClienteData(id, txtNombrecliente.getText(), txtRtn.getText());
+	}
+
+	public void setClienteData(FacturaClienteData data) {
+		txtIdcliente.setText("" + data.getId());
+		txtNombrecliente.setText(data.getNombre());
+		txtRtn.setText(data.getRtn() == null ? "" : data.getRtn());
 	}
 
 	public void conectarBtnContralador(CtlFacturarFrame c,String cmd,JToggleButton btn){

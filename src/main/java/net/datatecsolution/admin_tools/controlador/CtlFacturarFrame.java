@@ -6,6 +6,7 @@ import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.service.FacturacionService;
 import net.datatecsolution.admin_tools.view.*;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
+import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
@@ -342,15 +343,13 @@ public class CtlFacturarFrame
 
 	private void buscarClientePorId() {
 		myCliente = null;
-		myCliente = clienteDao.buscarPorId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
+		myCliente = clienteDao.buscarPorId(view.getClienteData().getId());
 
 		if (myCliente != null) {
-			this.view.getTxtNombrecliente().setText(myCliente.getNombre());
-			this.view.getTxtRtn().setText(myCliente.getRtn());
+			view.setClienteData(new FacturaClienteData(myCliente.getId(), myCliente.getNombre(), myCliente.getRtn()));
 		} else {
 			JOptionPane.showMessageDialog(view, "Cliente no encontrado");
-			this.view.getTxtIdcliente().setText("1");
-			this.view.getTxtNombrecliente().setText("Cliente Normal");
+			view.setClienteData(new FacturaClienteData(1, "Cliente Normal", ""));
 		}
 	}
 
@@ -782,11 +781,11 @@ public class CtlFacturarFrame
 
 	private boolean setFactura() {
 		if (myCliente == null) {
+			FacturaClienteData clienteData = view.getClienteData();
 			myCliente = new Cliente();
-			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
-			myCliente.setNombre(this.view.getTxtNombrecliente().getText());
-			myCliente.setRtn(view.getTxtRtn().getText());
-
+			myCliente.setId(clienteData.getId());
+			myCliente.setNombre(clienteData.getNombre());
+			myCliente.setRtn(clienteData.getRtn());
 		}
 
 		FacturaCabeceraData cabecera = view.getCabeceraData();
@@ -869,10 +868,11 @@ public class CtlFacturarFrame
 
 	private void setFacturaBasica() {
 		if (myCliente == null) {
+			FacturaClienteData clienteData = view.getClienteData();
 			myCliente = new Cliente();
-			myCliente.setId(Integer.parseInt(this.view.getTxtIdcliente().getText()));
-			myCliente.setNombre(this.view.getTxtNombrecliente().getText());
-			myCliente.setRtn(view.getTxtRtn().getText());
+			myCliente.setId(clienteData.getId());
+			myCliente.setNombre(clienteData.getNombre());
+			myCliente.setRtn(clienteData.getRtn());
 		}
 
 		FacturaCabeceraData cabecera = view.getCabeceraData();
@@ -1630,9 +1630,7 @@ public class CtlFacturarFrame
 			framePadre.btnFecha.revalidate();
 		}
 
-		this.view.getTxtIdcliente().setText("1");
-		this.view.getTxtNombrecliente().setText("Consumidor final");
-		view.getTxtRtn().setText("");
+		view.setClienteData(new FacturaClienteData(1, "Consumidor final", ""));
 
 		this.myCliente = null;
 		this.myArticulo = null;
@@ -1688,15 +1686,10 @@ public class CtlFacturarFrame
 
 		boolean resul = ctlBuscarCliente.buscarCliente(null);
 		if (resul) {
-
 			myCliente = ctlBuscarCliente.getCliente();
-			this.view.getTxtIdcliente().setText("" + myCliente.getId());
-			this.view.getTxtNombrecliente().setText(myCliente.getNombre());
-			this.view.getTxtRtn().setText(myCliente.getRtn());
-
+			view.setClienteData(new FacturaClienteData(myCliente.getId(), myCliente.getNombre(), myCliente.getRtn()));
 		} else {
-			this.view.getTxtIdcliente().setText("1");
-			this.view.getTxtNombrecliente().setText("Consumidor final");
+			view.setClienteData(new FacturaClienteData(1, "Consumidor final", ""));
 		}
 		viewListaCliente.dispose();
 		ctlBuscarCliente = null;
@@ -1768,9 +1761,11 @@ public class CtlFacturarFrame
 
 	public void cargarFacturaView() {
 
-		this.view.getTxtIdcliente().setText("" + myFactura.getCliente().getId());
-		this.view.getTxtNombrecliente().setText(myFactura.getCliente().getNombre());
-		view.getTxtRtn().setText(myFactura.getCliente().getRtn());
+		Cliente clienteFactura = myFactura.getCliente();
+		this.myCliente = clienteFactura;
+		view.setClienteData(new FacturaClienteData(clienteFactura.getId(), clienteFactura.getNombre(), clienteFactura.getRtn()));
+
+		view.setCabeceraData(new FacturaCabeceraData(myFactura.getTipoFactura(), view.getCabeceraData().getFecha()));
 
 		view.actualizarTotales(myFactura);
 
