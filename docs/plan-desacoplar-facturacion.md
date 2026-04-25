@@ -33,7 +33,9 @@
 
 ## Plan de refactorización
 
-### Fase 1 - Extraer FacturacionService (prioridad alta)
+### Fase 1 - Extraer FacturacionService (prioridad alta) ✅ COMPLETADA
+
+**Estado:** Implementada en commit `b0f4b54`. Pruebas manuales OK (facturar contado, facturar crédito, guardar orden, cargar orden pendiente, eliminar orden, cambiar precio).
 
 **Objetivo:** Crear una capa de servicio que encapsule la lógica de negocio de facturación.
 
