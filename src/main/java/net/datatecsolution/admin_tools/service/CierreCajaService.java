@@ -34,6 +34,10 @@ public class CierreCajaService {
 		return cierreCajaDao.registrarCierre(nuevo);
 	}
 
+	public boolean registrarCierreActual() {
+		return cierreCajaDao.registrar(new Object());
+	}
+
 	public CierreCaja buscarPorId(int id) {
 		return cierreCajaDao.buscarPorId(id);
 	}

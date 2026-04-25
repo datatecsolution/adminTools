@@ -3,7 +3,7 @@ package net.datatecsolution.admin_tools.controlador;
 import net.datatecsolution.admin_tools.modelo.AbstractJasperReports;
 import net.datatecsolution.admin_tools.modelo.Conexion;
 import net.datatecsolution.admin_tools.modelo.dao.ArticuloDao;
-import net.datatecsolution.admin_tools.modelo.dao.CierreCajaDao;
+import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
@@ -108,9 +108,9 @@ public class CtlMenuPrincipalFrame implements ActionListener {
 					//AbstractJasperReports.imprimierFactura();
 					AbstractJasperReports.showViewer(this.view);
 					
-					CierreCajaDao cierre=new CierreCajaDao();
-					
-					if(cierre.registrar(new Object())){
+					CierreCajaService cierreCajaService=new CierreCajaService();
+
+					if(cierreCajaService.registrarCierreActual()){
 						JOptionPane.showMessageDialog(view, "Se creo el cierre de caja");
 					}
 					
