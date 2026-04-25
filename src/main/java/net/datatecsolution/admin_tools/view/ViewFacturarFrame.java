@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.view;
 import net.datatecsolution.admin_tools.controlador.CtlFacturarFrame;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.botones.*;
+import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFactura;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.ListaBotonesFacturas;
@@ -566,6 +567,23 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtFechafactura(){
 		return txtFechafactura;
 	}
+
+	public FacturaCabeceraData getCabeceraData() {
+		int tipo = rdbtnCredito.isSelected()
+				? FacturaCabeceraData.TIPO_CREDITO
+				: FacturaCabeceraData.TIPO_CONTADO;
+		return new FacturaCabeceraData(tipo, txtFechafactura.getText());
+	}
+
+	public void setCabeceraData(FacturaCabeceraData data) {
+		if (data.esCredito()) {
+			rdbtnCredito.setSelected(true);
+		} else {
+			rdbtnContado.setSelected(true);
+		}
+		txtFechafactura.setText(data.getFecha());
+	}
+
 	public void conectarBtnContralador(CtlFacturarFrame c,String cmd,JToggleButton btn){
 		btn.addActionListener(c);
 		

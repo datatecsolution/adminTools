@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.modelo.dao.*;
 import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.service.FacturacionService;
 import net.datatecsolution.admin_tools.view.*;
+import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
@@ -788,15 +789,9 @@ public class CtlFacturarFrame
 
 		}
 
-		if (this.view.getRdbtnContado().isSelected()) {
-			myFactura.setTipoFactura(1);
-			myFactura.setEstadoPago(1);
-		}
-
-		if (this.view.getRdbtnCredito().isSelected()) {
-			myFactura.setTipoFactura(2);
-			myFactura.setEstadoPago(0);
-		}
+		FacturaCabeceraData cabecera = view.getCabeceraData();
+		myFactura.setTipoFactura(cabecera.getTipoFactura());
+		myFactura.setEstadoPago(cabecera.getEstadoPago());
 
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
@@ -880,15 +875,9 @@ public class CtlFacturarFrame
 			myCliente.setRtn(view.getTxtRtn().getText());
 		}
 
-		if (this.view.getRdbtnContado().isSelected()) {
-			myFactura.setTipoFactura(1);
-			myFactura.setEstadoPago(1);
-		}
-
-		if (this.view.getRdbtnCredito().isSelected()) {
-			myFactura.setTipoFactura(2);
-			myFactura.setEstadoPago(0);
-		}
+		FacturaCabeceraData cabecera = view.getCabeceraData();
+		myFactura.setTipoFactura(cabecera.getTipoFactura());
+		myFactura.setEstadoPago(cabecera.getEstadoPago());
 
 		myFactura.setCliente(myCliente);
 		myFactura.setDetalles(this.view.getModeloTabla().getDetalles());
@@ -1533,7 +1522,9 @@ public class CtlFacturarFrame
 
 			if (view.getModeloTabla().getRowCount() > 1) {
 
-				if (view.getRdbtnContado().isSelected()) {
+				FacturaCabeceraData cabecera = view.getCabeceraData();
+
+				if (cabecera.esContado()) {
 
 					if (!setFactura())
 						return;
@@ -1547,7 +1538,7 @@ public class CtlFacturarFrame
 					}
 
 				} else
-				if (view.getRdbtnCredito().isSelected()) {// si la factura es al contado se procede a guardar e imprimir
+				if (cabecera.esCredito()) {// si la factura es al contado se procede a guardar e imprimir
 
 						if (myCliente != null && myCliente.getTipoCliente() == 2) {
 
@@ -1632,7 +1623,7 @@ public class CtlFacturarFrame
 		this.myFactura.setVendedor(new Empleado());
 
 		String fechaSistema = facturacionService.getFechaSistema();
-		view.getTxtFechafactura().setText(fechaSistema);
+		view.setCabeceraData(new FacturaCabeceraData(FacturaCabeceraData.TIPO_CONTADO, fechaSistema));
 		ViewModuloFacturar framePadre = (ViewModuloFacturar) view.getTopLevelAncestor();
 		if (framePadre != null) {
 			framePadre.btnFecha.setText("Fecha: " + fechaSistema);
@@ -1653,7 +1644,6 @@ public class CtlFacturarFrame
 		this.view.getTxtSubtotal().setText("0.00");
 		this.view.getTxtTotal().setText("0.00");
 		this.myFactura.setObservacion("");
-		this.view.getRdbtnContado().setSelected(true);
 		this.view.setEstadoFactura(false, 0);
 
 		this.view.getTxtBuscar().requestFocusInWindow();
