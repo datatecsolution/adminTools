@@ -66,20 +66,36 @@
 3. Hacer que `CtlFacturarFrame` use `FacturacionService` en vez de los DAOs directos
 4. Verificar que la funcionalidad no cambia (pruebas manuales)
 
-### Fase 2 - Extraer CierreCajaService
+### Fase 2 - Extraer CierreCajaService ✅ COMPLETADA
+
+**Estado:** Implementada. Pruebas manuales OK (cerrar facturación desde menú, abrir lista de cierres, reporte detalle por categoría).
 
 **Objetivo:** Separar la lógica de cierre de caja en su propio servicio.
 
 **Archivo nuevo:** `src/main/java/net/datatecsolution/admin_tools/service/CierreCajaService.java`
 
 **Responsabilidades:**
-- Ejecutar cierre de caja
-- Calcular totales de ventas del turno
-- Generar reporte de cierre
+- Registrar cierre de caja (`registrarCierreActual`)
+- Verificar facturas pendientes por cerrar (`verificarCierrePendiente` - orquesta múltiples DAOs)
+- Búsquedas y paginación de cierres (`todos`, `buscarPorFecha`, `buscarPorId`)
+- Cargar cierres por facturación (`cargarCierreFacturas`, `buscarFacturacionPorCajaUsuario`)
+- Ventas por categoría para reporte de cierre (`getVentasCategorias`)
 
-**DAOs que se mueven:**
+**DAOs encapsulados en el servicio:**
 - `CierreCajaDao`
-- `FacturaDao` (consultas de cierre)
+- `CierreFacturacionDao`
+- `FacturaDao` (consultas de cierre, no se mueve completo)
+
+**Controllers migrados (activos):**
+- `CtlFacturarFrame`: `cierreCaja()` y `setCierre()`
+- `CtlCierresCajaLista`: todas las consultas de cierre y reporte por categoría
+- `CtlMenuPrincipal`: caso `CERRARFACTURACION`
+
+**Controllers migrados (muertos, churn sobre código a borrar en Fase 3):**
+- `CtlMenuPrincipalFrame`: caso `CERRARFACTURACION`
+- `CtlFacturar`: método `cierreCaja()`
+
+**Refactor adicional:** `FacturaDao.verificarCierre(List<Caja>)` instanciaba DAOs internamente (DAO-DAO problem). La orquestación se movió al servicio; en `FacturaDao` solo permanece el query per-caja `verificarCierre(Caja, CierreFacturacion)`.
 
 ### Fase 3 - Eliminar duplicación CtlFacturar / CtlFacturarFrame
 
