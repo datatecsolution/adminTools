@@ -125,7 +125,7 @@
 - Método huérfano `ViewModuloFacturar.conectarContralador(CtlModuloFacturar)` eliminado
 - Import `CtlFactCredito` borrado de `Principal.java`
 
-### Fase 4 - Desacoplar View del Controller
+### Fase 4 - Desacoplar View del Controller (en progreso)
 
 **Objetivo:** Reducir las ~200 llamadas directas `view.get*/set*`.
 
@@ -133,6 +133,28 @@
 - Crear DTOs para transferir datos entre view y controller (ej. `FacturaFormData`)
 - La view expone un método `getFormData()` y `setFormData(FacturaFormData)` en vez de 50 getters individuales
 - Opcionalmente crear interfaces para las vistas (`IViewFacturar`) para facilitar testing
+
+**Enfoque:** refactor incremental por clusters, con commit + pruebas manuales por cluster.
+
+#### Clusters completados
+
+| Cluster | Commit | Cambios |
+|---------|--------|---------|
+| **Cabecera** (`tipoFactura`, `fecha`, radios contado/crédito) | `30165d7` | DTO `FacturaCabeceraData`. View: `get/setCabeceraData()`. Controller: 5 sitios migrados. |
+| **Cliente** (`txtIdcliente`, `txtNombrecliente`, `txtRtn`) | `debe1b5` | DTO `FacturaClienteData`. View: `get/setClienteData()`. Controller: 6 sitios. Bonus: fix latente — al cargar orden no restauraba `tipoFactura` ni `myCliente`, lo que rompía facturación a crédito de orden cargada. Resets siempre limpian `rtn`. |
+| **Totales** (`txtSubtotal`, `txtImpuesto`, `txtImpuesto18`, `txtTotal`, `txtDescuento`) | `3b64c72` | View: `resetTotales()`. `actualizarTotales(Factura)` ya existía. Controller: 5 setText directos en `setEmptyView` consolidados en una sola llamada. |
+| **Búsqueda** (`txtBuscar`) | `3ce5492` | View: `getTextoBusqueda`, `setTextoBusqueda`, `limpiarBusqueda`, `enfocarBusqueda`, `limpiarYEnfocarBusqueda`, `marcarBusquedaNivelFact(boolean)`. Controller: ~17 sitios migrados. Identity check en `keyTyped` queda directo. |
+
+#### Sitios directos restantes en `CtlFacturarFrame` (candidatos a próximos clusters)
+
+- **`modeloTabla`** (~50 sitios): `setArticulo`, `agregarDetalle`, `eliminarDetalle`, `getDetalle(idx)`, `getDetalles`, `setDetalles`, `setEmptyDetalles`, `masCantidad`, `restarCantidad`, `buscarCantidadPorArticulo`, `getRowCount`, `getValueAt`, `fireTableDataChanged`. Es operación de dominio sobre el modelo de tabla, no UI puro. Considerar exponer operaciones más semánticas en la view (ej. `view.agregarArticuloAlDetalle(art)`, `view.eliminarFila(idx)`, etc.) o aceptar que `modeloTabla` es parte legítima del API view.
+- **`tableDetalle`** (~10 sitios): `getSelectedRow`, `getRowCount`, `changeSelection`, `addColumnSelectionInterval`. Mayormente para selección de filas tras inserción. Encapsular como `view.seleccionarFila(row, col)` o similar.
+- **Botones / acciones** (~20 sitios): `getBtnGuardar().setEnabled(...)`, `getBtnActualizar().setEnabled/setVisible(...)`, `getBtnCobrar()`, `getBtnCerrar()`, `getBtnGuardarCotizacion()`, `getPanelAcciones()`. Encapsular como `view.setEstadoBotones(...)` o similar — algunos ya existen (`setEstadoFactura(boolean, idFactura)`).
+- **`btnsGuardador`** (`getBtnsGuardador()`): manejo de órdenes pendientes.
+- **Otros campos sueltos**: `txtFechafactura`, `getRdbtnContado/Credito` (ya cubiertos por `getCabeceraData`, queda solo el listener attach).
+- **`getMenuContextual()`**: menú contextual de la tabla.
+
+**Orden sugerido:** botones/acciones → tableDetalle → modeloTabla (el más grande y delicado, porque toca lógica de negocio sobre el detalle de factura).
 
 ---
 
