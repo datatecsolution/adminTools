@@ -552,6 +552,14 @@ public class ViewFacturarFrame extends JInternalFrame {
 		txtDescuento.setText("" + factura.getTotalDescuento().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 	}
 
+	public void resetTotales() {
+		txtDescuento.setText("");
+		txtImpuesto.setText("0.00");
+		txtImpuesto18.setText("0.00");
+		txtSubtotal.setText("0.00");
+		txtTotal.setText("0.00");
+	}
+
 	public TablaModeloFactura getModeloTabla(){
 		return modeloTabla;
 	}

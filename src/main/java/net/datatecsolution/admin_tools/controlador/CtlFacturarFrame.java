@@ -1636,11 +1636,7 @@ public class CtlFacturarFrame
 		this.myArticulo = null;
 
 		this.view.getTxtBuscar().setText("");
-		this.view.getTxtDescuento().setText("");
-		this.view.getTxtImpuesto().setText("0.00");
-		this.view.getTxtImpuesto18().setText("0.00");
-		this.view.getTxtSubtotal().setText("0.00");
-		this.view.getTxtTotal().setText("0.00");
+		view.resetTotales();
 		this.myFactura.setObservacion("");
 		this.view.setEstadoFactura(false, 0);
 
