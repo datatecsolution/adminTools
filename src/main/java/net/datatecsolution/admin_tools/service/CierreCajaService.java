@@ -23,7 +23,35 @@ public class CierreCajaService {
 	}
 
 	public boolean verificarCierrePendiente(List<Caja> cajas) {
-		return facturaDao.verificarCierre(cajas);
+		CierreCaja ultimoCierreUser = cierreCajaDao.getCierreUltimoUser();
+		String usuario = ConexionStatic.getUsuarioLogin().getUser();
+		boolean resultado = false;
+
+		for (int x = 0; x < cajas.size(); x++) {
+			Caja caja = cajas.get(x);
+
+			CierreFacturacion registroFacturasCaja = cierreFacturacionDao.buscarPorCajaUsuario(
+					ConexionStatic.getUsuarioLogin().getCajas().get(x),
+					usuario,
+					ultimoCierreUser.getId());
+
+			if (registroFacturasCaja != null) {
+				resultado = facturaDao.verificarCierre(caja, registroFacturasCaja);
+				if (resultado) {
+					break;
+				}
+			} else {
+				CierreFacturacion newFacturasCaja = new CierreFacturacion();
+				if (facturaDao.verificarCierre(caja, newFacturasCaja)) {
+					newFacturasCaja.setCodigoCierre(ultimoCierreUser.getId());
+					newFacturasCaja.setUsuario(usuario);
+					newFacturasCaja.setCaja(caja);
+					cierreFacturacionDao.registrar(newFacturasCaja);
+				}
+			}
+		}
+
+		return resultado;
 	}
 
 	public boolean actualizarCierre(BigDecimal totalEfectivo) {

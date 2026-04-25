@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
+import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
@@ -932,9 +933,10 @@ public void calcularTotal(DetalleFactura detalle){
 		
 		
 		CierreCajaDao cierreRemote=new CierreCajaDao();
-		
+		CierreCajaService cierreCajaService=new CierreCajaService();
+
 		// se verifica que hay facturas para crear un cierre
-		if(facturaDao.verificarCierre(ConexionStatic.getUsuarioLogin().getCajas())){
+		if(cierreCajaService.verificarCierrePendiente(ConexionStatic.getUsuarioLogin().getCajas())){
 			
 			ViewCuentaEfectivo viewContar=new ViewCuentaEfectivo(view);
 			CtlContarEfectivo ctlContar=new CtlContarEfectivo(viewContar);
