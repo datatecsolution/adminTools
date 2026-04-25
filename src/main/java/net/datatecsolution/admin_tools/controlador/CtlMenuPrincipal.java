@@ -260,17 +260,6 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 					ctlAgregarCompra = null;
 				}
 				break;
-			case "FACTURAR":
-				if (permiso == 4) {
-					ViewFacturar vistaFacturar = new ViewFacturar(this.view);
-					vistaFacturar.pack();
-					CtlFacturar ctlFacturar = new CtlFacturar(vistaFacturar);
-					vistaFacturar.setVisible(true);
-					//JOptionPane.showMessageDialog(view, "Esta opcion solo esta disponible para usuario tipo cajeros");
-				}
-
-
-				break;
 			case "CATEGORIAS":
 				//se crea la lista de categorias
 				ViewListaCategorias vlCategorias = new ViewListaCategorias(this.view);

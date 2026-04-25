@@ -34,7 +34,7 @@ public class ViewModuloFacturar extends JFrame {
 	public ViewModuloFacturar() {
 		super( "Facturacion" );
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewModuloFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
 		
 		JMenuBar barra = new JMenuBar();
 		setJMenuBar( barra ); // establece la barra de menús para esta aplicación

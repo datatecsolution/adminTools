@@ -131,12 +131,6 @@ public class Principal {
 				principal.conectarControlador(ctl);*/
             }
             if(permiso==2){
-				/*
-				ViewFacturar vistaFacturar=new ViewFacturar(null);
-				CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar,conexion );
-				vistaFacturar.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); //.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
-				vistaFacturar.setVisible(true);
-				System.exit(0);*/
 
                 if(user.getCajas()!=null){
 

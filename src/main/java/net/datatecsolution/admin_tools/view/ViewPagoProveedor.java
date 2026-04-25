@@ -47,8 +47,7 @@ public class ViewPagoProveedor extends JDialog {
 		this.setTitle("Pago a proveedor");
 		this.setLocationRelativeTo(view);
 		this.setModal(true);
-		
-		//setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/view/recursos/logo-admin-tool1.png")));
+
 		getContentPane().setBackground(PanelPadre.color1);
 		
 		getContentPane().setLayout(null);

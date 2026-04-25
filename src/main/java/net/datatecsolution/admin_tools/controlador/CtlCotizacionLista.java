@@ -5,7 +5,6 @@ import net.datatecsolution.admin_tools.modelo.Conexion;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.modelo.dao.CotizacionDao;
-import net.datatecsolution.admin_tools.view.ViewFacturar;
 import net.datatecsolution.admin_tools.view.ViewListaCotizacion;
 
 import javax.swing.*;
@@ -167,28 +166,6 @@ public class CtlCotizacionLista implements ActionListener, MouseListener {
 				cargarTabla(myFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 				
 				}
-			break;
-		case "INSERTAR":
-			
-			ViewFacturar vistaFacturar=new ViewFacturar(this.view);
-			vistaFacturar.pack();
-			CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar );
-				
-			vistaFacturar.getTxtBuscar().requestFocusInWindow();
-			
-			//myFac=ctlFacturar.getAccion();
-			boolean resul=ctlFacturar.getAccion();
-			//JOptionPane.showMessageDialog(view, myFac);
-			
-			if(resul){
-				view.getModelo().netPag();
-				cargarTabla(myFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			}
-			
-			vistaFacturar.dispose();
-			vistaFacturar=null;
-			ctlFacturar=null;
 			break;
 		case "IMPRIMIR":
 			
