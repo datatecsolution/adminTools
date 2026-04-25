@@ -38,6 +38,14 @@ public class CierreCajaService {
 		return cierreCajaDao.buscarPorId(id);
 	}
 
+	public List<CierreCaja> todos(int limInf, int limSupe) {
+		return cierreCajaDao.todos(limInf, limSupe);
+	}
+
+	public List<CierreCaja> buscarPorFecha(String desde, String hasta, int limitInferior, int canItemPag) {
+		return cierreCajaDao.buscarPorFecha(desde, hasta, limitInferior, canItemPag);
+	}
+
 	public int getIdUltimoRegistro() {
 		return cierreCajaDao.idUltimoRequistro;
 	}
