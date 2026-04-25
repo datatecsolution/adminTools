@@ -112,9 +112,18 @@
 - `ViewFacturar.class.getResource(...)` para iconos en `ViewFacturaDevolucion`, `ViewModuloFacturar`, `ViewCxCPagos` redirigidos a la clase propia
 - Comentarios obsoletos en `ViewPagoProveedor`, `ViewCobro`, `ViewCobroFactura`
 
-**Pendiente para una posible Fase 3.1 (código muerto adicional detectado):**
-- `CtlFactCredito` + `ViewFactCredito` (solo aparecen en bloques comentados)
-- `CtlModuloFacturar` (solo aparecen en comentarios; `ViewModuloFacturar.conectarContralador` queda sin invocar)
+### Fase 3.1 - Borrar CtlFactCredito, ViewFactCredito y CtlModuloFacturar ✅ COMPLETADA
+
+**Estado:** Implementada. Compila limpio.
+
+**Archivos eliminados:**
+- `CtlFactCredito.java` y `ViewFactCredito.java` (solo referenciados desde bloques comentados)
+- `CtlModuloFacturar.java` (no instanciado; el módulo de facturación abre `ViewModuloFacturar` directamente)
+
+**Limpieza:**
+- Bloque comentado y comentarios sueltos en `Principal.java` (rama `permiso==2`)
+- Método huérfano `ViewModuloFacturar.conectarContralador(CtlModuloFacturar)` eliminado
+- Import `CtlFactCredito` borrado de `Principal.java`
 
 ### Fase 4 - Desacoplar View del Controller
 

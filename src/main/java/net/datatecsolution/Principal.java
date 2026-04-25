@@ -2,7 +2,6 @@ package net.datatecsolution;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import net.datatecsolution.admin_tools.controlador.CtlFactCredito;
 import net.datatecsolution.admin_tools.controlador.CtlLogin;
 import net.datatecsolution.admin_tools.controlador.CtlMenuPrincipal;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenVenta;
@@ -134,21 +133,9 @@ public class Principal {
 
                 if(user.getCajas()!=null){
 
-                    /*
-                    ViewFactCredito viewFactCredito=new ViewFactCredito(null);
-                    CtlFactCredito ctlFactCredito =new CtlFactCredito(viewFactCredito);
-
-                    viewFactCredito.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); //.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
-
-                     */
-
-
-
                     ViewModuloFacturar marcoEscritorio = new ViewModuloFacturar();
-                    //CtlModuloFacturar ctlMarcoEscritorio=new CtlModuloFacturar(marcoEscritorio,conexion);
                     marcoEscritorio.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-                    //marcoEscritorio.setSize( 1000, 800 ); // establece el tamaño del marco
-                    marcoEscritorio.setVisible( true ); // muestra el marco
+                    marcoEscritorio.setVisible( true );
 
                 }else{
                     JOptionPane.showMessageDialog(viewLogin, "No tiene cajas asignadas para poder facturar.","Error",JOptionPane.ERROR_MESSAGE);
