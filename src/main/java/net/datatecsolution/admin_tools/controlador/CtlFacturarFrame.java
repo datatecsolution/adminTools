@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
+import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.service.FacturacionService;
 import net.datatecsolution.admin_tools.view.*;
 
@@ -38,6 +39,7 @@ public class CtlFacturarFrame
 
 	List<ViewFacturarFrame> ventanas;
 	private final FacturacionService facturacionService;
+	private final CierreCajaService cierreCajaService;
 	private Caja cajaDefecto;
 	private boolean isThereConexion = false;
 
@@ -61,6 +63,7 @@ public class CtlFacturarFrame
 		codBarraDao = new CodBarraDao();
 		insumoDao = new InsumoDao();
 		facturacionService = new FacturacionService();
+		cierreCajaService = new CierreCajaService();
 
 		myUsuarioDao = new UsuarioDao();
 
@@ -1228,21 +1231,19 @@ public class CtlFacturarFrame
 	}
 
 	private void cierreCaja() {
-	
 
-		CierreCajaDao cierreDao = new CierreCajaDao();
-		CierreCaja oldCierre = cierreDao.getCierreUltimoUser();
+		CierreCaja oldCierre = cierreCajaService.getUltimoCierreUsuario();
 
-		if (facturaDao.verificarCierre(usuario.getCajas()) && oldCierre.getEstado() == true) {
+		if (cierreCajaService.verificarCierrePendiente(usuario.getCajas()) && oldCierre.getEstado() == true) {
 
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar = new CtlContarEfectivo(viewContar);
 
 			if (ctlContar.getEstado())
-				if (cierreDao.actualizarCierre(ctlContar.getTotal()))
+				if (cierreCajaService.actualizarCierre(ctlContar.getTotal()))
 				{
 					if (config.isImprReportCategCierre()) {
-						CierreCaja elCierre = cierreDao.buscarPorId(cierreDao.idUltimoRequistro);
+						CierreCaja elCierre = cierreCajaService.buscarPorId(cierreCajaService.getIdUltimoRegistro());
 						List<VentasCategoria> ventas = new ArrayList<VentasCategoria>();
 						CategoriaDao categoriaDao = new CategoriaDao();
 						List<Categoria> categorias = categoriaDao.todos();
@@ -1254,13 +1255,12 @@ public class CtlFacturarFrame
 							ventas.add(una);
 						}
 
-						CierreFacturacionDao cierreFacturacioDao = new CierreFacturacionDao();
-						elCierre.setCierreFacturas(cierreFacturacioDao.buscarIdCierre(elCierre.getId()));
+						cierreCajaService.cargarCierreFacturas(elCierre);
 
 						if (elCierre.getCierreFacturas() != null) {
 							for (int xx = 0; xx < elCierre.getCierreFacturas().size(); xx++) {
 
-								this.facturaDao.getVentasCategorias(
+								cierreCajaService.getVentasCategorias(
 										elCierre.getCierreFacturas().get(xx).getNoFacturaInicio(),
 										elCierre.getCierreFacturas().get(xx).getNoFacturaFinal(),
 										elCierre.getUsuario(),
@@ -1283,7 +1283,7 @@ public class CtlFacturarFrame
 					try {
 
 						AbstractJasperReports.createReport(ConexionStatic.getPoolConexion().getConnection(), 4,
-								cierreDao.idUltimoRequistro);
+								cierreCajaService.getIdUltimoRegistro());
 
 						AbstractJasperReports.imprimierFactura();
 						AbstractJasperReports.showViewer(view);
@@ -1826,10 +1826,7 @@ public class CtlFacturarFrame
 
 		boolean resul = false;
 
-		CierreCajaDao cierreDao = new CierreCajaDao();
-		CierreFacturacionDao cierreFacturasDao = new CierreFacturacionDao();
-
-		CierreCaja oldCierre = cierreDao.getCierreUltimoUser();
+		CierreCaja oldCierre = cierreCajaService.getUltimoCierreUsuario();
 
 		if (oldCierre.getEstado() == false) {
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
@@ -1841,7 +1838,7 @@ public class CtlFacturarFrame
 				newCierre.setUsuario(usuario.getUser());
 
 				for (int xx = 0; xx < usuario.getCajas().size(); xx++) {
-					CierreFacturacion unaC = cierreFacturasDao.buscarPorCajaUsuario(
+					CierreFacturacion unaC = cierreCajaService.buscarFacturacionPorCajaUsuario(
 							usuario.getCajas().get(xx),
 							usuario.getUser());
 
@@ -1864,7 +1861,7 @@ public class CtlFacturarFrame
 				newCierre.setNoEntradaInicial(oldCierre.getNoEntradaFinal() + 1);
 				newCierre.setNoCobroInicial(oldCierre.getNoCobroFinal() + 1);
 				newCierre.setNoPagoInicial(oldCierre.getNoPagoFinal() + 1);
-				cierreDao.registrarCierre(newCierre);
+				cierreCajaService.registrarCierre(newCierre);
 				resul = true;
 
 				viewContar.dispose();
