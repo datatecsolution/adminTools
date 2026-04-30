@@ -145,15 +145,15 @@
 | **Totales** (`txtSubtotal`, `txtImpuesto`, `txtImpuesto18`, `txtTotal`, `txtDescuento`) | `3b64c72` | View: `resetTotales()`. `actualizarTotales(Factura)` ya existía. Controller: 5 setText directos en `setEmptyView` consolidados en una sola llamada. |
 | **Búsqueda** (`txtBuscar`) | `3ce5492` | View: `getTextoBusqueda`, `setTextoBusqueda`, `limpiarBusqueda`, `enfocarBusqueda`, `limpiarYEnfocarBusqueda`, `marcarBusquedaNivelFact(boolean)`. Controller: ~17 sitios migrados. Identity check en `keyTyped` queda directo. |
 | **Botones / acciones** (`btnGuardar`, `btnActualizar`, `panelAcciones`, `btnsGuardador`) | `1bbf9e4` | View: `setEstadoBotonesNuevo`, `setEstadoBotonesEditandoOrden`, `setModoActualizarFactura`, `ocultarPanelAcciones`, `puedeGuardar`, `puedeActualizar`, `limpiarOrdenesGuardadas`, `getOrdenSeleccionadaPanel`, `buscarOrdenEnPanel(int)`. Controller: ~30 sitios migrados (8 pares setEnabled, 9 deleteAll, 3 getFacturaSeleted, 2 isEnabled en KeyListener, 1 setVisible/setVisible, 1 panelAcciones, 1 buscarFactura). |
+| **modeloTabla** (operaciones sobre el detalle de factura) | _pendiente commit_ | View: `agregarDetalle`, `vaciarDetalles`, `setDetalles`, `getDetalles`, `getDetalle(int)`, `setArticuloDetalle(Articulo)`, `setArticuloDetalle(Articulo,int)`, `eliminarDetalle(int)`, `masCantidad(int)`, `restarCantidad(int)`, `buscarCantidadPorArticulo(Articulo)`, `getCantidadFilasDetalle`, `getValorTabla(int,int)`, `refrescarTablaDetalle`. Controller: ~75 sitios migrados con `replace_all`. Cero referencias a `view.getModeloTabla()` en `CtlFacturarFrame`. |
 
 #### Sitios directos restantes en `CtlFacturarFrame` (candidatos a próximos clusters)
 
-- **`modeloTabla`** (~50 sitios): `setArticulo`, `agregarDetalle`, `eliminarDetalle`, `getDetalle(idx)`, `getDetalles`, `setDetalles`, `setEmptyDetalles`, `masCantidad`, `restarCantidad`, `buscarCantidadPorArticulo`, `getRowCount`, `getValueAt`, `fireTableDataChanged`. Es operación de dominio sobre el modelo de tabla, no UI puro. Considerar exponer operaciones más semánticas en la view (ej. `view.agregarArticuloAlDetalle(art)`, `view.eliminarFila(idx)`, etc.) o aceptar que `modeloTabla` es parte legítima del API view.
 - **`tableDetalle`** (~10 sitios): `getSelectedRow`, `getRowCount`, `changeSelection`, `addColumnSelectionInterval`. Mayormente para selección de filas tras inserción. Encapsular como `view.seleccionarFila(row, col)` o similar.
 - **Otros campos sueltos**: `txtFechafactura`, `getRdbtnContado/Credito` (ya cubiertos por `getCabeceraData`, queda solo el listener attach), `getBtnCobrar`, `getBtnCerrar`, `getBtnGuardarCotizacion`, `getBtnBuscar`, `getBtnBuscarCliente` (registro de listeners en construcción).
 - **`getMenuContextual()`**: menú contextual de la tabla.
 
-**Orden sugerido:** tableDetalle → modeloTabla (el más grande y delicado, porque toca lógica de negocio sobre el detalle de factura).
+**Orden sugerido:** tableDetalle → resto.
 
 ---
 

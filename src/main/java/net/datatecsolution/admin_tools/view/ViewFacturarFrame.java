@@ -1,6 +1,8 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlFacturarFrame;
+import net.datatecsolution.admin_tools.modelo.Articulo;
+import net.datatecsolution.admin_tools.modelo.DetalleFactura;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.botones.*;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
@@ -14,6 +16,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.List;
 
 public class ViewFacturarFrame extends JInternalFrame {
 
@@ -85,6 +88,62 @@ public class ViewFacturarFrame extends JInternalFrame {
 
 	public JPanel getPanelGuardados() {
 		return panelGuardados;
+	}
+
+	public void agregarDetalle() {
+		modeloTabla.agregarDetalle();
+	}
+
+	public void vaciarDetalles() {
+		modeloTabla.setEmptyDetalles();
+	}
+
+	public void setDetalles(List<DetalleFactura> detalles) {
+		modeloTabla.setDetalles(detalles);
+	}
+
+	public List<DetalleFactura> getDetalles() {
+		return modeloTabla.getDetalles();
+	}
+
+	public DetalleFactura getDetalle(int fila) {
+		return modeloTabla.getDetalle(fila);
+	}
+
+	public void setArticuloDetalle(Articulo articulo) {
+		modeloTabla.setArticulo(articulo);
+	}
+
+	public void setArticuloDetalle(Articulo articulo, int fila) {
+		modeloTabla.setArticulo(articulo, fila);
+	}
+
+	public void eliminarDetalle(int fila) {
+		modeloTabla.eliminarDetalle(fila);
+	}
+
+	public void masCantidad(int fila) {
+		modeloTabla.masCantidad(fila);
+	}
+
+	public void restarCantidad(int fila) {
+		modeloTabla.restarCantidad(fila);
+	}
+
+	public double buscarCantidadPorArticulo(Articulo articulo) {
+		return modeloTabla.buscarCantidadPorArticulo(articulo);
+	}
+
+	public int getCantidadFilasDetalle() {
+		return modeloTabla.getRowCount();
+	}
+
+	public Object getValorTabla(int fila, int columna) {
+		return modeloTabla.getValueAt(fila, columna);
+	}
+
+	public void refrescarTablaDetalle() {
+		modeloTabla.fireTableDataChanged();
 	}
 
 	public void setEstadoBotonesNuevo() {
