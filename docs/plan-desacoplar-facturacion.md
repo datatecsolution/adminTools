@@ -166,6 +166,28 @@ Fase 1 (FacturacionService) → Fase 2 (CierreCajaService) → Fase 3 (Eliminar 
 
 Cada fase se puede entregar de forma independiente sin romper funcionalidad.
 
+## Trabajo paralelo incluido en la rama
+
+Cambios fuera del alcance original del plan que viajan junto con la refactor (commit `88ed263`). Se entregan en la misma fusión a `master`.
+
+### Cobrador en Cliente
+- Campo `cobrador` (FK a `empleado`) en `Cliente` con migración `V9__cliente_id_cobrador.sql`.
+- DAOs y vistas relacionadas: `ClienteDao`, `EmpleadoDao`, `CtlCliente`, `CtlClienteBuscar`, `CtlClienteLista`, `CtlCuentasFacturas`, `CtlCuentasFacturasReporte`, `CuentaFacturaDao`.
+
+### Estado 5 = Eliminado en órdenes
+- Borrado lógico (estado 5) desde `CtlOrdenesBuscar` y desde el panel de órdenes pendientes en `CtlFacturarFrame` (vía `facturacionService.cambiarEstadoOrden`).
+- En `CtlOrdenesLista`: separación de borrado físico (`btnEliminar`) y cambio de estado (nuevo `BotonCambiarEstado`), ambos con confirmación.
+- Persistencia de la selección de vendedor entre aperturas y auto-recarga al cambiar combo con radio "Todos" activo.
+- `btnEliminar` deshabilitado hasta seleccionar fila (`ListSelectionListener`).
+
+### Gestión de precios por usuario
+- Nuevo `UsuarioPrecioDao` y ajustes en `Usuario`, `ViewCrearUsuario`, `CtlUsuario` para asignar precios permitidos por usuario.
+
+### Documentación
+- `docs/analisis-impacto-nuevo-precio.md`: análisis de impacto de agregar un quinto precio en el módulo de facturación.
+
+---
+
 ## Rama de trabajo
 
 - **Rama:** `refactor/desacoplar-facturacion`
