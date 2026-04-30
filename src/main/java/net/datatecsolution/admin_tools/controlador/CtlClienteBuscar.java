@@ -49,7 +49,7 @@ public class CtlClienteBuscar implements ActionListener ,MouseListener, WindowLi
 		this.view.getCbxEmpleados().removeAllItems();
 	
 		//
-		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
+		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda());
 		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
 	}
 	
@@ -134,7 +134,7 @@ public boolean buscarCliente(Window v){
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 				
 				if(miEmpleado!=null){
-					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+					ConexionStatic.getUsuarioLogin().getConfig().setCobradorEnBusqueda(miEmpleado);
 				}
 				
 			break;

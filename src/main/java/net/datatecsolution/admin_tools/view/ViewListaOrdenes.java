@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.controlador.CtlClienteLista;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenesBuscar;
 import net.datatecsolution.admin_tools.controlador.CtlOrdenesLista;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.view.botones.BotonCambiarEstado;
 import net.datatecsolution.admin_tools.view.botones.BotonCuenta;
 import net.datatecsolution.admin_tools.view.botones.BotonImprimirSmall;
 import net.datatecsolution.admin_tools.view.botones.BotonLimpiar;
@@ -27,6 +28,7 @@ public class ViewListaOrdenes extends ViewTabla {
 	private JRadioButton rdbtnNombre;
 
 	private JButton btnImprimir;
+	private JButton btnCambiarEstado;
 //	private JRadioButton rdbtnRtn;
 
 
@@ -45,6 +47,10 @@ public class ViewListaOrdenes extends ViewTabla {
 
         btnImprimir=new BotonImprimirSmall();
         panelAccion.add(btnImprimir);
+
+        btnCambiarEstado = new BotonCambiarEstado();
+        btnCambiarEstado.setEnabled(false);
+        panelAccion.add(btnCambiarEstado);
         
 		
 		rdbtnNombre = new JRadioButton("Nombre",false);
@@ -167,7 +173,10 @@ public class ViewListaOrdenes extends ViewTabla {
 		btnImprimir.setActionCommand("IMPRIMIR");
 
 		btnEliminar.addActionListener(c);
-		btnEliminar.setActionCommand("CAMBIAR_ESTADO");
+		btnEliminar.setActionCommand("ELIMINAR");
+
+		btnCambiarEstado.addActionListener(c);
+		btnCambiarEstado.setActionCommand("CAMBIAR_ESTADO");
 		
 		btnBuscar.addActionListener(c);
 		btnBuscar.setActionCommand("BUSCAR");
@@ -190,6 +199,10 @@ public class ViewListaOrdenes extends ViewTabla {
 	 */
 	public JComboBox<Empleado> getCbxEmpleados() {
 		return cbxEmpleados;
+	}
+
+	public JButton getBtnCambiarEstado() {
+		return btnCambiarEstado;
 	}
 
 	/**

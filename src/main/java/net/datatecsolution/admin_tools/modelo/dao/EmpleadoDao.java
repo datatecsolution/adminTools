@@ -484,5 +484,80 @@ public class EmpleadoDao extends ModeloDaoBasic {
 		return false;
 	}
 
+	public List<Empleado> getEmpleadosAsignadosA(String usuario) {
+		List<Empleado> empleados = new ArrayList<Empleado>();
+		Connection con = null;
+		ResultSet res = null;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+			psConsultas = con.prepareStatement(super.getQuerySelect() + " where usuario=?");
+			psConsultas.setString(1, usuario);
+			res = psConsultas.executeQuery();
+			while (res.next()) {
+				Empleado un = new Empleado();
+				un.setCodigo(res.getInt("codigo_empleado"));
+				un.setNombre(res.getString("nombre"));
+				un.setApellido(res.getString("apellido"));
+				empleados.add(un);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			try {
+				if (res != null) res.close();
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return empleados;
+	}
+
+	public boolean desasignarUsuariosDe(String usuario) {
+		Connection con = null;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+			psConsultas = con.prepareStatement(super.getQueryUpdate() + " SET usuario = NULL WHERE usuario = ?");
+			psConsultas.setString(1, usuario);
+			psConsultas.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			return false;
+		} finally {
+			try {
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public boolean asignarUsuario(String usuario, int codigoEmpleado) {
+		Connection con = null;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+			psConsultas = con.prepareStatement(super.getQueryUpdate() + " SET usuario = ? WHERE codigo_empleado = ?");
+			psConsultas.setString(1, usuario);
+			psConsultas.setInt(2, codigoEmpleado);
+			psConsultas.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			return false;
+		} finally {
+			try {
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 
 }

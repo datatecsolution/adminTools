@@ -57,7 +57,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		myCliente.setTelefono(view.getTxtTelefono().getText());
 		myCliente.setCelular(view.getTxtMovil().getText());
 		myCliente.setRtn(view.getTxtRtn().getText());
-		myCliente.setVendedor(myVendedor);
+		myCliente.setCobrador(myVendedor);
 		myCliente.setRutaCobro(myRuta);
 	}
 	
@@ -156,14 +156,24 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		this.view.getTxtMovil().setText(cliente.getCelular());
 		this.view.getTxtRtn().setText(cliente.getRtn());
 
-		this.myVendedor=cliente.getVendedor();
+		this.myVendedor=cliente.getCobrador();
 		this.myRuta=cliente.getRutaCobro();
 
-		view.getTxtIdVendedor().setText(cliente.getVendedor().getCodigo()+"");
-		view.getTxtVendedor().setText(cliente.getVendedor().toString());
+		if (cliente.getCobrador() != null) {
+			view.getTxtIdVendedor().setText(cliente.getCobrador().getCodigo()+"");
+			view.getTxtVendedor().setText(cliente.getCobrador().toString());
+		} else {
+			view.getTxtIdVendedor().setText("");
+			view.getTxtVendedor().setText("");
+		}
 
-		view.getTxtIdRutaCobro().setText(cliente.getRutaCobro().getCodigo()+"");
-		view.getTxtRutaCobro().setText(cliente.getRutaCobro().getDescripcion());
+		if (cliente.getRutaCobro() != null) {
+			view.getTxtIdRutaCobro().setText(cliente.getRutaCobro().getCodigo()+"");
+			view.getTxtRutaCobro().setText(cliente.getRutaCobro().getDescripcion());
+		} else {
+			view.getTxtIdRutaCobro().setText("");
+			view.getTxtRutaCobro().setText("");
+		}
 		
 		
 		

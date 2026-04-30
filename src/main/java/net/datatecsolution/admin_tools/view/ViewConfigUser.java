@@ -46,7 +46,7 @@ public class ViewConfigUser extends JDialog {
 		getContentPane().setBackground(PanelPadre.color1);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(6, 64, 424, 260);
+		tabbedPane.setBounds(6, 64, 424, 295);
 		getContentPane().add(tabbedPane);
 		
 		JPanel panel = new JPanel();
@@ -175,19 +175,19 @@ public class ViewConfigUser extends JDialog {
 		txtUsuario.setColumns(10);
 		
 		btnAtras = new JButton("Atras");
-		btnAtras.setBounds(16, 331, 77, 29);
+		btnAtras.setBounds(16, 366, 77, 29);
 		getContentPane().add(btnAtras);
-		
+
 		btnSig = new JButton("Sig");
-		btnSig.setBounds(102, 331, 76, 29);
+		btnSig.setBounds(102, 366, 76, 29);
 		getContentPane().add(btnSig);
 
 		lblPosicionItem = new JLabel("0 de 10");
-		lblPosicionItem.setBounds(325, 336, 181, 16);
+		lblPosicionItem.setBounds(325, 371, 181, 16);
 		getContentPane().add(lblPosicionItem);
 
-		
-		setSize(443,400);
+
+		setSize(443,435);
 		
 		//centrar la ventana en la pantalla
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

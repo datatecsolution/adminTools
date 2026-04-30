@@ -365,11 +365,18 @@ public class CtlFacturarFrame
 
 	private void eliminarPendiente() {
 		int idFacturaTemporal = view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
-		Factura eliminarTem = new Factura();
-		eliminarTem.setIdFactura(idFacturaTemporal);
 
-		if (solicitarPasswordAdmin()) {
-			this.facturacionService.eliminarOrden(eliminarTem);
+		int confirma = JOptionPane.showConfirmDialog(
+				view,
+				"¿Está seguro que desea eliminar la orden #" + idFacturaTemporal + "?",
+				"Confirmar eliminación",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE);
+
+		if (confirma == JOptionPane.YES_OPTION) {
+			Factura eliminarTem = new Factura();
+			eliminarTem.setIdFactura(idFacturaTemporal);
+			this.facturacionService.cambiarEstadoOrden(eliminarTem, 5);
 			this.tipoView = 1;
 			this.view.getBtnGuardar().setEnabled(true);
 			this.view.getBtnActualizar().setEnabled(false);

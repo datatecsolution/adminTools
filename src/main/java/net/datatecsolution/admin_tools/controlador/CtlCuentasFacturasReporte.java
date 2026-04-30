@@ -64,7 +64,7 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 		//se remueve la lista por defecto
 		this.view.getCbxEmpleados().removeAllItems();
 		//
-		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
+		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda());
 		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
 	}
 
@@ -196,7 +196,7 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 
 				if(miEmpleado!=null){
-					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+					ConexionStatic.getUsuarioLogin().getConfig().setCobradorEnBusqueda(miEmpleado);
 				}
 
 				//ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
@@ -295,8 +295,8 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				AbstractJasperReports.createReportCuentaMora(ConexionStatic.getPoolConexion().getConnection(),
 																view.getModelSpinner().getNumber().intValue(),
 																ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getCodigo(),
-																ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo(),
-																ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getNombre()+" "+ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getApellido(),
+																ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo(),
+																ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getNombre()+" "+ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getApellido(),
 																ConexionStatic.getUsuarioLogin().getConfig().getRutaCobroEnBusqueda().getDescripcion());
 				//
 				//AbstractJasperReports.imprimierFactura();
@@ -325,7 +325,7 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
 			}else if(this.view.getRdbtnRTN().isSelected()){
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
-			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()!=0){
 
 				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
@@ -348,7 +348,7 @@ public class CtlCuentasFacturasReporte implements ActionListener, MouseListener,
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
 			}else if(this.view.getRdbtnRTN().isSelected()){
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
-			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()!=0){
 
 				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){

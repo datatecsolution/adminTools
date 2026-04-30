@@ -66,18 +66,18 @@ public class TmOrdenes extends TablaModelo {
 				if (AbstractJasperReports.isNumber(facturas.get(rowIndex).getEstado()))
 					switch (Integer.parseInt(facturas.get(rowIndex).getEstado())) {
 						case 1:
-							return "Activo";
+							return "Activa";
 						case 2:
-							return "Modificado";
+							return "Modificada";
 						case 3:
-							return "Facturado";
+							return "Imprimida";
 						case 4:
-							return "Eliminado";
+							return "Enviado";
 						default:
-							return "No definido";
+							return "Desc.";
 					}
 				else
-					return "No definido";
+					return "Desc.";
 
 			default:
 				return null;
