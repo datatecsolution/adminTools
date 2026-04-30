@@ -87,6 +87,45 @@ public class ViewFacturarFrame extends JInternalFrame {
 		return panelGuardados;
 	}
 
+	public void setEstadoBotonesNuevo() {
+		btnGuardar.setEnabled(true);
+		btnActualizar.setEnabled(false);
+	}
+
+	public void setEstadoBotonesEditandoOrden() {
+		btnGuardar.setEnabled(false);
+		btnActualizar.setEnabled(true);
+	}
+
+	public void setModoActualizarFactura() {
+		btnGuardar.setVisible(false);
+		btnActualizar.setVisible(true);
+	}
+
+	public void ocultarPanelAcciones() {
+		panelAcciones.setVisible(false);
+	}
+
+	public boolean puedeGuardar() {
+		return btnGuardar.isEnabled();
+	}
+
+	public boolean puedeActualizar() {
+		return btnActualizar.isEnabled();
+	}
+
+	public void limpiarOrdenesGuardadas() {
+		btnGuardados.deleteAll();
+	}
+
+	public Factura getOrdenSeleccionadaPanel() {
+		return btnGuardados.getFacturaSeleted();
+	}
+
+	public Factura buscarOrdenEnPanel(int idFactura) {
+		return btnGuardados.buscarFactura(idFactura);
+	}
+
 	public void setEstadoFactura(boolean editando, int numeroFactura) {
 		TitledBorder border;
 		if (editando) {

@@ -94,12 +94,11 @@ public class CtlFacturarFrame
 			}
 			if (numeroFactura == 0) {
 				this.tipoView = 1;
-				this.view.getBtnGuardar().setEnabled(true);
-				this.view.getBtnActualizar().setEnabled(false);
+				this.view.setEstadoBotonesNuevo();
 
 				setEmptyView();
 
-				view.getBtnsGuardador().deleteAll();
+				view.limpiarOrdenesGuardadas();
 
 				cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 			}
@@ -174,12 +173,11 @@ public class CtlFacturarFrame
 
 					if (this.tipoView == 2) {
 						this.tipoView = 1;
-						this.view.getBtnGuardar().setEnabled(true);
-						this.view.getBtnActualizar().setEnabled(false);
+						this.view.setEstadoBotonesNuevo();
 
 						setEmptyView();
 
-						view.getBtnsGuardador().deleteAll();
+						view.limpiarOrdenesGuardadas();
 
 						cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 					}
@@ -353,7 +351,7 @@ public class CtlFacturarFrame
 	}
 
 	private void imprimirPendiente() {
-		int idFacturaTemporal = view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
+		int idFacturaTemporal = view.getOrdenSeleccionadaPanel().getIdFactura();
 		try {
 			AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(),
 					idFacturaTemporal);
@@ -364,7 +362,7 @@ public class CtlFacturarFrame
 	}
 
 	private void eliminarPendiente() {
-		int idFacturaTemporal = view.getBtnsGuardador().getFacturaSeleted().getIdFactura();
+		int idFacturaTemporal = view.getOrdenSeleccionadaPanel().getIdFactura();
 
 		int confirma = JOptionPane.showConfirmDialog(
 				view,
@@ -378,10 +376,9 @@ public class CtlFacturarFrame
 			eliminarTem.setIdFactura(idFacturaTemporal);
 			this.facturacionService.cambiarEstadoOrden(eliminarTem, 5);
 			this.tipoView = 1;
-			this.view.getBtnGuardar().setEnabled(true);
-			this.view.getBtnActualizar().setEnabled(false);
+			this.view.setEstadoBotonesNuevo();
 			setEmptyView();
-			view.getBtnsGuardador().deleteAll();
+			view.limpiarOrdenesGuardadas();
 			cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 		}
 	}
@@ -771,15 +768,14 @@ public class CtlFacturarFrame
 
 	private void cargarFacturaPendiente(int numeroFactura) {
 
-		Factura fact = view.getBtnsGuardador().buscarFactura(numeroFactura);
+		Factura fact = view.buscarOrdenEnPanel(numeroFactura);
 		this.myFactura = fact;
 
 		myFactura.setDetalles(facturacionService.detallesOrdenPendiente(numeroFactura));
 
 		cargarFacturaView();
 		this.calcularTotales();
-		this.view.getBtnGuardar().setEnabled(false);
-		this.view.getBtnActualizar().setEnabled(true);
+		this.view.setEstadoBotonesEditandoOrden();
 		this.view.getModeloTabla().agregarDetalle();
 		this.view.setEstadoFactura(true, numeroFactura);
 		tipoView = 2;
@@ -933,7 +929,7 @@ public class CtlFacturarFrame
 			JToggleButton even = (JToggleButton) evento.getComponent();
 			even.setSelected(true);
 
-			Factura facturaSeleccionada = view.getBtnsGuardador().getFacturaSeleted();
+			Factura facturaSeleccionada = view.getOrdenSeleccionadaPanel();
 			if (facturaSeleccionada == null || facturaSeleccionada.getIdFactura() <= 0) return;
 
 			int idFacturaTemporal = facturaSeleccionada.getIdFactura();
@@ -1099,7 +1095,7 @@ public class CtlFacturarFrame
 				break;
 
 			case KeyEvent.VK_F5:
-				view.getBtnsGuardador().deleteAll();
+				view.limpiarOrdenesGuardadas();
 				cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				break;
 
@@ -1315,11 +1311,11 @@ public class CtlFacturarFrame
 
 		}
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_A) {
-			if (view.getBtnActualizar().isEnabled())
+			if (view.puedeActualizar())
 				actualizar();
 		}
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
-			if (view.getBtnGuardar().isEnabled())
+			if (view.puedeGuardar())
 				guardar();
 
 		}
@@ -1468,7 +1464,7 @@ public class CtlFacturarFrame
 
 					setEmptyView();
 
-					view.getBtnsGuardador().deleteAll();
+					view.limpiarOrdenesGuardadas();
 
 					cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				} else {
@@ -1488,12 +1484,11 @@ public class CtlFacturarFrame
 		setFacturaBasica();
 		facturacionService.actualizarFacturaTemporal(myFactura);
 		this.tipoView = 1;
-		this.view.getBtnGuardar().setEnabled(true);
-		this.view.getBtnActualizar().setEnabled(false);
+		this.view.setEstadoBotonesNuevo();
 
 		setEmptyView();
 
-		view.getBtnsGuardador().deleteAll();
+		view.limpiarOrdenesGuardadas();
 
 		cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 
@@ -1577,7 +1572,7 @@ public class CtlFacturarFrame
 						JOptionPane.ERROR_MESSAGE);
 			}
 
-			view.getBtnsGuardador().deleteAll();
+			view.limpiarOrdenesGuardadas();
 			cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 
 		}
@@ -1663,8 +1658,7 @@ public class CtlFacturarFrame
 
 			cargarFacturaView();
 			this.calcularTotales();
-			this.view.getBtnGuardar().setEnabled(false);
-			this.view.getBtnActualizar().setEnabled(true);
+			this.view.setEstadoBotonesEditandoOrden();
 			this.view.getModeloTabla().agregarDetalle();
 			this.view.setEstadoFactura(true, myFactura.getIdFactura());
 			tipoView = 2;
@@ -1716,8 +1710,7 @@ public class CtlFacturarFrame
 
 					if (this.tipoView == 2) {
 						this.tipoView = 1;
-						this.view.getBtnGuardar().setEnabled(true);
-						this.view.getBtnActualizar().setEnabled(false);
+						this.view.setEstadoBotonesNuevo();
 
 						Factura eliminarTem = new Factura();
 						eliminarTem.setIdFactura(idFacturaTemporal);
@@ -1726,7 +1719,7 @@ public class CtlFacturarFrame
 
 						setEmptyView();
 
-						view.getBtnsGuardador().deleteAll();
+						view.limpiarOrdenesGuardadas();
 
 						cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 					}
@@ -1775,8 +1768,7 @@ public class CtlFacturarFrame
 
 		this.myFactura = f;
 		cargarFacturaView();
-		this.view.getBtnGuardar().setVisible(false);
-		this.view.getBtnActualizar().setVisible(true);
+		this.view.setModoActualizarFactura();
 		this.view.getModeloTabla().agregarDetalle();
 		this.view.setEstadoFactura(true, f.getIdFactura());
 		tipoView = 2;
@@ -1795,7 +1787,7 @@ public class CtlFacturarFrame
 	
 		this.myFactura = f;
 		cargarFacturaView();
-		this.view.getPanelAcciones().setVisible(false);
+		this.view.ocultarPanelAcciones();
 		this.view.setVisible(true);
 	}
 
@@ -1970,8 +1962,7 @@ public class CtlFacturarFrame
 
 				if (this.tipoView == 2) {
 					this.tipoView = 1;
-					this.view.getBtnGuardar().setEnabled(true);
-					this.view.getBtnActualizar().setEnabled(false);
+					this.view.setEstadoBotonesNuevo();
 
 					Factura eliminarTem = new Factura();
 					eliminarTem.setIdFactura(idFacturaTemporal);
@@ -1980,7 +1971,7 @@ public class CtlFacturarFrame
 
 					setEmptyView();
 
-					view.getBtnsGuardador().deleteAll();
+					view.limpiarOrdenesGuardadas();
 
 					cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				}
