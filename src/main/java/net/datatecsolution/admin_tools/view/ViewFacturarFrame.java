@@ -1,8 +1,12 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlFacturarFrame;
+import net.datatecsolution.admin_tools.modelo.Articulo;
+import net.datatecsolution.admin_tools.modelo.DetalleFactura;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.botones.*;
+import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
+import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFactura;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.ListaBotonesFacturas;
@@ -12,6 +16,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.List;
 
 public class ViewFacturarFrame extends JInternalFrame {
 
@@ -83,6 +88,123 @@ public class ViewFacturarFrame extends JInternalFrame {
 
 	public JPanel getPanelGuardados() {
 		return panelGuardados;
+	}
+
+	public void agregarDetalle() {
+		modeloTabla.agregarDetalle();
+	}
+
+	public int getFilaSeleccionada() {
+		return tableDetalle.getSelectedRow();
+	}
+
+	public void seleccionarFila(int fila) {
+		if (fila >= 0 && fila < tableDetalle.getRowCount()) {
+			tableDetalle.setRowSelectionInterval(fila, fila);
+		}
+	}
+
+	public void enfocarCeldaTabla(int fila, int columna, int columnaInicio, int columnaFin) {
+		tableDetalle.changeSelection(fila, 0, false, false);
+		tableDetalle.changeSelection(fila, columna, false, false);
+		tableDetalle.addColumnSelectionInterval(columnaInicio, columnaFin);
+	}
+
+	public void vaciarDetalles() {
+		modeloTabla.setEmptyDetalles();
+	}
+
+	public void setDetalles(List<DetalleFactura> detalles) {
+		modeloTabla.setDetalles(detalles);
+	}
+
+	public List<DetalleFactura> getDetalles() {
+		return modeloTabla.getDetalles();
+	}
+
+	public DetalleFactura getDetalle(int fila) {
+		return modeloTabla.getDetalle(fila);
+	}
+
+	public void setArticuloDetalle(Articulo articulo) {
+		modeloTabla.setArticulo(articulo);
+	}
+
+	public void setArticuloDetalle(Articulo articulo, int fila) {
+		modeloTabla.setArticulo(articulo, fila);
+	}
+
+	public void eliminarDetalle(int fila) {
+		modeloTabla.eliminarDetalle(fila);
+	}
+
+	public void masCantidad(int fila) {
+		modeloTabla.masCantidad(fila);
+	}
+
+	public void restarCantidad(int fila) {
+		modeloTabla.restarCantidad(fila);
+	}
+
+	public double buscarCantidadPorArticulo(Articulo articulo) {
+		return modeloTabla.buscarCantidadPorArticulo(articulo);
+	}
+
+	public int getCantidadFilasDetalle() {
+		return modeloTabla.getRowCount();
+	}
+
+	public Object getValorTabla(int fila, int columna) {
+		return modeloTabla.getValueAt(fila, columna);
+	}
+
+	public void refrescarTablaDetalle() {
+		modeloTabla.fireTableDataChanged();
+	}
+
+	public void setEstadoBotonesNuevo() {
+		btnGuardar.setEnabled(true);
+		btnActualizar.setEnabled(false);
+	}
+
+	public void setEstadoBotonesEditandoOrden() {
+		btnGuardar.setEnabled(false);
+		btnActualizar.setEnabled(true);
+	}
+
+	public void setModoActualizarFactura() {
+		btnGuardar.setVisible(false);
+		btnActualizar.setVisible(true);
+	}
+
+	public void ocultarPanelAcciones() {
+		panelAcciones.setVisible(false);
+	}
+
+	public boolean puedeGuardar() {
+		return btnGuardar.isEnabled();
+	}
+
+	public boolean puedeActualizar() {
+		return btnActualizar.isEnabled();
+	}
+
+	public void limpiarOrdenesGuardadas() {
+		btnGuardados.deleteAll();
+	}
+
+	public Factura getOrdenSeleccionadaPanel() {
+		return btnGuardados.getFacturaSeleted();
+	}
+
+	public Factura buscarOrdenEnPanel(int idFactura) {
+		return btnGuardados.buscarFactura(idFactura);
+	}
+	public boolean seleccionarOrdenEnPanel(int idFactura) {
+		return btnGuardados.seleccionarPorId(idFactura);
+	}
+	public void seleccionarBotonNuevaFactura() {
+		btnGuardados.seleccionarBotonNuevaFactura();
 	}
 
 	public void setEstadoFactura(boolean editando, int numeroFactura) {
@@ -481,6 +603,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelGuardados.revalidate();
 		panelGuardados.repaint();
 	}
+	public void refrescarPanelGuardados(){
+		panelGuardados.revalidate();
+	}
 	public ListaBotonesFacturas getBtnsGuardador(){
 		return btnGuardados;
 	}
@@ -542,12 +667,26 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtIdcliente(){
 		return txtIdcliente;
 	}
+	public boolean esCampoNombreCliente(Component c) {
+		return c == txtNombrecliente;
+	}
+	public void resetIdCliente() {
+		txtIdcliente.setText("-1");
+	}
 	public void actualizarTotales(net.datatecsolution.admin_tools.modelo.Factura factura) {
 		txtTotal.setText("" + factura.getTotal().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 		txtImpuesto.setText("" + factura.getTotalImpuesto().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 		txtImpuesto18.setText("" + factura.getTotalImpuesto18().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 		txtSubtotal.setText("" + factura.getSubTotal().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 		txtDescuento.setText("" + factura.getTotalDescuento().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
+	}
+
+	public void resetTotales() {
+		txtDescuento.setText("");
+		txtImpuesto.setText("0.00");
+		txtImpuesto18.setText("0.00");
+		txtSubtotal.setText("0.00");
+		txtTotal.setText("0.00");
 	}
 
 	public TablaModeloFactura getModeloTabla(){
@@ -559,13 +698,68 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtBuscar(){
 		return txtBuscar;
 	}
+	public String getTextoBusqueda() {
+		return txtBuscar.getText();
+	}
+	public void setTextoBusqueda(String texto) {
+		txtBuscar.setText(texto);
+	}
+	public void limpiarBusqueda() {
+		txtBuscar.setText("");
+	}
+	public void enfocarBusqueda() {
+		txtBuscar.requestFocusInWindow();
+	}
+	public void limpiarYEnfocarBusqueda() {
+		txtBuscar.setText("");
+		txtBuscar.requestFocusInWindow();
+	}
+	public void marcarBusquedaNivelFact(boolean nivelFact) {
+		txtBuscar.setBackground(nivelFact ? new Color(250, 0, 0) : new Color(60, 179, 113));
+	}
 	public JPopupMenu getMenuContextual(){
 		return menuContextual;
-		
+
+	}
+	public void mostrarMenuContextual(Component invoker, int x, int y) {
+		menuContextual.show(invoker, x, y);
 	}
 	public JTextField getTxtFechafactura(){
 		return txtFechafactura;
 	}
+
+	public FacturaCabeceraData getCabeceraData() {
+		int tipo = rdbtnCredito.isSelected()
+				? FacturaCabeceraData.TIPO_CREDITO
+				: FacturaCabeceraData.TIPO_CONTADO;
+		return new FacturaCabeceraData(tipo, txtFechafactura.getText());
+	}
+
+	public void setCabeceraData(FacturaCabeceraData data) {
+		if (data.esCredito()) {
+			rdbtnCredito.setSelected(true);
+		} else {
+			rdbtnContado.setSelected(true);
+		}
+		txtFechafactura.setText(data.getFecha());
+	}
+
+	public FacturaClienteData getClienteData() {
+		int id = 0;
+		try {
+			id = Integer.parseInt(txtIdcliente.getText().trim());
+		} catch (NumberFormatException e) {
+			id = 0;
+		}
+		return new FacturaClienteData(id, txtNombrecliente.getText(), txtRtn.getText());
+	}
+
+	public void setClienteData(FacturaClienteData data) {
+		txtIdcliente.setText("" + data.getId());
+		txtNombrecliente.setText(data.getNombre());
+		txtRtn.setText(data.getRtn() == null ? "" : data.getRtn());
+	}
+
 	public void conectarBtnContralador(CtlFacturarFrame c,String cmd,JToggleButton btn){
 		btn.addActionListener(c);
 		
@@ -583,10 +777,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		tableDetalle.addKeyListener(c);
 		tableDetalle.addMouseListener(c);
 		modeloTabla.addTableModelListener(c);
-		tableDetalle.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		tableDetalle.setColumnSelectionAllowed(true);
+		tableDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableDetalle.setRowSelectionAllowed(true);
-		tableDetalle.setCellSelectionEnabled(true);
+		tableDetalle.setColumnSelectionAllowed(false);
 		
 		txtIdcliente.addKeyListener(c);
 		txtNombrecliente.addKeyListener(c);

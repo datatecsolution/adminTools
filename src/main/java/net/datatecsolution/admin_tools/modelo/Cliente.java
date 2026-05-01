@@ -15,6 +15,8 @@ public class Cliente {
 	private Integer tipoCliente=0;
 	private Empleado vendedor=new Empleado();
 	private int idVendedor=-1;
+	private Empleado cobrador=new Empleado();
+	private int idCobrador=0;
 	private RutaCobro rutaCobro=new RutaCobro();
 	private int idRutaCobro=-1;
 	
@@ -106,6 +108,21 @@ public class Cliente {
 		}
 		this.idVendedor=v.getCodigo();
 		this.vendedor = v;
+	}
+	public Empleado getCobrador() {
+		return cobrador;
+	}
+	public void setCobrador(Empleado c) {
+		if (c == null) {
+			this.idCobrador = 0;
+			this.cobrador = null;
+			return;
+		}
+		this.idCobrador = c.getCodigo();
+		this.cobrador = c;
+	}
+	public int getIdCobrador() {
+		return idCobrador;
 	}
 	public RutaCobro getRutaCobro(){return rutaCobro;}
 	public void setRutaCobro(RutaCobro v) {

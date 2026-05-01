@@ -5,20 +5,21 @@ import net.datatecsolution.admin_tools.modelo.Conexion;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.modelo.dao.CotizacionDao;
-import net.datatecsolution.admin_tools.view.ViewFacturar;
 import net.datatecsolution.admin_tools.view.ViewListaCotizacion;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class CtlCotizacionLista implements ActionListener, MouseListener {
+public class CtlCotizacionLista implements ActionListener, MouseListener, KeyListener {
 	
 	private final Conexion conexion=null;
 	private ViewListaCotizacion view=null;
@@ -168,28 +169,6 @@ public class CtlCotizacionLista implements ActionListener, MouseListener {
 				
 				}
 			break;
-		case "INSERTAR":
-			
-			ViewFacturar vistaFacturar=new ViewFacturar(this.view);
-			vistaFacturar.pack();
-			CtlFacturar ctlFacturar=new CtlFacturar(vistaFacturar );
-				
-			vistaFacturar.getTxtBuscar().requestFocusInWindow();
-			
-			//myFac=ctlFacturar.getAccion();
-			boolean resul=ctlFacturar.getAccion();
-			//JOptionPane.showMessageDialog(view, myFac);
-			
-			if(resul){
-				view.getModelo().netPag();
-				cargarTabla(myFacturaDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-				view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-			}
-			
-			vistaFacturar.dispose();
-			vistaFacturar=null;
-			ctlFacturar=null;
-			break;
 		case "IMPRIMIR":
 			
 			//se comprueba que este selecciona una fila de la tabla
@@ -286,6 +265,23 @@ public class CtlCotizacionLista implements ActionListener, MouseListener {
 		this.myFactura = myFactura;
 	}
 	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			resultado = false;
+			myFactura = null;
+			view.setVisible(false);
+		}
+	}
+
 public boolean buscarCotizaciones(Window v){
 		
 		//this.myArticuloDao.cargarInstrucciones();

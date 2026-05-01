@@ -2,7 +2,9 @@ package net.datatecsolution.admin_tools.modelo.dao;
 
 import net.datatecsolution.admin_tools.config.PasswordHasher;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
+import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.Factura;
+import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 import net.datatecsolution.admin_tools.modelo.Usuario;
 
 import javax.swing.*;
@@ -489,15 +491,16 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 			}
 			
 		
-			//se vuelven asignar las cajas que estan en la 
+			//se vuelven asignar las cajas que estan en la
 			for(int x=0;x<myUsuario.getCajas().size();x++){
 				cajaDao.asignarCajas(myUsuario.getUser(),myUsuario.getCajas().get(x));
 				//JOptionPane.showMessageDialog(null, myUsuario.getCajas().get(x).toString());
 			}
-			
+
+			persistirAsignaciones(myUsuario);
 
 			return true;
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
@@ -544,12 +547,17 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 			//se desasignan las cajas del usuario
 			cajaDao.desAsignarCaja(myUsuario);
 			
-			//se vuelven asignar las cajas que estan en la 
+			//se vuelven asignar las cajas que estan en la
 			for(int x=0;x<myUsuario.getCajas().size();x++){
 				cajaDao.asignarCajas(myUsuario.getUser(),myUsuario.getCajas().get(x));
 			}
-			
-			
+
+			if (myUsuario.getUserOld() != null && !myUsuario.getUserOld().equals(myUsuario.getUser())) {
+				new EmpleadoDao().desasignarUsuariosDe(myUsuario.getUserOld());
+				new UsuarioPrecioDao().desasignarPrecios(myUsuario.getUserOld());
+			}
+			persistirAsignaciones(myUsuario);
+
 			return true;
 		}catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -559,7 +567,7 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 		finally
 		{
 			try{
-				
+
 				if(psConsultas != null)psConsultas.close();
                 if(conn != null) conn.close();
 			} // fin de try
@@ -569,6 +577,92 @@ public List<Usuario> porNombre(String busqueda,int limitInferio, int canItemPag)
 			//conexion.desconectar();
 			} // fin de catch
 		} // fin de finally
+	}
+
+	private void persistirAsignaciones(Usuario u) {
+		EmpleadoDao empleadoDao = new EmpleadoDao();
+		UsuarioPrecioDao precioDao = new UsuarioPrecioDao();
+
+		empleadoDao.desasignarUsuariosDe(u.getUser());
+		precioDao.desasignarPrecios(u.getUser());
+
+		boolean esMovil = u.getCodigoEmpleado() > 0;
+
+		if (esMovil) {
+			actualizarCodigoEmpleado(u.getUser(), u.getCodigoEmpleado());
+			empleadoDao.asignarUsuario(u.getUser(), u.getCodigoEmpleado());
+			if (u.getPreciosAsignados() != null) {
+				for (PrecioArticulo p : u.getPreciosAsignados()) {
+					precioDao.asignarPrecio(u.getUser(), p.getCodigoPrecio());
+				}
+			}
+		} else {
+			actualizarCodigoEmpleado(u.getUser(), 0);
+			if (u.getVendedoresAsignados() != null) {
+				for (Empleado e : u.getVendedoresAsignados()) {
+					empleadoDao.asignarUsuario(u.getUser(), e.getCodigo());
+				}
+			}
+		}
+	}
+
+	private void actualizarCodigoEmpleado(String usuario, int codigoEmpleado) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = ConexionStatic.getPoolConexion().getConnection();
+			ps = conn.prepareStatement("UPDATE " + DbName + ".usuario SET codigo_empleado = ? WHERE usuario = ?");
+			if (codigoEmpleado > 0) {
+				ps.setInt(1, codigoEmpleado);
+			} else {
+				ps.setNull(1, java.sql.Types.INTEGER);
+			}
+			ps.setString(2, usuario);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ps != null) ps.close();
+				if (conn != null) conn.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public void cargarAsignaciones(Usuario u) {
+		u.setVendedoresAsignados(new EmpleadoDao().getEmpleadosAsignadosA(u.getUser()));
+		u.setPreciosAsignados(new UsuarioPrecioDao().getPreciosPorUsuario(u.getUser()));
+		u.setCodigoEmpleado(consultarCodigoEmpleado(u.getUser()));
+	}
+
+	private int consultarCodigoEmpleado(String usuario) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet res = null;
+		int codigo = 0;
+		try {
+			conn = ConexionStatic.getPoolConexion().getConnection();
+			ps = conn.prepareStatement("SELECT codigo_empleado FROM " + DbName + ".usuario WHERE usuario = ?");
+			ps.setString(1, usuario);
+			res = ps.executeQuery();
+			if (res.next()) {
+				codigo = res.getInt("codigo_empleado");
+				if (res.wasNull()) codigo = 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (res != null) res.close();
+				if (ps != null) ps.close();
+				if (conn != null) conn.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return codigo;
 	}
 
 	@Override

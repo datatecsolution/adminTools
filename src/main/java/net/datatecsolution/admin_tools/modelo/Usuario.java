@@ -10,8 +10,30 @@ public class Usuario extends Persona {
 	private String permiso="";
 	private String pwd="";
 	private int tipo_permiso;
+	private int codigoEmpleado=0;
 	private List<Caja> cajasAsignadas=new ArrayList<Caja>();
+	private List<Empleado> vendedoresAsignados=new ArrayList<Empleado>();
+	private List<PrecioArticulo> preciosAsignados=new ArrayList<PrecioArticulo>();
 	private ConfigUserFacturacion config=new ConfigUserFacturacion();
+
+	public int getCodigoEmpleado() {
+		return codigoEmpleado;
+	}
+	public void setCodigoEmpleado(int codigoEmpleado) {
+		this.codigoEmpleado = codigoEmpleado;
+	}
+	public List<Empleado> getVendedoresAsignados() {
+		return vendedoresAsignados;
+	}
+	public void setVendedoresAsignados(List<Empleado> vendedoresAsignados) {
+		this.vendedoresAsignados = vendedoresAsignados;
+	}
+	public List<PrecioArticulo> getPreciosAsignados() {
+		return preciosAsignados;
+	}
+	public void setPreciosAsignados(List<PrecioArticulo> preciosAsignados) {
+		this.preciosAsignados = preciosAsignados;
+	}
 	
 	public void setCodigo(int c){
 		codigo=c;

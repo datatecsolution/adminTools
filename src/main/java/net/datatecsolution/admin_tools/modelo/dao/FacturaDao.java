@@ -1331,53 +1331,6 @@ public class FacturaDao extends ModeloDaoBasic {
 			return null;
 	}
 
-	public boolean verificarCierre(List<Caja> cajas) {
-		// TODO Auto-generated method stub
-		boolean resultado = false;
-		CierreFacturacionDao cierreFacturasDao = new CierreFacturacionDao();
-
-		CierreCajaDao cierreCajaDao = new CierreCajaDao();
-
-		CierreCaja ultimoCierreUser = cierreCajaDao.getCierreUltimoUser();
-
-		// se recorren las caja en busca de facturas para realizar el cierre
-		for (int x = 0; x < cajas.size(); x++) {
-
-			// se extren los registros de las caja(numero factura inicial)
-			CierreFacturacion registroFacturasCaja = cierreFacturasDao.buscarPorCajaUsuario(
-					ConexionStatic.getUsuarioLogin().getCajas().get(x),
-					ConexionStatic.getUsuarioLogin().getUser(),
-					ultimoCierreUser.getId());
-			// se verifica que el registro de la factura no este vacio
-			if (registroFacturasCaja != null) {
-
-				// se busca la existencia de facturas para esa caja
-				resultado = verificarCierre(cajas.get(x), registroFacturasCaja);
-				// si encontro un factua para realizar el cierre sale del for
-				if (resultado) {
-					break;
-				}
-
-			} else {// si esta vacio se se verifica que hay facturas hechas en esa caja para crear
-					// el registro
-					// se crea un registro vacio
-				CierreFacturacion newFacturasCaja = new CierreFacturacion();
-				// se verifica si hay factuas en esa caja
-				boolean result2 = verificarCierre(cajas.get(x), newFacturasCaja);
-				if (result2) {// si hay factura se crea el registro
-					newFacturasCaja.setCodigoCierre(ultimoCierreUser.getId());
-					newFacturasCaja.setUsuario(ConexionStatic.getUsuarioLogin().getUser());
-					newFacturasCaja.setCaja(cajas.get(x));
-					cierreFacturasDao.registrar(newFacturasCaja);
-					// resultado=true;
-
-				}
-			}
-		}
-
-		return resultado;
-	}
-
 	public void getComiciones(String fecha1, String fecha2, Caja caja, List<Comision> comisiones,
 			int comisionPorcentaje) {
 

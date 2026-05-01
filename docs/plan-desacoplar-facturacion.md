@@ -33,7 +33,9 @@
 
 ## Plan de refactorización
 
-### Fase 1 - Extraer FacturacionService (prioridad alta)
+### Fase 1 - Extraer FacturacionService (prioridad alta) ✅ COMPLETADA
+
+**Estado:** Implementada en commit `b0f4b54`. Pruebas manuales OK (facturar contado, facturar crédito, guardar orden, cargar orden pendiente, eliminar orden, cambiar precio).
 
 **Objetivo:** Crear una capa de servicio que encapsule la lógica de negocio de facturación.
 
@@ -64,31 +66,66 @@
 3. Hacer que `CtlFacturarFrame` use `FacturacionService` en vez de los DAOs directos
 4. Verificar que la funcionalidad no cambia (pruebas manuales)
 
-### Fase 2 - Extraer CierreCajaService
+### Fase 2 - Extraer CierreCajaService ✅ COMPLETADA
+
+**Estado:** Implementada. Pruebas manuales OK (cerrar facturación desde menú, abrir lista de cierres, reporte detalle por categoría).
 
 **Objetivo:** Separar la lógica de cierre de caja en su propio servicio.
 
 **Archivo nuevo:** `src/main/java/net/datatecsolution/admin_tools/service/CierreCajaService.java`
 
 **Responsabilidades:**
-- Ejecutar cierre de caja
-- Calcular totales de ventas del turno
-- Generar reporte de cierre
+- Registrar cierre de caja (`registrarCierreActual`)
+- Verificar facturas pendientes por cerrar (`verificarCierrePendiente` - orquesta múltiples DAOs)
+- Búsquedas y paginación de cierres (`todos`, `buscarPorFecha`, `buscarPorId`)
+- Cargar cierres por facturación (`cargarCierreFacturas`, `buscarFacturacionPorCajaUsuario`)
+- Ventas por categoría para reporte de cierre (`getVentasCategorias`)
 
-**DAOs que se mueven:**
+**DAOs encapsulados en el servicio:**
 - `CierreCajaDao`
-- `FacturaDao` (consultas de cierre)
+- `CierreFacturacionDao`
+- `FacturaDao` (consultas de cierre, no se mueve completo)
 
-### Fase 3 - Eliminar duplicación CtlFacturar / CtlFacturarFrame
+**Controllers migrados (activos):**
+- `CtlFacturarFrame`: `cierreCaja()` y `setCierre()`
+- `CtlCierresCajaLista`: todas las consultas de cierre y reporte por categoría
+- `CtlMenuPrincipal`: caso `CERRARFACTURACION`
 
-**Objetivo:** Unificar la lógica duplicada entre ambos controllers.
+**Controllers migrados (muertos, churn sobre código a borrar en Fase 3):**
+- `CtlMenuPrincipalFrame`: caso `CERRARFACTURACION`
+- `CtlFacturar`: método `cierreCaja()`
 
-**Opciones:**
-- **Opción A:** Hacer que `CtlFacturar` delegue a `CtlFacturarFrame` (si aún se usa)
-- **Opción B:** Eliminar `CtlFacturar` y `ViewFacturar` si ya no se usan (el MDI frame los reemplazó)
-- **Opción C:** Ambos controllers usan `FacturacionService`, reduciendo duplicación naturalmente
+**Refactor adicional:** `FacturaDao.verificarCierre(List<Caja>)` instanciaba DAOs internamente (DAO-DAO problem). La orquestación se movió al servicio; en `FacturaDao` solo permanece el query per-caja `verificarCierre(Caja, CierreFacturacion)`.
 
-### Fase 4 - Desacoplar View del Controller
+### Fase 3 - Eliminar duplicación CtlFacturar / CtlFacturarFrame ✅ COMPLETADA
+
+**Estado:** Implementada. Se eligió Opción B: el usuario confirmó que `CtlFacturar`/`ViewFacturar` y `CtlMenuPrincipalFrame`/`ViewMenuPrincipalFrame` ya no se usan (la facturación va por `Principal:153 → ViewModuloFacturar → CtlFacturarFrame`).
+
+**Archivos eliminados:**
+- `CtlFacturar.java` y `ViewFacturar.java`
+- `CtlMenuPrincipalFrame.java` y `ViewMenuPrincipalFrame.java`
+
+**Limpieza de referencias activas:**
+- `CtlMenuPrincipal:FACTURAR` (rama `permiso==4`, muerta en producción)
+- `CtlCotizacionLista:INSERTAR` (no se usa)
+- Bloques comentados en `Principal`, `CtlSalidasListas`, `CtlEntradasListas`
+- `ViewFacturar.class.getResource(...)` para iconos en `ViewFacturaDevolucion`, `ViewModuloFacturar`, `ViewCxCPagos` redirigidos a la clase propia
+- Comentarios obsoletos en `ViewPagoProveedor`, `ViewCobro`, `ViewCobroFactura`
+
+### Fase 3.1 - Borrar CtlFactCredito, ViewFactCredito y CtlModuloFacturar ✅ COMPLETADA
+
+**Estado:** Implementada. Compila limpio.
+
+**Archivos eliminados:**
+- `CtlFactCredito.java` y `ViewFactCredito.java` (solo referenciados desde bloques comentados)
+- `CtlModuloFacturar.java` (no instanciado; el módulo de facturación abre `ViewModuloFacturar` directamente)
+
+**Limpieza:**
+- Bloque comentado y comentarios sueltos en `Principal.java` (rama `permiso==2`)
+- Método huérfano `ViewModuloFacturar.conectarContralador(CtlModuloFacturar)` eliminado
+- Import `CtlFactCredito` borrado de `Principal.java`
+
+### Fase 4 - Desacoplar View del Controller (en progreso)
 
 **Objetivo:** Reducir las ~200 llamadas directas `view.get*/set*`.
 
@@ -96,6 +133,25 @@
 - Crear DTOs para transferir datos entre view y controller (ej. `FacturaFormData`)
 - La view expone un método `getFormData()` y `setFormData(FacturaFormData)` en vez de 50 getters individuales
 - Opcionalmente crear interfaces para las vistas (`IViewFacturar`) para facilitar testing
+
+**Enfoque:** refactor incremental por clusters, con commit + pruebas manuales por cluster.
+
+#### Clusters completados
+
+| Cluster | Commit | Cambios |
+|---------|--------|---------|
+| **Cabecera** (`tipoFactura`, `fecha`, radios contado/crédito) | `30165d7` | DTO `FacturaCabeceraData`. View: `get/setCabeceraData()`. Controller: 5 sitios migrados. |
+| **Cliente** (`txtIdcliente`, `txtNombrecliente`, `txtRtn`) | `debe1b5` | DTO `FacturaClienteData`. View: `get/setClienteData()`. Controller: 6 sitios. Bonus: fix latente — al cargar orden no restauraba `tipoFactura` ni `myCliente`, lo que rompía facturación a crédito de orden cargada. Resets siempre limpian `rtn`. |
+| **Totales** (`txtSubtotal`, `txtImpuesto`, `txtImpuesto18`, `txtTotal`, `txtDescuento`) | `3b64c72` | View: `resetTotales()`. `actualizarTotales(Factura)` ya existía. Controller: 5 setText directos en `setEmptyView` consolidados en una sola llamada. |
+| **Búsqueda** (`txtBuscar`) | `3ce5492` | View: `getTextoBusqueda`, `setTextoBusqueda`, `limpiarBusqueda`, `enfocarBusqueda`, `limpiarYEnfocarBusqueda`, `marcarBusquedaNivelFact(boolean)`. Controller: ~17 sitios migrados. Identity check en `keyTyped` queda directo. |
+| **Botones / acciones** (`btnGuardar`, `btnActualizar`, `panelAcciones`, `btnsGuardador`) | `1bbf9e4` | View: `setEstadoBotonesNuevo`, `setEstadoBotonesEditandoOrden`, `setModoActualizarFactura`, `ocultarPanelAcciones`, `puedeGuardar`, `puedeActualizar`, `limpiarOrdenesGuardadas`, `getOrdenSeleccionadaPanel`, `buscarOrdenEnPanel(int)`. Controller: ~30 sitios migrados (8 pares setEnabled, 9 deleteAll, 3 getFacturaSeleted, 2 isEnabled en KeyListener, 1 setVisible/setVisible, 1 panelAcciones, 1 buscarFactura). |
+| **modeloTabla** (operaciones sobre el detalle de factura) | `1ecee86` | View: `agregarDetalle`, `vaciarDetalles`, `setDetalles`, `getDetalles`, `getDetalle(int)`, `setArticuloDetalle(Articulo)`, `setArticuloDetalle(Articulo,int)`, `eliminarDetalle(int)`, `masCantidad(int)`, `restarCantidad(int)`, `buscarCantidadPorArticulo(Articulo)`, `getCantidadFilasDetalle`, `getValorTabla(int,int)`, `refrescarTablaDetalle`. Controller: ~75 sitios migrados con `replace_all`. Cero referencias a `view.getModeloTabla()` en `CtlFacturarFrame`. |
+| **tableDetalle** (selección de filas) | `be2880c` | View: `getFilaSeleccionada`, `enfocarCeldaTabla(fila,col,colIni,colFin)`. Controller: 3 sitios `getSelectedRow` migrados, 4 bloques de 5-7 líneas (`changeSelection` ×2 + `addColumnSelectionInterval`) compactados a una sola llamada, 1 `getRowCount` redirigido al wrapper existente. Cero referencias a `view.getTableDetalle()` en `CtlFacturarFrame`. |
+| **Campos sueltos / menú contextual** | `d6f9acb` | View: `esCampoNombreCliente(Component)`, `resetIdCliente()`, `refrescarPanelGuardados()`, `mostrarMenuContextual(Component,int,int)`. Controller: identity check en `keyReleased` migrado, reset de `txtIdcliente` semántico, `revalidate()` del panel pendientes encapsulado, `show()` del menú contextual encapsulado. Los listeners de `getBtnCobrar/Cerrar/GuardarCotizacion/Buscar/BuscarCliente` y los radios contado/crédito quedan como attachs directos en construcción y son aceptables (no son lógica de negocio). |
+
+#### Sitios directos restantes en `CtlFacturarFrame`
+
+Solo permanece el cableado de listeners en construcción (`addActionListener`/`addKeyListener`), que es responsabilidad legítima del controller-as-listener.
 
 ---
 
@@ -107,7 +163,29 @@ Fase 1 (FacturacionService) → Fase 2 (CierreCajaService) → Fase 3 (Eliminar 
 
 Cada fase se puede entregar de forma independiente sin romper funcionalidad.
 
+## Trabajo paralelo incluido en la rama
+
+Cambios fuera del alcance original del plan que viajan junto con la refactor (commit `88ed263`). Se entregan en la misma fusión a `master`.
+
+### Cobrador en Cliente
+- Campo `cobrador` (FK a `empleado`) en `Cliente` con migración `V9__cliente_id_cobrador.sql`.
+- DAOs y vistas relacionadas: `ClienteDao`, `EmpleadoDao`, `CtlCliente`, `CtlClienteBuscar`, `CtlClienteLista`, `CtlCuentasFacturas`, `CtlCuentasFacturasReporte`, `CuentaFacturaDao`.
+
+### Estado 5 = Eliminado en órdenes
+- Borrado lógico (estado 5) desde `CtlOrdenesBuscar` y desde el panel de órdenes pendientes en `CtlFacturarFrame` (vía `facturacionService.cambiarEstadoOrden`).
+- En `CtlOrdenesLista`: separación de borrado físico (`btnEliminar`) y cambio de estado (nuevo `BotonCambiarEstado`), ambos con confirmación.
+- Persistencia de la selección de vendedor entre aperturas y auto-recarga al cambiar combo con radio "Todos" activo.
+- `btnEliminar` deshabilitado hasta seleccionar fila (`ListSelectionListener`).
+
+### Gestión de precios por usuario
+- Nuevo `UsuarioPrecioDao` y ajustes en `Usuario`, `ViewCrearUsuario`, `CtlUsuario` para asignar precios permitidos por usuario.
+
+### Documentación
+- `docs/analisis-impacto-nuevo-precio.md`: análisis de impacto de agregar un quinto precio en el módulo de facturación.
+
+---
+
 ## Rama de trabajo
 
 - **Rama:** `refactor/desacoplar-facturacion`
-- **Base:** `master`
+- **Base:** `master` (commit `a3e68ba`)

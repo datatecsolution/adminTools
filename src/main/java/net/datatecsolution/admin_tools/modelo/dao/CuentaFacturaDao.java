@@ -49,7 +49,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			+ " JOIN "+super.DbName+".cliente "
 					+ " on (cliente.codigo_cliente="+ super.tableName+".codigo_cliente) "
 			+ " JOIN "+super.DbName+".empleados "
-				+ " on (cliente.id_vendedor=empleados.codigo_empleado) "
+				+ " on (cliente.id_cobrador=empleados.codigo_empleado) "
 			+ " JOIN ( " +
 						"SELECT "
 									+super.tableName+".codigo_cuenta as cod2, "
@@ -258,10 +258,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 			String whereBusqueda="";
 
-			if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-				whereBusqueda=" and id_vendedor>?";
+			if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+				whereBusqueda=" and id_cobrador>=?";
 			}else{
-				whereBusqueda=" and id_vendedor=?";
+				whereBusqueda=" and id_cobrador=?";
 			}
 
 			String whereBusquedaRuta="";
@@ -279,7 +279,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cuentas_facturas.codigo_cuenta=?  and"+  conSaldo+whereBusqueda+whereBusquedaRuta +" order by cuentas_facturas.codigo_cuenta asc");
 			super.psConsultas.setInt(1, codigo);
-			super.psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			super.psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo());
 
 			//System.out.println(psConsultas);
 			res = super.psConsultas.executeQuery();
@@ -606,10 +606,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 		String whereBusqueda="";
 
-		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-			whereBusqueda=" and id_vendedor>?";
+		if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_cobrador>=?";
 		}else{
-			whereBusqueda=" and id_vendedor=?";
+			whereBusqueda=" and id_cobrador=?";
 		}
 
 		String whereBusquedaRuta="";
@@ -627,7 +627,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			//dsfa
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda+whereBusquedaRuta+" and  no_dias >=30 and no_dias<="+diasRetrazados);
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo());
 
 			res = super.psConsultas.executeQuery();
 
@@ -720,10 +720,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 		String whereBusqueda="";
 
-		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-			whereBusqueda=" and id_vendedor>?";
+		if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_cobrador>=?";
 		}else{
-			whereBusqueda=" and id_vendedor=?";
+			whereBusqueda=" and id_cobrador=?";
 		}
 
 		String whereBusquedaRuta="";
@@ -741,7 +741,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			//dsfa
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where "+conSaldo+whereBusqueda+whereBusquedaRuta);
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo());
 
 			res = super.psConsultas.executeQuery();
 			
@@ -915,10 +915,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 		String whereBusqueda="";
 
-		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-			whereBusqueda=" and id_vendedor>?";
+		if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_cobrador>=?";
 		}else{
-			whereBusqueda=" and id_vendedor=?";
+			whereBusqueda=" and id_cobrador=?";
 		}
 
 		String whereBusquedaRuta="";
@@ -935,7 +935,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			//super.psConsultas = conn.prepareStatement(super.getQuerySearch("saldo",">"));//+" where saldo2>0 and CURDATE() > DATE_ADD(cuentas_facturas.fecha, INTERVAL (select dia_vencimiento_factura from config_app limit 1) DAY) ");
 			//dd
 			psConsultas.setString(1, "%" + nombre + "%");
-			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo());
 			//super.psConsultas.setInt(2, limSupe);
 			//super.psConsultas.setInt(3, limInf);
 			//System.out.println(psConsultas);
@@ -1024,10 +1024,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 		String whereBusqueda="";
 
-		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-			whereBusqueda=" and id_vendedor>?";
+		if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_cobrador>=?";
 		}else{
-			whereBusqueda=" and id_vendedor=?";
+			whereBusqueda=" and id_cobrador=?";
 		}
 
 		String whereBusquedaRuta="";
@@ -1145,10 +1145,10 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 
 		String whereBusqueda="";
 
-		if(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()==0){
-			whereBusqueda=" and id_vendedor>?";
+		if(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()==0){
+			whereBusqueda=" and id_cobrador>=?";
 		}else{
-			whereBusqueda=" and id_vendedor=?";
+			whereBusqueda=" and id_cobrador=?";
 		}
 
 		String whereBusquedaRuta="";
@@ -1166,7 +1166,7 @@ public class CuentaFacturaDao extends ModeloDaoBasic {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			super.psConsultas = conn.prepareStatement(super.getQuerySelect()+" where cliente.rtn like ? "+conSaldo+whereBusqueda+whereBusquedaRuta);
 			psConsultas.setString(1, rtn + "%");
-			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
+			psConsultas.setInt(2, ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo());
 
 			res = super.psConsultas.executeQuery();
 

@@ -30,13 +30,20 @@ public class CtlOrdenesBuscar implements ActionListener ,MouseListener, WindowLi
 		view=v;
 		view.conectarControladorBuscar(this);
 		view.getBtnAgregar().setEnabled(true);
-		view.getBtnEliminar().setEnabled(true);
+		view.getBtnEliminar().setEnabled(false);
 		ordenDao =new FacturaOrdenVentaDao();
 		empleadoDao=new EmpleadoDao ();
+
+		view.getTabla().getSelectionModel().addListSelectionListener(ev -> {
+			if (!ev.getValueIsAdjusting()) {
+				view.getBtnEliminar().setEnabled(view.getTabla().getSelectedRow() >= 0);
+			}
+		});
+
 		cargarComboBox();
-		view.getRdbtnNombre().setSelected(true);
-		//cargarTabla(clienteDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-		//view.setVisible(true);
+		view.getRdbtnTodos().setSelected(true);
+		view.getModelo().setPaginacion();
+		cargarTabla(ordenDao.buscarPorNombreCliente("",view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 	}
 
 	private void cargarComboBox(){
@@ -107,47 +114,33 @@ public boolean buscarCliente(Window v){
 			
 		case "CAMBIOCOMBOBOX":
 				//JOptionPane.showMessageDialog(view, "Cambio el vendedor");
-			
+
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
-				
+
 				if(miEmpleado!=null){
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+
+					if(view.getRdbtnTodos().isSelected()){
+						view.getModelo().setPaginacion();
+						cargarTabla(ordenDao.buscarPorNombreCliente("",view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+						view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
+					}
 				}
-				
-				//JOptionPane.showMessageDialog(view, "Cambio el vendedor "+miEmpleado.toString());
-				
+
 			break;
 			
 		case "BUSCAR":
-			
-			//si se seleciono el boton ID
 			view.getModelo().setPaginacion();
-//			if(this.view.getRdbtnId().isSelected()){
-//				myOrden =ordenDao.buscarPorId(Integer.parseInt(this.view.getTxtBuscar().getText()));
-//				if(myOrden !=null){
-//					this.view.getModelo().limpiarClientes();
-//					this.view.getModelo().agregarCliente(myOrden);
-//				}else{
-//					JOptionPane.showMessageDialog(view, "No se encuentro el registro","Error",JOptionPane.ERROR_MESSAGE);
-//				}
-//			}
 
-			if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre
-
+			if(this.view.getRdbtnNombre().isSelected()){
 				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-
 			}
-//			if(this.view.getRdbtnRtn().isSelected()){
-//				cargarTabla(clienteDao.buscarPorRtn(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-//				}
-//
 			if(this.view.getRdbtnTodos().isSelected()){
-				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+				cargarTabla(ordenDao.buscarPorNombreCliente("",view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 				this.view.getTxtBuscar().setText("");
 			}
-			
+
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
-		
 			break;
 			
 			
@@ -201,24 +194,22 @@ public boolean buscarCliente(Window v){
 				break;
 		case "NEXT":
 			view.getModelo().netPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+			if(this.view.getRdbtnTodos().isSelected()){
+				cargarTabla(ordenDao.buscarPorNombreCliente("",view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
-            if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre
+			if(this.view.getRdbtnNombre().isSelected()){
 				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
-
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
 		case "LAST":
 			view.getModelo().lastPag();
-			if(this.view.getRdbtnTodos().isSelected()){  
-				cargarTabla(ordenDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+			if(this.view.getRdbtnTodos().isSelected()){
+				cargarTabla(ordenDao.buscarPorNombreCliente("",view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
-			if(this.view.getRdbtnNombre().isSelected()){ //si esta selecionado la busqueda por nombre
+			if(this.view.getRdbtnNombre().isSelected()){
 				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
-			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
 
@@ -229,10 +220,21 @@ public boolean buscarCliente(Window v){
 			//si seleccion una fila
 			if(filaPulsada>=0) {
 
-				Factura eliminarTem=new Factura();
 				int idFacturaTemporal = this.view.getModelo().getFactura(filaPulsada).getIdFactura();
-				eliminarTem.setIdFactura(idFacturaTemporal);
-				ordenDao.cambiarEstado(eliminarTem,4);
+
+				int confirma = JOptionPane.showConfirmDialog(
+						view,
+						"¿Está seguro que desea eliminar la orden #" + idFacturaTemporal + "?",
+						"Confirmar eliminación",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+
+				if (confirma == JOptionPane.YES_OPTION) {
+					Factura eliminarTem = new Factura();
+					eliminarTem.setIdFactura(idFacturaTemporal);
+					ordenDao.cambiarEstado(eliminarTem, 5);
+					this.view.getModelo().eliminarFactura(filaPulsada);
+				}
 
 			}
 

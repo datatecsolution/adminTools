@@ -28,10 +28,11 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 	//String[] estados = {"Activo", "Modificado", "Facturado", "Eliminado"};
 
 	Estado[] estados = {
-			new Estado(1, "Activo"),
-			new Estado(2, "Modificado"),
-			new Estado(3, "Facturado"),
-			new Estado(4, "Eliminado")
+			new Estado(1, "Activa"),
+			new Estado(2, "Modificada"),
+			new Estado(3, "Imprimida"),
+			new Estado(4, "Enviado"),
+			new Estado(5, "Eliminado")
 	};
 
 	public CtlOrdenesLista(ViewListaOrdenes v){
@@ -40,13 +41,24 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 		empleadoDao=new EmpleadoDao ();
 
 		view.getBtnAgregar().setEnabled(true);
-		view.getBtnEliminar().setEnabled(true);
+		view.getBtnEliminar().setEnabled(false);
+		view.getBtnCambiarEstado().setEnabled(false);
 		//view.getRdbtnNombre().setSelected(true);
 		ordenDao =new FacturaOrdenVentaDao();
-		
+
+		view.getTabla().getSelectionModel().addListSelectionListener(ev -> {
+			if (!ev.getValueIsAdjusting()) {
+				boolean haySeleccion = view.getTabla().getSelectedRow() >= 0;
+				view.getBtnEliminar().setEnabled(haySeleccion);
+				view.getBtnCambiarEstado().setEnabled(haySeleccion);
+			}
+		});
+
 		cargarComboBox();
+		view.getRdbtnTodos().setSelected(true);
+		view.getModelo().setPaginacion();
+		cargarTabla(consultarOrdenes(true, ""));
 		view.setVisible(true);
-		cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 
 	}
 	
@@ -86,6 +98,12 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 
 				if (miEmpleado != null) {
 					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+
+					if (this.view.getRdbtnTodos().isSelected()) {
+						view.getModelo().setPaginacion();
+						cargarTabla(consultarOrdenes(true, ""));
+						view.getTxtPagina().setText("" + view.getModelo().getNoPagina());
+					}
 				}
 
 
@@ -94,14 +112,10 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(view, "Click en busquda por id");
 				break;
 			case "BUSCAR":
-
-
-				//si se seleciono el boton ID
 				view.getModelo().setPaginacion();
 
 				if (this.view.getRdbtnTodos().isSelected()) {
-					//JOptionPane.showMessageDialog(view,"Vamos a buscar");
-					cargarTabla(ordenDao.buscarPorVendedorCliente("", view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
+					cargarTabla(consultarOrdenes(true, ""));
 					this.view.getTxtBuscar().setText("");
 				}
 				if (this.view.getRdbtnId().isSelected()) {
@@ -113,11 +127,8 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(view, "No se encuentro el registro", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-
-				if (this.view.getRdbtnNombre().isSelected()) { //si esta selecionado la busqueda por nombre
-
-					cargarTabla(ordenDao.buscarPorVendedorCliente(this.view.getTxtBuscar().getText(), view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
-
+				if (this.view.getRdbtnNombre().isSelected()) {
+					cargarTabla(consultarOrdenes(false, this.view.getTxtBuscar().getText()));
 				}
 				view.getTxtPagina().setText("" + view.getModelo().getNoPagina());
 				break;
@@ -127,25 +138,20 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 			case "NEXT":
 				view.getModelo().netPag();
 				if (this.view.getRdbtnTodos().isSelected()) {
-					cargarTabla(ordenDao.buscarPorVendedorCliente("", view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
+					cargarTabla(consultarOrdenes(true, ""));
 				}
-				if (this.view.getRdbtnNombre().isSelected()) { //si esta selecionado la busqueda por nombre
-
-					cargarTabla(ordenDao.buscarPorVendedorCliente(this.view.getTxtBuscar().getText(), view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
-
+				if (this.view.getRdbtnNombre().isSelected()) {
+					cargarTabla(consultarOrdenes(false, this.view.getTxtBuscar().getText()));
 				}
 				view.getTxtPagina().setText("" + view.getModelo().getNoPagina());
 				break;
 			case "LAST":
 				view.getModelo().lastPag();
 				if (this.view.getRdbtnTodos().isSelected()) {
-					cargarTabla(ordenDao.buscarPorVendedorCliente("", view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
-
+					cargarTabla(consultarOrdenes(true, ""));
 				}
-				if (this.view.getRdbtnNombre().isSelected()) { //si esta selecionado la busqueda por nombre
-
-					cargarTabla(ordenDao.buscarPorVendedorCliente(this.view.getTxtBuscar().getText(), view.getModelo().getLimiteSuperior(), view.getModelo().getCanItemPag()));
-
+				if (this.view.getRdbtnNombre().isSelected()) {
+					cargarTabla(consultarOrdenes(false, this.view.getTxtBuscar().getText()));
 				}
 				view.getTxtPagina().setText("" + view.getModelo().getNoPagina());
 				break;
@@ -172,6 +178,29 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 						ee.printStackTrace();
 					}
 
+				}
+				break;
+
+			case "ELIMINAR":
+				filaPulsada = this.view.getTabla().getSelectedRow();
+				if (filaPulsada >= 0) {
+					Factura facturaEliminar = this.view.getModelo().getFactura(filaPulsada);
+					int idEliminar = facturaEliminar.getIdFactura();
+
+					int confirma = JOptionPane.showConfirmDialog(
+							view,
+							"¿Está seguro que desea ELIMINAR FÍSICAMENTE la orden #" + idEliminar
+									+ "?\nEsta acción no se puede deshacer.",
+							"Confirmar eliminación física",
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE);
+
+					if (confirma == JOptionPane.YES_OPTION) {
+						Factura eliminarTem = new Factura();
+						eliminarTem.setIdFactura(idEliminar);
+						ordenDao.eliminar(eliminarTem);
+						this.view.getModelo().eliminarFactura(filaPulsada);
+					}
 				}
 				break;
 
@@ -240,6 +269,23 @@ public class CtlOrdenesLista implements ActionListener, MouseListener {
 				this.view.getModelo().agregarFactura(ordenes.get(c));
 			}
 		}
+	}
+
+	private List<Factura> consultarOrdenes(boolean radioTodos, String filtroNombre) {
+		int codigoVendedor = ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo();
+		int limInf = view.getModelo().getLimiteSuperior();
+		int canItemPag = view.getModelo().getCanItemPag();
+
+		if (radioTodos) {
+			if (codigoVendedor == 0) {
+				return ordenDao.todasSinFiltro(limInf, canItemPag);
+			}
+			return ordenDao.buscarPorVendedorCliente("", limInf, canItemPag);
+		}
+		if (codigoVendedor == 0) {
+			return ordenDao.buscarPorClienteSinFiltroVendedor(filtroNombre, limInf, canItemPag);
+		}
+		return ordenDao.buscarPorVendedorCliente(filtroNombre, limInf, canItemPag);
 	}
 
 	@Override

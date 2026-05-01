@@ -22,6 +22,7 @@ public class ConfigUserFacturacion {
 	private String formatoFacturaCredito = "tiket";
 	private Usuario usuario2 = null;
 	private Empleado vendedorEnBusqueda;
+	private Empleado cobradorEnBusqueda;
 	private RutaCobro rutaCobroEnBusqueda;
 
 	private boolean imprReportOrden = false;
@@ -50,6 +51,9 @@ public class ConfigUserFacturacion {
 
 		vendedorEnBusqueda = new Empleado();
 		vendedorEnBusqueda.setCodigo(1);
+
+		cobradorEnBusqueda = new Empleado();
+		cobradorEnBusqueda.setCodigo(0);
 
 		departEnBusqueda = new Departamento();
 		departEnBusqueda.setId(1);
@@ -328,6 +332,14 @@ public class ConfigUserFacturacion {
 
 	public void setPwdEntrePrecio(boolean pwdEntrePrecio) {
 		this.pwdEntrePrecio = pwdEntrePrecio;
+	}
+
+	public Empleado getCobradorEnBusqueda() {
+		return cobradorEnBusqueda;
+	}
+
+	public void setCobradorEnBusqueda(Empleado cobradorEnBusqueda) {
+		this.cobradorEnBusqueda = cobradorEnBusqueda;
 	}
 
 	public RutaCobro getRutaCobroEnBusqueda() {

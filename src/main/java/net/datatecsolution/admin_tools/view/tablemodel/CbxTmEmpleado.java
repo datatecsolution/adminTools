@@ -42,6 +42,8 @@ public class CbxTmEmpleado extends DefaultComboBoxModel{
 
 		empleados.add(unEmpleado);
 
+		if (im == null) return;
+
 		for (Empleado emp:im
 		) {
 			empleados.add(emp);

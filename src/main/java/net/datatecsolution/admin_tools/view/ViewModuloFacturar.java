@@ -34,7 +34,7 @@ public class ViewModuloFacturar extends JFrame {
 	public ViewModuloFacturar() {
 		super( "Facturacion" );
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ViewModuloFacturar.class.getResource("/drawable/logo-admin-tool1.png")));
 		
 		JMenuBar barra = new JMenuBar();
 		setJMenuBar( barra ); // establece la barra de menús para esta aplicación
@@ -167,11 +167,6 @@ public class ViewModuloFacturar extends JFrame {
 		//centrar la ventana en la pantalla
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-	}
-	public void conectarContralador(CtlModuloFacturar c){
-		btnAgregar.addActionListener(c);
-		btnAgregar.setActionCommand("NUEVO");
-		
 	}
 }
 

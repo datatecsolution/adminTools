@@ -13,24 +13,24 @@ public class RenderizadorTablaFacturas implements TableCellRenderer {
 		editor.setOpaque(true);
 		if (value != null)
 		      editor.setText("  "+ value +"  ");
-		
-		
+
+
 		if (row % 2 == 0) {
 			editor.setBackground(new Color(176, 224, 230));
         } else {
         	editor.setBackground(Color.white);
         }
-		
+
 		 if(column==5)
 			   editor.setHorizontalAlignment(SwingConstants.RIGHT);
-		
-		 
-		 
+
+
+
 		 if (isSelected) {
 			 editor.setBackground(new Color(254, 172, 172));
 	        }
-		
-		
+
+
 		return editor;
 	}
 

@@ -1,7 +1,11 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 import net.datatecsolution.admin_tools.modelo.Usuario;
+import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
+import net.datatecsolution.admin_tools.modelo.dao.PrecioArticuloDao;
 import net.datatecsolution.admin_tools.modelo.dao.UsuarioDao;
 import net.datatecsolution.admin_tools.view.ViewCrearUsuario;
 import net.datatecsolution.admin_tools.view.ViewListaCajas;
@@ -11,55 +15,69 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CtlUsuario extends MouseAdapter implements ActionListener {
-	private ViewCrearUsuario view=null;
-	private Usuario myUsuario=null;
-	private UsuarioDao myDao=null;
-	private boolean resultaOperacion=false;
-	
-	public CtlUsuario(ViewCrearUsuario v){
-		view=v;
-		
-		myUsuario=new Usuario();
-		myDao=new UsuarioDao();
-		
+	private ViewCrearUsuario view = null;
+	private Usuario myUsuario = null;
+	private UsuarioDao myDao = null;
+	private EmpleadoDao empleadoDao = null;
+	private PrecioArticuloDao precioDao = null;
+	private List<Empleado> todosEmpleados = null;
+	private List<PrecioArticulo> todosPrecios = null;
+	private boolean resultaOperacion = false;
+
+	public CtlUsuario(ViewCrearUsuario v) {
+		view = v;
+
+		myUsuario = new Usuario();
+		myDao = new UsuarioDao();
+		empleadoDao = new EmpleadoDao();
+		precioDao = new PrecioArticuloDao();
+
 		view.conectarCtl(this);
-		
+		cargarListasReferencia();
+		view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
+	}
+
+	private void cargarListasReferencia() {
+		java.util.Vector<Empleado> empleados = empleadoDao.todoEmpleadosVendedores();
+		todosEmpleados = empleados == null ? new ArrayList<Empleado>() : new ArrayList<Empleado>(empleados);
+		todosPrecios = precioDao.getTipoPrecios();
+		if (todosPrecios == null) todosPrecios = new ArrayList<PrecioArticulo>();
+
+		view.cargarEmpleadosEscritorio(todosEmpleados);
+		view.cargarComboEmpleadoMovil(todosEmpleados);
+		view.cargarPreciosMovil(todosPrecios);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		String comando=e.getActionCommand();
-		
-		switch(comando){
-		case "AGREGARCAJA":
-				ViewListaCajas vListaCajas=new ViewListaCajas(view);
-				CtlCajasBuscar cListaCajaBuscar=new CtlCajasBuscar(vListaCajas);
-				
-				boolean resul=cListaCajaBuscar.buscarCaja();
-				
-				
-				
-				if(resul){
-					boolean verificar=view.getModeloListaCajas().verificarDuplicado(cListaCajaBuscar.getMyCaja());
-					//se verifica que no este la caja en la lista ya
-					if(verificar){
-						JOptionPane.showMessageDialog(view, "La caja ya esta asignada al usuario","Error",JOptionPane.ERROR_MESSAGE);
-					}else{
-						//se veficica que no exista otra caja en la lista para poder establece la primera por defecto
-						if(view.getModeloListaCajas().getSize()==0)
-							cListaCajaBuscar.getMyCaja().setActiva(true);
-						view.getModeloListaCajas().addCaja(cListaCajaBuscar.getMyCaja());
+		String comando = e.getActionCommand();
 
-					}
+		switch (comando) {
+		case "AGREGARCAJA":
+			ViewListaCajas vListaCajas = new ViewListaCajas(view);
+			CtlCajasBuscar cListaCajaBuscar = new CtlCajasBuscar(vListaCajas);
+
+			boolean resul = cListaCajaBuscar.buscarCaja();
+
+			if (resul) {
+				boolean verificar = view.getModeloListaCajas().verificarDuplicado(cListaCajaBuscar.getMyCaja());
+				if (verificar) {
+					JOptionPane.showMessageDialog(view, "La caja ya esta asignada al usuario", "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					if (view.getModeloListaCajas().getSize() == 0)
+						cListaCajaBuscar.getMyCaja().setActiva(true);
+					view.getModeloListaCajas().addCaja(cListaCajaBuscar.getMyCaja());
 				}
-				
+			}
+
 			break;
 		case "GUARDAR":
-			if(validar()){
+			if (validar()) {
 				setUser();
 				guardarUsuario();
 			}
@@ -68,190 +86,168 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			view.setVisible(false);
 			break;
 		case "ACTUALIZAR":
-			
-			if(validar()){
+			if (validar()) {
 				setUser();
 				actualizarUsuario();
 			}
-			
 			break;
-			
 		case "ELIMINARCODIGO":
-			
-			//se obtiene el index del codigo selecionado
-			int indexCodigoSelecionado=this.view.getlCajas().getSelectedIndex();
-			
-			Caja cajaSelect=this.view.getModeloListaCajas().getCaja(indexCodigoSelecionado);
-			
-			//se pregunta si en verdad se quiere borrar el codigo de bgarra
-			int confirmacion=JOptionPane.showConfirmDialog(view, "Desea eliminar ["+cajaSelect+"] del usuario?");
-			
-			// si se confirma la eliminacion se procede a eliminar
-			if(confirmacion==0){
-				
-				//se eliminar el codigo en la view list y se coloca el eliminado en una lista especial para eliminar de la bd
-				this.view.getModeloListaCajas().eliminarCaja(indexCodigoSelecionado);
-				
-				
-			}
+			int idxCodigo = this.view.getlCajas().getSelectedIndex();
+			Caja cajaSelect = this.view.getModeloListaCajas().getCaja(idxCodigo);
+			int conf = JOptionPane.showConfirmDialog(view, "Desea eliminar [" + cajaSelect + "] del usuario?");
+			if (conf == 0) this.view.getModeloListaCajas().eliminarCaja(idxCodigo);
 			break;
 		case "SETDEFAULT":
-			//se obtiene el index del codigo selecionado
-			int indexCodigoSelecionado2=this.view.getlCajas().getSelectedIndex();
-			
-			Caja cajaSelect2=this.view.getModeloListaCajas().getCaja(indexCodigoSelecionado2);
-			
-			//se pregunta si en verdad se quiere borrar el codigo de bgarra
-			int confirmacion2=JOptionPane.showConfirmDialog(view, "Desea establecer default la caja ["+cajaSelect2+"] del usuario?");
-			
-			// si se confirma la eliminacion se procede a eliminar
-			if(confirmacion2==0){
-				
-				//se eliminar el codigo en la view list y se coloca el eliminado en una lista especial para eliminar de la bd
-				this.view.getModeloListaCajas().setCajaDefault(indexCodigoSelecionado2);
-				
-				
-			}
-			
+			int idxCodigo2 = this.view.getlCajas().getSelectedIndex();
+			Caja cajaSelect2 = this.view.getModeloListaCajas().getCaja(idxCodigo2);
+			int conf2 = JOptionPane.showConfirmDialog(view, "Desea establecer default la caja [" + cajaSelect2 + "] del usuario?");
+			if (conf2 == 0) this.view.getModeloListaCajas().setCajaDefault(idxCodigo2);
+			break;
+		case "TIPO_ESCRITORIO":
+			view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
+			break;
+		case "TIPO_MOVIL":
+			view.mostrarCard(ViewCrearUsuario.CARD_MOVIL);
 			break;
 		}
-		
 	}
-	
+
 	private void actualizarUsuario() {
-		// TODO Auto-generated method stub
-		if(myDao.actualizar(myUsuario)){
+		if (myDao.actualizar(myUsuario)) {
 			JOptionPane.showMessageDialog(view, "El Usuario se actualizo correctamente.");
-			this.resultaOperacion=true;
+			this.resultaOperacion = true;
 			view.setVisible(false);
-		}else{
+		} else {
 			JOptionPane.showMessageDialog(view, "Ocurrio un problema para actualizar el usuario");
 		}
 	}
 
-	private void guardarUsuario(){
-		if(myDao.registrar(myUsuario)){
-			JOptionPane.showMessageDialog(view, "El Usuario se guardo correctamente.","Exito",JOptionPane.INFORMATION_MESSAGE);
-			this.resultaOperacion=true;
+	private void guardarUsuario() {
+		if (myDao.registrar(myUsuario)) {
+			JOptionPane.showMessageDialog(view, "El Usuario se guardo correctamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+			this.resultaOperacion = true;
 			view.setVisible(false);
-		}else{
-			JOptionPane.showMessageDialog(view, "Ocurrio un problema para guardar el usuario","Error",JOptionPane.ERROR_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(view, "Ocurrio un problema para guardar el usuario", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void setUser() {
-		// TODO Auto-generated method stub
 		myUsuario.setUser(view.getTxtUser().getText());
-		
-		//myUsuario.setApellido(view.getTxtApellido().getText());
-		
 		myUsuario.setNombre(view.getTxtNombre().getText());
-		
 		myUsuario.setPwd(view.getPwd().getText());
-		
 		myUsuario.setCajas(view.getModeloListaCajas().getCajas());
-		
-		//JOptionPane.showMessageDialog(null, view.getModeloListaCajas().getCajas().size());
-		if(view.getRdbtnAdministrador().isSelected()){
-			myUsuario.setTipoPermiso(4);
-			myUsuario.setPermiso("Administrador");
-		}
-		if(view.getRdbtnCajero().isSelected()){
-			myUsuario.setTipoPermiso(2);
-			myUsuario.setPermiso("Cajero");
-		}
 
-		if(view.getRdbtnVendedor().isSelected()){
+		if (view.getRdbtnTipoMovil().isSelected()) {
 			myUsuario.setTipoPermiso(3);
 			myUsuario.setPermiso("Vendedor");
+			myUsuario.setCodigoEmpleado(view.getCodigoEmpleadoMovilSeleccionado());
+
+			List<PrecioArticulo> seleccionados = new ArrayList<PrecioArticulo>();
+			for (Integer codigo : view.getPreciosMarcados()) {
+				PrecioArticulo p = new PrecioArticulo();
+				p.setCodigoPrecio(codigo);
+				seleccionados.add(p);
+			}
+			myUsuario.setPreciosAsignados(seleccionados);
+			myUsuario.setVendedoresAsignados(new ArrayList<Empleado>());
+		} else {
+			if (view.getRdbtnAdministrador().isSelected()) {
+				myUsuario.setTipoPermiso(4);
+				myUsuario.setPermiso("Administrador");
+			} else if (view.getRdbtnCajero().isSelected()) {
+				myUsuario.setTipoPermiso(2);
+				myUsuario.setPermiso("Cajero");
+			} else if (view.getRdbtnVendedor().isSelected()) {
+				myUsuario.setTipoPermiso(3);
+				myUsuario.setPermiso("Vendedor");
+			} else if (view.getRdbtnSupervisor().isSelected()) {
+				myUsuario.setTipoPermiso(1);
+				myUsuario.setPermiso("Supervisor");
+			}
+			myUsuario.setCodigoEmpleado(0);
+
+			List<Empleado> seleccionados = new ArrayList<Empleado>();
+			for (Integer codigo : view.getEmpleadosMarcados()) {
+				Empleado e = new Empleado();
+				e.setCodigo(codigo);
+				seleccionados.add(e);
+			}
+			myUsuario.setVendedoresAsignados(seleccionados);
+			myUsuario.setPreciosAsignados(new ArrayList<PrecioArticulo>());
 		}
-		if(view.getRdbtnSupervisor().isSelected()){
-			myUsuario.setTipoPermiso(1);
-			myUsuario.setPermiso("Supervisor");
-		}
-
-
-
 	}
 
 	private boolean validar() {
-		// TODO Auto-generated method stub
-		
-		
-		String jpf1Text=Arrays.toString(view.getPwd().getPassword());//get the char array of password and convert to string represenation
-		String jpf2Text=Arrays.toString(view.getRePwd().getPassword());
-		boolean resul=false;
-		if(view.getTxtUser().getText().trim().length()==0){
+		String jpf1Text = Arrays.toString(view.getPwd().getPassword());
+		String jpf2Text = Arrays.toString(view.getRePwd().getPassword());
+		boolean resul = false;
+		if (view.getTxtUser().getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
 			view.getTxtUser().requestFocusInWindow();
-		}else
-		if(view.getTxtNombre().getText().trim().length()==0){
+		} else if (view.getTxtNombre().getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
 			view.getTxtNombre().requestFocusInWindow();
-		} /* else
-			if(view.getTxtApellido().getText().trim().length()==0){
-				JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
-				view.getTxtApellido().requestFocusInWindow();
-			} */else
-				if(view.getPwd().getPassword().length==0){
-					JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
-					view.getPwd().requestFocusInWindow();
-				}else
-					if(view.getRePwd().getPassword().length==0){
-						JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
-						view.getRePwd().requestFocusInWindow();
-					}else
-						if(!jpf1Text.equals(jpf2Text)){
-							JOptionPane.showMessageDialog(view, "Password no son iguales!!!");
-							view.getPwd().requestFocusInWindow();
-						}else
-							resul=true;
-		
+		} else if (view.getPwd().getPassword().length == 0) {
+			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
+			view.getPwd().requestFocusInWindow();
+		} else if (view.getRePwd().getPassword().length == 0) {
+			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
+			view.getRePwd().requestFocusInWindow();
+		} else if (!jpf1Text.equals(jpf2Text)) {
+			JOptionPane.showMessageDialog(view, "Password no son iguales!!!");
+			view.getPwd().requestFocusInWindow();
+		} else if (view.getRdbtnTipoMovil().isSelected() && view.getCodigoEmpleadoMovilSeleccionado() == 0) {
+			JOptionPane.showMessageDialog(view, "Debe seleccionar un vendedor para el usuario movil");
+		} else {
+			resul = true;
+		}
 		return resul;
 	}
 
 	public boolean agregarUsuario() {
-		// TODO Auto-generated method stub
 		view.setVisible(true);
 		return resultaOperacion;
 	}
 
 	public Usuario getUsuario() {
-		// TODO Auto-generated method stub
 		return myUsuario;
 	}
-	public void loadUsuario(){
+
+	public void loadUsuario() {
 		view.getTxtUser().setText(myUsuario.getUser());
 		view.getTxtNombre().setText(myUsuario.getNombre());
-		//view.getTxtApellido().setText(myUsuario.getApellido());
-		
-		if(myUsuario.getTipoPermiso()==4){
-			view.getRdbtnAdministrador().setSelected(true);
-		}
-		if(myUsuario.getTipoPermiso()==2){
-			view.getRdbtnCajero().setSelected(true);
+
+		boolean esMovil = myUsuario.getPreciosAsignados() != null && !myUsuario.getPreciosAsignados().isEmpty();
+
+		if (esMovil) {
+			view.getRdbtnTipoMovil().setSelected(true);
+			view.mostrarCard(ViewCrearUsuario.CARD_MOVIL);
+			view.seleccionarEmpleadoMovil(myUsuario.getCodigoEmpleado());
+			view.marcarPreciosAsignados(myUsuario.getPreciosAsignados());
+		} else {
+			view.getRdbtnTipoEscritorio().setSelected(true);
+			view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
+
+			if (myUsuario.getTipoPermiso() == 4) view.getRdbtnAdministrador().setSelected(true);
+			else if (myUsuario.getTipoPermiso() == 2) view.getRdbtnCajero().setSelected(true);
+			else if (myUsuario.getTipoPermiso() == 1) view.getRdbtnSupervisor().setSelected(true);
+			else if (myUsuario.getTipoPermiso() == 3) view.getRdbtnVendedor().setSelected(true);
+
+			view.marcarEmpleadosAsignados(myUsuario.getVendedoresAsignados());
 		}
 
-		if(myUsuario.getTipoPermiso()==1){
-			view.getRdbtnSupervisor().setSelected(true);
-		}
-		if(myUsuario.getTipoPermiso()==3){
-			view.getRdbtnVendedor().setSelected(true);
-		}
-		
-		//si tiene cajas asignas se muestran en la view
-		if(myUsuario.getCajas()!=null){
+		if (myUsuario.getCajas() != null) {
 			view.getModeloListaCajas().setCajas(myUsuario.getCajas());
 		}
 	}
-	
-	
-	public boolean actualizarUsuario(Usuario user){
-		myUsuario=user;
+
+	public boolean actualizarUsuario(Usuario user) {
+		myUsuario = user;
 		myUsuario.setUserOld(user.getUser());
-		
-		//JOptionPane.showMessageDialog(view, myUsuario);
-		
+
+		myDao.cargarAsignaciones(myUsuario);
+
 		view.getBtnActualizar().setVisible(true);
 		view.getBtnGuardar().setVisible(false);
 		view.getTxtUser().setEnabled(false);
@@ -259,36 +255,26 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		view.setVisible(true);
 		return resultaOperacion;
 	}
-	
-	// maneja el evento de oprimir el boton del raton
-		public void mousePressed( MouseEvent evento )
-		{
-			check(evento);
-			checkForTriggerEvent( evento ); // comprueba el desencadenador
-		} // fin del metodo mousePressed
-		
-		// maneja el evento de liberacion del boton del raton
-		public void mouseReleased( MouseEvent evento )
-		{
-			check(evento);
-			checkForTriggerEvent( evento ); // comprueba el desencadenador
-		} // fin del metodo mouseReleased
-		
-		// determina si el evento debe desencadenar el menu contextual
-		private void checkForTriggerEvent( MouseEvent evento )
-		{
-			if ( evento.isPopupTrigger() )
-				this.view.getMenuContextual().show(evento.getComponent(), evento.getX(), evento.getY() );
-		} // fin del motodo checkForTriggerEvent
-		
-		public void check(MouseEvent e)
-		{ 
-			if (e.isPopupTrigger()) { //if the event shows the menu 
-				this.view.getlCajas().setSelectedIndex(this.view.getlCajas().locationToIndex(e.getPoint())); //select the item 
-				//menuContextual.show(listCodigos, e.getX(), e.getY()); //and show the menu 
-			} 
-			
-			
+
+	public void mousePressed(MouseEvent evento) {
+		check(evento);
+		checkForTriggerEvent(evento);
+	}
+
+	public void mouseReleased(MouseEvent evento) {
+		check(evento);
+		checkForTriggerEvent(evento);
+	}
+
+	private void checkForTriggerEvent(MouseEvent evento) {
+		if (evento.isPopupTrigger())
+			this.view.getMenuContextual().show(evento.getComponent(), evento.getX(), evento.getY());
+	}
+
+	public void check(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			this.view.getlCajas().setSelectedIndex(this.view.getlCajas().locationToIndex(e.getPoint()));
 		}
+	}
 
 }

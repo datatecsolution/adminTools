@@ -2,9 +2,7 @@ package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.CategoriaDao;
-import net.datatecsolution.admin_tools.modelo.dao.CierreCajaDao;
-import net.datatecsolution.admin_tools.modelo.dao.CierreFacturacionDao;
-import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
+import net.datatecsolution.admin_tools.service.CierreCajaService;
 import net.datatecsolution.admin_tools.view.ViewFiltroRepCierreVentaDetalle;
 import net.datatecsolution.admin_tools.view.ViewFiltroRepCierreVentaDetalleCateg;
 import net.datatecsolution.admin_tools.view.ViewListaCierresCaja;
@@ -18,19 +16,18 @@ import java.util.List;
 
 public class CtlCierresCajaLista extends MouseAdapter implements ActionListener, MouseListener {
 	private final ViewListaCierresCaja view;
-	private final CierreCajaDao myDao;
+	private final CierreCajaService cierreCajaService;
 	private int filaPulsada;
 	private CierreCaja myCierre;
-	private final FacturaDao facturaDao=new FacturaDao();
-	
+
 
 	public CtlCierresCajaLista(ViewListaCierresCaja v) {
 		// TODO Auto-generated constructor stub
 		view=v;
-		myDao=new CierreCajaDao();
+		cierreCajaService=new CierreCajaService();
 		myCierre=new CierreCaja();
 		view.conectarCtl(this);
-		cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+		cargarTabla(cierreCajaService.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 		view.setVisible(true);
 	}
 	
@@ -183,18 +180,17 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 				}
 				
 				//se consigue los registros de las facturas de los cierre
-				CierreFacturacionDao cierreFacturacioDao=new CierreFacturacionDao();
-				elCierre.setCierreFacturas(cierreFacturacioDao.buscarIdCierre(elCierre.getId()));
-				
+				cierreCajaService.cargarCierreFacturas(elCierre);
+
 				//si existe los registros de los cierres se recororen en busca los totales en las facturas
 				if(elCierre.getCierreFacturas()!=null){
-					
+
 					//se recorren los registros para sacar los totales de la facturas
 					for(int xx=0;xx<elCierre.getCierreFacturas().size();xx++){
-						
-						facturaDao.getVentasCategorias(elCierre.getCierreFacturas().get(xx).getNoFacturaInicio(),
-															elCierre.getCierreFacturas().get(xx).getNoFacturaFinal(), 
-															elCierre.getUsuario(), 
+
+						cierreCajaService.getVentasCategorias(elCierre.getCierreFacturas().get(xx).getNoFacturaInicio(),
+															elCierre.getCierreFacturas().get(xx).getNoFacturaFinal(),
+															elCierre.getUsuario(),
 															elCierre.getCierreFacturas().get(xx).getCaja(), ventas);
 						
 						
@@ -265,7 +261,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 		case "BUSCAR":
 			view.getModelo().setPaginacion();
 			if(view.getRdbtnId().isSelected()){
-				this.myCierre=myDao.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText()));
+				this.myCierre=cierreCajaService.buscarPorId(Integer.parseInt(view.getTxtBuscar().getText()));
 				if(myCierre!=null){
 					view.getModelo().limpiar();
 					view.getModelo().agregar(myCierre);
@@ -274,7 +270,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 				}
 			}
 			if(view.getRdbtnTodos().isSelected()){
-				cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+				cargarTabla(cierreCajaService.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}
 			
 			if(view.getRdbtnFecha().isSelected()){
@@ -283,7 +279,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 				String date2 = sdf.format(this.view.getDcFecha2().getDate());
 				
 				//JOptionPane.showMessageDialog(view, date1+" al  "+date2);
-				cargarTabla(myDao.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				cargarTabla(cierreCajaService.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
 			break;
@@ -291,7 +287,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 		case "NEXT":
 			view.getModelo().netPag();
 			if(view.getRdbtnTodos().isSelected()){
-				cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+				cargarTabla(cierreCajaService.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}
 			if(view.getRdbtnFecha().isSelected()){
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -299,7 +295,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 				String date2 = sdf.format(this.view.getDcFecha2().getDate());
 				
 				//JOptionPane.showMessageDialog(view, date1+" al  "+date2);
-				cargarTabla(myDao.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				cargarTabla(cierreCajaService.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
 			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());
@@ -307,7 +303,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 		case "LAST":
 			view.getModelo().lastPag();
 			if(view.getRdbtnTodos().isSelected()){
-				cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
+				cargarTabla(cierreCajaService.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}
 			if(view.getRdbtnFecha().isSelected()){
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -315,7 +311,7 @@ public class CtlCierresCajaLista extends MouseAdapter implements ActionListener,
 				String date2 = sdf.format(this.view.getDcFecha2().getDate());
 				
 				//JOptionPane.showMessageDialog(view, date1+" al  "+date2);
-				cargarTabla(myDao.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
+				cargarTabla(cierreCajaService.buscarPorFecha(date1,date2,view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 			}
 			
 			view.getTxtPagina().setText(""+view.getModelo().getNoPagina());

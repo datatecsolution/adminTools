@@ -270,6 +270,17 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 		ResultSet res=null;
 
 		boolean existe=false;
+
+		List<Caja> cajasUsuario = ConexionStatic.getUsuarioLogin().getCajas();
+		if (cajasUsuario == null || cajasUsuario.isEmpty()) {
+			return null;
+		}
+		StringBuilder placeholdersCajas = new StringBuilder();
+		for (int i = 0; i < cajasUsuario.size(); i++) {
+			if (i > 0) placeholdersCajas.append(",");
+			placeholdersCajas.append("?");
+		}
+
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 
@@ -282,14 +293,19 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
 				+ "WHERE encabezado_factura_temp.estado < 3 "
 				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ "AND encabezado_factura_temp.codigo_caja IN (" + placeholdersCajas + ") "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
 				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
 			psConsultas = con.prepareStatement(sqlOrdenes);
-			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(3, 0);
-			psConsultas.setInt(4, 20);
+			int idx = 1;
+			psConsultas.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+			for (Caja caja : cajasUsuario) {
+				psConsultas.setInt(idx++, caja.getCodigo());
+			}
+			psConsultas.setInt(idx++, 0);
+			psConsultas.setInt(idx, 20);
 
 			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] SQL: " + psConsultas);
 			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] usuario: " + ConexionStatic.getUsuarioLogin().getUser());
@@ -324,6 +340,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
 				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
 				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setEstado(res.getString("estado"));
 
 				//unaFactura.setDetalles(detallesDao.detallesFacturaPendiente(unaFactura.getIdFactura()));
 
@@ -417,25 +434,26 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ "impuesto = ?, "
 				+ "total=?, "
 				+ "codigo_cliente=?,"
-				
+
 				+ "estado_factura=?,"
 				+ "descuento=?,"
-				+ "tipo_factura=? "
+				+ "tipo_factura=?, "
+				+ "estado=2 "
 				//+ "usuario=?"
 				+ " WHERE numero_factura = ?";
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			psConsultas=conn.prepareStatement(sql);
-			
+
 			//JOptionPane.showMessageDialog(null, f);
 			psConsultas.setBigDecimal(1,factura.getSubTotal());
 			psConsultas.setBigDecimal(2,factura.getTotalImpuesto());
 			psConsultas.setBigDecimal(3,factura.getTotal());
 			psConsultas.setInt(4, factura.getCliente().getId());
 			psConsultas.setString(5, "ACT");
-			
+
 			psConsultas.setBigDecimal(6, factura.getTotalDescuento());
-			
+
 			psConsultas.setInt(7, factura.getTipoFactura());
 			//psConsultas.setString(8, ConexionStatic.getUsuarioLogin().getUser());
 			psConsultas.setInt(8, factura.getIdFactura());
@@ -486,11 +504,20 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 
 
-			psConsultas = con.prepareStatement(super.getQuerySearchJoin("estado<3 and empleados.usuario", "=", "empleados", "codigo_empleado", "codigo_vendedor"));
-			//psConsultas = con.prepareStatement(super.getQuerySearchJoin(campo, operador, tableJoin, campoTableJoin, campoJoin)
+			String sqlTodos = super.getQuerySelect()
+				+ " JOIN (SELECT encabezado_factura_temp.numero_factura FROM "
+				+ super.DbName + ".encabezado_factura_temp LEFT JOIN "
+				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
+				+ "WHERE encabezado_factura_temp.estado < 3 "
+				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
+				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
+				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
+			psConsultas = con.prepareStatement(sqlTodos);
 			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(2, limSupe);
-			psConsultas.setInt(3, limInf);
+			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setInt(3, limSupe);
+			psConsultas.setInt(4, limInf);
 
 
 			System.out.println(psConsultas);
@@ -527,6 +554,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
 				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
 				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
 
 
 				facturas.add(unaFactura);
@@ -560,6 +588,146 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			return facturas;
 		}
 		else return null;
+	}
+
+	public List<Factura> todasSinFiltro(int limitInferior, int canItemPag) {
+		Connection con = null;
+		List<Factura> facturas = new ArrayList<Factura>();
+		ResultSet res = null;
+		boolean existe = false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			String sqlTodas = super.getQuerySelect()
+				+ " ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?";
+			psConsultas = con.prepareStatement(sqlTodas);
+			psConsultas.setInt(1, limitInferior);
+			psConsultas.setInt(2, canItemPag);
+
+			System.out.println("[DEBUG todasSinFiltro] SQL: " + psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while (res.next()) {
+				Factura unaFactura = new Factura();
+				existe = true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				Cliente unCliente = new Cliente();
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado = new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+				unaFactura.setVendedor(unEmpleado);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setSubTotalExcento(res.getBigDecimal("subtotal_excento"));
+				unaFactura.setSubTotal15(res.getBigDecimal("subtotal15"));
+				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
+				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
+				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
+
+				facturas.add(unaFactura);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			super.DbName = DbNameBase;
+			try {
+				if (res != null) res.close();
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException excepcionSql) {
+				excepcionSql.printStackTrace();
+			}
+		}
+
+		if (existe) {
+			return facturas;
+		} else return null;
+	}
+
+	public List<Factura> buscarPorClienteSinFiltroVendedor(String nombre, int limitInferior, int canItemPag) {
+		Connection con = null;
+		List<Factura> facturas = new ArrayList<Factura>();
+		ResultSet res = null;
+		boolean existe = false;
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			String sql = super.getQuerySelect()
+				+ " WHERE cliente.nombre_cliente LIKE ? "
+				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?";
+			psConsultas = con.prepareStatement(sql);
+			psConsultas.setString(1, "%" + nombre + "%");
+			psConsultas.setInt(2, limitInferior);
+			psConsultas.setInt(3, canItemPag);
+
+			System.out.println("[DEBUG buscarPorClienteSinFiltroVendedor] SQL: " + psConsultas);
+
+			res = psConsultas.executeQuery();
+
+			while (res.next()) {
+				Factura unaFactura = new Factura();
+				existe = true;
+				unaFactura.setIdFactura(res.getInt("numero_factura"));
+				Cliente unCliente = new Cliente();
+				unCliente.setId(res.getInt("codigo_cliente"));
+				unCliente.setNombre(res.getString("nombre_cliente"));
+				unCliente.setTipoCliente(res.getInt("tipo_cliente"));
+				unCliente.setRtn(res.getString("rtn"));
+				unaFactura.setCliente(unCliente);
+
+				Empleado unEmpleado = new Empleado();
+				unEmpleado.setCodigo(res.getInt("codigo_vendedor"));
+				unaFactura.setVendedor(unEmpleado);
+
+				unaFactura.setFecha(res.getString("fecha"));
+				unaFactura.setSubTotal(res.getBigDecimal("subtotal"));
+				unaFactura.setTotalImpuesto(res.getBigDecimal("impuesto"));
+				unaFactura.setTotal(res.getBigDecimal("total"));
+				unaFactura.setTotalDescuento(res.getBigDecimal("descuento"));
+				unaFactura.setTipoFactura(res.getInt("tipo_factura"));
+				unaFactura.setSubTotalExcento(res.getBigDecimal("subtotal_excento"));
+				unaFactura.setSubTotal15(res.getBigDecimal("subtotal15"));
+				unaFactura.setSubTotal18(res.getBigDecimal("subtotal18"));
+				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
+				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
+				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
+
+				facturas.add(unaFactura);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+		} finally {
+			super.DbName = DbNameBase;
+			try {
+				if (res != null) res.close();
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException excepcionSql) {
+				excepcionSql.printStackTrace();
+			}
+		}
+
+		if (existe) {
+			return facturas;
+		} else return null;
 	}
 
 	public List<Factura> todosConEliminados(String nombre,int limitInferio, int canItemPag) {
@@ -618,6 +786,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
 				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
 				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
 
 
 				facturas.add(unaFactura);
@@ -761,12 +930,33 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 
 
-			psConsultas = con.prepareStatement(super.getQuerySearchJoin("encabezado_factura_temp.estado<3 and codigo_vendedor=? and nombre_cliente", "LIKE", "cliente", "codigo_cliente", "codigo_cliente"));
+			int codigoVendedor = ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo();
 
-			psConsultas.setInt(1, ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo());
-			psConsultas.setString(2, "%" + nombre + "%");
-			psConsultas.setInt(3, limitInferio);
-			psConsultas.setInt(4, canItemPag);
+			if (codigoVendedor == 0) {
+				String sqlBuscarTodos = super.getQuerySelect()
+					+ " JOIN (SELECT encabezado_factura_temp.numero_factura FROM "
+					+ super.DbName + ".encabezado_factura_temp "
+					+ "LEFT JOIN " + DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
+					+ "JOIN " + super.DbName + ".cliente ON (encabezado_factura_temp.codigo_cliente = cliente.codigo_cliente) "
+					+ "WHERE encabezado_factura_temp.estado < 3 "
+					+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+					+ "AND cliente.nombre_cliente LIKE ? "
+					+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
+					+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
+					+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
+				psConsultas = con.prepareStatement(sqlBuscarTodos);
+				psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
+				psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
+				psConsultas.setString(3, "%" + nombre + "%");
+				psConsultas.setInt(4, limitInferio);
+				psConsultas.setInt(5, canItemPag);
+			} else {
+				psConsultas = con.prepareStatement(super.getQuerySearchJoin("encabezado_factura_temp.estado<3 and codigo_vendedor=? and nombre_cliente", "LIKE", "cliente", "codigo_cliente", "codigo_cliente"));
+				psConsultas.setInt(1, codigoVendedor);
+				psConsultas.setString(2, "%" + nombre + "%");
+				psConsultas.setInt(3, limitInferio);
+				psConsultas.setInt(4, canItemPag);
+			}
 
 			System.out.println(psConsultas);
 
@@ -802,6 +992,7 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				unaFactura.setTotalOtrosImpuesto(res.getBigDecimal("isvOtros"));
 				unaFactura.setCodigoCaja(res.getInt("codigo_caja"));
 				unaFactura.setObservacion(res.getString("observacion"));
+				unaFactura.setEstado(res.getString("estado"));
 
 
 				facturas.add(unaFactura);

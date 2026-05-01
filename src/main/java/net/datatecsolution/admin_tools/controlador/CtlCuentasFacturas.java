@@ -73,7 +73,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 		//se remueve la lista por defecto
 		this.view.getCbxEmpleados().removeAllItems();
 		//
-		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda());
+		int vendedor=view.getModeloListaEmpleados().buscarEmpleado(ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda());
 		this.view.getCbxEmpleados().setSelectedIndex(vendedor);
 		//this.view.getCbxEmpleados().setSelectedIndex(0);
 	}
@@ -292,7 +292,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				Empleado miEmpleado=(Empleado)view.getCbxEmpleados().getSelectedItem();
 
 				if(miEmpleado!=null){
-					ConexionStatic.getUsuarioLogin().getConfig().setVendedorEnBusqueda(miEmpleado);
+					ConexionStatic.getUsuarioLogin().getConfig().setCobradorEnBusqueda(miEmpleado);
 				}
 				/*
 				ActionEvent actionEvent=new ActionEvent(view,ActionEvent.ACTION_PERFORMED,"BUSCAR");
@@ -513,7 +513,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
 			}else if(this.view.getRdbtnRTN().isSelected()){
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
-			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()!=0){
 
 				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
@@ -535,7 +535,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXfecha(date1,date2));
 			}else if(this.view.getRdbtnRTN().isSelected()){
 				cargarTabla(cuentaFacturaDao.buscarConSaldoXrtnCliente(view.getTxtBuscar().getText()));
-			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getVendedorEnBusqueda().getCodigo()!=0){
+			}else if(this.view.getRdbtnTodos().isSelected()&&ConexionStatic.getUsuarioLogin().getConfig().getCobradorEnBusqueda().getCodigo()!=0){
 
 				cargarTabla(cuentaFacturaDao.buscarConSaldo(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
 			}else if(view.getRdbtnCliente().isSelected()&&view.getTxtBuscar().getText().trim().length()>=3){
