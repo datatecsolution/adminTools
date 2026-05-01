@@ -753,10 +753,10 @@ public class ViewFacturarFrame extends JInternalFrame {
 		tableDetalle.addKeyListener(c);
 		tableDetalle.addMouseListener(c);
 		modeloTabla.addTableModelListener(c);
-		tableDetalle.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		tableDetalle.setColumnSelectionAllowed(true);
+		tableDetalle.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableDetalle.setColumnSelectionAllowed(false);
 		tableDetalle.setRowSelectionAllowed(true);
-		tableDetalle.setCellSelectionEnabled(true);
+		tableDetalle.setCellSelectionEnabled(false);
 		
 		txtIdcliente.addKeyListener(c);
 		txtNombrecliente.addKeyListener(c);
