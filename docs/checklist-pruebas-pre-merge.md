@@ -87,7 +87,7 @@ Marcar con `[x]` cada caso a medida que se valida. Si algo falla, anotar el comm
 
 ## 8. Servicios y migraciones (smoke)
 
-- [ ] App arranca sin errores en BD limpia
+- [ ] App arranca sin errores en BD limpia *(diferida — se valida en master)*
 - [x] App arranca sin errores en BD con datos
 - [x] Login con BCrypt: usuario migrado desde texto plano funciona en primer login y en logins posteriores
 - [x] Conexión cifrada AES (`connection.dat`) carga correctamente
