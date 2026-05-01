@@ -11,13 +11,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class CtlCotizacionLista implements ActionListener, MouseListener {
+public class CtlCotizacionLista implements ActionListener, MouseListener, KeyListener {
 	
 	private final Conexion conexion=null;
 	private ViewListaCotizacion view=null;
@@ -263,6 +265,23 @@ public class CtlCotizacionLista implements ActionListener, MouseListener {
 		this.myFactura = myFactura;
 	}
 	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			resultado = false;
+			myFactura = null;
+			view.setVisible(false);
+		}
+	}
+
 public boolean buscarCotizaciones(Window v){
 		
 		//this.myArticuloDao.cargarInstrucciones();

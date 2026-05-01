@@ -107,6 +107,17 @@ public void conectarControlador(CtlCotizacionLista c){
 		 
 		 tabla.addMouseListener(c);
 		 tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		 tabla.addKeyListener(c);
+		 txtBuscar.addKeyListener(c);
+		 btnBuscar.addKeyListener(c);
+		 btnAgregar.addKeyListener(c);
+		 btnEliminar.addKeyListener(c);
+		 btnImprimir.addKeyListener(c);
+		 btnSiguiente.addKeyListener(c);
+		 btnAnterior.addKeyListener(c);
+		 rdbtnId.addKeyListener(c);
+		 rdbtnCliente.addKeyListener(c);
+		 rdbtnFecha.addKeyListener(c);
 	}
 	
 	
