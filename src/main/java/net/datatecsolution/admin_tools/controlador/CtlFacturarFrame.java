@@ -971,11 +971,7 @@ public class CtlFacturarFrame
 						this.view.setArticuloDetalle(myArticulo, row);
 						calcularTotales();
 
-						boolean toggle = false;
-						boolean extend = false;
-						this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
-						this.view.getTableDetalle().changeSelection(row, colum, toggle, extend);
-						this.view.getTableDetalle().addColumnSelectionInterval(3, 3);
+						this.view.enfocarCeldaTabla(row, colum, 3, 3);
 
 					} else {
 						JOptionPane.showMessageDialog(view, "No se encuentra el articulo");
@@ -1065,7 +1061,7 @@ public class CtlFacturarFrame
 	public void keyPressed(KeyEvent e) {
 	
 
-		filaPulsada = this.view.getTableDetalle().getSelectedRow();
+		filaPulsada = this.view.getFilaSeleccionada();
 
 		switch (e.getKeyCode()) {
 
@@ -1303,7 +1299,7 @@ public class CtlFacturarFrame
 	public void keyReleased(KeyEvent e) {
 	
 
-		filaPulsada = this.view.getTableDetalle().getSelectedRow();
+		filaPulsada = this.view.getFilaSeleccionada();
 
 		if (e.getComponent() == this.view.getTxtNombrecliente()) {
 			view.getTxtIdcliente().setText("-1");
@@ -1359,7 +1355,7 @@ public class CtlFacturarFrame
 			ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 			frame.btnCaja.setText(cajaActiva.getDescripcion());
 		}
-		filaPulsada = this.view.getTableDetalle().getSelectedRow();
+		filaPulsada = this.view.getFilaSeleccionada();
 		char caracter = e.getKeyChar();
 
 		if (e.getComponent() == this.view.getTxtBuscar()) {
@@ -1741,13 +1737,8 @@ public class CtlFacturarFrame
 
 	private void selectRowInset() {
 
-		int row = this.view.getTableDetalle().getRowCount() - 2;
-		int col = 1;
-		boolean toggle = false;
-		boolean extend = false;
-		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
-		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
-		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+		int row = this.view.getCantidadFilasDetalle() - 2;
+		this.view.enfocarCeldaTabla(row, 1, 0, 6);
 
 	}
 
@@ -1999,12 +1990,7 @@ public class CtlFacturarFrame
 				existe = true;
 
 				int row = x;
-				int col = 1;
-				boolean toggle = false;
-				boolean extend = false;
-				this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
-				this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
-				this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
+				this.view.enfocarCeldaTabla(row, 1, 0, 6);
 
 				String entrada = (String) JOptionPane.showInputDialog(view,
 						"El articula ya esta en la factura. Escriba el cantida a agregar:",
@@ -2058,13 +2044,7 @@ public class CtlFacturarFrame
 	}
 
 	private void selectRowInset(int row) {
-		int col = 1;
-		boolean toggle = false;
-		boolean extend = false;
-		this.view.getTableDetalle().changeSelection(row, 0, toggle, extend);
-		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
-		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
-
+		this.view.enfocarCeldaTabla(row, 1, 0, 6);
 	}
 
 	@Override

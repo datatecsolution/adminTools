@@ -94,6 +94,16 @@ public class ViewFacturarFrame extends JInternalFrame {
 		modeloTabla.agregarDetalle();
 	}
 
+	public int getFilaSeleccionada() {
+		return tableDetalle.getSelectedRow();
+	}
+
+	public void enfocarCeldaTabla(int fila, int columna, int columnaInicio, int columnaFin) {
+		tableDetalle.changeSelection(fila, 0, false, false);
+		tableDetalle.changeSelection(fila, columna, false, false);
+		tableDetalle.addColumnSelectionInterval(columnaInicio, columnaFin);
+	}
+
 	public void vaciarDetalles() {
 		modeloTabla.setEmptyDetalles();
 	}
