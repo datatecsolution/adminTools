@@ -270,6 +270,17 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 		ResultSet res=null;
 
 		boolean existe=false;
+
+		List<Caja> cajasUsuario = ConexionStatic.getUsuarioLogin().getCajas();
+		if (cajasUsuario == null || cajasUsuario.isEmpty()) {
+			return null;
+		}
+		StringBuilder placeholdersCajas = new StringBuilder();
+		for (int i = 0; i < cajasUsuario.size(); i++) {
+			if (i > 0) placeholdersCajas.append(",");
+			placeholdersCajas.append("?");
+		}
+
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 
@@ -282,14 +293,19 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
 				+ "WHERE encabezado_factura_temp.estado < 3 "
 				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ "AND encabezado_factura_temp.codigo_caja IN (" + placeholdersCajas + ") "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
 				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
 			psConsultas = con.prepareStatement(sqlOrdenes);
-			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(3, 0);
-			psConsultas.setInt(4, 20);
+			int idx = 1;
+			psConsultas.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+			psConsultas.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+			for (Caja caja : cajasUsuario) {
+				psConsultas.setInt(idx++, caja.getCodigo());
+			}
+			psConsultas.setInt(idx++, 0);
+			psConsultas.setInt(idx, 20);
 
 			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] SQL: " + psConsultas);
 			System.err.println("[DEBUG ordenesPorEmpleadosUsuarios] usuario: " + ConexionStatic.getUsuarioLogin().getUser());

@@ -769,6 +769,12 @@ public class CtlFacturarFrame
 	private void cargarFacturaPendiente(int numeroFactura) {
 
 		Factura fact = view.buscarOrdenEnPanel(numeroFactura);
+
+		if (!cambiarACajaDeOrden(fact)) {
+			view.seleccionarOrdenEnPanel(myFactura != null ? myFactura.getIdFactura() : 0);
+			return;
+		}
+
 		this.myFactura = fact;
 
 		myFactura.setDetalles(facturacionService.detallesOrdenPendiente(numeroFactura));
@@ -1638,6 +1644,7 @@ public class CtlFacturarFrame
 		view.resetTotales();
 		this.myFactura.setObservacion("");
 		this.view.setEstadoFactura(false, 0);
+		this.view.seleccionarBotonNuevaFactura();
 
 		view.limpiarYEnfocarBusqueda();
 	}
@@ -1652,22 +1659,73 @@ public class CtlFacturarFrame
 		ctlBuscarOrden.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarOrden.buscarCliente(null);
+		boolean ordenCargada = false;
 		if (resul) {
-			this.myFactura = ctlBuscarOrden.getOrden();
+			Factura ordenSeleccionada = ctlBuscarOrden.getOrden();
 
-			myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
+			if (cambiarACajaDeOrden(ordenSeleccionada)) {
+				this.myFactura = ordenSeleccionada;
 
-			cargarFacturaView();
-			this.calcularTotales();
-			this.view.setEstadoBotonesEditandoOrden();
-			this.view.agregarDetalle();
-			this.view.setEstadoFactura(true, myFactura.getIdFactura());
-			this.view.seleccionarOrdenEnPanel(myFactura.getIdFactura());
-			tipoView = 2;
+				myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
 
+				cargarFacturaView();
+				this.calcularTotales();
+				this.view.setEstadoBotonesEditandoOrden();
+				this.view.agregarDetalle();
+				this.view.setEstadoFactura(true, myFactura.getIdFactura());
+				tipoView = 2;
+				ordenCargada = true;
+			}
 		}
+		sincronizarPanelPendientes(ordenCargada);
 		viewListaOrdenes.dispose();
 		ctlBuscarOrden = null;
+	}
+
+	private boolean cambiarACajaDeOrden(Factura orden) {
+		int codigoCajaOrden = orden.getCodigoCaja();
+		if (codigoCajaOrden == cajaActiva.getCodigo()) {
+			return true;
+		}
+
+		boolean accesible = false;
+		for (Caja c : usuario.getCajas()) {
+			if (c.getCodigo() == codigoCajaOrden) {
+				accesible = true;
+				break;
+			}
+		}
+		if (!accesible) {
+			JOptionPane.showMessageDialog(view,
+					"La orden #" + orden.getIdFactura() + " pertenece a una caja a la que no tienes acceso.",
+					"Caja no accesible", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		cajaActiva = usuario.setCajaActica(codigoCajaOrden);
+		rotacionManual = true;
+		ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
+		if (frame != null) {
+			frame.btnCaja.setText(cajaActiva.getDescripcion());
+		}
+		return true;
+	}
+
+	private void sincronizarPanelPendientes() {
+		sincronizarPanelPendientes(false);
+	}
+
+	private void sincronizarPanelPendientes(boolean ordenRecienCargada) {
+		int idActual = (tipoView == 2 && myFactura != null) ? myFactura.getIdFactura() : 0;
+
+		view.limpiarOrdenesGuardadas();
+		cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
+
+		if (idActual > 0 && !view.seleccionarOrdenEnPanel(idActual) && !ordenRecienCargada) {
+			setEmptyView();
+			this.tipoView = 1;
+			this.view.setEstadoBotonesNuevo();
+		}
 	}
 
 	private void buscarCliente() {

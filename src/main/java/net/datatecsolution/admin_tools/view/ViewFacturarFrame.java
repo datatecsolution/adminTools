@@ -203,6 +203,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public boolean seleccionarOrdenEnPanel(int idFactura) {
 		return btnGuardados.seleccionarPorId(idFactura);
 	}
+	public void seleccionarBotonNuevaFactura() {
+		btnGuardados.seleccionarBotonNuevaFactura();
+	}
 
 	public void setEstadoFactura(boolean editando, int numeroFactura) {
 		TitledBorder border;

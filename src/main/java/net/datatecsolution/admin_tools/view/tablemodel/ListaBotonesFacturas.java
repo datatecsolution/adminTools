@@ -139,6 +139,12 @@ public class ListaBotonesFacturas extends AbstractListModel {
 		}
 		return false;
 	}
+
+	public void seleccionarBotonNuevaFactura(){
+		if(!btnGuardados.isEmpty()){
+			btnGuardados.get(0).setSelected(true);
+		}
+	}
 	
 
 }
