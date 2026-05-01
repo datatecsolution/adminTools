@@ -934,7 +934,7 @@ public class CtlFacturarFrame
 
 			int idFacturaTemporal = facturaSeleccionada.getIdFactura();
 			this.cargarFacturaPendiente(idFacturaTemporal);
-			this.view.getMenuContextual().show(evento.getComponent(), evento.getX(), evento.getY());
+			this.view.mostrarMenuContextual(evento.getComponent(), evento.getX(), evento.getY());
 
 		}
 	}
@@ -1191,7 +1191,7 @@ public class CtlFacturarFrame
 			for (int c = 0; c < facturas.size(); c++) {
 				view.addBotonPendiente(facturas.get(c), this);
 			}
-			view.getPanelGuardados().revalidate();
+			view.refrescarPanelGuardados();
 		} else {
 			view.eliminarBotones();
 		}
@@ -1306,8 +1306,8 @@ public class CtlFacturarFrame
 
 		filaPulsada = this.view.getFilaSeleccionada();
 
-		if (e.getComponent() == this.view.getTxtNombrecliente()) {
-			view.getTxtIdcliente().setText("-1");
+		if (this.view.esCampoNombreCliente(e.getComponent())) {
+			view.resetIdCliente();
 			this.myCliente = null;
 
 		}

@@ -597,6 +597,9 @@ public class ViewFacturarFrame extends JInternalFrame {
 		panelGuardados.revalidate();
 		panelGuardados.repaint();
 	}
+	public void refrescarPanelGuardados(){
+		panelGuardados.revalidate();
+	}
 	public ListaBotonesFacturas getBtnsGuardador(){
 		return btnGuardados;
 	}
@@ -658,6 +661,12 @@ public class ViewFacturarFrame extends JInternalFrame {
 	public JTextField getTxtIdcliente(){
 		return txtIdcliente;
 	}
+	public boolean esCampoNombreCliente(Component c) {
+		return c == txtNombrecliente;
+	}
+	public void resetIdCliente() {
+		txtIdcliente.setText("-1");
+	}
 	public void actualizarTotales(net.datatecsolution.admin_tools.modelo.Factura factura) {
 		txtTotal.setText("" + factura.getTotal().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
 		txtImpuesto.setText("" + factura.getTotalImpuesto().setScale(2, java.math.BigDecimal.ROUND_HALF_EVEN));
@@ -704,7 +713,10 @@ public class ViewFacturarFrame extends JInternalFrame {
 	}
 	public JPopupMenu getMenuContextual(){
 		return menuContextual;
-		
+
+	}
+	public void mostrarMenuContextual(Component invoker, int x, int y) {
+		menuContextual.show(invoker, x, y);
 	}
 	public JTextField getTxtFechafactura(){
 		return txtFechafactura;

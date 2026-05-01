@@ -147,11 +147,11 @@
 | **Botones / acciones** (`btnGuardar`, `btnActualizar`, `panelAcciones`, `btnsGuardador`) | `1bbf9e4` | View: `setEstadoBotonesNuevo`, `setEstadoBotonesEditandoOrden`, `setModoActualizarFactura`, `ocultarPanelAcciones`, `puedeGuardar`, `puedeActualizar`, `limpiarOrdenesGuardadas`, `getOrdenSeleccionadaPanel`, `buscarOrdenEnPanel(int)`. Controller: ~30 sitios migrados (8 pares setEnabled, 9 deleteAll, 3 getFacturaSeleted, 2 isEnabled en KeyListener, 1 setVisible/setVisible, 1 panelAcciones, 1 buscarFactura). |
 | **modeloTabla** (operaciones sobre el detalle de factura) | `1ecee86` | View: `agregarDetalle`, `vaciarDetalles`, `setDetalles`, `getDetalles`, `getDetalle(int)`, `setArticuloDetalle(Articulo)`, `setArticuloDetalle(Articulo,int)`, `eliminarDetalle(int)`, `masCantidad(int)`, `restarCantidad(int)`, `buscarCantidadPorArticulo(Articulo)`, `getCantidadFilasDetalle`, `getValorTabla(int,int)`, `refrescarTablaDetalle`. Controller: ~75 sitios migrados con `replace_all`. Cero referencias a `view.getModeloTabla()` en `CtlFacturarFrame`. |
 | **tableDetalle** (selección de filas) | `be2880c` | View: `getFilaSeleccionada`, `enfocarCeldaTabla(fila,col,colIni,colFin)`. Controller: 3 sitios `getSelectedRow` migrados, 4 bloques de 5-7 líneas (`changeSelection` ×2 + `addColumnSelectionInterval`) compactados a una sola llamada, 1 `getRowCount` redirigido al wrapper existente. Cero referencias a `view.getTableDetalle()` en `CtlFacturarFrame`. |
+| **Campos sueltos / menú contextual** | _(pendiente commit)_ | View: `esCampoNombreCliente(Component)`, `resetIdCliente()`, `refrescarPanelGuardados()`, `mostrarMenuContextual(Component,int,int)`. Controller: identity check en `keyReleased` migrado, reset de `txtIdcliente` semántico, `revalidate()` del panel pendientes encapsulado, `show()` del menú contextual encapsulado. Los listeners de `getBtnCobrar/Cerrar/GuardarCotizacion/Buscar/BuscarCliente` y los radios contado/crédito quedan como attachs directos en construcción y son aceptables (no son lógica de negocio). |
 
-#### Sitios directos restantes en `CtlFacturarFrame` (candidatos a próximos clusters)
+#### Sitios directos restantes en `CtlFacturarFrame`
 
-- **Otros campos sueltos**: `txtFechafactura`, `getRdbtnContado/Credito` (ya cubiertos por `getCabeceraData`, queda solo el listener attach), `getBtnCobrar`, `getBtnCerrar`, `getBtnGuardarCotizacion`, `getBtnBuscar`, `getBtnBuscarCliente` (registro de listeners en construcción).
-- **`getMenuContextual()`**: menú contextual de la tabla.
+Solo permanece el cableado de listeners en construcción (`addActionListener`/`addKeyListener`), que es responsabilidad legítima del controller-as-listener.
 
 ---
 
