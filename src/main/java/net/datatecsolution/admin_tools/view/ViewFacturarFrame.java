@@ -98,6 +98,12 @@ public class ViewFacturarFrame extends JInternalFrame {
 		return tableDetalle.getSelectedRow();
 	}
 
+	public void seleccionarFila(int fila) {
+		if (fila >= 0 && fila < tableDetalle.getRowCount()) {
+			tableDetalle.setRowSelectionInterval(fila, fila);
+		}
+	}
+
 	public void enfocarCeldaTabla(int fila, int columna, int columnaInicio, int columnaFin) {
 		tableDetalle.changeSelection(fila, 0, false, false);
 		tableDetalle.changeSelection(fila, columna, false, false);

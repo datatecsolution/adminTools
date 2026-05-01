@@ -1043,11 +1043,16 @@ public class CtlFacturarFrame
 	}
 
 	public void calcularTotales() {
+		int filaActual = view.getFilaSeleccionada();
 		facturacionService.calcularTotales(myFactura, view.getDetalles());
 
 		view.actualizarTotales(myFactura);
 		view.refrescarTablaDetalle();
-		this.selectRowInset();
+		if (filaActual >= 0) {
+			view.seleccionarFila(filaActual);
+		} else {
+			this.selectRowInset();
+		}
 		view.enfocarBusqueda();
 	}
 
