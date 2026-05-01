@@ -1662,6 +1662,7 @@ public class CtlFacturarFrame
 			this.view.setEstadoBotonesEditandoOrden();
 			this.view.agregarDetalle();
 			this.view.setEstadoFactura(true, myFactura.getIdFactura());
+			this.view.seleccionarOrdenEnPanel(myFactura.getIdFactura());
 			tipoView = 2;
 
 		}

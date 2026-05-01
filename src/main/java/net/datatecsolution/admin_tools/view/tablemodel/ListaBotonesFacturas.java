@@ -130,6 +130,15 @@ public class ListaBotonesFacturas extends AbstractListModel {
 		}
 		return null;
 	}
+
+	public boolean seleccionarPorId(int id){
+		int idx = buscarFacturaIndex(id);
+		if(idx >= 0){
+			btnGuardados.get(idx).setSelected(true);
+			return true;
+		}
+		return false;
+	}
 	
 
 }
