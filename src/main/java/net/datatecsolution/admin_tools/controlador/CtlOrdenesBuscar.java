@@ -22,7 +22,7 @@ public class CtlOrdenesBuscar implements ActionListener ,MouseListener, WindowLi
 	private FacturaOrdenVentaDao ordenDao =null;
 	private Factura myOrden =null;
 	//fila selecciona enla lista
-	private int filaPulsada;
+	private int filaPulsada=-1;
 	private boolean resultado=false;
 	private EmpleadoDao empleadoDao=null;
 
@@ -386,7 +386,7 @@ public boolean buscarCliente(Window v){
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
 			//filaPulsada = this.view.getTabla().getSelectedRow();
 			//JOptionPane.showMessageDialog(view, "Entro aqui released "+filaPulsada);
-			if(filaPulsada>=0){
+			if(filaPulsada>=0 && filaPulsada<view.getModelo().getRowCount()){
 			
 	            //se consigue el proveedore de la fila seleccionada
 	            this.myOrden =this.view.getModelo().getFactura(filaPulsada);// .getCliente(filaPulsada);
@@ -412,10 +412,14 @@ public boolean buscarCliente(Window v){
 
 				cargarTabla(ordenDao.buscarPorNombreCliente(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
 
-				this.view.getTabla().setRowSelectionInterval(0	, 0);
-				filaPulsada=0;
-				
-				this.myOrden =view.getModelo().getFactura(0);
+				if(view.getModelo().getRowCount()>0){
+					this.view.getTabla().setRowSelectionInterval(0	, 0);
+					filaPulsada=0;
+					this.myOrden =view.getModelo().getFactura(0);
+				}else{
+					filaPulsada=-1;
+					this.myOrden=null;
+				}
 			}
 
 			
