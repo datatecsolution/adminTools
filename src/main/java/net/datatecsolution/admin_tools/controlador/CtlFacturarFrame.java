@@ -157,7 +157,7 @@ public class CtlFacturarFrame
 	}
 
 	private void guardarCotizacion() {
-		setFactura();
+		setFacturaBasica();
 		if (validar()) {
 			CotizacionDao cotizacioDao = new CotizacionDao();
 			boolean resultado = cotizacioDao.registrar(myFactura);
