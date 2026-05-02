@@ -141,10 +141,24 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 			
 			break;
 		case "BUSCAR":
-			
-			
-			myFactura=myFacturaDao.buscarPorIdAndVendedor(Integer.parseInt(this.view.getTxtNofact().getText()),view.getCbxCajas().getSelectedItem(),myEmpleado.getCodigo());
-			if(myFactura!=null){												
+
+			String txtNo = this.view.getTxtNofact().getText().trim();
+			if(txtNo.isEmpty()){
+				view.getTxtNofact().requestFocusInWindow();
+				break;
+			}
+			int idFactBuscar;
+			try{
+				idFactBuscar = Integer.parseInt(txtNo);
+			}catch(NumberFormatException nfe){
+				JOptionPane.showMessageDialog(view, "El número de factura debe ser numérico.","Entrada inválida",JOptionPane.WARNING_MESSAGE);
+				view.getTxtNofact().selectAll();
+				view.getTxtNofact().requestFocusInWindow();
+				break;
+			}
+
+			myFactura=myFacturaDao.buscarPorIdAndVendedor(idFactBuscar,view.getCbxCajas().getSelectedItem(),myEmpleado.getCodigo());
+			if(myFactura!=null){
 				
 				
 				Caja caja=(Caja)view.getCbxCajas().getSelectedItem();
@@ -195,15 +209,17 @@ public class CtlRutaEntrega implements ActionListener, KeyListener, MouseListene
 	}
 	
 	private void selectRowInset(){
-		
-		int row = this.view.getTablasFacturas().getRowCount () - 2;
-	    int col = 1;
-	    boolean toggle = false;
-	    boolean extend = false;
-	    this.view.getTablasFacturas().changeSelection(row, 0, toggle, extend);
-	    this.view.getTablasFacturas().changeSelection(row, col, toggle, extend);
-	    this.view.getTablasFacturas().addColumnSelectionInterval(0, 6);
-		
+
+		int rowCount = this.view.getTablasFacturas().getRowCount();
+		int colCount = this.view.getTablasFacturas().getColumnCount();
+		if(rowCount <= 0 || colCount <= 0) return;
+
+		int row = rowCount - 1;
+		int lastCol = colCount - 1;
+		this.view.getTablasFacturas().changeSelection(row, 0, false, false);
+		this.view.getTablasFacturas().changeSelection(row, lastCol, false, false);
+		this.view.getTablasFacturas().addColumnSelectionInterval(0, lastCol);
+
 	}
 
 	private boolean verificarFactYaAgregada(Factura factVerificar){
