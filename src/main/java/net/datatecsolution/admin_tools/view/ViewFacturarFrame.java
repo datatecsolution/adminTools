@@ -761,10 +761,15 @@ public class ViewFacturarFrame extends JInternalFrame {
 	}
 
 	public void conectarBtnContralador(CtlFacturarFrame c,String cmd,JToggleButton btn){
+		for(java.awt.event.ActionListener al : btn.getActionListeners())
+			if(al instanceof CtlFacturarFrame) btn.removeActionListener(al);
+		for(java.awt.event.KeyListener kl : btn.getKeyListeners())
+			if(kl instanceof CtlFacturarFrame) btn.removeKeyListener(kl);
+		for(java.awt.event.MouseListener ml : btn.getMouseListeners())
+			if(ml instanceof CtlFacturarFrame) btn.removeMouseListener(ml);
+
 		btn.addActionListener(c);
-		
 		btn.setActionCommand(cmd);
-		
 		btn.addKeyListener(c);
 		btn.addMouseListener(c);
 	}
