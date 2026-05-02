@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.view;
 
 
+import net.datatecsolution.admin_tools.controlador.CtlRutaCobroBuscar;
 import net.datatecsolution.admin_tools.controlador.CtlRutaCobroLista;
 import net.datatecsolution.admin_tools.view.botones.BotonLimpiar;
 import net.datatecsolution.admin_tools.view.rendes.TablaRenderizadorProveedor;
@@ -131,6 +132,39 @@ public void conectarControlador(CtlRutaCobroLista c){
 		 tabla.addMouseListener(c);
 		 tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		 this.addWindowListener(c);
+	}
+
+	public void conectarCtlBuscar(CtlRutaCobroBuscar c) {
+		this.addWindowListener(c);
+
+		rdbtnDescripcion.addActionListener(c);
+		rdbtnDescripcion.setActionCommand("ESCRIBIR");
+
+		rdbtnObservacion.addActionListener(c);
+		rdbtnObservacion.setActionCommand("ESCRIBIR");
+
+		btnAgregar.addActionListener(c);
+		btnAgregar.setActionCommand("INSERTAR");
+		btnAgregar.addKeyListener(c);
+
+		btnEliminar.addActionListener(c);
+		btnEliminar.setActionCommand("ELIMINAR");
+
+		btnBuscar.addActionListener(c);
+		btnBuscar.setActionCommand("BUSCAR");
+
+		btnSiguiente.addActionListener(c);
+		btnSiguiente.setActionCommand("NEXT");
+
+		btnAnterior.addActionListener(c);
+		btnAnterior.setActionCommand("LAST");
+
+		txtBuscar.addActionListener(c);
+		txtBuscar.setActionCommand("BUSCAR");
+		txtBuscar.addKeyListener(c);
+
+		tabla.addMouseListener(c);
+		tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	/*
