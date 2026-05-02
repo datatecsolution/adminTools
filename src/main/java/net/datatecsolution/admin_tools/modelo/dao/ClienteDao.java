@@ -561,7 +561,7 @@ public class ClienteDao extends ModeloDaoBasic {
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET nombre_cliente = ?, direccion = ? ,telefono = ?, movil=?, rtn=?,limite_credito=?,id_cobrador=?, id_ruta_cobro=? WHERE codigo_cliente = ?");
+			psConsultas=conn.prepareStatement(super.getQueryUpdate()+" SET nombre_cliente = ?, direccion = ? ,telefono = ?, movil=?, rtn=?,limite_credito=?,id_cobrador=?, id_vendedor=?, id_ruta_cobro=? WHERE codigo_cliente = ?");
 			psConsultas.setString(1,cliente.getNombre());
 			psConsultas.setString(2, cliente.getDereccion());
 			psConsultas.setString(3, cliente.getTelefono());
@@ -571,8 +571,10 @@ public class ClienteDao extends ModeloDaoBasic {
 
 			int codigoCobrador = cliente.getCobrador() != null ? cliente.getCobrador().getCodigo() : 0;
 			psConsultas.setInt(7, codigoCobrador);
-			psConsultas.setInt(8, cliente.getRutaCobro().getCodigo());
-			psConsultas.setInt(9,cliente.getId());
+			int codigoVendedor = cliente.getVendedor() != null ? cliente.getVendedor().getCodigo() : 0;
+			psConsultas.setInt(8, codigoVendedor);
+			psConsultas.setInt(9, cliente.getRutaCobro().getCodigo());
+			psConsultas.setInt(10,cliente.getId());
 			
 			
 			resultado=psConsultas.executeUpdate();
@@ -664,7 +666,7 @@ public class ClienteDao extends ModeloDaoBasic {
 			con = ConexionStatic.getPoolConexion().getConnection();
 			
 			//insertarNuevaCliente=con.prepareStatement( "INSERT INTO cliente(nombre_cliente,direccion,telefono,movil,rtn) VALUES (?,?,?,?,?)");
-			psConsultas=con.prepareStatement( super.getQueryInsert()+" (nombre_cliente,direccion,telefono,movil,rtn,limite_credito,tipo_cliente,id_cobrador,id_ruta_cobro) VALUES (?,?,?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
+			psConsultas=con.prepareStatement( super.getQueryInsert()+" (nombre_cliente,direccion,telefono,movil,rtn,limite_credito,tipo_cliente,id_cobrador,id_vendedor,id_ruta_cobro) VALUES (?,?,?,?,?,?,?,?,?,?)",java.sql.Statement.RETURN_GENERATED_KEYS);
 
 
 			psConsultas.setString( 1, myCliente.getNombre() );
@@ -676,7 +678,9 @@ public class ClienteDao extends ModeloDaoBasic {
 			psConsultas.setInt(7, 2);
 			int codigoCobradorIns = myCliente.getCobrador() != null ? myCliente.getCobrador().getCodigo() : 0;
 			psConsultas.setInt(8, codigoCobradorIns);
-			psConsultas.setInt(9, myCliente.getRutaCobro().getCodigo());
+			int codigoVendedorIns = myCliente.getVendedor() != null ? myCliente.getVendedor().getCodigo() : 0;
+			psConsultas.setInt(9, codigoVendedorIns);
+			psConsultas.setInt(10, myCliente.getRutaCobro().getCodigo());
 			
 			resultado=psConsultas.executeUpdate();
 			

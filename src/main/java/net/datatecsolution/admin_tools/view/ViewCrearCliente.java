@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class ViewCrearCliente extends JDialog{
-	private JTextField txtIdVendedor;
+	private JTextField txtIdCobrador;
 	private final JTextField txtNombre;
 	private final JTextField txtDireccion;
 	private final JTextField txtTelefono;
@@ -24,6 +24,9 @@ public class ViewCrearCliente extends JDialog{
 	private final BotonCancelar btnCancelar;
 	private final BotonActualizar btnActualizar;
 	private final BotonGuardar btnGuardar;
+	private final JTextField txtCobrador;
+
+	private JTextField txtIdVendedor;
 	private final JTextField txtVendedor;
 
 	private JPopupMenu mcBusqueda;
@@ -39,11 +42,11 @@ public class ViewCrearCliente extends JDialog{
 
 		setTitle("Crear Cliente");
 
-		this.setSize(350,546);
+		this.setSize(350,605);
 		getContentPane().setLayout(null);
 
 		JPanel JplPrincipal = new PanelPadre();
-		JplPrincipal.setBounds(0, 0, 349, 518);
+		JplPrincipal.setBounds(0, 0, 349, 577);
 		getContentPane().add(JplPrincipal);
 		JplPrincipal.setLayout(null);
 
@@ -92,20 +95,7 @@ public class ViewCrearCliente extends JDialog{
 		JplPrincipal.add(txtRtn);
 		txtRtn.setColumns(10);
 
-		// botones de accion
-		btnCancelar = new BotonCancelar();
-		btnCancelar.setLocation(180, 399);
-		JplPrincipal.add(btnCancelar);
-
-		btnGuardar = new BotonGuardar();
-		btnGuardar.setLocation(19, 399);
-		JplPrincipal.add(btnGuardar);
-
-		btnActualizar=new BotonActualizar();
-		btnActualizar.setLocation(19, 399);
-		JplPrincipal.add(btnActualizar);
-
-		JLabel lblVendedor = new JLabel("Cobrador(F1)");
+		JLabel lblVendedor = new JLabel("Vendedor(F2)");
 		lblVendedor.setBounds(19, 275, 119, 14);
 		JplPrincipal.add(lblVendedor);
 
@@ -114,25 +104,52 @@ public class ViewCrearCliente extends JDialog{
 		txtIdVendedor.setToolTipText("Codigo vendedor");
 		JplPrincipal.add(txtIdVendedor);
 
-
 		txtVendedor = new JTextField();
 		txtVendedor.setColumns(10);
 		txtVendedor.setBounds(60, 290, 270, 32);
 		JplPrincipal.add(txtVendedor);
 
-		JLabel lblFRuta = new JLabel("Ruta de cobro(F2)");
-		lblFRuta.setBounds(19, 328, 119, 14);
+		JLabel lblCobrador = new JLabel("Cobrador(F1)");
+		lblCobrador.setBounds(19, 328, 119, 14);
+		JplPrincipal.add(lblCobrador);
+
+		txtIdCobrador = new JTextField();
+		txtIdCobrador.setBounds(19, 343, 30, 32);
+		txtIdCobrador.setToolTipText("Codigo cobrador");
+		JplPrincipal.add(txtIdCobrador);
+
+
+		txtCobrador = new JTextField();
+		txtCobrador.setColumns(10);
+		txtCobrador.setBounds(60, 343, 270, 32);
+		JplPrincipal.add(txtCobrador);
+
+		JLabel lblFRuta = new JLabel("Ruta de cobro(F3)");
+		lblFRuta.setBounds(19, 381, 119, 14);
 		JplPrincipal.add(lblFRuta);
 
 		txtIdRutaCobro = new JTextField();
-		txtIdRutaCobro.setToolTipText("Codigo vendedor");
-		txtIdRutaCobro.setBounds(19, 343, 30, 32);
+		txtIdRutaCobro.setToolTipText("Codigo ruta");
+		txtIdRutaCobro.setBounds(19, 396, 30, 32);
 		JplPrincipal.add(txtIdRutaCobro);
 
 		txtRutaCobro = new JTextField();
 		txtRutaCobro.setColumns(10);
-		txtRutaCobro.setBounds(60, 343, 270, 32);
+		txtRutaCobro.setBounds(60, 396, 270, 32);
 		JplPrincipal.add(txtRutaCobro);
+
+		// botones de accion
+		btnCancelar = new BotonCancelar();
+		btnCancelar.setLocation(180, 458);
+		JplPrincipal.add(btnCancelar);
+
+		btnGuardar = new BotonGuardar();
+		btnGuardar.setLocation(19, 458);
+		JplPrincipal.add(btnGuardar);
+
+		btnActualizar=new BotonActualizar();
+		btnActualizar.setLocation(19, 458);
+		JplPrincipal.add(btnActualizar);
 		btnActualizar.setVisible(false);
 
 		mcBusqueda = new JPopupMenu(); // crea el men� contextual
@@ -162,6 +179,9 @@ public class ViewCrearCliente extends JDialog{
 	}
 	public void conectarControlador(CtlCliente c){
 
+		txtIdCobrador.addActionListener(c);
+		txtIdCobrador.setActionCommand("BUSCAR_COBRADOR");
+
 		txtIdVendedor.addActionListener(c);
 		txtIdVendedor.setActionCommand("BUSCAR_VENDEDOR");
 
@@ -184,6 +204,7 @@ public class ViewCrearCliente extends JDialog{
 		txtTelefono.addKeyListener(c);
 		txtMovil.addKeyListener(c);
 		txtMovil.addKeyListener(c);
+		txtCobrador.addKeyListener(c);
 		txtVendedor.addKeyListener(c);
 		txtRutaCobro.addKeyListener(c);
 
@@ -194,9 +215,10 @@ public class ViewCrearCliente extends JDialog{
 		this.btnGuardar.setVisible(false);
 
 	}
-	/**
-	 * @return the txtVendedor
-	 */
+	public JTextField getTxtCobrador() {
+		return txtCobrador;
+	}
+
 	public JTextField getTxtVendedor() {
 		return txtVendedor;
 	}
@@ -225,6 +247,14 @@ public class ViewCrearCliente extends JDialog{
 		}
 
 	}
+	public JTextField getTxtIdCobrador() {
+		return txtIdCobrador;
+	}
+
+	public void setTxtIdCobrador(JTextField txtIdCobrador) {
+		this.txtIdCobrador = txtIdCobrador;
+	}
+
 	public JTextField getTxtIdVendedor() {
 		return txtIdVendedor;
 	}

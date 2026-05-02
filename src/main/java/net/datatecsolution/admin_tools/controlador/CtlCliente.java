@@ -9,31 +9,38 @@ import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.RutaCobroDao;
 import net.datatecsolution.admin_tools.view.ViewCrearCliente;
 import net.datatecsolution.admin_tools.view.ViewListaEmpleados;
+import net.datatecsolution.admin_tools.view.ViewListaRutasCobro;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.List;
 
 public class CtlCliente implements ActionListener,WindowListener , KeyListener{
-	
+
 	private final ViewCrearCliente view;
 	private Cliente myCliente=null;
 	private ClienteDao myClienteDao=null;
 	private boolean resultaOperacion=false;
+	private Empleado myCobrador=null;
 	private Empleado myVendedor=null;
 	private RutaCobro myRuta=null;
 	private final EmpleadoDao myEmpleadoDao;
 	private RutaCobroDao myRutaDao;
-	
+
 	public CtlCliente(ViewCrearCliente v){
 		view=v;
 		view.conectarControlador(this);
-		
-		
+
+
 		myEmpleadoDao=new EmpleadoDao();
 		myRutaDao=new RutaCobroDao();
-		
-		//se busca el empleado por defecto es con el id 0
+
+		//se busca el empleado por defecto es con el id 1 (cobrador y vendedor)
+		myCobrador=myEmpleadoDao.buscarPorId(1);
+		if(myCobrador!=null){
+			view.getTxtCobrador().setText(myCobrador.toString());
+			view.getTxtIdCobrador().setText(myCobrador.getCodigo()+" ");
+		}
 		myVendedor=myEmpleadoDao.buscarPorId(1);
 		if(myVendedor!=null){
 			view.getTxtVendedor().setText(myVendedor.toString());
@@ -49,7 +56,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		view.setLocationRelativeTo(view);
 		view.setModal(true);
 		//view.setVisible(true);
-		
+
 	}
 	private void getCliente(){
 		myCliente.setNombre(view.getTxtNombre().getText());
@@ -57,20 +64,21 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		myCliente.setTelefono(view.getTxtTelefono().getText());
 		myCliente.setCelular(view.getTxtMovil().getText());
 		myCliente.setRtn(view.getTxtRtn().getText());
-		myCliente.setCobrador(myVendedor);
+		myCliente.setCobrador(myCobrador);
+		myCliente.setVendedor(myVendedor);
 		myCliente.setRutaCobro(myRuta);
 	}
-	
+
 	public boolean agregarCliente(){
 		this.view.setVisible(true);
 		return resultaOperacion;
 	}
-	
+
 	/*<<<<<<<<<<<<<<<<<<<<<<<<< metodo que devuelve el cliente guardado >>>>>>>>>>>>>>>>>>>>>>>>>         */
 	public Cliente getClienteGuardado(){
 		return myCliente;
-		
-		
+
+
 	}
 
 	@Override
@@ -87,7 +95,7 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 			actualizarCliente(cliente);
 
 		}
-		
+
 		switch(comando){
 			case "BUSCAR_RUTA":
 				if(AbstractJasperReports.isNumber(view.getTxtIdRutaCobro().getText())){
@@ -97,6 +105,17 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 						view.getTxtIdRutaCobro().setText(myRuta.getCodigo()+"");
 					}
 					view.getTxtRutaCobro().setText(myRuta.getDescripcion());
+				}
+				break;
+
+			case "BUSCAR_COBRADOR":
+				if(AbstractJasperReports.isNumber(view.getTxtIdCobrador().getText())){
+					myCobrador=myEmpleadoDao.buscarPorId(Integer.parseInt(view.getTxtIdCobrador().getText()));
+					if(myCobrador==null){
+						myCobrador=myEmpleadoDao.buscarPorId(1);
+						view.getTxtIdCobrador().setText(myCobrador.getCodigo()+" ");
+					}
+					view.getTxtCobrador().setText(myCobrador.toString());
 				}
 				break;
 
@@ -139,29 +158,38 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 				break;
 		}
 	}
-	
-	
+
+
 	public boolean actualizarCliente(Cliente cliente){
 		//se carga la configuracionde la view articulo para la actulizacion
 		this.view.configActualizar();
-		
-		
+
+
 		//se establece el nombre de articulo en la view
 		this.view.getTxtNombre().setText(cliente.getNombre());
-		
+
 		//se establece la marca en la view
 		this.view.getTxtDireccion().setText(cliente.getDereccion());
-		
+
 		this.view.getTxtTelefono().setText(cliente.getTelefono());
 		this.view.getTxtMovil().setText(cliente.getCelular());
 		this.view.getTxtRtn().setText(cliente.getRtn());
 
-		this.myVendedor=cliente.getCobrador();
+		this.myCobrador=cliente.getCobrador();
+		this.myVendedor=cliente.getVendedor();
 		this.myRuta=cliente.getRutaCobro();
 
 		if (cliente.getCobrador() != null) {
-			view.getTxtIdVendedor().setText(cliente.getCobrador().getCodigo()+"");
-			view.getTxtVendedor().setText(cliente.getCobrador().toString());
+			view.getTxtIdCobrador().setText(cliente.getCobrador().getCodigo()+"");
+			view.getTxtCobrador().setText(cliente.getCobrador().toString());
+		} else {
+			view.getTxtIdCobrador().setText("");
+			view.getTxtCobrador().setText("");
+		}
+
+		if (cliente.getVendedor() != null) {
+			view.getTxtIdVendedor().setText(cliente.getVendedor().getCodigo()+"");
+			view.getTxtVendedor().setText(cliente.getVendedor().toString());
 		} else {
 			view.getTxtIdVendedor().setText("");
 			view.getTxtVendedor().setText("");
@@ -174,25 +202,25 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 			view.getTxtIdRutaCobro().setText("");
 			view.getTxtRutaCobro().setText("");
 		}
-		
-		
-		
+
+
+
 		//se establece el articulo de la clase this
 		myCliente=cliente;
-		
-		
-				
+
+
+
 		// se hace visible la ventana modal
 		this.view.setVisible(true);
-		
-		
-		
+
+
+
 		return this.resultaOperacion;
 	}
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void windowClosing(WindowEvent e) {
@@ -209,44 +237,50 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 		view.setVisible(false);
 		view.dispose();
 
-		
+
 	}
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 		switch(e.getKeyCode()){
-		
+
 		case KeyEvent.VK_F1:
-			buscarEmpleado();
+			buscarCobrador();
+			break;
+		case KeyEvent.VK_F2:
+			buscarVendedor();
+			break;
+		case KeyEvent.VK_F3:
+			buscarRuta();
 			break;
 	}
-		
+
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -279,20 +313,46 @@ public class CtlCliente implements ActionListener,WindowListener , KeyListener{
 			view.getMcBusqueda().setVisible(false);
 		}
 
-		
+
 	}
-	
-	public void buscarEmpleado(){
+
+	private void buscarCobrador(){
 		ViewListaEmpleados viewBuscarEmpleado=new ViewListaEmpleados(view);
 		CtlEmpleadosListaBuscar ctBuscarEmpleado=new CtlEmpleadosListaBuscar(viewBuscarEmpleado);
 		viewBuscarEmpleado.pack();
 		boolean resultado=ctBuscarEmpleado.buscar();
-		
+
+		if(resultado){
+			myCobrador=ctBuscarEmpleado.getEmpleadoSelected();
+			view.getTxtIdCobrador().setText(myCobrador.getCodigo()+"");
+			view.getTxtCobrador().setText(myCobrador.toString());
+		}
+	}
+
+	private void buscarVendedor(){
+		ViewListaEmpleados viewBuscarEmpleado=new ViewListaEmpleados(view);
+		CtlEmpleadosListaBuscar ctBuscarEmpleado=new CtlEmpleadosListaBuscar(viewBuscarEmpleado);
+		viewBuscarEmpleado.pack();
+		boolean resultado=ctBuscarEmpleado.buscar();
+
 		if(resultado){
 			myVendedor=ctBuscarEmpleado.getEmpleadoSelected();
+			view.getTxtIdVendedor().setText(myVendedor.getCodigo()+"");
 			view.getTxtVendedor().setText(myVendedor.toString());
 		}
-		
+	}
+
+	private void buscarRuta(){
+		ViewListaRutasCobro viewBuscarRuta=new ViewListaRutasCobro(view);
+		CtlRutaCobroBuscar ctBuscarRuta=new CtlRutaCobroBuscar(viewBuscarRuta);
+		viewBuscarRuta.pack();
+		boolean resultado=ctBuscarRuta.buscar();
+
+		if(resultado){
+			myRuta=ctBuscarRuta.getRutaSelected();
+			view.getTxtIdRutaCobro().setText(myRuta.getCodigo()+"");
+			view.getTxtRutaCobro().setText(myRuta.getDescripcion());
+		}
 	}
 
 }
