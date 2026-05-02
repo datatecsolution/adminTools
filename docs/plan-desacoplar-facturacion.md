@@ -125,7 +125,9 @@
 - Método huérfano `ViewModuloFacturar.conectarContralador(CtlModuloFacturar)` eliminado
 - Import `CtlFactCredito` borrado de `Principal.java`
 
-### Fase 4 - Desacoplar View del Controller (en progreso)
+### Fase 4 - Desacoplar View del Controller ✅ COMPLETADA
+
+**Estado:** Implementada. Los 8 clusters previstos están migrados (ver tabla). Solo permanece el cableado de listeners en construcción, que es responsabilidad legítima del controller-as-listener.
 
 **Objetivo:** Reducir las ~200 llamadas directas `view.get*/set*`.
 
@@ -152,6 +154,15 @@
 #### Sitios directos restantes en `CtlFacturarFrame`
 
 Solo permanece el cableado de listeners en construcción (`addActionListener`/`addKeyListener`), que es responsabilidad legítima del controller-as-listener.
+
+#### Ajustes de UX descubiertos durante las pruebas (incluidos en la rama)
+
+| Ajuste | Commit | Detalle |
+|--------|--------|---------|
+| Preservar fila seleccionada al recalcular totales | `57a0d67` | Tras cambiar cantidad/precio la fila no salta a la última. |
+| Marcar orden en panel al cargarla por F3 | `c418f67` | El botón del panel queda seleccionado como si se hubiese hecho clic. |
+| Esc en búsqueda de cotizaciones | `1db6765` | `CtlCotizacionLista` implementa `KeyListener` y cierra el diálogo. |
+| Filtro panel por cajas asignadas + auto-cambio de caja | `1aebebb` | El panel solo muestra órdenes del usuario en cajas asignadas. F3 sigue mostrando todas; al cargar una de otra caja accesible se cambia la caja activa, y si no es accesible se bloquea con advertencia. Ctrl+N regresa la marca al botón "Nueva factura". |
 
 ---
 
@@ -189,3 +200,4 @@ Cambios fuera del alcance original del plan que viajan junto con la refactor (co
 
 - **Rama:** `refactor/desacoplar-facturacion`
 - **Base:** `master` (commit `a3e68ba`)
+- **Merge a master:** ✅ commit `f125bd2` (no-ff). 49/50 pruebas del checklist validadas; "App arranca sin errores en BD limpia" diferida para validar directamente en master.
