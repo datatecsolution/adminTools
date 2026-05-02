@@ -769,9 +769,7 @@ public class CtlFacturarFrame
 	private void cargarFacturaPendiente(int numeroFactura) {
 
 		Factura fact = view.buscarOrdenEnPanel(numeroFactura);
-
-		if (!cambiarACajaDeOrden(fact)) {
-			view.seleccionarOrdenEnPanel(myFactura != null ? myFactura.getIdFactura() : 0);
+		if (fact == null) {
 			return;
 		}
 
@@ -1661,54 +1659,21 @@ public class CtlFacturarFrame
 		boolean resul = ctlBuscarOrden.buscarCliente(null);
 		boolean ordenCargada = false;
 		if (resul) {
-			Factura ordenSeleccionada = ctlBuscarOrden.getOrden();
+			this.myFactura = ctlBuscarOrden.getOrden();
 
-			if (cambiarACajaDeOrden(ordenSeleccionada)) {
-				this.myFactura = ordenSeleccionada;
+			myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
 
-				myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
-
-				cargarFacturaView();
-				this.calcularTotales();
-				this.view.setEstadoBotonesEditandoOrden();
-				this.view.agregarDetalle();
-				this.view.setEstadoFactura(true, myFactura.getIdFactura());
-				tipoView = 2;
-				ordenCargada = true;
-			}
+			cargarFacturaView();
+			this.calcularTotales();
+			this.view.setEstadoBotonesEditandoOrden();
+			this.view.agregarDetalle();
+			this.view.setEstadoFactura(true, myFactura.getIdFactura());
+			tipoView = 2;
+			ordenCargada = true;
 		}
 		sincronizarPanelPendientes(ordenCargada);
 		viewListaOrdenes.dispose();
 		ctlBuscarOrden = null;
-	}
-
-	private boolean cambiarACajaDeOrden(Factura orden) {
-		int codigoCajaOrden = orden.getCodigoCaja();
-		if (codigoCajaOrden == cajaActiva.getCodigo()) {
-			return true;
-		}
-
-		boolean accesible = false;
-		for (Caja c : usuario.getCajas()) {
-			if (c.getCodigo() == codigoCajaOrden) {
-				accesible = true;
-				break;
-			}
-		}
-		if (!accesible) {
-			JOptionPane.showMessageDialog(view,
-					"La orden #" + orden.getIdFactura() + " pertenece a una caja a la que no tienes acceso.",
-					"Caja no accesible", JOptionPane.WARNING_MESSAGE);
-			return false;
-		}
-
-		cajaActiva = usuario.setCajaActica(codigoCajaOrden);
-		rotacionManual = true;
-		ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
-		if (frame != null) {
-			frame.btnCaja.setText(cajaActiva.getDescripcion());
-		}
-		return true;
 	}
 
 	private void sincronizarPanelPendientes() {
