@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteInventarioSeleccion" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11111111-2222-3333-4444-555555555555">
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="filasDataset" uuid="22222222-3333-4444-5555-666666666666">
+		<field name="articulo" class="java.lang.String"/>
+		<field name="codArticulo" class="java.lang.String"/>
+		<field name="totalIngreso" class="java.lang.Double"/>
+		<field name="totalSalida" class="java.lang.Double"/>
+		<field name="saldo" class="java.lang.Double"/>
+		<field name="efectivoSaldo" class="java.lang.Double"/>
+		<variable name="row" class="java.lang.Integer" calculation="Count">
+			<variableExpression><![CDATA[$F{articulo}]]></variableExpression>
+			<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		</variable>
+	</subDataset>
+	<parameter name="bodega" class="java.lang.String"/>
+	<parameter name="usuario" class="java.lang.String"/>
+	<parameter name="totalEfectivo" class="java.lang.Double"/>
+	<parameter name="filasDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<queryString>
+		<![CDATA[SELECT 1 FROM datos_empresa LIMIT 1]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="130" splitType="Stretch">
+			<subreport>
+				<reportElement x="-20" y="0" width="612" height="45" uuid="aaaaaaa1-bbbb-cccc-dddd-000000000001"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reportes/encabezado_carta.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="50" width="572" height="22" uuid="33333333-4444-5555-6666-777777777777"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE INVENTARIO POR SELECCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="80" width="60" height="14" uuid="44444444-5555-6666-7777-888888888888"/>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bodega:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="80" width="350" height="14" uuid="55555555-6666-7777-8888-999999999999"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{bodega}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="96" width="60" height="14" uuid="66666666-7777-8888-9999-aaaaaaaaaaaa"/>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="96" width="200" height="14" uuid="77777777-8888-9999-aaaa-bbbbbbbbbbbb"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="280" y="96" width="50" height="14" uuid="88888888-9999-aaaa-bbbb-cccccccccccc"/>
+				<textElement>
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="330" y="96" width="150" height="14" uuid="99999999-aaaa-bbbb-cccc-dddddddddddd"/>
+				<textElement>
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="60">
+			<componentElement>
+				<reportElement x="0" y="0" width="572" height="50" uuid="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="filasDataset" uuid="bbbbbbbb-cccc-dddd-eeee-ffffffffffff">
+						<dataSourceExpression><![CDATA[$P{filasDataSource}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="35" uuid="cccccccc-dddd-eeee-ffff-111111111111">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="35" height="18" uuid="dddddddd-eeee-ffff-1111-222222222222"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[No]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField>
+								<reportElement x="0" y="0" width="35" height="16" uuid="eeeeeeee-ffff-1111-2222-333333333333"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$V{row}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="195" uuid="ffffffff-1111-2222-3333-444444444444">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="195" height="18" uuid="11111112-2222-3333-4444-555555555555"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[Articulo]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField>
+								<reportElement x="0" y="0" width="195" height="16" uuid="22222223-3333-4444-5555-666666666666"/>
+								<box leftPadding="2"/>
+								<textElement verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{articulo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="33333334-4444-5555-6666-777777777777">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="70" height="18" uuid="44444445-5555-6666-7777-888888888888"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[Cód. Artículo]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField>
+								<reportElement x="0" y="0" width="70" height="16" uuid="55555556-6666-7777-8888-999999999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{codArticulo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="66666667-7777-8888-9999-aaaaaaaaaaaa">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="77777778-8888-9999-aaaa-bbbbbbbbbbbb"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[T. Ingreso]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="60" height="16" uuid="88888889-9999-aaaa-bbbb-cccccccccccc"/>
+								<box rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{totalIngreso}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="9999999a-aaaa-bbbb-cccc-dddddddddddd">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="aaaaaaab-bbbb-cccc-dddd-eeeeeeeeeeee"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[T. Salida]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="60" height="16" uuid="bbbbbbbc-cccc-dddd-eeee-ffffffffffff"/>
+								<box rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{totalSalida}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="ccccccca-dddd-eeee-ffff-111111111110">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="18" uuid="ddddddda-eeee-ffff-1111-222222222220"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[Saldo]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="60" height="16" uuid="eeeeeeea-ffff-1111-2222-333333333330"/>
+								<box rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="92" uuid="fffffffa-1111-2222-3333-444444444440">
+						<jr:tableHeader style="Table_TH" height="18">
+							<staticText>
+								<reportElement x="0" y="0" width="92" height="18" uuid="11111110-2222-3333-4444-555555555550"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true"/></textElement>
+								<text><![CDATA[Efectivo Saldo (L.)]]></text>
+							</staticText>
+						</jr:tableHeader>
+						<jr:detailCell style="Table_TD" height="16">
+							<textField pattern="#,##0.00">
+								<reportElement x="0" y="0" width="92" height="16" uuid="22222220-3333-4444-5555-666666666660"/>
+								<box rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8"/></textElement>
+								<textFieldExpression><![CDATA[$F{efectivoSaldo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="280" height="15" uuid="66666660-7777-8888-9999-aaaaaaaaaaa0"/>
+				<textElement><font fontName="SansSerif" size="7"/></textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="40">
+			<line>
+				<reportElement x="0" y="0" width="572" height="1" uuid="33333330-4444-5555-6666-777777777770"/>
+			</line>
+			<staticText>
+				<reportElement x="350" y="10" width="130" height="20" uuid="44444440-5555-6666-7777-888888888880"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Efectivo (L.):]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="482" y="10" width="90" height="20" uuid="55555550-6666-7777-8888-999999999990"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalEfectivo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
