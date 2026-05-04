@@ -59,6 +59,7 @@ public class ViewMenuPrincipal extends JFrame {
 	private JMenuItem mntmRutasDeCobro;
 	private JMenuItem mntmReporteCuentasFacturas;
 	private final JMenuItem mntmVentasArtVendedor;
+	private final JMenuItem mntmReporteInventarioSeleccion;
 
 	public ViewMenuPrincipal() {
 		setTitle("Admin Tools");
@@ -182,6 +183,9 @@ public class ViewMenuPrincipal extends JFrame {
 
 		mntmVentasArtVendedor = new JMenuItem("Ventas articulo por vendedor");
 		mnReportes.add(mntmVentasArtVendedor);
+
+		mntmReporteInventarioSeleccion = new JMenuItem("Inventario por selección");
+		mnReportes.add(mntmReporteInventarioSeleccion);
 
 		JMenu mnCuentasPorPagar = new JMenu("Cuentas por pagar");
 		menuBar.add(mnCuentasPorPagar);
@@ -338,6 +342,9 @@ public class ViewMenuPrincipal extends JFrame {
 
 		mntmVentasArtVendedor.addActionListener(c);
 		mntmVentasArtVendedor.setActionCommand("VENTAS_ART_VENDEDOR");
+
+		mntmReporteInventarioSeleccion.addActionListener(c);
+		mntmReporteInventarioSeleccion.setActionCommand("REPORTE_INVENTARIO_SELECCION");
 		
 		mntmCajas.addActionListener(c);
 		mntmCajas.setActionCommand("CAJAS");

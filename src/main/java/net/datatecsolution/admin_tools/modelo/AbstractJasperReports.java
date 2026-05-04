@@ -523,6 +523,33 @@ public abstract class AbstractJasperReports implements Runnable {
 		}
 	}
 
+	public static void createReporteInventarioSeleccion(Connection conn, List<FilaReporteInventario> filas,
+			String bodega, double totalEfectivo, String usuario) {
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		parametros.put("bodega", bodega);
+		parametros.put("usuario", usuario);
+		parametros.put("totalEfectivo", totalEfectivo);
+		parametros.put("filasDataSource", new JRBeanCollectionDataSource(filas));
+
+		try {
+			InputStream in = AbstractJasperReports.class
+					.getResourceAsStream("/reportes/ReporteInventarioSeleccion.jrxml");
+			if (in == null) {
+				JOptionPane.showMessageDialog(null, "No se encontró la plantilla del reporte.");
+				return;
+			}
+			JasperReport jr = JasperCompileManager.compileReport(in);
+			reportFilled = JasperFillManager.fillReport(jr, parametros, conn);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 	public static void createReportVentasCategoria(Connection conn, List<DetalleFactura> ventas, Categoria cat,
 			String fecha1, String fecha2) {
 

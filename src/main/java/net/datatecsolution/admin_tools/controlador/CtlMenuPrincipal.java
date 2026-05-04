@@ -409,6 +409,14 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 					CtlFiltroRepVentasArtVendedor ctlFiltroArtVend = new CtlFiltroRepVentasArtVendedor(viewFiltroArtVend);
 				}
 				break;
+			case "REPORTE_INVENTARIO_SELECCION":
+				ViewReporteInventario viewReporteInventario = new ViewReporteInventario(view);
+				CtlReporteInventario ctlReporteInventario = new CtlReporteInventario(viewReporteInventario);
+				viewReporteInventario.setVisible(true);
+				viewReporteInventario.dispose();
+				viewReporteInventario = null;
+				ctlReporteInventario = null;
+				break;
 			case "REPORTE_X_VENCER":
 				ViewFiltroRepVenc viewFiltroRepVenc = new ViewFiltroRepVenc(view);
 				CtlFiltroRepVenc ctlFiltroRepVenc = new CtlFiltroRepVenc(viewFiltroRepVenc);

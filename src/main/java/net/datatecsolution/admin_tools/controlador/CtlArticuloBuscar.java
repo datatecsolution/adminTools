@@ -377,25 +377,30 @@ public class CtlArticuloBuscar implements ActionListener,MouseListener, WindowLi
 			
 			//si esta activado la busqueda por articulo
 			if(this.view.getRdbtnArticulo().isSelected()){
-				
-				
-				
+
+
+
 				cargarTabla(myArticuloDao.buscarArticulo(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				
-				this.view.getTabla().setRowSelectionInterval(0	, 0);
-				filaPulsada=1;
-				
-				myArticulo=view.getModelo().getArticulo(0);
+
+				if(this.view.getTabla().getRowCount()>0){
+					this.view.getTabla().setRowSelectionInterval(0	, 0);
+					filaPulsada=1;
+					myArticulo=view.getModelo().getArticulo(0);
+				} else {
+					myArticulo=null;
+				}
 			}
-			
+
 			//si esta activado las busqueda por Marca
-			if(this.view.getRdbtnMarca().isSelected()){  
+			if(this.view.getRdbtnMarca().isSelected()){
 				cargarTabla(myArticuloDao.buscarArticuloMarca(this.view.getTxtBuscar().getText(),view.getModelo().getLimiteSuperior(),view.getModelo().getCanItemPag()));
-				this.view.getTabla().setRowSelectionInterval(0	, 0);
-				filaPulsada=1;
-				
-				
-				myArticulo=view.getModelo().getArticulo(0);
+				if(this.view.getTabla().getRowCount()>0){
+					this.view.getTabla().setRowSelectionInterval(0	, 0);
+					filaPulsada=1;
+					myArticulo=view.getModelo().getArticulo(0);
+				} else {
+					myArticulo=null;
+				}
 			}
 			
 			//si esta activado la busqueda por id
