@@ -2005,7 +2005,7 @@ public class CtlFacturarFrame
 			this.view.enfocarCeldaTabla(x, 1, 0, 6);
 
 			String entrada = (String) JOptionPane.showInputDialog(view,
-					"El articulo ya esta en la factura. Escriba la cantidad a agregar:",
+					"El articulo \"" + art.getArticulo() + "\" ya esta en la factura. Escriba la cantidad a agregar:",
 					"Agregar cantidad", JOptionPane.OK_CANCEL_OPTION, null, null, "1");
 
 			if (entrada == null || !AbstractJasperReports.isNumberReal(entrada)) {
