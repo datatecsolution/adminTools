@@ -94,7 +94,13 @@ public boolean buscarCliente(Window v){
 		this.view.setLocationRelativeTo(v);
 		this.view.setModal(true);
 		view.getTxtBuscar().requestFocusInWindow();
-		
+
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myOrden = view.getModelo().getFactura(0);
+		}
+
 		this.view.setVisible(true);
 		
 		return resultado;

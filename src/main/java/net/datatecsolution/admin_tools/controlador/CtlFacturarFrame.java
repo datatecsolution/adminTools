@@ -47,7 +47,6 @@ public class CtlFacturarFrame
 
 	private Integer bandera = 0;
 	private boolean rotacionManual = false;
-	private boolean unirCanItem=true;
 
 	private final Usuario usuario;
 	private final ConfigUserFacturacion config;
@@ -1652,9 +1651,6 @@ public class CtlFacturarFrame
 		CtlOrdenesBuscar ctlBuscarOrden = new CtlOrdenesBuscar(viewListaOrdenes);
 
 		viewListaOrdenes.pack();
-		ctlBuscarOrden.view.getTxtBuscar().setText("");
-		ctlBuscarOrden.view.getTxtBuscar().selectAll();
-		ctlBuscarOrden.view.getTxtBuscar().requestFocusInWindow();
 
 		boolean resul = ctlBuscarOrden.buscarCliente(null);
 		boolean ordenCargada = false;
@@ -2011,65 +2007,33 @@ public class CtlFacturarFrame
 	}
 
 	public boolean buscarArticuloEnFactura(Articulo art) {
-		boolean existe = false;
 		for (int x = 0; x < view.getDetalles().size(); x++) {
 			Articulo artLocal = view.getDetalles().get(x).getArticulo();
 
-			if (art.getId() == artLocal.getId()) {
-				existe = true;
-
-				int row = x;
-				this.view.enfocarCeldaTabla(row, 1, 0, 6);
-
-				String entrada = (String) JOptionPane.showInputDialog(view,
-						"El articula ya esta en la factura. Escriba el cantida a agregar:",
-						"Agregar cantidad\n", JOptionPane.OK_CANCEL_OPTION, null,
-						null, "1");
-
-				if (config.isFacturarSinInventario()) {
-					BigDecimal cantidadSaldoItem = new BigDecimal(entrada);
-
-					BigDecimal newCantidadSaldoItem = new BigDecimal(
-							view.getDetalle(x).getCantidad().add(cantidadSaldoItem).doubleValue());
-
-					this.view.getDetalle(x).setCantidad(newCantidadSaldoItem);
-					this.calcularTotales();
-
-				} else {
-					if (AbstractJasperReports.isNumberReal(entrada)) {
-						if (myArticulo.getTipoArticulo() == 1) {
-							double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
-									cajaActiva.getDetartamento().getId());
-
-							BigDecimal cantidadSaldoItem = new BigDecimal(entrada);
-
-							double cantidad = view.getDetalle(x).getCantidad().add(cantidadSaldoItem)
-									.doubleValue();
-
-							BigDecimal newCantidadSaldoItem = new BigDecimal(view.getDetalle(x)
-									.getCantidad().add(cantidadSaldoItem).doubleValue());
-
-							this.view.getDetalle(x).setCantidad(newCantidadSaldoItem);
-
-							if (existencia > 0.0 && cantidad <= existencia) {
-								this.calcularTotales();
-							} else {
-								JOptionPane.showMessageDialog(view,
-										"No se puede requerir la cantidad de "
-												+ cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN)
-														.doubleValue()
-												+ " del articulo en la bodega " + usuario
-														.getCajaActiva().getDetartamento().getDescripcion());
-								view.eliminarDetalle(x);
-							}
-						}
-					}
-				}
-
+			if (art.getId() != artLocal.getId()) {
+				continue;
 			}
 
+			BigDecimal nuevaCantidad = view.getDetalle(x).getCantidad().add(BigDecimal.ONE);
+
+			if (!config.isFacturarSinInventario() && art.getTipoArticulo() == 1) {
+				double existencia = myArticuloDao.getExistencia(art.getId(),
+						cajaActiva.getDetartamento().getId());
+				if (existencia <= 0.0 || nuevaCantidad.doubleValue() > existencia) {
+					JOptionPane.showMessageDialog(view,
+							"No hay existencia suficiente del articulo en la bodega "
+									+ usuario.getCajaActiva().getDetartamento().getDescripcion());
+					this.view.enfocarCeldaTabla(x, 1, 0, 6);
+					return true;
+				}
+			}
+
+			this.view.getDetalle(x).setCantidad(nuevaCantidad);
+			this.calcularTotales();
+			this.view.enfocarCeldaTabla(x, 1, 0, 6);
+			return true;
 		}
-		return existe;
+		return false;
 	}
 
 	private void selectRowInset(int row) {
