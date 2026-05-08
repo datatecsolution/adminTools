@@ -437,26 +437,16 @@ public class CtlFacturarFrame
 		}
 
 		if (!aplicarTodo) {
-			BigDecimal cantidad = this.view.getDetalle(filaPulsada).getCantidad();
-			BigDecimal precioVenta = new BigDecimal(
-					view.getDetalle(filaPulsada).getArticulo().getPrecioVenta());
-			BigDecimal totalItem = cantidad.multiply(precioVenta);
-			double desc = bdDescuento / 100;
-			BigDecimal des = totalItem.multiply(new BigDecimal(desc));
-			this.view.getDetalle(filaPulsada)
-					.setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
+			DetalleFactura detalle = view.getDetalle(filaPulsada);
+			detalle.setDescuentoItem(facturacionService.calcularDescuentoPorcentaje(detalle, bdDescuento));
 		} else {
 			for (int xx = 0; xx < view.getDetalles().size(); xx++) {
 				DetalleFactura detalle = this.view.getDetalle(xx);
-				if (detalle.getArticulo().getId() != -1)
-					if (detalle.getCantidad().doubleValue() != 0 && detalle.getArticulo().getPrecioVenta() != 0) {
-						BigDecimal cantidad = detalle.getCantidad();
-						BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
-						BigDecimal totalItem = cantidad.multiply(precioVenta);
-						double desc = bdDescuento / 100;
-						BigDecimal des = totalItem.multiply(new BigDecimal(desc));
-						detalle.setDescuentoItem(des.setScale(0, BigDecimal.ROUND_HALF_EVEN));
-					}
+				if (detalle.getArticulo().getId() != -1
+						&& detalle.getCantidad().doubleValue() != 0
+						&& detalle.getArticulo().getPrecioVenta() != 0) {
+					detalle.setDescuentoItem(facturacionService.calcularDescuentoPorcentaje(detalle, bdDescuento));
+				}
 			}
 		}
 		this.calcularTotales();

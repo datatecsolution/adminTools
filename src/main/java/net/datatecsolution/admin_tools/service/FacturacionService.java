@@ -88,6 +88,14 @@ public class FacturacionService {
 		}
 	}
 
+	public BigDecimal calcularDescuentoPorcentaje(DetalleFactura detalle, double porcentaje) {
+		BigDecimal cantidad = detalle.getCantidad();
+		BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
+		BigDecimal totalItem = cantidad.multiply(precioVenta);
+		BigDecimal factor = new BigDecimal(porcentaje / 100);
+		return totalItem.multiply(factor).setScale(0, BigDecimal.ROUND_HALF_EVEN);
+	}
+
 	public boolean registrarFactura(Factura factura) {
 		return facturaDao.registrar(factura);
 	}
