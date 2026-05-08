@@ -34,6 +34,11 @@ public class CtlCajasBuscar extends CtlGenerico implements ActionListener, Mouse
 		
 	}
 	public boolean buscarCaja(){
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myCaja = view.getModelo().getCaja(0);
+		}
 		view.setVisible(true);
 		return this.resultadoBuscar;
 	}

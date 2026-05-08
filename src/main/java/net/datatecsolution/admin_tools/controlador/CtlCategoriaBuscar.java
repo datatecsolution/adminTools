@@ -209,7 +209,13 @@ public class CtlCategoriaBuscar implements ActionListener, MouseListener,WindowL
 	}
 	
 	public Categoria buscarMarca(){
-		
+
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myMarca = view.getModelo().getMarca(0);
+		}
+
 		this.view.setVisible(true);
 		return myMarca;
 	}

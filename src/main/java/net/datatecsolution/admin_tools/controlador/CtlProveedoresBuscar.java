@@ -209,12 +209,19 @@ public class CtlProveedoresBuscar implements ActionListener ,MouseListener, Wind
 	
 	public boolean buscarProveedores(Window v){
 		cargarTabla(myDao.todos(view.getModelo().getCanItemPag(),view.getModelo().getLimiteSuperior()));
-		
+
 		this.view.setLocationRelativeTo(v);
 		this.view.setModal(true);
+
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myProveedor = view.getModelo().getProveedor(0);
+		}
+
 		this.view.setVisible(true);
 		return resultado;
-		
+
 	}
 
 	/**

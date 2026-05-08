@@ -31,6 +31,13 @@ public class CtlRutaCobroBuscar implements ActionListener, MouseListener, Window
 	public boolean buscar() {
 		view.getRdbtnDescripcion().setSelected(true);
 		view.getTxtBuscar().requestFocusInWindow();
+
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myRuta = view.getModelo().getRuta(0);
+		}
+
 		view.setVisible(true);
 		return resultado;
 	}
@@ -78,7 +85,7 @@ public class CtlRutaCobroBuscar implements ActionListener, MouseListener, Window
 		}
 
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			if(filaPulsada>0){
+			if(filaPulsada>=0){
 				myRuta=this.view.getModelo().getRuta(filaPulsada);
 				this.resultado=true;
 				view.setVisible(false);

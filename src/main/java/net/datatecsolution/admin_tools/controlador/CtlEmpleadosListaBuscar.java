@@ -33,6 +33,13 @@ public class CtlEmpleadosListaBuscar implements ActionListener,MouseListener, Wi
 		// TODO Auto-generated method stub
 		view.getRdbtnNombre().setSelected(true);
 		view.getTxtBuscar().requestFocusInWindow();
+
+		if (view.getModelo().getRowCount() > 0) {
+			this.view.getTabla().setRowSelectionInterval(0, 0);
+			this.filaPulsada = 0;
+			this.myEmpleado = view.getModelo().getEmpleado(0);
+		}
+
 		view.setVisible(true);
 		return resultado;
 	}
@@ -97,8 +104,8 @@ public class CtlEmpleadosListaBuscar implements ActionListener,MouseListener, Wi
 	      }
 		
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			
-			if(filaPulsada>0){
+
+			if(filaPulsada>=0){
 				//Se recoge el id de la fila marcada
 	            int identificador= (int)this.view.getModelo().getValueAt(filaPulsada, 0);
 	            
