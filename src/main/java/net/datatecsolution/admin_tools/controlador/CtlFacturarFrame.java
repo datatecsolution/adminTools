@@ -2002,7 +2002,17 @@ public class CtlFacturarFrame
 				continue;
 			}
 
-			BigDecimal nuevaCantidad = view.getDetalle(x).getCantidad().add(BigDecimal.ONE);
+			this.view.enfocarCeldaTabla(x, 1, 0, 6);
+
+			String entrada = (String) JOptionPane.showInputDialog(view,
+					"El articulo ya esta en la factura. Escriba la cantidad a agregar:",
+					"Agregar cantidad", JOptionPane.OK_CANCEL_OPTION, null, null, "1");
+
+			if (entrada == null || !AbstractJasperReports.isNumberReal(entrada)) {
+				return true;
+			}
+
+			BigDecimal nuevaCantidad = view.getDetalle(x).getCantidad().add(new BigDecimal(entrada));
 
 			if (!config.isFacturarSinInventario() && art.getTipoArticulo() == 1) {
 				double existencia = myArticuloDao.getExistencia(art.getId(),
@@ -2011,14 +2021,12 @@ public class CtlFacturarFrame
 					JOptionPane.showMessageDialog(view,
 							"No hay existencia suficiente del articulo en la bodega "
 									+ usuario.getCajaActiva().getDetartamento().getDescripcion());
-					this.view.enfocarCeldaTabla(x, 1, 0, 6);
 					return true;
 				}
 			}
 
 			this.view.getDetalle(x).setCantidad(nuevaCantidad);
 			this.calcularTotales();
-			this.view.enfocarCeldaTabla(x, 1, 0, 6);
 			return true;
 		}
 		return false;
