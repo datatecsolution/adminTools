@@ -24,7 +24,6 @@ public class CtlFacturarFrame
 		implements ActionListener, MouseListener, TableModelListener, KeyListener, InternalFrameListener {
 	private ViewFacturarFrame view;
 	private Factura myFactura = null;
-	private FacturaDao facturaDao = null;
 	private ClienteDao clienteDao = null;
 	private Articulo myArticulo = null;
 	private ArticuloDao myArticuloDao = null;
@@ -60,7 +59,6 @@ public class CtlFacturarFrame
 		myFactura = new Factura();
 		myArticuloDao = new ArticuloDao();
 		clienteDao = new ClienteDao();
-		facturaDao = new FacturaDao();
 		codBarraDao = new CodBarraDao();
 		insumoDao = new InsumoDao();
 		facturacionService = new FacturacionService();
