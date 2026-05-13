@@ -33,6 +33,17 @@ Problemas estructurales detectados en el esquema actual:
 | 9 | Corregir typos (`saldo_anterio`, etc.) | Medio | Bajo | Limpieza |
 | 10 | Rediseño del kardex multi-tenant | Muy alto | Muy alto | Aislamiento real entre cajas |
 
+## Estado de avance
+
+- **Fase 4 (drop de índices duplicados)** — **completada**. Implementada por
+  `V4__drop_duplicate_indexes.java` (mayoría) y `V11__drop_indices_duplicados.sql`
+  (los 2 que quedaban). US-005 cerrada. Ver `auditoria-resultado.md`.
+- **Fase 5 (índices en columnas de fecha)** — **verificada**. La auditoría
+  contra `admin_tools` y `admin_tools_caja_2` mostró que las 17 columnas de
+  fecha críticas ya tenían índice. Las 15 candidatas sin índice no se usan
+  en `WHERE/ORDER BY` en ningún DAO ni stored procedure. US-006 cerrada
+  sin migración. Ver `auditoria-resultado.md`.
+
 ## Orden recomendado de ejecución
 
 1. **Fases 4 y 5** — quick wins sin riesgo (drop de índices duplicados + índices de fecha).
