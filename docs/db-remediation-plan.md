@@ -43,6 +43,13 @@ Problemas estructurales detectados en el esquema actual:
   fecha críticas ya tenían índice. Las 15 candidatas sin índice no se usan
   en `WHERE/ORDER BY` en ningún DAO ni stored procedure. US-006 cerrada
   sin migración. Ver `auditoria-resultado.md`.
+- **Fase 2 (MyISAM → InnoDB)** — **completada**. Implementada por
+  `V12__convert_myisam_to_innodb.sql` con stored procedure dinámica que
+  itera `information_schema` y convierte cualquier tabla MyISAM detectada.
+  Idempotente y robusta contra drift (no hardcodea nombres del baseline).
+  Baseline declara 3 tablas MyISAM: `articulo_bodega`, `pagos_creditos`,
+  `salida_productos`. US-013 cerrada. Auditoría en
+  `auditoria-myisam-pre-v12.sql`.
 
 ## Orden recomendado de ejecución
 
