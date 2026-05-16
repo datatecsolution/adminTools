@@ -39,7 +39,7 @@ public class CtlFacturarFrame
 	private int tipoView = 1;
 	private int netBuscar = 0;
 
-	List<ViewFacturarFrame> ventanas;
+	List<? extends IViewFacturar> ventanas;
 	private final FacturacionService facturacionService;
 	private final CierreCajaService cierreCajaService;
 	private Caja cajaDefecto;
@@ -52,7 +52,7 @@ public class CtlFacturarFrame
 	private final ConfigUserFacturacion config;
 	private Caja cajaActiva;
 
-	public CtlFacturarFrame(ViewFacturarFrame v, List<ViewFacturarFrame> ven) {
+	public CtlFacturarFrame(IViewFacturar v, List<? extends IViewFacturar> ven) {
 
 		ventanas = ven;
 		view = v;

@@ -155,6 +155,34 @@
 
 Solo permanece el cableado de listeners en construcción (`addActionListener`/`addKeyListener`), que es responsabilidad legítima del controller-as-listener.
 
+### Fase 4.1 - Interfaz IViewFacturar + DTO FacturaFormData ✅ COMPLETADA
+
+**Estado:** Implementada en commits `e276f3f` y `483d010` como cierre formal de US-011 del Sprint 2.
+
+**Objetivo:** Cerrar la deuda residual de Fase 4 formalizando el contrato View ↔ Controller.
+
+**Cambios:**
+
+- `IViewFacturar` nueva en `view/`: declara los 47 métodos de dominio + 4 lifecycle (`setVisible`, `dispose`, `getTopLevelAncestor`, `conectarContralador`) + helper `asComponent()` (para APIs Swing que requieren Component). Auditados directamente de los `view.*()` que `CtlFacturarFrame` invoca.
+- `ViewFacturarFrame implements IViewFacturar`. Override `asComponent()` retorna `this`.
+- `CtlFacturarFrame` ahora referencia exclusivamente `IViewFacturar`:
+  - Campo `view`: `IViewFacturar`
+  - Campo `ventanas`: `List<? extends IViewFacturar>`
+  - Constructor: `(IViewFacturar v, List<? extends IViewFacturar> ven)`
+  - **Cero referencias a `ViewFacturarFrame` concreto en el controller.**
+- `FacturaFormData` nueva en `view/dto/`: snapshot agregado de `FacturaCabeceraData` + `FacturaClienteData` + `List<DetalleFactura>`. Factories `empty(fecha)` y `of(factura, fecha)`.
+- `IViewFacturar` expone `getFormData()` y `setFormData(FacturaFormData)`.
+- Refactor de dos flujos clave en el controller:
+  - `setEmptyView()`: 4 setters cluster + DTOs inline → 1 sola llamada `setFormData(empty)`.
+  - `cargarFacturaView()`: 4 sitios → 3 líneas con `setFormData(of(factura, fechaActual))`.
+
+**Notas:**
+
+- El caller del constructor (`ViewModuloFacturar`) no necesitó cambios: pasa un `ViewFacturarFrame` que es upcasted a `IViewFacturar`, y un `List<ViewFacturarFrame>` que satisface `List<? extends IViewFacturar>`.
+- Para sitios donde el controller debe pasar la vista a APIs Swing tipadas como `Component` (JOptionPane.show*, JasperReports.showViewer, SwingUtilities.getWindowAncestor), se usa `view.asComponent()` con cast a `JInternalFrame` cuando hace falta.
+
+**Beneficio futuro:** la interfaz es el contrato que `admintools-pos` (React) deberá replicar a través de endpoints REST en el backend `admintools` (Sprint 3+). Sirve de referencia explícita sobre qué operaciones del formulario de facturación exponer.
+
 #### Ajustes de UX descubiertos durante las pruebas (incluidos en la rama)
 
 | Ajuste | Commit | Detalle |
