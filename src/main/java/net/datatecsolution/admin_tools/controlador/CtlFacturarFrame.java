@@ -7,6 +7,7 @@ import net.datatecsolution.admin_tools.service.FacturacionService;
 import net.datatecsolution.admin_tools.view.*;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
 import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
+import net.datatecsolution.admin_tools.view.dto.FacturaFormData;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
@@ -1606,31 +1607,30 @@ public class CtlFacturarFrame
 	}
 
 	private void setEmptyView() {
-		view.vaciarDetalles();
-		myFactura.setCodigoAlter(0);
-		view.agregarDetalle();
+		String fechaSistema = facturacionService.getFechaSistema();
 
+		// Snapshot atomico: cabecera contado + cliente "Consumidor final" + detalles vacios.
+		view.setFormData(FacturaFormData.empty(fechaSistema));
+		view.agregarDetalle();   // linea en blanco para empezar a tipear
+
+		// Reset del modelo interno
+		myFactura.setCodigoAlter(0);
 		this.myFactura.resetTotales();
 		this.myFactura.setVendedor(new Empleado());
+		this.myFactura.setObservacion("");
+		this.myCliente = null;
+		this.myArticulo = null;
 
-		String fechaSistema = facturacionService.getFechaSistema();
-		view.setCabeceraData(new FacturaCabeceraData(FacturaCabeceraData.TIPO_CONTADO, fechaSistema));
+		// Etiqueta de fecha en el frame padre
 		ViewModuloFacturar framePadre = (ViewModuloFacturar) view.getTopLevelAncestor();
 		if (framePadre != null) {
 			framePadre.btnFecha.setText("Fecha: " + fechaSistema);
 			framePadre.btnFecha.revalidate();
 		}
 
-		view.setClienteData(new FacturaClienteData(1, "Consumidor final", ""));
-
-		this.myCliente = null;
-		this.myArticulo = null;
-
 		view.resetTotales();
-		this.myFactura.setObservacion("");
 		this.view.setEstadoFactura(false, 0);
 		this.view.seleccionarBotonNuevaFactura();
-
 		view.limpiarYEnfocarBusqueda();
 	}
 
@@ -1756,16 +1756,13 @@ public class CtlFacturarFrame
 	}
 
 	public void cargarFacturaView() {
+		// Preserva la fecha que esta hoy en la cabecera (no la de la factura
+		// cargada — es la fecha de trabajo actual).
+		String fechaActual = view.getCabeceraData().getFecha();
 
-		Cliente clienteFactura = myFactura.getCliente();
-		this.myCliente = clienteFactura;
-		view.setClienteData(new FacturaClienteData(clienteFactura.getId(), clienteFactura.getNombre(), clienteFactura.getRtn()));
-
-		view.setCabeceraData(new FacturaCabeceraData(myFactura.getTipoFactura(), view.getCabeceraData().getFecha()));
-
+		view.setFormData(FacturaFormData.of(myFactura, fechaActual));
+		this.myCliente = myFactura.getCliente();
 		view.actualizarTotales(myFactura);
-
-		this.view.setDetalles(myFactura.getDetalles());
 	}
 
 	public Factura actualizarFactura(Factura f) {

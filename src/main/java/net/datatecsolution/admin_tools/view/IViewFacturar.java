@@ -6,6 +6,7 @@ import net.datatecsolution.admin_tools.modelo.DetalleFactura;
 import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
 import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
+import net.datatecsolution.admin_tools.view.dto.FacturaFormData;
 
 import javax.swing.JTextField;
 import java.awt.Component;
@@ -44,6 +45,18 @@ public interface IViewFacturar {
      * tipicamente devuelve {@code this} porque es un JInternalFrame.
      */
     Component asComponent();
+
+    // ─── Form snapshot (cabecera + cliente + detalles) ──────────────────────
+    /** Devuelve un snapshot del estado actual del formulario. */
+    FacturaFormData getFormData();
+
+    /**
+     * Aplica el snapshot al formulario: setCabeceraData + setClienteData +
+     * vaciarDetalles + setDetalles. NO agrega línea en blanco al final
+     * (eso queda como responsabilidad del caller via {@link #agregarDetalle()})
+     * porque depende del contexto (form nuevo vs edición).
+     */
+    void setFormData(FacturaFormData data);
 
     // ─── Cabecera ───────────────────────────────────────────────────────────
     FacturaCabeceraData getCabeceraData();

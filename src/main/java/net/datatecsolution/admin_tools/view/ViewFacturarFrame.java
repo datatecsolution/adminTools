@@ -7,6 +7,7 @@ import net.datatecsolution.admin_tools.modelo.Factura;
 import net.datatecsolution.admin_tools.view.botones.*;
 import net.datatecsolution.admin_tools.view.dto.FacturaCabeceraData;
 import net.datatecsolution.admin_tools.view.dto.FacturaClienteData;
+import net.datatecsolution.admin_tools.view.dto.FacturaFormData;
 import net.datatecsolution.admin_tools.view.rendes.RenderizadorTablaFactura;
 import net.datatecsolution.admin_tools.view.tablemodel.CbxTmEmpleado;
 import net.datatecsolution.admin_tools.view.tablemodel.ListaBotonesFacturas;
@@ -776,6 +777,19 @@ public class ViewFacturarFrame extends JInternalFrame implements IViewFacturar {
 	@Override
 	public Component asComponent() {
 		return this;
+	}
+
+	@Override
+	public FacturaFormData getFormData() {
+		return new FacturaFormData(getCabeceraData(), getClienteData(), getDetalles());
+	}
+
+	@Override
+	public void setFormData(FacturaFormData data) {
+		setCabeceraData(data.getCabecera());
+		setClienteData(data.getCliente());
+		vaciarDetalles();
+		setDetalles(data.getDetalles());
 	}
 
 	public void conectarContralador(CtlFacturarFrame c){
