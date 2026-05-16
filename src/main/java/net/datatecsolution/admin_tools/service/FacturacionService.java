@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.service;
 
 import net.datatecsolution.admin_tools.modelo.*;
 import net.datatecsolution.admin_tools.modelo.dao.*;
+import net.datatecsolution.admintools.core.FacturacionCalculadora;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -89,11 +90,12 @@ public class FacturacionService {
 	}
 
 	public BigDecimal calcularDescuentoPorcentaje(DetalleFactura detalle, double porcentaje) {
-		BigDecimal cantidad = detalle.getCantidad();
-		BigDecimal precioVenta = new BigDecimal(detalle.getArticulo().getPrecioVenta());
-		BigDecimal totalItem = cantidad.multiply(precioVenta);
-		BigDecimal factor = new BigDecimal(porcentaje / 100);
-		return totalItem.multiply(factor).setScale(0, BigDecimal.ROUND_HALF_EVEN);
+		// Delega al modulo compartido admintools-core (logica pura,
+		// reusable por la API Spring Boot).
+		return FacturacionCalculadora.calcularDescuentoPorcentaje(
+				detalle.getCantidad(),
+				detalle.getArticulo().getPrecioVenta(),
+				porcentaje);
 	}
 
 	public boolean registrarFactura(Factura factura) {
