@@ -1,0 +1,43 @@
+// admintools-core
+//
+// Modulo compartido con logica pura (calculos financieros, validaciones
+// de dominio) reutilizable por:
+//   - El Swing legacy (root project AdminTools) via project(':admintools-core')
+//   - El backend Spring Boot admintools (/Users/jdmayorga/Desktop/admintools)
+//     via Maven dependency con mavenLocal() o un registro remoto.
+//
+// Diseno:
+//   - Cero dependencias Swing, JPA, Spring, JDBC.
+//   - Solo java.* + jakarta + BigDecimal. Sin imports de paquetes
+//     application-specific (admin_tools.modelo, admin_tools.dao, etc).
+//   - Inputs/outputs son primitivos o DTOs propios del modulo.
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = 'net.datatecsolution'
+version = '0.1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifactId 'admintools-core'
+        }
+    }
+    // Por defecto se publica a mavenLocal() (~/.m2/repository).
+    // Para agregar un registro remoto, declarar aqui un repositories block.
+}

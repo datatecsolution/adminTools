@@ -23,6 +23,12 @@ java{
 
 }
 jar {
+    // El fat-jar empaca todas las dependencias incluido admintools-core.
+    // Gradle 4.10 no infiere automaticamente esta dependencia desde el
+    // bloque `from` con `configurations.collect`, asi que la declaramos
+    // explicita para que `gradlew clean build` funcione desde cero.
+    dependsOn(':admintools-core:jar')
+
     from {
         configurations.runtime.collect {
             it.isDirectory() ? it : zipTree(it)
@@ -39,6 +45,10 @@ jar {
 }
 
 dependencies {
+    // Modulo compartido con logica pura (calculos financieros, etc).
+    // Reutilizable por la API Spring Boot via mavenLocal.
+    compile project(':admintools-core')
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'com.toedter', name: 'jcalendar', version: '1.4'
     //compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
