@@ -29,8 +29,8 @@ SELECT
     TABLE_NAME              AS tabla,
     COLUMN_NAME             AS columna,
     DATA_TYPE               AS tipo,
-    NUMERIC_PRECISION       AS precision,
-    NUMERIC_SCALE           AS scale,
+    NUMERIC_PRECISION       AS num_precision,
+    NUMERIC_SCALE           AS num_scale,
     COLUMN_DEFAULT          AS valor_default
 FROM information_schema.COLUMNS
 WHERE TABLE_SCHEMA = @db
