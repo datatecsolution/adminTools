@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CtlFacturarFrame
 		implements ActionListener, MouseListener, TableModelListener, KeyListener, InternalFrameListener {
-	private ViewFacturarFrame view;
+	private IViewFacturar view;
 	private Factura myFactura = null;
 	private ClienteDao clienteDao = null;
 	private Articulo myArticulo = null;
@@ -164,7 +164,7 @@ public class CtlFacturarFrame
 				try {
 					AbstractJasperReports.crearReporteCotizacion(ConexionStatic.getPoolConexion().getConnection(),
 							myFactura.getIdFactura());
-					AbstractJasperReports.showViewer(view);
+					AbstractJasperReports.showViewer((JInternalFrame) view.asComponent());
 
 					setEmptyView();
 
@@ -182,7 +182,7 @@ public class CtlFacturarFrame
 					e.printStackTrace();
 				}
 			} else {
-				JOptionPane.showMessageDialog(view, "Error al guardar la cotizacion", "Error al guardar",
+				JOptionPane.showMessageDialog(view.asComponent(), "Error al guardar la cotizacion", "Error al guardar",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -199,7 +199,7 @@ public class CtlFacturarFrame
 		this.myArticulo = this.myArticuloDao.buscarArticuloBarraCod(busca);
 
 		if (myArticulo == null) {
-			JOptionPane.showMessageDialog(view, "No se encontro el articulo");
+			JOptionPane.showMessageDialog(view.asComponent(), "No se encontro el articulo");
 			view.limpiarYEnfocarBusqueda();
 			myArticulo = null;
 			netBuscar = 0;
@@ -245,7 +245,7 @@ public class CtlFacturarFrame
 				this.view.agregarDetalle();
 				selectRowInset();
 			} else {
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						"Solo la caja " + cajaDefecto.getDescripcion() + " puede facturar servicios.",
 						"Error en articulo", JOptionPane.ERROR_MESSAGE);
 				view.limpiarBusqueda();
@@ -276,7 +276,7 @@ public class CtlFacturarFrame
 				this.view.agregarDetalle();
 				selectRowInset();
 			} else {
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						myArticulo.getArticulo() + " no tiene existencia en "
 								+ cajaActiva.getDetartamento().getDescripcion(),
 						"Error en existencia", JOptionPane.ERROR_MESSAGE);
@@ -284,7 +284,7 @@ public class CtlFacturarFrame
 			}
 		} else {
 			if (cajaActiva.getCodigo() != this.cajaDefecto.getCodigo()) {
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						"Solo la caja " + cajaDefecto.getDescripcion() + " puede facturar servicios.",
 						"Error en articulo", JOptionPane.ERROR_MESSAGE);
 				view.limpiarBusqueda();
@@ -314,7 +314,7 @@ public class CtlFacturarFrame
 					}
 				} else {
 					exist = false;
-					JOptionPane.showMessageDialog(view,
+					JOptionPane.showMessageDialog(view.asComponent(),
 							"El insumo " + insumos.get(xx).getArticulo().getArticulo()
 									+ " que pertence al servicio " + myArticulo.getArticulo()
 									+ " ,\nno tiene existencia en "
@@ -342,7 +342,7 @@ public class CtlFacturarFrame
 		if (myCliente != null) {
 			view.setClienteData(new FacturaClienteData(myCliente.getId(), myCliente.getNombre(), myCliente.getRtn()));
 		} else {
-			JOptionPane.showMessageDialog(view, "Cliente no encontrado");
+			JOptionPane.showMessageDialog(view.asComponent(), "Cliente no encontrado");
 			view.setClienteData(new FacturaClienteData(1, "Cliente Normal", ""));
 		}
 	}
@@ -352,7 +352,7 @@ public class CtlFacturarFrame
 		try {
 			AbstractJasperReports.createReportOrdenCarta(ConexionStatic.getPoolConexion().getConnection(),
 					idFacturaTemporal);
-			AbstractJasperReports.showViewer(view);
+			AbstractJasperReports.showViewer((JInternalFrame) view.asComponent());
 		} catch (SQLException ee) {
 			ee.printStackTrace();
 		}
@@ -362,7 +362,7 @@ public class CtlFacturarFrame
 		int idFacturaTemporal = view.getOrdenSeleccionadaPanel().getIdFactura();
 
 		int confirma = JOptionPane.showConfirmDialog(
-				view,
+				view.asComponent(),
 				"¿Está seguro que desea eliminar la orden #" + idFacturaTemporal + "?",
 				"Confirmar eliminación",
 				JOptionPane.YES_NO_OPTION,
@@ -419,19 +419,19 @@ public class CtlFacturarFrame
 		if (filaPulsada < 0) return;
 
 		etiqueta.setText("Escriba el porcentaje(%) de descuento 1-35%");
-		JOptionPane.showMessageDialog(view, panelDescuento, "Descuento", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(view.asComponent(), panelDescuento, "Descuento", JOptionPane.INFORMATION_MESSAGE);
 		String seleccionadoDescuento = descuento.getText();
 		boolean aplicarTodo = rememberChk.isSelected();
 
 		if (!AbstractJasperReports.isNumberReal(seleccionadoDescuento)) {
-			JOptionPane.showMessageDialog(view, "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(view.asComponent(), "El descuento debe ser un numero", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
 		double bdDescuento = Double.parseDouble(seleccionadoDescuento);
 
 		if (bdDescuento > maxDescuento) {
-			JOptionPane.showMessageDialog(view, "No puede otorgar un descuento mayo del 35%", "Error",
+			JOptionPane.showMessageDialog(view.asComponent(), "No puede otorgar un descuento mayo del 35%", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -457,7 +457,7 @@ public class CtlFacturarFrame
 		if (filaPulsada < 0) return;
 
 		etiqueta.setText("Escriba el descuento");
-		JOptionPane.showMessageDialog(view, panelDescuento, "Descuento", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(view.asComponent(), panelDescuento, "Descuento", JOptionPane.INFORMATION_MESSAGE);
 		String entrada = descuento.getText();
 		boolean aplicarTodo = rememberChk.isSelected();
 
@@ -496,7 +496,7 @@ public class CtlFacturarFrame
 	public void modificarCantidad() {
 		if (filaPulsada < 0) return;
 
-		String entrada = JOptionPane.showInputDialog(view, "Escriba el cantida");
+		String entrada = JOptionPane.showInputDialog(view.asComponent(), "Escriba el cantida");
 		if (entrada == null || entrada.trim().isEmpty()) return;
 
 		if (config.isFacturarSinInventario()) {
@@ -523,7 +523,7 @@ public class CtlFacturarFrame
 			if (existencia > 0.0 && cantidad <= existencia) {
 				this.calcularTotales();
 			} else {
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						"No se puede requerir la cantidad de "
 								+ cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()
 								+ " del articulo en la bodega "
@@ -551,7 +551,7 @@ public class CtlFacturarFrame
 					exist = true;
 				} else {
 					exist = false;
-					JOptionPane.showMessageDialog(view,
+					JOptionPane.showMessageDialog(view.asComponent(),
 							"El insumo " + insumos.get(xx).getArticulo().getArticulo()
 									+ " que pertence al servicio " + myArticulo.getArticulo()
 									+ " ,\nno tiene existencia en "
@@ -569,7 +569,7 @@ public class CtlFacturarFrame
 				this.view.getDetalle(filaPulsada).setCantidad(cantidadSaldoItem);
 				this.calcularTotales();
 			} else {
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						"No se puede requerir la cantidad de "
 								+ cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()
 								+ " del articulo en la bodega "
@@ -695,7 +695,7 @@ public class CtlFacturarFrame
 			this.view.masCantidad(filaPulsada);
 			this.calcularTotales();
 		} else {
-			JOptionPane.showMessageDialog(view, "No se puede requerir la cantidad de "
+			JOptionPane.showMessageDialog(view.asComponent(), "No se puede requerir la cantidad de "
 					+ cantidadSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()
 					+ " del articulo en la bodega " + cajaActiva.getDetartamento().getDescripcion(),
 					"Error en existencia", JOptionPane.ERROR_MESSAGE);
@@ -726,7 +726,7 @@ public class CtlFacturarFrame
 				exist = true;
 			} else {
 				exist = false;
-				JOptionPane.showMessageDialog(view,
+				JOptionPane.showMessageDialog(view.asComponent(),
 						"El insumo " + insumos.get(xx).getArticulo().getArticulo()
 								+ " que pertence al servicio " + myArticulo.getArticulo()
 								+ " ,\nno tiene existencia en "
@@ -743,7 +743,7 @@ public class CtlFacturarFrame
 			this.view.getDetalle(filaPulsada).setCantidad(newCantSaldoItem);
 			this.calcularTotales();
 		} else {
-			JOptionPane.showMessageDialog(view,
+			JOptionPane.showMessageDialog(view.asComponent(),
 					"No se puede requerir la cantidad de "
 							+ newCantSaldoItem.setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()
 							+ " del articulo en la bodega "
@@ -794,7 +794,7 @@ public class CtlFacturarFrame
 
 		if (config.isVentanaVendedor()) {
 			if (myFactura.getVendedor().getCodigo() < 1) {
-				ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
+				ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view.asComponent()));
 				CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
 				verificarAccion = ctlVendedor.cargarVendedor();
@@ -819,7 +819,7 @@ public class CtlFacturarFrame
 		if (config.isVentanaObservaciones()) {
 			String observaciones = "";
 			JTextArea ta = new JTextArea(20, 20);
-			switch (JOptionPane.showConfirmDialog(view, new JScrollPane(ta), "Observaciones de la factura",
+			switch (JOptionPane.showConfirmDialog(view.asComponent(), new JScrollPane(ta), "Observaciones de la factura",
 					JOptionPane.ERROR_MESSAGE)) {
 				case JOptionPane.OK_OPTION:
 					observaciones = ta.getText();
@@ -832,7 +832,7 @@ public class CtlFacturarFrame
 		}
 
 		if (myFactura.getTipoFactura() == 1) {
-			ViewCambioPago viewPago = new ViewCambioPago(SwingUtilities.getWindowAncestor(view));
+			ViewCambioPago viewPago = new ViewCambioPago(SwingUtilities.getWindowAncestor(view.asComponent()));
 			CtlCambioPago ctlPago = new CtlCambioPago(viewPago, myFactura.getTotal());
 			boolean resulPago = ctlPago.pagar();
 			if (resulPago) {
@@ -965,7 +965,7 @@ public class CtlFacturarFrame
 						this.view.enfocarCeldaTabla(row, colum, 3, 3);
 
 					} else {
-						JOptionPane.showMessageDialog(view, "No se encuentra el articulo");
+						JOptionPane.showMessageDialog(view.asComponent(), "No se encuentra el articulo");
 						this.view.getDetalle(row).getArticulo().setId(-1);
 						this.view.agregarDetalle();
 						calcularTotales();
@@ -998,7 +998,7 @@ public class CtlFacturarFrame
 						calcularTotales();
 						view.enfocarBusqueda();
 					} else {
-						JOptionPane.showMessageDialog(view,
+						JOptionPane.showMessageDialog(view.asComponent(),
 								myArticulo.getArticulo() + " no tiene existencia en " + usuario
 										.getCajaActiva().getDetartamento().getDescripcion(),
 								"Error en existencia", JOptionPane.ERROR_MESSAGE);
@@ -1191,7 +1191,7 @@ public class CtlFacturarFrame
 
 	private void buscarCotizaciones() {
 	
-		ViewListaCotizacion vistaFacturars = new ViewListaCotizacion(SwingUtilities.getWindowAncestor(view));
+		ViewListaCotizacion vistaFacturars = new ViewListaCotizacion(SwingUtilities.getWindowAncestor(view.asComponent()));
 		CtlCotizacionLista ctlFacturas = new CtlCotizacionLista(vistaFacturars);
 
 		vistaFacturars.pack();
@@ -1269,7 +1269,7 @@ public class CtlFacturarFrame
 								cierreCajaService.getIdUltimoRegistro());
 
 						AbstractJasperReports.imprimierFactura();
-						AbstractJasperReports.showViewer(view);
+						AbstractJasperReports.showViewer((JInternalFrame) view.asComponent());
 
 						viewContar.dispose();
 						viewContar = null;
@@ -1280,11 +1280,11 @@ public class CtlFacturarFrame
 						ee.printStackTrace();
 					}
 				} else {
-					JOptionPane.showMessageDialog(view, "No se guardo el cierre de corte. Vuelva a hacer el corte.");
+					JOptionPane.showMessageDialog(view.asComponent(), "No se guardo el cierre de corte. Vuelva a hacer el corte.");
 				}
 		} // fin de la verificacion de las facturas
 		else {
-			JOptionPane.showMessageDialog(view,
+			JOptionPane.showMessageDialog(view.asComponent(),
 					"No hay facturas para crear un cierre de caja o no tiene un cierre activo.");
 			salir();
 		}
@@ -1338,7 +1338,7 @@ public class CtlFacturarFrame
 					ViewModuloFacturar frame = (ViewModuloFacturar) view.getTopLevelAncestor();
 					frame.btnCaja.setText(caja.getDescripcion());
 				} else {
-					JOptionPane.showMessageDialog(view,
+					JOptionPane.showMessageDialog(view.asComponent(),
 							"No puede cambiar de caja. Debe eliminar los articulos agregado", "ERORR",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -1406,7 +1406,7 @@ public class CtlFacturarFrame
 
 	private boolean solicitarPasswordAdmin() {
 		JPasswordField pf = crearPasswordConFoco();
-		int action = JOptionPane.showConfirmDialog(view, pf, "Escriba el password de admin",
+		int action = JOptionPane.showConfirmDialog(view.asComponent(), pf, "Escriba el password de admin",
 				JOptionPane.OK_CANCEL_OPTION);
 		if (action != JOptionPane.OK_OPTION) {
 			return false;
@@ -1415,7 +1415,7 @@ public class CtlFacturarFrame
 		if (myUsuarioDao.comprobarAdmin(pwd)) {
 			return true;
 		}
-		JOptionPane.showMessageDialog(view, "Password incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(view.asComponent(), "Password incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
 		return false;
 	}
 
@@ -1428,7 +1428,7 @@ public class CtlFacturarFrame
 
 			if (config.isVentanaVendedor()) {
 				if (myFactura.getVendedor().getCodigo() < 1) {
-					ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view));
+					ViewCargarVenderor viewVendedor = new ViewCargarVenderor(SwingUtilities.getWindowAncestor(view.asComponent()));
 					CtlCargarVendedor ctlVendedor = new CtlCargarVendedor(viewVendedor);
 
 					resulVendedor = ctlVendedor.cargarVendedor();
@@ -1460,13 +1460,13 @@ public class CtlFacturarFrame
 
 					cargarFacturasPendientes(facturacionService.obtenerOrdenesPendientes());
 				} else {
-					JOptionPane.showMessageDialog(view, "Error al guardar la factura temporal", "Error al guardar",
+					JOptionPane.showMessageDialog(view.asComponent(), "Error al guardar la factura temporal", "Error al guardar",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
 		} else {
-			JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.", "ERROR",
+			JOptionPane.showMessageDialog(view.asComponent(), "Para guardar debe agregar articulos.", "ERROR",
 					JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -1489,12 +1489,12 @@ public class CtlFacturarFrame
 	private boolean validar() {
 		boolean resultado = false;
 		if (!(view.getCantidadFilasDetalle() > 1)) {
-			JOptionPane.showMessageDialog(view, " Debe agregar articulos primero.", "Error Validacion",
+			JOptionPane.showMessageDialog(view.asComponent(), " Debe agregar articulos primero.", "Error Validacion",
 					JOptionPane.ERROR_MESSAGE);
 			resultado = false;
 		} else if (this.myCliente == null) {
 
-			JOptionPane.showMessageDialog(view, "Debe agregar el cliente primero", "Error Validacion",
+			JOptionPane.showMessageDialog(view.asComponent(), "Debe agregar el cliente primero", "Error Validacion",
 					JOptionPane.ERROR_MESSAGE);
 			resultado = false;
 
@@ -1523,7 +1523,7 @@ public class CtlFacturarFrame
 					if (setCierre()) {
 						this.guardarFactura();
 					} else {
-						JOptionPane.showMessageDialog(view,
+						JOptionPane.showMessageDialog(view.asComponent(),
 								"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -1549,18 +1549,18 @@ public class CtlFacturarFrame
 
 							this.guardarFactura();
 						} else {
-							JOptionPane.showMessageDialog(view,
+							JOptionPane.showMessageDialog(view.asComponent(),
 									"No se puede cobrar la factura. Debe abrir la caja primero!!!", "Error caja",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					} else {
-						JOptionPane.showMessageDialog(view, "El Cliente no tiene cuenta de credito o no ha sido creado",
+						JOptionPane.showMessageDialog(view.asComponent(), "El Cliente no tiene cuenta de credito o no ha sido creado",
 								"Error facturar", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 
 			} else {
-				JOptionPane.showMessageDialog(view, "Para guardar debe agregar articulos.", "ERORR",
+				JOptionPane.showMessageDialog(view.asComponent(), "Para guardar debe agregar articulos.", "ERORR",
 						JOptionPane.ERROR_MESSAGE);
 			}
 
@@ -1571,7 +1571,7 @@ public class CtlFacturarFrame
 	}
 
 	private void buscarArticulo() {
-		ViewListaArticulo viewListaArticulo = new ViewListaArticulo(SwingUtilities.getWindowAncestor(view));
+		ViewListaArticulo viewListaArticulo = new ViewListaArticulo(SwingUtilities.getWindowAncestor(view.asComponent()));
 		CtlArticuloBuscar ctlArticulo = new CtlArticuloBuscar(viewListaArticulo);
 
 		viewListaArticulo.pack();
@@ -1635,7 +1635,7 @@ public class CtlFacturarFrame
 	}
 
 	private void buscarOrden() {
-		ViewListaOrdenes viewListaOrdenes = new ViewListaOrdenes(SwingUtilities.getWindowAncestor(view));
+		ViewListaOrdenes viewListaOrdenes = new ViewListaOrdenes(SwingUtilities.getWindowAncestor(view.asComponent()));
 		CtlOrdenesBuscar ctlBuscarOrden = new CtlOrdenesBuscar(viewListaOrdenes);
 
 		viewListaOrdenes.pack();
@@ -1678,7 +1678,7 @@ public class CtlFacturarFrame
 	}
 
 	private void buscarCliente() {
-		ViewListaClientes viewListaCliente = new ViewListaClientes(SwingUtilities.getWindowAncestor(view));
+		ViewListaClientes viewListaCliente = new ViewListaClientes(SwingUtilities.getWindowAncestor(view.asComponent()));
 
 		CtlClienteBuscar ctlBuscarCliente = new CtlClienteBuscar(viewListaCliente);
 		viewListaCliente.pack();
@@ -1740,7 +1740,7 @@ public class CtlFacturarFrame
 			setEmptyView();
 
 		} else {
-			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos",
+			JOptionPane.showMessageDialog(view.asComponent(), "No se guardo la factura", "Error Base de Datos",
 					JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
@@ -1928,7 +1928,7 @@ public class CtlFacturarFrame
 				}
 
 				if (config.isImprReportOrden()) {
-					int resul2 = JOptionPane.showConfirmDialog(view, "Desea imprimir la orden?");
+					int resul2 = JOptionPane.showConfirmDialog(view.asComponent(), "Desea imprimir la orden?");
 					if (resul2 == 0) {
 						AbstractJasperReports.createReportOrden(ConexionStatic.getPoolConexion().getConnection(),
 								myFactura.getIdFactura());
@@ -1959,7 +1959,7 @@ public class CtlFacturarFrame
 
 				setEmptyView();
 
-				ViewCambio cambio = new ViewCambio(SwingUtilities.getWindowAncestor(view));
+				ViewCambio cambio = new ViewCambio(SwingUtilities.getWindowAncestor(view.asComponent()));
 				cambio.getTxtCambio().setText(cambioEfectivo);
 				cambio.getTxtEfectivo().setText(pago);
 				cambio.setVisible(true);
@@ -1986,7 +1986,7 @@ public class CtlFacturarFrame
 			setEmptyView();
 
 		} else {
-			JOptionPane.showMessageDialog(view, "No se guardo la factura", "Error Base de Datos",
+			JOptionPane.showMessageDialog(view.asComponent(), "No se guardo la factura", "Error Base de Datos",
 					JOptionPane.ERROR_MESSAGE);
 			this.view.setVisible(false);
 			this.view.dispose();
@@ -2004,7 +2004,7 @@ public class CtlFacturarFrame
 
 			this.view.enfocarCeldaTabla(x, 1, 0, 6);
 
-			String entrada = (String) JOptionPane.showInputDialog(view,
+			String entrada = (String) JOptionPane.showInputDialog(view.asComponent(),
 					"El articulo \"" + art.getArticulo() + "\" ya esta en la factura. Escriba la cantidad a agregar:",
 					"Agregar cantidad", JOptionPane.OK_CANCEL_OPTION, null, null, "1");
 
@@ -2018,7 +2018,7 @@ public class CtlFacturarFrame
 				double existencia = myArticuloDao.getExistencia(art.getId(),
 						cajaActiva.getDetartamento().getId());
 				if (existencia <= 0.0 || nuevaCantidad.doubleValue() > existencia) {
-					JOptionPane.showMessageDialog(view,
+					JOptionPane.showMessageDialog(view.asComponent(),
 							"No hay existencia suficiente del articulo en la bodega "
 									+ usuario.getCajaActiva().getDetartamento().getDescripcion());
 					return true;

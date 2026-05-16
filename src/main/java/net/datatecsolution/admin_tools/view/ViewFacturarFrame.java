@@ -18,7 +18,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.List;
 
-public class ViewFacturarFrame extends JInternalFrame {
+public class ViewFacturarFrame extends JInternalFrame implements IViewFacturar {
 
 	protected BorderLayout miEsquema;
 	private final JTable tableDetalle;
@@ -773,6 +773,11 @@ public class ViewFacturarFrame extends JInternalFrame {
 		btn.addKeyListener(c);
 		btn.addMouseListener(c);
 	}
+	@Override
+	public Component asComponent() {
+		return this;
+	}
+
 	public void conectarContralador(CtlFacturarFrame c){
 		ctl=c;
 		
