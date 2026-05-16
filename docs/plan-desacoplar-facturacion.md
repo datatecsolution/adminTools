@@ -183,6 +183,50 @@ Solo permanece el cableado de listeners en construcción (`addActionListener`/`a
 
 **Beneficio futuro:** la interfaz es el contrato que `admintools-pos` (React) deberá replicar a través de endpoints REST en el backend `admintools` (Sprint 3+). Sirve de referencia explícita sobre qué operaciones del formulario de facturación exponer.
 
+### Fase 4.2 - Modulo Gradle admintools-core ✅ COMPLETADA
+
+**Estado:** Implementada en commits `cf529e0`, `3881ec6` y siguientes como cierre de US-012 del Sprint 2.
+
+**Objetivo:** crear un módulo Gradle compartible entre el Swing y la API Spring Boot para alojar lógica pura reutilizable.
+
+**Alcance incremental (no big-bang):** se decidió crear el módulo + extraer UNA pieza inicial como semilla, en lugar de mover servicios completos. Razón: `FacturacionService` del Swing depende de DAOs JDBC + `ConexionStatic` (singleton Swing-acoplado); la API tiene sus propias entidades JPA. Migrar el servicio entero arrastraría todo el ecosistema y excedería 8 SP.
+
+**Estructura:**
+
+```
+adminTools/                    (root project AdminTools)
+├── build.gradle               (Swing — depende del core)
+├── settings.gradle            (include 'admintools-core')
+└── admintools-core/           (modulo nuevo)
+    ├── build.gradle           (plugin java-library + maven-publish)
+    └── src/main/java/net/datatecsolution/admintools/core/
+        └── FacturacionCalculadora.java
+```
+
+**Decisiones técnicas:**
+
+- Namespace `net.datatecsolution.admintools.core` (sin guión bajo, alineado con la API) para distinguir del paquete Swing `net.datatecsolution.admin_tools.*`.
+- `group = net.datatecsolution`, `version = 0.1.0-SNAPSHOT` (SemVer; `0.x` mientras la API es inestable).
+- Publicación a `mavenLocal()` por ahora; registro remoto cuando se necesite distribución.
+- `FacturacionCalculadora.calcularDescuentoPorcentaje(BigDecimal, double, double)` con la fórmula y rounding bit-idénticos al cálculo histórico. `FacturacionService` del Swing delega vía composición.
+- 4 tests JUnit cubriendo cálculo básico, redondeo HALF_EVEN, casos borde.
+
+**Consumo desde el API (`/Users/jdmayorga/Desktop/admintools/build.gradle`):**
+
+```groovy
+repositories { mavenLocal(); mavenCentral(); ... }
+
+dependencies {
+    implementation 'net.datatecsolution:admintools-core:0.1.0-SNAPSHOT'
+}
+```
+
+Por ahora la dependencia está como comentario en el `build.gradle` del API — se activará cuando US-020 (FacturaController) la necesite.
+
+**Build del root:** `./gradlew clean build` verde end-to-end (11 tasks). `jar.dependsOn(':admintools-core:jar')` agregado para que el fat-jar del Swing encuentre el JAR del core en clean build (Gradle 4.10 no infería la dependencia desde `from { configurations.collect }`).
+
+**Siguientes extracciones (cuando la API las requiera):** `calcularTotalesDetalle`, `calcularTotales`, `validarFactura`, lógica de impuestos 15%/18%/exento. Cada una con su test de regresión.
+
 #### Ajustes de UX descubiertos durante las pruebas (incluidos en la rama)
 
 | Ajuste | Commit | Detalle |
