@@ -50,6 +50,19 @@ Problemas estructurales detectados en el esquema actual:
   Baseline declara 3 tablas MyISAM: `articulo_bodega`, `pagos_creditos`,
   `salida_productos`. US-013 cerrada. Auditoría en
   `auditoria-myisam-pre-v12.sql`.
+- **Fase 1 (float → DECIMAL) — lote 1: facturación** — **completada en
+  rama `feature/us-014-015-decimal-facturas`**. `V13__decimal_encabezado_detalle.sql`
+  migra 17 columnas monetarias (12 en `encabezado_factura`, 5 en
+  `detalle_factura`) de `float(8,2)`/`float(10,2)` a `DECIMAL(15,2)`.
+  `detalle_factura.cantidad` se deja como float (no es monetaria).
+  Lado Java: las entidades `Factura` y `DetalleFactura` ya usaban
+  `BigDecimal`, y `FacturaDao`/`DetalleFacturaDao` ya usaban
+  `getBigDecimal`/`setBigDecimal` para los campos migrados — cero
+  cambios Java necesarios para este lote (US-015 cumplida por
+  verificación). Auditoría en `auditoria-decimal-pre-v13.sql` con
+  3 bloques: inventario, rangos de valores, valores fuera de rango.
+  US-014 + US-015 cerradas. Lotes futuros (kardex,
+  cuentas_por_cobrar, recibos, articulo.precio) en US separadas.
 
 ## Orden recomendado de ejecución
 

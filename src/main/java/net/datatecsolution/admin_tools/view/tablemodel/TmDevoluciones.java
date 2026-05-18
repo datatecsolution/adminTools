@@ -114,7 +114,11 @@ public class TmDevoluciones extends AbstractTableModel {
 		//fireTableDataChanged();
 	}
 	public void restarCantidad(int index){
-		BigDecimal temp=detallesFactura.get(index).getCantidad().subtract(new BigDecimal(1));
+		// Evitar que la cantidad llegue a 0 o negativo: solo restar si despues
+		// queda algo > 0.
+		BigDecimal actual = detallesFactura.get(index).getCantidad();
+		BigDecimal temp = actual.subtract(BigDecimal.ONE);
+		if (temp.compareTo(BigDecimal.ZERO) <= 0) return;
 		detallesFactura.get(index).setCantidad(temp);
 		fireTableCellUpdated(index, 3);
 		fireTableCellUpdated(index, 4);
