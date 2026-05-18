@@ -49,7 +49,11 @@ public class ViewSelectPrecio extends JDialog {
 		getContentPane().add(cbPrecios);
 		
 		chckbxAplicarAToda = new JCheckBox("Aplicar a toda la factura?");
-		chckbxAplicarAToda.setSelected(true);
+		// Default desmarcado: el comportamiento seguro es aplicar solo a la
+		// fila seleccionada. Si esta marcado por defecto, el usuario que abre
+		// el dialogo sin haber seleccionado fila y da OK termina cambiando
+		// el precio a todos los detalles sin darse cuenta.
+		chckbxAplicarAToda.setSelected(false);
 		chckbxAplicarAToda.setBounds(22, 70, 272, 23);
 		getContentPane().add(chckbxAplicarAToda);
 		

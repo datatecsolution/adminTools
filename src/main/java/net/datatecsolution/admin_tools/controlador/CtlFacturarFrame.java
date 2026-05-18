@@ -382,6 +382,14 @@ public class CtlFacturarFrame
 	}
 
 	public void aplicarDescuento() {
+		// Refrescar filaPulsada desde la tabla. El estado cacheado se actualiza
+		// solo en eventos de teclado (keyPressed/keyTyped); cuando el usuario
+		// selecciona la fila con click del mouse o cuando aplicarDescuento se
+		// invoca desde el boton del menu (ViewModuloFacturar), filaPulsada
+		// quedaba con el valor del ultimo agregado y el descuento caia siempre
+		// en la ultima fila.
+		filaPulsada = view.getFilaSeleccionada();
+
 		double maxDescuento = 35;
 		JPanel panelDescuento = new JPanel();
 		panelDescuento.setLayout(new BoxLayout(panelDescuento, BoxLayout.Y_AXIS));
@@ -479,6 +487,11 @@ public class CtlFacturarFrame
 	}
 
 	public void modificarPrecio() {
+		// Mismo problema que aplicarDescuento: filaPulsada solo se refrescaba
+		// en eventos de teclado, asi que un click del mouse no la actualizaba
+		// y el cambio caia en la fila vieja (la ultima agregada).
+		filaPulsada = view.getFilaSeleccionada();
+
 		if (config.isPwdPrecio()) {
 			if (!solicitarPasswordAdmin()) {
 				return;
@@ -495,6 +508,10 @@ public class CtlFacturarFrame
 	}
 
 	public void modificarCantidad() {
+		// Mismo problema que aplicarDescuento: filaPulsada solo se refrescaba
+		// en eventos de teclado, asi que un click del mouse no la actualizaba
+		// y el cambio caia en la fila vieja (la ultima agregada).
+		filaPulsada = view.getFilaSeleccionada();
 		if (filaPulsada < 0) return;
 
 		String entrada = JOptionPane.showInputDialog(view.asComponent(), "Escriba el cantida");
@@ -602,6 +619,9 @@ public class CtlFacturarFrame
 	}
 
 	private void seleccionarPrecioEspecifico() {
+		// Refrescar filaPulsada desde la tabla (ver comentario en aplicarDescuento).
+		filaPulsada = view.getFilaSeleccionada();
+
 		if (!solicitarPasswordAdmin()) {
 			return;
 		}
@@ -663,6 +683,8 @@ public class CtlFacturarFrame
 	}
 
 	private void incrementarCantidad() {
+		// Refrescar filaPulsada desde la tabla (ver comentario en aplicarDescuento).
+		filaPulsada = view.getFilaSeleccionada();
 		if (filaPulsada < 0) return;
 
 		if (config.isFacturarSinInventario()) {

@@ -235,8 +235,11 @@ public class TabloModeloRequisicion extends AbstractTableModel  {
 	}
 
 	public void restarCantidad(int index) {
-		// TODO Auto-generated method stub
-		BigDecimal temp=detallesRequi.get(index).getCantidad().subtract(new BigDecimal(1));
+		// Evitar que la cantidad llegue a 0 o negativo: solo restar si despues
+		// queda algo > 0.
+		BigDecimal actual = detallesRequi.get(index).getCantidad();
+		BigDecimal temp = actual.subtract(BigDecimal.ONE);
+		if (temp.compareTo(BigDecimal.ZERO) <= 0) return;
 		detallesRequi.get(index).setCantidad(temp);
 		fireTableCellUpdated(index, 2);
 		fireTableCellUpdated(index, 3);
