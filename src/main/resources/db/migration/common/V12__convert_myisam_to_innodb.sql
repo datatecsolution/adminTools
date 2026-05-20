@@ -25,6 +25,13 @@
 -- tablas conocidas son chicas. Si en runtime aparece una tabla MyISAM
 -- grande (ej. log de auditoria), la conversion puede tardar minutos —
 -- coordinarlo en ventana de mantenimiento.
+--
+-- ROW_FORMAT=DYNAMIC explicito: MyISAM admite ROW_FORMAT=FIXED, InnoDB
+-- no. En MySQL 9.4 el ALTER falla con "Table storage engine for
+-- '#sql-...' doesn't have this option" si la tabla origen tiene
+-- ROW_FORMAT=FIXED. En MySQL 8.0 era mas permisivo. Forzamos DYNAMIC
+-- (default de InnoDB desde 5.7.9) para que la conversion sea segura
+-- en cualquier version.
 -- =====================================================================
 
 DELIMITER $$
@@ -50,7 +57,7 @@ BEGIN
             LEAVE convert_loop;
         END IF;
 
-        SET @sql = CONCAT('ALTER TABLE `', tname, '` ENGINE=InnoDB');
+        SET @sql = CONCAT('ALTER TABLE `', tname, '` ROW_FORMAT=DYNAMIC, ENGINE=InnoDB');
         PREPARE stmt FROM @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;
