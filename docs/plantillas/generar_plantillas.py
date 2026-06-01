@@ -21,14 +21,13 @@ from openpyxl.utils import get_column_letter
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# --- Snapshot de catálogos (admin_tools) ---
-CATEGORIAS = [
-    "ACCES", "BEBE", "BEBID", "BOLSO", "CABELLO", "COSTURA", "CUIDADO PERSONAL",
-    "DECOR", "ELECT", "ELECTRONICA", "FERRE", "FIEST", "GOLOS", "HOGAR", "JOYERIA",
-    "JUGUE", "MEDIC", "OTROS", "REGAL", "RODA", "ROPA", "SEGUR", "SERVI", "UTIL",
-    "Varios", "ZAPAT",
-]
+# El ISV es estándar (no depende del cliente): exonerado / 15% / 18%.
 IMPUESTOS = ["Exectos (0%)", "Basicos (15%)", "Lujo (18%)"]
+
+# El cliente define SUS propias categorías en la hoja "Categorias" (no imponemos
+# las nuestras). Estos son solo ejemplos a reemplazar.
+EJEMPLO_CATEGORIAS = ["ABARROTES", "BEBIDAS", "LIMPIEZA", "CUIDADO PERSONAL", "ROPA"]
+MAX_CATEGORIAS = 200  # rango del dropdown que apunta a la hoja Categorias
 
 HEADER_FILL = PatternFill("solid", fgColor="1F4E78")
 HEADER_FONT = Font(bold=True, color="FFFFFF", size=11)
@@ -50,15 +49,27 @@ def estilizar_encabezado(ws, ncols, fila=1):
     ws.freeze_panes = ws.cell(row=fila + 1, column=1)
 
 
-def hoja_listas(wb, categorias, impuestos):
+def hoja_listas(wb, impuestos):
+    """Hoja oculta con los valores fijos del sistema (solo ISV)."""
     ws = wb.create_sheet("Listas")
-    ws["A1"] = "Categorias"
-    ws["B1"] = "Impuestos"
-    for i, v in enumerate(categorias, start=2):
-        ws.cell(row=i, column=1, value=v)
+    ws["A1"] = "Impuestos"
     for i, v in enumerate(impuestos, start=2):
-        ws.cell(row=i, column=2, value=v)
+        ws.cell(row=i, column=1, value=v)
     ws.sheet_state = "hidden"
+    return ws
+
+
+def hoja_categorias(wb):
+    """Hoja visible donde el cliente ingresa SUS categorías (paso 1)."""
+    ws = wb.create_sheet("Categorias")
+    ws.cell(row=1, column=1, value="Categoria *")
+    ws.column_dimensions["A"].width = 30
+    estilizar_encabezado(ws, 1)
+    # Ejemplos a reemplazar por las categorías reales del cliente.
+    for i, v in enumerate(EJEMPLO_CATEGORIAS, start=2):
+        c = ws.cell(row=i, column=1, value=v)
+        c.font = EXAMPLE_FONT
+        c.border = BORDER
     return ws
 
 
@@ -90,7 +101,8 @@ def dv(formula, prompt, allow_blank=True):
 def plantilla_productos():
     wb = Workbook()
     wb.remove(wb.active)
-    hoja_listas(wb, CATEGORIAS, IMPUESTOS)
+    hoja_listas(wb, IMPUESTOS)
+    hoja_categorias(wb)  # paso 1: el cliente ingresa sus categorías
 
     ws = wb.create_sheet("Productos")
     headers = [
@@ -107,9 +119,9 @@ def plantilla_productos():
     estilizar_encabezado(ws, len(headers))
 
     ejemplos = [
-        ["Coca Cola 600ml", "BEBID", "Basicos (15%)", 25.00, "7501055300013", 1001],
+        ["Coca Cola 600ml", "BEBIDAS", "Basicos (15%)", 25.00, "7501055300013", 1001],
         ["Camiseta algodon M", "ROPA", "Basicos (15%)", 180.00, "", 1002],
-        ["Medicamento generico", "MEDIC", "Exectos (0%)", 45.50, "", ""],
+        ["Jabon de tocador", "CUIDADO PERSONAL", "Basicos (15%)", 18.50, "", ""],
     ]
     for r, fila in enumerate(ejemplos, start=2):
         for c, val in enumerate(fila, start=1):
@@ -119,8 +131,10 @@ def plantilla_productos():
 
     n = 600
     last = 1 + len(ejemplos) + n
-    dv_cat = dv("=Listas!$A$2:$A$%d" % (1 + len(CATEGORIAS)), "Seleccioná la categoría del producto.")
-    dv_imp = dv("=Listas!$B$2:$B$%d" % (1 + len(IMPUESTOS)), "Seleccioná el ISV que aplica.")
+    # Categoría: dropdown que apunta a la hoja "Categorias" (lo que el cliente cargó).
+    dv_cat = dv("=Categorias!$A$2:$A$%d" % (1 + MAX_CATEGORIAS),
+                "Elegí una categoría de las que cargaste en la hoja 'Categorias'.")
+    dv_imp = dv("=Listas!$A$2:$A$%d" % (1 + len(IMPUESTOS)), "Seleccioná el ISV que aplica.")
     ws.add_data_validation(dv_cat)
     ws.add_data_validation(dv_imp)
     dv_cat.add("B2:B%d" % last)
@@ -135,20 +149,25 @@ def plantilla_productos():
     instr = [
         "PLANTILLA DE CARGA INICIAL — PRODUCTOS",
         "",
-        "Llená la hoja \"Productos\" (una fila por producto). Las filas en gris claro son EJEMPLOS: borralas o reemplazalas.",
+        "IMPORTANTE: este archivo tiene DOS pasos en este orden:",
         "",
-        "COLUMNAS:",
+        "PASO 1 — Hoja \"Categorias\":",
+        "• Ingresá PRIMERO todas TUS categorías (una por fila, en la columna 'Categoria').",
+        "• Usá tus propios nombres de categoría — no hay una lista fija del sistema.",
+        "• Las filas en gris son ejemplos: borralas y poné las tuyas.",
+        "",
+        "PASO 2 — Hoja \"Productos\" (una fila por producto):",
         "• Nombre *  (obligatorio): nombre del producto tal como aparecerá en facturas y catálogo.",
-        "• Categoria *  (obligatorio): elegí una de la lista desplegable. Si falta una categoría, avisanos para agregarla.",
-        "• Impuesto (ISV) *  (obligatorio): Exectos (0%) = exonerado, Basicos (15%), Lujo (18%). Elegí de la lista.",
+        "• Categoria *  (obligatorio): elegí del desplegable — solo aparecen las categorías que cargaste en el PASO 1.",
+        "• Impuesto (ISV) *  (obligatorio): Exectos (0%) = exonerado, Basicos (15%), Lujo (18%). Elegí del desplegable.",
         "• Precio de venta *  (obligatorio): precio al público, en Lempiras, CON impuesto incluido. Solo números (ej. 25.00).",
         "• Codigo de barras  (opcional): si el producto tiene código de barras escaneable.",
         "• Codigo alterno  (opcional): código interno/SKU si manejás uno.",
         "",
         "REGLAS:",
+        "• Cargá las categorías ANTES de los productos (el desplegable de Categoría se llena desde la hoja 'Categorias').",
         "• No cambies los encabezados ni el orden de las columnas.",
         "• No dejes filas vacías en medio de los datos.",
-        "• Categoría e Impuesto deben venir SIEMPRE de la lista desplegable (validación activada).",
         "• El precio incluye el ISV (el sistema calcula el desglose automáticamente).",
         "",
         "Cuando termines, guardá el archivo y envialo para la carga. Soporta varios cientos de productos por archivo.",
