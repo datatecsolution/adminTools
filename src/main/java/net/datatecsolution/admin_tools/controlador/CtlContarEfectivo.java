@@ -57,37 +57,48 @@ public class CtlContarEfectivo implements ActionListener, KeyListener{
 		return resultado;
 	}
 
+	/** Campo vacío o no numérico -> 0 (no revienta con NumberFormatException). */
+	private static BigDecimal bd(String t) {
+		if (t == null || t.trim().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		try {
+			return new BigDecimal(t.trim());
+		} catch (NumberFormatException e) {
+			return BigDecimal.ZERO;
+		}
+	}
+
 	private void setTotal() {
-		// TODO Auto-generated method stub
-		uno=new BigDecimal(view.getTxtUno().getText());
+		total = BigDecimal.ZERO;
+
+		uno=bd(view.getTxtUno().getText());
 		total=total.add(uno);
-		
-		dos=new BigDecimal(view.getTxtDos().getText());
+
+		dos=bd(view.getTxtDos().getText());
 		total=total.add(dos.multiply(new BigDecimal(2)));
-		
-		cinco=new BigDecimal(view.getTxtCinco().getText());
+
+		cinco=bd(view.getTxtCinco().getText());
 		total=total.add(cinco.multiply(new BigDecimal(5)));
-		
-		diez=new BigDecimal(view.getTxtDiez().getText());
+
+		diez=bd(view.getTxtDiez().getText());
 		total=total.add(diez.multiply(new BigDecimal(10)));
-		
-		veinte=new BigDecimal(view.getTxtVeinte().getText());
+
+		veinte=bd(view.getTxtVeinte().getText());
 		total=total.add(veinte.multiply(new BigDecimal(20)));
-		
-		cincuenta=new BigDecimal(view.getTxtCincuenta().getText());
+
+		cincuenta=bd(view.getTxtCincuenta().getText());
 		total=total.add(cincuenta.multiply(new BigDecimal(50)));
-		
-		cien=new BigDecimal(view.getTxtCien().getText());
+
+		cien=bd(view.getTxtCien().getText());
 		total=total.add(cien.multiply(new BigDecimal(100)));
-		
-		quinientos=new BigDecimal(view.getTxtQuiniento().getText());
+
+		quinientos=bd(view.getTxtQuiniento().getText());
 		total=total.add(quinientos.multiply(new BigDecimal(500)));
-		
+
 		this.resultado=true;
-		
+
 		view.setVisible(false);
-		
-		
 	}
 	
 	public BigDecimal getTotal(){
