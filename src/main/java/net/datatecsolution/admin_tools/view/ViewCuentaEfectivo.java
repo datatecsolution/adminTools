@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlContarEfectivo;
+import net.datatecsolution.admin_tools.util.MontoUtil;
 import net.datatecsolution.admin_tools.view.botones.BotonBuscar1;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
 import net.datatecsolution.admin_tools.view.botones.BotonGuardar;
@@ -349,31 +350,28 @@ public class ViewCuentaEfectivo extends JDialog {
 		return txtQuinientos;
 	}
 	
+	/**
+	 * Cantidad de billetes de un campo. Campo vacío o no numérico -> 0, para no
+	 * reventar con NumberFormatException mientras el usuario teclea/borra.
+	 */
+	private BigDecimal cantidad(JTextField campo) {
+		return MontoUtil.parse(campo.getText());
+	}
+
 	private void calcularTotal() throws Exception  {
-		
-		
-			BigDecimal uno=new BigDecimal(this.txtUno.getText());
-			BigDecimal dos=new BigDecimal(this.txtDos.getText());
-			dos=dos.multiply(new BigDecimal(2));
-			BigDecimal cinco=new BigDecimal(this.txtCinco.getText());
-			cinco=cinco.multiply(new BigDecimal(5));
-			BigDecimal diez=new BigDecimal(this.txtDiez.getText());
-			diez=diez.multiply(new BigDecimal(10));
-			BigDecimal veinte=new BigDecimal(this.txtVeinte.getText());
-			veinte=veinte.multiply(new BigDecimal(20));
-			BigDecimal cincuenta=new BigDecimal(this.txtCincuenta.getText());
-			cincuenta=cincuenta.multiply(new BigDecimal(50));
-			BigDecimal cien=new BigDecimal(this.txtCien.getText());
-			cien=cien.multiply(new BigDecimal(100));
-			BigDecimal quiniento=new BigDecimal(this.txtQuinientos.getText());
-			quiniento=quiniento.multiply(new BigDecimal(500));
-			
+
+			BigDecimal uno=cantidad(this.txtUno);
+			BigDecimal dos=cantidad(this.txtDos).multiply(new BigDecimal(2));
+			BigDecimal cinco=cantidad(this.txtCinco).multiply(new BigDecimal(5));
+			BigDecimal diez=cantidad(this.txtDiez).multiply(new BigDecimal(10));
+			BigDecimal veinte=cantidad(this.txtVeinte).multiply(new BigDecimal(20));
+			BigDecimal cincuenta=cantidad(this.txtCincuenta).multiply(new BigDecimal(50));
+			BigDecimal cien=cantidad(this.txtCien).multiply(new BigDecimal(100));
+			BigDecimal quiniento=cantidad(this.txtQuinientos).multiply(new BigDecimal(500));
+
 			BigDecimal total=uno.add(dos).add(cinco).add(diez).add(veinte).add(cincuenta).add(cien).add(quiniento);
-			
+
 			txtTotal.setText(""+total.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-		
-		
-		
 	}
 	
 	public void conectarControlador(CtlContarEfectivo c){
