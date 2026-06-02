@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlContarEfectivo;
+import net.datatecsolution.admin_tools.util.MontoUtil;
 import net.datatecsolution.admin_tools.view.botones.BotonBuscar1;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
 import net.datatecsolution.admin_tools.view.botones.BotonGuardar;
@@ -354,19 +355,7 @@ public class ViewCuentaEfectivo extends JDialog {
 	 * reventar con NumberFormatException mientras el usuario teclea/borra.
 	 */
 	private BigDecimal cantidad(JTextField campo) {
-		String t = campo.getText();
-		if (t == null) {
-			return BigDecimal.ZERO;
-		}
-		t = t.trim();
-		if (t.isEmpty()) {
-			return BigDecimal.ZERO;
-		}
-		try {
-			return new BigDecimal(t);
-		} catch (NumberFormatException e) {
-			return BigDecimal.ZERO;
-		}
+		return MontoUtil.parse(campo.getText());
 	}
 
 	private void calcularTotal() throws Exception  {

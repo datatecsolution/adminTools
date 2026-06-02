@@ -59,14 +59,7 @@ public class CtlContarEfectivo implements ActionListener, KeyListener{
 
 	/** Campo vacío o no numérico -> 0 (no revienta con NumberFormatException). */
 	private static BigDecimal bd(String t) {
-		if (t == null || t.trim().isEmpty()) {
-			return BigDecimal.ZERO;
-		}
-		try {
-			return new BigDecimal(t.trim());
-		} catch (NumberFormatException e) {
-			return BigDecimal.ZERO;
-		}
+		return net.datatecsolution.admin_tools.util.MontoUtil.parse(t);
 	}
 
 	private void setTotal() {
