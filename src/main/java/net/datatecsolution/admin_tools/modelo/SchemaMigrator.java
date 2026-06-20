@@ -21,6 +21,8 @@ import java.util.Map;
  *  - Migraciones de caja:  classpath:db/migration/caja,   tabla schema_version en cada admin_tools_caja_N.
  *
  * baselineOnMigrate=true permite adoptar clientes existentes sin re-ejecutar la V1.
+ * outOfOrder=true tolera historiales desincronizados: aplica una migración
+ * pendiente de versión menor (hueco) en vez de abortar el arranque.
  */
 public class SchemaMigrator {
 
@@ -96,6 +98,12 @@ public class SchemaMigrator {
                 .baselineOnMigrate(true)
                 .baselineVersion("1")
                 .baselineDescription("baseline")
+                // outOfOrder=true: si a un cliente le falta una migración "vieja"
+                // (p.ej. la BD tiene V30/V31 aplicadas pero le falta el registro de
+                // V29), Flyway la aplica en su hueco en vez de abortar la app con
+                // "Detected resolved migration not applied to database". Sin esto,
+                // un historial desincronizado tumba el arranque (Principal).
+                .outOfOrder(true)
                 .placeholders(placeholders)
                 .load();
         flyway.repair();
