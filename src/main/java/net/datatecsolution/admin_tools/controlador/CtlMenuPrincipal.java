@@ -272,7 +272,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 
 				break;
 			case "CLIENTES":
-				if (permiso == 4) {
+				if (permiso == 1 || permiso == 4) {
 					ViewListaClientes viewClientes = new ViewListaClientes(view);
 					CtlClienteLista ctlClientes = new CtlClienteLista(viewClientes);
 					viewClientes.dispose();
@@ -321,7 +321,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				ctlProgramarPrecio=null;*/
 				break;
 			case "R_DEI_VENTAS":
-				if (permiso == 4) {
+				if (permiso == 1 || permiso == 4) {
 					ViewFiltroRepSarVentas viewFiltroDei = new ViewFiltroRepSarVentas(view);
 					CtlFiltroRepSarVentas ctlFiltroDei = new CtlFiltroRepSarVentas(viewFiltroDei);
 				}
@@ -386,7 +386,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				break;
 			case "COMISIONES":
 
-				if (permiso == 4) {
+				if (permiso == 1 || permiso == 4) {
 					ViewFiltroComisiones viewComisiones = new ViewFiltroComisiones(view);
 					CtlFiltroRepComisiones ctlComisiones = new CtlFiltroRepComisiones(viewComisiones);
 					viewComisiones.dispose();
@@ -404,7 +404,7 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 
 				break;
 			case "VENTAS_ART_VENDEDOR":
-				if (permiso == 4) {
+				if (permiso == 1 || permiso == 4) {
 					ViewFiltroRepVentasArtVendedor viewFiltroArtVend = new ViewFiltroRepVentasArtVendedor(view);
 					CtlFiltroRepVentasArtVendedor ctlFiltroArtVend = new CtlFiltroRepVentasArtVendedor(viewFiltroArtVend);
 				}
