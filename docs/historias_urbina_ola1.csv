@@ -125,4 +125,7 @@ Proveedor (entity), ProveedorCRUD, SupplierService (getAll/getById), SupplierMap
 - Hito: 1
 
 === ORIGEN ===
-Deuda marcada en SupplierCtl (INV-5). Rama de trabajo: admintools-api `feature/suppliers-crud`. Frontend (pantalla de gestión en admintools-pos, hoy src/features/suppliers es solo read-only) queda como seguimiento full-stack posterior.",Backlog,Backend;Hito 1;Sprint 11;5 SP,11,Backend,5,1
+Deuda marcada en SupplierCtl (INV-5). Rama de trabajo: admintools-api `feature/suppliers-crud`. Frontend (pantalla de gestión en admintools-pos, hoy src/features/suppliers es solo read-only) queda como seguimiento full-stack posterior.
+
+=== ENTREGA ===
+Backend mergeado: admintools-api#17 -> main (0faa2fa), 2026-06-22. E2E verificado (crear/editar/buscar+saldo; DELETE en uso -> 409; DELETE libre -> 204; gate ADMIN). Pantalla de gestion en admintools-pos a partir de design_handoff_proveedores (en progreso).",Terminado,Backend;Hito 1;Sprint 11;5 SP,11,Backend,5,1
