@@ -129,3 +129,33 @@ Deuda marcada en SupplierCtl (INV-5). Rama de trabajo: admintools-api `feature/s
 
 === ENTREGA ===
 Backend mergeado: admintools-api#17 -> main (0faa2fa), 2026-06-22. E2E verificado (crear/editar/buscar+saldo; DELETE en uso -> 409; DELETE libre -> 204; gate ADMIN). Pantalla de gestion en admintools-pos a partir de design_handoff_proveedores (en progreso).",Terminado,Backend;Hito 1;Sprint 11;5 SP,11,Backend,5,1
+"[US-097] Clientes: rediseño full-stack (saldo/crédito, estado de cuenta, cartera por cobrar)","Rediseño del módulo de Clientes del POS (admintools-pos), migrando del Swing (Cliente, CtlClienteLista, CtlCliente) a partir del prototipo design_handoff_clientes. Reemplaza la CustomersPage/CustomerFormDialog mínimas (solo nombre/RTN/dirección/teléfono). Full-stack.
+
+=== ENTREGADO ===
+- Backend (admintools-api): la entidad cliente ya tenía las columnas (movil, limite_credito, id_vendedor, tipo_cliente) -> sin migración, solo exposición + enriquecimiento. CustomerResponse + mobile/limiteCredito/idVendedor/vendedorNombre/saldo; CustomerCreateRequest + mobile/idVendedor. CustomerService inyecta JdbcTemplate(commonDataSource): enriquece saldo (f_saldo_cliente) + vendedorNombre (join empleados) en search/getById/create/update; DELETE 409 si el cliente tiene saldo CxC o movimientos en cuentas_por_cobrar. ClienteRepository persiste celular + vendedor asignado y setea el límite exacto (esquiva el setLimiteCredito legacy que SUMA). El CxC (balance/statement/invoices/delinquent/abonos a cliente y a factura) ya existía y no se tocó.
+- Frontend (admintools-pos): Lista con columnas Código/Cliente(+RTN/teléfono)/Tipo(badge)/Vendedor/Saldo-Crédito (ámbar si debe, rojo+icono si sobregiro); búsqueda unificada sin acentos (nombre+RTN+teléfonos+id+vendedor); filtro de vendedor con combobox de búsqueda (SellerCombobox, headlessui v2); chip Con saldo; botón Cartera por cobrar. Modal SIEMPRE a crédito (tipoCliente 2 fijo): nombre/RTN/dirección/teléfono/celular/límite + combobox de vendedor, validación, Guardar y agregar otro, saldo solo-lectura en edición. Drawer AccountDrawer (estado de cuenta: tarjetas Saldo/Límite/Disponible + barra de uso con sobregiro rojo; facturas pendientes clicables -> detalle con movimientos + abonar a la factura; Registrar abono a nivel cliente vía AbonoDialog). Drawer CarteraDrawer (KPIs total por cobrar/# clientes/# vencidas + deudores agrupados de /delinquent). Borrado seguro (CustomerDeleteDialog: bloqueo por saldo + 409). Nuevo feature accounts-receivable. Reusa useSellers para los comboboxes.
+
+=== DECISIÓN DE NEGOCIO ===
+El admin SIEMPRE crea clientes a crédito; el de contado se da de alta desde facturación (no buscable como cliente en el POS). Por eso el modal no tiene toggle Contado/Crédito.
+
+=== CRITERIOS DE ACEPTACIÓN ===
+- Lista con saldo/vendedor/límite y sobregiro en rojo ✔
+- Crear cliente a crédito con celular+vendedor+límite (E2E admin/4321) ✔
+- Editar (límite exacto 5000->8000, reasignar vendedor) ✔
+- DELETE de cliente con saldo -> 409; libre -> 204 ✔
+- Estado de cuenta con detalle de factura + abonos a cliente y a factura ✔
+- Cartera por cobrar con KPIs y deudores ✔
+- tsc/lint/build limpios
+
+=== METADATOS ===
+- ID: US-097
+- Sprint: 11
+- Tipo: Full-stack
+- Story Points: 13
+- Hito: 1
+
+=== ENTREGA ===
+PRs: admintools-api#18 -> main (1dcce1d) y admintools-pos#27 -> master (e68e96c), mergeados 2026-06-23.
+
+=== TODO(API) PENDIENTE ===
+Cobrador y ruta de cobro del Swing aún no se persisten (solo vendedor); la lista sigue scopeada por el vendedor del usuario autenticado (US-019).",Terminado,Full-stack;Hito 1;Sprint 11;13 SP,11,Full-stack,13,1
