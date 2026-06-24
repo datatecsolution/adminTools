@@ -146,3 +146,6 @@ connection.dat
 # macOS
 .DS_Store
 **/.DS_Store
+
+# Config local de build (org.gradle.java.home — ruta por máquina)
+gradle.properties
