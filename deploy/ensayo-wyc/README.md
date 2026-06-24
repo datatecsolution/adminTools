@@ -1,10 +1,18 @@
-# Ensayo de migración — miscelanías Wyc
+# Ensayo de migración (genérico por cliente)
 
 Automatiza la **Fase 2 (ensayo en copia efímera)** del
-[runbook de migración de cliente](../../docs/runbook-migracion-cliente.md) para
-Wyc. Prueba que las migraciones Flyway aplican limpio sobre el esquema real de
-Wyc **sin tocar producción**. Ver el análisis completo en
-[`docs/migracion-wyc-analisis.md`](../../docs/migracion-wyc-analisis.md).
+[runbook de migración de cliente](../../docs/runbook-migracion-cliente.md). Prueba
+que las migraciones Flyway aplican limpio sobre el esquema real de un cliente
+**sin tocar producción**. Es **genérico**: se elige el cliente con la variable
+`CLIENT`, que apunta a `~/.<cliente>.env` (vars `<cliente>_host/_user/_password`).
+
+Análisis hechos con esta herramienta:
+[`docs/migracion-wyc-analisis.md`](../../docs/migracion-wyc-analisis.md) ·
+[`docs/migracion-venecia-analisis.md`](../../docs/migracion-venecia-analisis.md).
+
+> El runner `EnsayoMigrate` también sirve para la **migración real**: apuntando
+> `ENS_HOST/ENS_PORT/ENS_USER/ENS_PASS` al MySQL de prod del cliente corre el
+> mismo `SchemaMigrator` (así se migró venecia).
 
 ## Qué hace `ensayo.sh`
 1. Descubre las BDs (`admin_tools` + `admin_tools_caja_N`) y **vuelca el esquema**
@@ -21,15 +29,16 @@ Wyc **sin tocar producción**. Ver el análisis completo en
 - El fat-jar `build/libs/AdminTools-1.0.jar` (si falta: `./gradlew jar`). Trae
   `SchemaMigrator` + Flyway 6.5.7 + driver MySQL + las migraciones `.sql` **y las
   Java (V3/V4/V5)** — por eso NO se usa Flyway CLI.
-- `~/.wyc.env` con `wyc_host` / `wyc_user` / `wyc_password` (la contraseña viaja
-  solo por env `MYSQL_PWD`, nunca a disco ni a la línea de comandos).
-- El host de Wyc accesible desde docker (misma LAN / VPN).
+- `~/.<cliente>.env` con `<cliente>_host` / `<cliente>_user` / `<cliente>_password`
+  (la contraseña viaja solo por env `MYSQL_PWD`, nunca a disco ni a la línea de comandos).
+- El host del cliente accesible desde docker (misma LAN / VPN).
 
 ## Uso
 ```bash
-bash deploy/ensayo-wyc/ensayo.sh                 # ensayo + limpieza automática
-KEEP=1 bash deploy/ensayo-wyc/ensayo.sh          # deja el MySQL efímero vivo para inspeccionar
-WITH_API=1 API_IMAGE=<imagen-api> bash deploy/ensayo-wyc/ensayo.sh   # además valida con la API
+CLIENT=venecia bash deploy/ensayo-wyc/ensayo.sh           # ensayo + limpieza automática
+CLIENT=venecia KEEP=1 bash deploy/ensayo-wyc/ensayo.sh    # deja el MySQL efímero vivo para inspeccionar
+CLIENT=wyc WITH_API=1 API_IMAGE=<img> bash deploy/ensayo-wyc/ensayo.sh   # además valida con la API
+# (CLIENT por defecto = wyc; usa ~/.<cliente>.env)
 ```
 Salida: `✔ ENSAYO OK` (las migraciones aplican limpio) o `✘ ENSAYO CON FALLAS`
 (con el detalle de qué BD/qué versión falló — resolver **antes** de tocar prod).

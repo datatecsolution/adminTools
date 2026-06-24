@@ -21,8 +21,10 @@
 set -euo pipefail
 
 # ---------- config ----------
-NET=ensayo-wyc-net
-MYC=ensayo-wyc-mysql
+CLIENT="${CLIENT:-wyc}"          # CLIENT=venecia bash ensayo.sh → usa ~/.venecia.env y vars venecia_*
+NET="ensayo-${CLIENT}-net"
+MYC="ensayo-${CLIENT}-mysql"
+API_C="ensayo-${CLIENT}-api"
 ENS_PORT=${ENS_PORT:-13306}
 ENS_PASS=throwaway
 MYSQL_IMG=mysql:8.0
@@ -36,9 +38,9 @@ die(){ printf '\033[1;31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
 
 cleanup(){
   if [ "${KEEP:-0}" = "1" ]; then
-    echo "KEEP=1 → contenedor $MYC vivo en 127.0.0.1:$ENS_PORT (user root / $ENS_PASS). Limpiá con: docker rm -f $MYC ${WITH_API:+ensayo-wyc-api}; docker network rm $NET"
+    echo "KEEP=1 → contenedor $MYC vivo en 127.0.0.1:$ENS_PORT (user root / $ENS_PASS). Limpiá con: docker rm -f $MYC ${WITH_API:+$API_C}; docker network rm $NET"
   else
-    docker rm -f "$MYC" ${WITH_API:+ensayo-wyc-api} >/dev/null 2>&1 || true
+    docker rm -f "$MYC" ${WITH_API:+$API_C} >/dev/null 2>&1 || true
     docker network rm "$NET" >/dev/null 2>&1 || true
   fi
   rm -rf "$WORK"
@@ -49,21 +51,26 @@ trap cleanup EXIT
 command -v docker >/dev/null || die "falta docker"
 command -v java   >/dev/null || die "falta java"
 [ -f "$JAR" ] || die "no existe $JAR — corré: (cd $REPO && ./gradlew jar)"
-[ -f "$HOME/.wyc.env" ] || die "no existe ~/.wyc.env (vars wyc_host/wyc_user/wyc_password)"
-set -a; source "$HOME/.wyc.env"; set +a
-: "${wyc_host:?}"; : "${wyc_user:?}"; : "${wyc_password:?}"
-export MYSQL_PWD="$wyc_password"   # mysqldump/mysql lo leen del entorno
+ENVFILE="$HOME/.${CLIENT}.env"
+[ -f "$ENVFILE" ] || die "no existe $ENVFILE (vars ${CLIENT}_host/${CLIENT}_user/${CLIENT}_password)"
+set -a; source "$ENVFILE"; set +a
+# Lookup indirecto de las vars <cliente>_host/_user/_password
+_h="${CLIENT}_host"; _u="${CLIENT}_user"; _p="${CLIENT}_password"
+DBHOST="${!_h:-}"; DBUSER="${!_u:-}"; DBPASS="${!_p:-}"
+[ -n "$DBHOST" ] && [ -n "$DBUSER" ] && [ -n "$DBPASS" ] || die "credenciales vacías en $ENVFILE"
+export MYSQL_PWD="$DBPASS"   # mysqldump/mysql lo leen del entorno (no a argv)
+echo "   cliente=$CLIENT  destino=$DBUSER@$DBHOST"
 
-dump(){ # dump <args...>  → corre mysqldump dentro de un contenedor mysql, pasando MYSQL_PWD por -e (sin valor en argv)
+dump(){ # dump <args...>  → mysqldump dentro de un contenedor mysql, MYSQL_PWD por -e (sin valor en argv)
   docker run --rm -e MYSQL_PWD "$MYSQL_IMG" \
-    mysqldump -h"$wyc_host" -u"$wyc_user" --no-tablespaces --set-gtid-purged=OFF --column-statistics=0 "$@"
+    mysqldump -h"$DBHOST" -u"$DBUSER" --no-tablespaces --set-gtid-purged=OFF --column-statistics=0 "$@"
 }
 sanitize(){ sed -E 's/DEFINER=`[^`]*`@`[^`]*`//g'; }   # quita DEFINER (el user del cliente no existe en la copia)
 
 # ---------- 1. descubrir BDs + dump de esquema ----------
 log "1/6  Descubriendo BDs y volcando esquema (read-only)"
 mapfile -t DBS < <(docker run --rm -e MYSQL_PWD "$MYSQL_IMG" \
-  mysql -h"$wyc_host" -u"$wyc_user" -N -e "SHOW DATABASES" | grep -E '^admin_tools(_caja_[0-9]+)?$' | sort)
+  mysql -h"$DBHOST" -u"$DBUSER" -N -e "SHOW DATABASES" | grep -E '^admin_tools(_caja_[0-9]+)?$' | sort)
 [ "${#DBS[@]}" -ge 1 ] || die "no se encontraron BDs admin_tools*"
 echo "   BDs: ${DBS[*]}"
 for db in "${DBS[@]}"; do
@@ -120,8 +127,8 @@ echo "   · existencia_articulo_bodega (backfill V18): $EAB filas  (nota: esquem
 if [ "${WITH_API:-0}" = "1" ]; then
   log "6/6  Validando con la API (ddl-auto=validate)"
   [ -n "${API_IMAGE:-}" ] || die "WITH_API=1 requiere API_IMAGE=<imagen>"
-  docker rm -f ensayo-wyc-api >/dev/null 2>&1 || true
-  docker run -d --name ensayo-wyc-api --network "$NET" \
+  docker rm -f $API_C >/dev/null 2>&1 || true
+  docker run -d --name $API_C --network "$NET" \
     -e SPRING_PROFILES_ACTIVE=pdn -e MYSQL_HOST="$MYC" -e MYSQL_PORT=3306 -e MYSQL_DB=admin_tools \
     -e MYSQL_USER=root -e MYSQL_PASSWORD="$ENS_PASS" -e MYSQL_TZ=GMT-6 \
     -e APP_JWT_SECRET="$(head -c48 /dev/urandom | base64)" -e APP_JWT_EXPIRATION_MS=86400000 \
@@ -129,9 +136,9 @@ if [ "${WITH_API:-0}" = "1" ]; then
     "$API_IMAGE" >/dev/null
   echo -n "   esperando arranque de la API"
   for i in $(seq 1 40); do
-    if docker logs ensayo-wyc-api 2>&1 | grep -q "Started AdmintoolsApplication"; then echo " ✓ valida OK"; break; fi
-    if docker logs ensayo-wyc-api 2>&1 | grep -qiE "Schema-validation|missing|wrong column"; then echo " ✗"; docker logs ensayo-wyc-api 2>&1 | grep -iE "Schema-validation|missing|wrong column" | head; PASS=0; break; fi
-    echo -n "."; sleep 3; [ "$i" = 40 ] && { echo " (timeout — revisá: docker logs ensayo-wyc-api)"; PASS=0; }
+    if docker logs $API_C 2>&1 | grep -q "Started AdmintoolsApplication"; then echo " ✓ valida OK"; break; fi
+    if docker logs $API_C 2>&1 | grep -qiE "Schema-validation|missing|wrong column"; then echo " ✗"; docker logs $API_C 2>&1 | grep -iE "Schema-validation|missing|wrong column" | head; PASS=0; break; fi
+    echo -n "."; sleep 3; [ "$i" = 40 ] && { echo " (timeout — revisá: docker logs $API_C)"; PASS=0; }
   done
 else
   log "6/6  API: omitida (pasá WITH_API=1 API_IMAGE=<img> para validarla)"
