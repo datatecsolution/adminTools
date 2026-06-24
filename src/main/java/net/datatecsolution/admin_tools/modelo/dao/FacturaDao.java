@@ -199,7 +199,7 @@ public class FacturaDao extends ModeloDaoBasic {
 			psConsultas.setBigDecimal(11, myFactura.getPago());
 			psConsultas.setString(12, ConexionStatic.getUsuarioLogin().getUser());
 			psConsultas.setString(13, NumberToLetterConverter
-					.convertNumberToLetter(myFactura.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+					.convertNumberToLetter(myFactura.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 			psConsultas.setInt(14, myFactura.getVendedor().getCodigo());
 			psConsultas.setInt(15, 1);
 			psConsultas.setInt(16, myFactura.getEstadoPago());

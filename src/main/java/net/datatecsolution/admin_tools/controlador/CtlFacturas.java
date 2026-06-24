@@ -601,7 +601,7 @@ public class CtlFacturas implements ActionListener, MouseListener, ChangeListene
 		String concepto="Anulacion de factura # "+myFactura.getIdFactura();
 		myRecibo.setTotal(myFactura.getTotal());
 		myRecibo.setConcepto(concepto);
-		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 
 
 		//se manda aguardar el recibo con los pagos realizados

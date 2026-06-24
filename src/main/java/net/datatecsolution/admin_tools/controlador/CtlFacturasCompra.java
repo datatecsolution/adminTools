@@ -333,7 +333,7 @@ public class CtlFacturasCompra implements ActionListener, MouseListener, ChangeL
 		myRecibo.setConcepto(concepto);
 		myRecibo.setTotal(myFacturaCompra.getTotal());
 
-		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 
 
 

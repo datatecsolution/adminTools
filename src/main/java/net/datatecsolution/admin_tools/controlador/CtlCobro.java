@@ -435,7 +435,7 @@ switch(e.getKeyCode()){
 		myRecibo.setTotal(new BigDecimal(view.getTxtTotal().getText()));
 	
 		//se establece la cantidad en letras
-		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+		myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 	}
 
 }
