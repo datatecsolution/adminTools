@@ -1,6 +1,8 @@
 package net.datatecsolution.admin_tools.modelo;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class NumberToLetterConverter {
 	
@@ -10,7 +12,7 @@ public class NumberToLetterConverter {
          "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS",
          "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE" };
 
- private static final String[] DECENAS = { "VENTI", "TREINTA ", "CUARENTA ",
+ private static final String[] DECENAS = { "VEINTI", "TREINTA ", "CUARENTA ",
          "CINCUENTA ", "SESENTA ", "SETENTA ", "OCHENTA ", "NOVENTA ",
          "CIEN " };
 
@@ -47,15 +49,14 @@ public class NumberToLetterConverter {
 
      StringBuilder converted = new StringBuilder();
 
-     String patternThreeDecimalPoints = "#.###";
-
-     DecimalFormat format = new DecimalFormat(patternThreeDecimalPoints);
-     format.setRoundingMode(RoundingMode.DOWN);
-
-     // formateamos el numero, para ajustarlo a el formato de tres puntos
-     // decimales
-     String formatedDouble = format.format(doubleNumber);
-     doubleNumber = Double.parseDouble(formatedDouble);
+     // Formato a 2 decimales FIJOS con separador '.' (Locale.US), para que los
+     // centavos queden siempre en 2 digitos. Antes se usaba "#.###" + un
+     // String.valueOf(double) que descartaba los ceros finales (120.50 -> "120.5")
+     // y leia "5" como 5 centavos en vez de 50 — ese era el bug de los decimales.
+     DecimalFormat format = new DecimalFormat("0.00",
+             DecimalFormatSymbols.getInstance(Locale.US));
+     format.setRoundingMode(RoundingMode.HALF_UP);
+     String formatedDouble = format.format(doubleNumber); // siempre "NNNN.DD"
 
      // Validamos que sea un numero legal
      if (doubleNumber > 999999999)
@@ -66,8 +67,9 @@ public class NumberToLetterConverter {
      if (doubleNumber < 0)
          throw new NumberFormatException("El numero debe ser positivo");
 
-     String[] splitNumber = String.valueOf(doubleNumber).replace('.', '#')
-             .split("#");
+     // Partimos la cadena FORMATEADA (no String.valueOf de un double): asi el
+     // segmento de centavos siempre tiene 2 digitos ("50", "05", "00").
+     String[] splitNumber = formatedDouble.replace('.', '#').split("#");
 
      // Descompone el trio de millones
      int millon = Integer.parseInt(String.valueOf(getDigitAt(splitNumber[0],
@@ -103,7 +105,7 @@ public class NumberToLetterConverter {
      if (cientos > 1)
          converted.append(convertNumber(String.valueOf(cientos)));
 
-     converted.append("LEMPIRAS");
+     converted.append(" LEMPIRAS");
 
      // Descompone los centavos
      int centavos = Integer.parseInt(String.valueOf(getDigitAt(
@@ -116,7 +118,9 @@ public class NumberToLetterConverter {
          converted.append(" CON " + convertNumber(String.valueOf(centavos))
                  + "CENTAVOS");
 
-     return converted.toString();
+     // Normaliza espacios (algunas palabras de los arreglos no traen espacio
+     // final/lo traen de mas): colapsa dobles y recorta extremos.
+     return converted.toString().trim().replaceAll("\\s+", " ");
  }
 
  /**

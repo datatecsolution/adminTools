@@ -434,7 +434,7 @@ public class CtlCuentasFacturas implements ActionListener, MouseListener, Change
 										LocalDateTime now = LocalDateTime.now();
 										myRecibo.setFecha(sdf.format(now));
 										//se establece la cantidad en letras
-										myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(0, BigDecimal.ROUND_HALF_EVEN).doubleValue()));
+										myRecibo.setTotalLetras(NumberToLetterConverter.convertNumberToLetter(myRecibo.getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
 
 										//se manda aguardar el recibo con los pagos realizados
 										boolean resulta = this.myReciboDao.registrar(myRecibo, cuentaFacturaOrigen,true);
