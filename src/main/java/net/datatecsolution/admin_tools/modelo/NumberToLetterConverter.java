@@ -12,7 +12,7 @@ public class NumberToLetterConverter {
          "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS",
          "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE" };
 
- private static final String[] DECENAS = { "VENTI", "TREINTA ", "CUARENTA ",
+ private static final String[] DECENAS = { "VEINTI", "TREINTA ", "CUARENTA ",
          "CINCUENTA ", "SESENTA ", "SETENTA ", "OCHENTA ", "NOVENTA ",
          "CIEN " };
 
@@ -105,7 +105,7 @@ public class NumberToLetterConverter {
      if (cientos > 1)
          converted.append(convertNumber(String.valueOf(cientos)));
 
-     converted.append("LEMPIRAS");
+     converted.append(" LEMPIRAS");
 
      // Descompone los centavos
      int centavos = Integer.parseInt(String.valueOf(getDigitAt(
@@ -118,7 +118,9 @@ public class NumberToLetterConverter {
          converted.append(" CON " + convertNumber(String.valueOf(centavos))
                  + "CENTAVOS");
 
-     return converted.toString();
+     // Normaliza espacios (algunas palabras de los arreglos no traen espacio
+     // final/lo traen de mas): colapsa dobles y recorta extremos.
+     return converted.toString().trim().replaceAll("\\s+", " ");
  }
 
  /**
