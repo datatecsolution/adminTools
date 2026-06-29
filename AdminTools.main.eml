@@ -20,6 +20,8 @@
 		<level name="Gradle: org.glassfish.jaxb:jaxb-runtime:2.3.1" value="project"/>
 		<level name="Gradle: javax.xml.bind:jaxb-api:2.3.1" value="project"/>
 		<level name="Gradle: com.google.guava:guava:28.1-jre" value="project"/>
+		<level name="Gradle: org.flywaydb:flyway-core:6.5.7" value="project"/>
+		<level name="Gradle: org.mindrot:jbcrypt:0.4" value="project"/>
 		<level name="Gradle: org.apache.commons:commons-pool2:2.7.0" value="project"/>
 		<level name="Gradle: commons-logging:commons-logging:1.2" value="project"/>
 		<level name="Gradle: com.google.protobuf:protobuf-java:3.11.4" value="project"/>

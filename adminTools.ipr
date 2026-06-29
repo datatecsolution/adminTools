@@ -8,6 +8,9 @@
       <module name="AdminTools" target="1.8" />
       <module name="adminTools.1.0.main" target="1.8" />
       <module name="adminTools.1.0.test" target="1.8" />
+      <module name="AdminTools.admintools-core" target="1.8" />
+      <module name="AdminTools.admintools-core.main" target="1.8" />
+      <module name="AdminTools.admintools-core.test" target="1.8" />
       <module name="AdminTools.main" target="1.8" />
       <module name="AdminTools.test" target="1.8" />
     </bytecodeTargetLevel>
@@ -24,6 +27,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/admintools-core" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -161,6 +165,9 @@
       <module fileurl="file://$PROJECT_DIR$/1.0.main.iml" filepath="$PROJECT_DIR$/1.0.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/1.0.test.iml" filepath="$PROJECT_DIR$/1.0.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/AdminTools.iml" filepath="$PROJECT_DIR$/AdminTools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.iml" filepath="$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.main.iml" filepath="$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.test.iml" filepath="$PROJECT_DIR$/admintools-core/AdminTools.admintools-core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/AdminTools.main.iml" filepath="$PROJECT_DIR$/AdminTools.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/AdminTools.test.iml" filepath="$PROJECT_DIR$/AdminTools.test.iml" />
     </modules>
@@ -790,6 +797,14 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/ecj/3.21.0/a143919dc9978bdf5977f04b19bc50cee00aa862/ecj-3.21.0-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Gradle: org.flywaydb:flyway-core:6.5.7" type="java-imported" external-system-id="GRADLE">
+      <properties groupId="org.flywaydb" artifactId="flyway-core" version="6.5.7" />
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.flywaydb/flyway-core/6.5.7/58c28ead296b8e8152f2beae74ad468b98b3ec96/flyway-core-6.5.7.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="Gradle: org.glassfish.jaxb:jaxb-runtime:2.3.1" type="java-imported" external-system-id="GRADLE">
       <properties groupId="org.glassfish.jaxb" artifactId="jaxb-runtime" version="2.3.1" />
       <CLASSES>
@@ -848,6 +863,14 @@
       <properties groupId="org.jvnet.staxex" artifactId="stax-ex" version="1.8" />
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jvnet.staxex/stax-ex/1.8/8cc35f73da321c29973191f2cf143d29d26a1df7/stax-ex-1.8.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Gradle: org.mindrot:jbcrypt:0.4" type="java-imported" external-system-id="GRADLE">
+      <properties groupId="org.mindrot" artifactId="jbcrypt" version="0.4" />
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mindrot/jbcrypt/0.4/af7e61017f73abb18ac4e036954f9f28c6366c07/jbcrypt-0.4.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
