@@ -499,10 +499,11 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				unArticulo.setPrecioVenta(res.getDouble("precio_articulo"));
 				unArticulo.setTipoArticulo(res.getInt("tipo_articulo"));
 				unArticulo.setExistencia(res.getInt("existencia"));
+				unArticulo.setEstado(res.getBoolean("estado"));
 				//unArticulo.setPreciosVenta(preciosDao.getPreciosArticulo(unArticulo.getId()));
-				
+
 			 }
-			//JOptionPane.showMessageDialog(null, unArticulo);		
+			//JOptionPane.showMessageDialog(null, unArticulo);
 					
 			} catch (SQLException e) {
 					JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
