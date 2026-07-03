@@ -312,8 +312,18 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 					}
 					
 			        
-					if(myArticulo!=null){
-						
+					//un articulo INACTIVO no debe recibir compras: tipear el codigo viejo
+					//de un producto reemplazado re-ingresa stock al articulo muerto y
+					//descuadra el inventario (caso Ronal cat. 107, compras 7024/7038)
+					if(myArticulo!=null && !myArticulo.isEstado()){
+						JOptionPane.showMessageDialog(view,
+								"El articulo "+myArticulo.getId()+" - "+myArticulo.getArticulo()
+								+" esta INACTIVO.\nBusque el articulo activo que lo reemplaza.",
+								"Articulo inactivo",JOptionPane.ERROR_MESSAGE);
+						this.view.getModelo().getDetalle(row).getArticulo().setId(-1);
+						myArticulo=null;
+					}else if(myArticulo!=null){
+
 						//conseguir los precios del producto
 						myArticulo.setPreciosVenta(this.preciosDao.getPreciosArticulo(myArticulo.getId()));
 						
