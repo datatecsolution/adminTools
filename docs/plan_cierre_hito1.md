@@ -19,7 +19,7 @@
 |------|-------------|--------|
 | 0 | Reconciliar backlog (verificar ya-hechas) | ✅ Hecho (2026-07-05: las 4 cubiertas, −23 SP) |
 | 1 | Hardening BD: float→DECIMAL (US-070..073) | ⬜ Pendiente |
-| 2 | Completar features admin/POS (US-081/043/044/047/100) | 🟦 En curso (US-079 ✅ 2026-07-05) |
+| 2 | Completar features admin/POS (US-081/043/044/047/100) | 🟡 En curso (US-079 ✅ merged 2026-07-08 · US-101 ✅) |
 | 3 | Hardening app de pedidos (US-074..077) | ⬜ Pendiente |
 | 4 | Seguridad — auditoría OWASP (US-049) | ⬜ Pendiente |
 | 5 | Pasada de prueba integral (objetivo "probado") | ⬜ Pendiente |
@@ -76,7 +76,7 @@ descuadres; jar viejo arranca OK contra el esquema nuevo.
 
 ## Fase 2 — Completar features del panel admin / POS
 
-- [x] **US-079** — Imagen de producto *(5 SP)* — **Terminado 2026-07-05** (PRs api#25, pos#32). Desvío aprobado por simpleza de BD: en vez de columna `imageUrl` + `/upload`, se **reusa la tabla legacy `articulo_imagen`** (blob en BD, sin migración, sobrevive redeploys vía mysqldump). API `/products/{id}/image` (POST ADMIN → `{imageVersion}`; GET público con ETag/immutable/304; DELETE) + `ProductResponse.imageVersion`; POS con sección Imagen en el modal, miniatura en la tabla y en el grid táctil. E2E verde contra API local.
+- [x] **US-079** — Imagen de producto *(5 SP)* — **MERGEADO 2026-07-08** (api#25 → main, pos#32 → master). Desvío aprobado por simpleza de BD: en vez de columna `imageUrl` + `/upload`, se **reusa la tabla legacy `articulo_imagen`** (blob en BD, sin migración, sobrevive redeploys vía mysqldump). API `/products/{id}/image` (POST ADMIN → `{imageVersion}`; GET público con ETag/immutable/304; DELETE; `?size=thumb` → miniatura ~160px al vuelo, 5.8× menos bytes para conexión lenta) + `ProductResponse.imageVersion`; POS con cuadro de imagen 40×40 inline en el modal (clic/drag&drop), miniatura en la tabla, en el grid táctil y **en el catálogo + líneas del ticket de facturación**. Colateral: se arregló un blocker preexistente de Zod v4 que impedía guardar cualquier producto (`prices.record`). E2E por navegador (Playwright). NO desplegado en clientes aún.
 
   > **Nota — análisis de eficiencia del blob-en-BD (medido contra Ronal, 2026-07-05).** Ronal: 3.408 productos (2.883 activos), `articulo_imagen` en 0 filas, BD común `admin_tools` = 324,6 MB, suma de todas las BD = 650,9 MB, **buffer pool en 128 MB** (default sin tunear). Proyección con JPEG 600 px ≈ 60 KB: 30% de activos con foto = ~52 MB; 60% = ~104 MB; **100% de activos = ~173 MB** (común pasaría a ~498 MB, +27% del backup total). Para alcanzar el umbral de "separar backups" (~2 GB de imágenes) harían falta ~34.000 fotos = 10× el catálogo → **no aplica**. Clave: las imágenes están **acotadas por el catálogo** (crece lento), no por las ventas (`movimiento_kardex` ya tiene 1,34 M filas). **Veredicto: el blob-en-BD es la opción correcta para este perfil de cliente; no hay caso para filesystem ni object storage.**
   >
