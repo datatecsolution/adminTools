@@ -18,7 +18,7 @@
 | Fase | Descripción | Estado |
 |------|-------------|--------|
 | 0 | Reconciliar backlog (verificar ya-hechas) | ✅ Hecho (2026-07-05: las 4 cubiertas, −23 SP) |
-| 1 | Hardening BD: float→DECIMAL (US-070..073) | ⬜ Pendiente |
+| 1 | Hardening BD: float→DECIMAL (US-070..073) | 🟡 En curso (US-070 ✅ validado local, sin deploy) |
 | 2 | Completar features admin/POS (US-081/043/044/047/100) | 🟡 En curso (US-079 ✅ merged 2026-07-08 · US-101 ✅) |
 | 3 | Hardening app de pedidos (US-074..077) | ⬜ Pendiente |
 | 4 | Seguridad — auditoría OWASP (US-049) | ⬜ Pendiente |
@@ -63,8 +63,15 @@ espejo de la API (`admintools-api/src/main/resources/db/migration/caja`).
 - Auditoría `information_schema` pre-migración en cada lote (sin valores fuera de rango).
 - Verificar que ningún DAO viejo haga `INSERT` posicional en las tablas tocadas.
 - Backup completo antes de cada lote.
+- **Precisión estándar: `DECIMAL(15,2)`** (rango ±9.999.999.999.999,99; caja V7 usó lo mismo).
+- **Regla de espejo API (¡crítica, descubierta en US-070!):** las entidades JPA de la API tienen `@JdbcTypeCode(SqlTypes.REAL)` en las columnas que aún eran float, para que `ddl-auto=validate` no exija DECIMAL. **Al migrar cada lote hay que QUITAR esa anotación** de las entidades correspondientes o la API no arranca ("found decimal, expecting real"). Mapeo entidad→lote:
+  - US-070: `ArticuloKardex` ✅ (hecho)
+  - US-071: `CuentaPorCobrar`, `CuentaPorCobrarFactura`, `ReciboPago`
+  - US-073: `CierreCaja`, `EntradaCaja`, `SalidaCaja`
+  - (verificar además otras entidades al tocar cada tabla)
+- **TODO EL TRABAJO DE FASE 1 SE VALIDA EN LOCAL** (`localhost/admin_tools`); no tocar clientes hasta validar todo y OK del usuario (regla 2026-07-08).
 
-- [ ] **US-070** — kardex, articulo_kardex, detalle_movimiento_kardex → DECIMAL *(riesgo medio · 5 SP)*
+- [x] **US-070** — kardex/stock float→DECIMAL(15,2) *(medio · 5 SP)* — **✅ validado en local 2026-07-08** (V34 común: kardex, movimiento_kardex, articulo_kardex, articulo_bodega). `detalle_movimiento_kardex` no tenía floats; `existencia_articulo_bodega` ya era DECIMAL. Fix API: `ArticuloKardex` sin `@JdbcTypeCode(REAL)`. Datos preservados, vistas/SPs OK, API valida + `/inventory/*` responde. Ramas `feature/us-070-kardex-decimal` (Swing + API), **sin push ni deploy**.
 - [ ] **US-071** — CxC, cuenta_factura, recibo_pago, cobro_factura, pagos_creditos → DECIMAL *(medio · 5 SP)*
 - [ ] **US-072** — tabla `articulo` + **entidad `Articulo` a BigDecimal** (muchos call-sites: DAOs, controllers, aritmética) *(**alto** · 8 SP)*
 - [ ] **US-073** — cierre_caja, entradas/salidas_caja, cuentas/movimientos_bancos, datos_factura + barrido global *(medio · 5 SP)*
