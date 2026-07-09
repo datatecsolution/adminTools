@@ -18,7 +18,7 @@
 | Fase | Descripción | Estado |
 |------|-------------|--------|
 | 0 | Reconciliar backlog (verificar ya-hechas) | ✅ Hecho (2026-07-05: las 4 cubiertas, −23 SP) |
-| 1 | Hardening BD: float→DECIMAL (US-070..073) | 🟡 En curso (US-070 ✅ validado local, sin deploy) |
+| 1 | Hardening BD: float→DECIMAL (US-070..073) | ✅ Validado en local (US-070/071/072/073; esquema común con **cero float**). Sin push ni deploy — pendiente OK del usuario |
 | 2 | Completar features admin/POS (US-081/043/044/047/100) | 🟡 En curso (US-079 ✅ merged 2026-07-08 · US-101 ✅) |
 | 3 | Hardening app de pedidos (US-074..077) | ⬜ Pendiente |
 | 4 | Seguridad — auditoría OWASP (US-049) | ⬜ Pendiente |
@@ -75,10 +75,18 @@ espejo de la API (`admintools-api/src/main/resources/db/migration/caja`).
 - [x] **US-070** — kardex/stock float→DECIMAL(15,2) *(medio · 5 SP)* — **✅ validado en local 2026-07-08** (V34 común: kardex, movimiento_kardex, articulo_kardex, articulo_bodega). `detalle_movimiento_kardex` no tenía floats; `existencia_articulo_bodega` ya era DECIMAL. Fix API: `ArticuloKardex` sin `@JdbcTypeCode(REAL)`. Datos preservados, vistas/SPs OK, API valida + `/inventory/*` responde. Ramas `feature/us-070-kardex-decimal` (Swing + API), **sin push ni deploy**.
 - [x] **US-071** — CxC float→DECIMAL(15,2) *(medio · 5 SP)* — **✅ validado en local 2026-07-09** (V35 común: `cliente.saldo`, `cuentas_por_cobrar`, `cuentas_por_cobrar_facturas`, `pagos_creditos`, `recibo_pago` — OJO typo legacy `saldo_anterio`). Fix API: `CuentaPorCobrar`/`CuentaPorCobrarFactura`/`ReciboPago` sin `@JdbcTypeCode(REAL)` (`cliente.saldo` es `@Transient`, `pagos_creditos` no mapeada). Datos preservados (checksums iguales), API valida + `/accounts-receivable` balance/statement/delinquent OK. Rama `feature/fase1-decimal` (Swing + API; renombrada desde `us-070`), **sin push ni deploy**.
 - [x] **US-072** — precio de artículo float→DECIMAL(15,2) *(alto · 8 SP)* — **✅ validado en local 2026-07-09** (V36 común: `articulo.precio_articulo` double(10,2)→DECIMAL, `precios_programados.nuevo_precio` float→DECIMAL). **Riesgo real menor de lo estimado:** el precio de venta real ya vive en `precios_articulos` (DECIMAL(38,2), Sprint 4.5); `articulo.precio_articulo` es fallback legacy. En vez del refactor `Double→BigDecimal` en call-sites, se añadió `@JdbcTypeCode(DECIMAL)` a los 2 campos `Double` (patrón `existencia`). Vistas heredan DECIMAL. Datos preservados, API valida, lectura + round-trip de escritura de precio exactos. Rama `feature/fase1-decimal`, **sin push ni deploy**.
-- [ ] **US-073** — cierre_caja, entradas/salidas_caja, cuentas/movimientos_bancos, datos_factura + barrido global *(medio · 5 SP)*
+- [x] **US-073** — barrido final float→DECIMAL(15,2) del esquema común *(medio · 5 SP)* — **✅ validado en local 2026-07-09** (V37 común: cierre_caja(17), cuentas_bancos, cuentas_por_pagar, detalle_cotizacion, encabezado_cotizacion, detalle_factura, detalle_factura_temp, entradas/salidas_caja, insumos, movimientos_bancos, recibo_pago_proveedores). **Tras V37 el esquema COMÚN tiene CERO float/double base.** Fix API: `CierreCaja`(−17 REAL), `EntradaCaja`/`SalidaCaja`(−REAL), `DetalleOrden.precio`(+DECIMAL); `DetalleFactura` tenant ya BigDecimal. 11 checksums idénticos, API valida, `/cierre-caja/actual` + `/orders` OK, round-trip escritura entrada 12.34 exacto. Rama `feature/fase1-decimal`, **sin push ni deploy**.
+  - **Residual (fuera de Fase 1, esquema CAJA):** `detalle_factura.cantidad` en las BDs por-caja sigue `float(11,2)` — `caja/V7` la dejó así explícitamente por "no ser monetaria". Si se quisiera cero-float también en caja: `caja/V10` (ALTER MODIFY, espejada a la API) + retest por cada caja_N. No bloquea el DoD ("cero float **monetario**"; `cantidad` es cantidad, no monto).
 
 **DoD:** cero columnas float monetarias en el esquema; facturación/cierre/CxC sin
 descuadres; jar viejo arranca OK contra el esquema nuevo.
+
+**Estado DoD (2026-07-09):** ✅ esquema COMÚN con cero float/double base (V34–V37);
+✅ datos preservados (checksums idénticos por lote); ✅ API arranca con `validate`
+limpio contra V37; ⬜ *pendiente antes de deploy:* smoke test del **Swing viejo**
+arrancando contra el esquema V37 (Flyway `repair()+migrate()` + facturación/cierre
+de punta a punta) y **OK explícito del usuario** para push + deploy a clientes. La
+migración es JDBC-safe (solo `ALTER MODIFY`), pero el smoke del jar es el último gate.
 
 ---
 
