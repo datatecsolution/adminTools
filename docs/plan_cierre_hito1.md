@@ -66,13 +66,13 @@ espejo de la API (`admintools-api/src/main/resources/db/migration/caja`).
 - **Precisión estándar: `DECIMAL(15,2)`** (rango ±9.999.999.999.999,99; caja V7 usó lo mismo).
 - **Regla de espejo API (¡crítica, descubierta en US-070!):** las entidades JPA de la API tienen `@JdbcTypeCode(SqlTypes.REAL)` en las columnas que aún eran float, para que `ddl-auto=validate` no exija DECIMAL. **Al migrar cada lote hay que QUITAR esa anotación** de las entidades correspondientes o la API no arranca ("found decimal, expecting real"). Mapeo entidad→lote:
   - US-070: `ArticuloKardex` ✅ (hecho)
-  - US-071: `CuentaPorCobrar`, `CuentaPorCobrarFactura`, `ReciboPago`
+  - US-071: `CuentaPorCobrar`, `CuentaPorCobrarFactura`, `ReciboPago` ✅ (hecho)
   - US-073: `CierreCaja`, `EntradaCaja`, `SalidaCaja`
   - (verificar además otras entidades al tocar cada tabla)
 - **TODO EL TRABAJO DE FASE 1 SE VALIDA EN LOCAL** (`localhost/admin_tools`); no tocar clientes hasta validar todo y OK del usuario (regla 2026-07-08).
 
 - [x] **US-070** — kardex/stock float→DECIMAL(15,2) *(medio · 5 SP)* — **✅ validado en local 2026-07-08** (V34 común: kardex, movimiento_kardex, articulo_kardex, articulo_bodega). `detalle_movimiento_kardex` no tenía floats; `existencia_articulo_bodega` ya era DECIMAL. Fix API: `ArticuloKardex` sin `@JdbcTypeCode(REAL)`. Datos preservados, vistas/SPs OK, API valida + `/inventory/*` responde. Ramas `feature/us-070-kardex-decimal` (Swing + API), **sin push ni deploy**.
-- [ ] **US-071** — CxC, cuenta_factura, recibo_pago, cobro_factura, pagos_creditos → DECIMAL *(medio · 5 SP)*
+- [x] **US-071** — CxC float→DECIMAL(15,2) *(medio · 5 SP)* — **✅ validado en local 2026-07-09** (V35 común: `cliente.saldo`, `cuentas_por_cobrar`, `cuentas_por_cobrar_facturas`, `pagos_creditos`, `recibo_pago` — OJO typo legacy `saldo_anterio`). Fix API: `CuentaPorCobrar`/`CuentaPorCobrarFactura`/`ReciboPago` sin `@JdbcTypeCode(REAL)` (`cliente.saldo` es `@Transient`, `pagos_creditos` no mapeada). Datos preservados (checksums iguales), API valida + `/accounts-receivable` balance/statement/delinquent OK. Rama `feature/fase1-decimal` (Swing + API; renombrada desde `us-070`), **sin push ni deploy**.
 - [ ] **US-072** — tabla `articulo` + **entidad `Articulo` a BigDecimal** (muchos call-sites: DAOs, controllers, aritmética) *(**alto** · 8 SP)*
 - [ ] **US-073** — cierre_caja, entradas/salidas_caja, cuentas/movimientos_bancos, datos_factura + barrido global *(medio · 5 SP)*
 
