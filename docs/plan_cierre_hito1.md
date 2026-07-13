@@ -81,12 +81,25 @@ espejo de la API (`admintools-api/src/main/resources/db/migration/caja`).
 **DoD:** cero columnas float monetarias en el esquema; facturación/cierre/CxC sin
 descuadres; jar viejo arranca OK contra el esquema nuevo.
 
-**Estado DoD (2026-07-09):** ✅ esquema COMÚN con cero float/double base (V34–V37);
+**Estado DoD (2026-07-12):** ✅ esquema COMÚN con cero float/double base (V34–V37);
 ✅ datos preservados (checksums idénticos por lote); ✅ API arranca con `validate`
-limpio contra V37; ⬜ *pendiente antes de deploy:* smoke test del **Swing viejo**
-arrancando contra el esquema V37 (Flyway `repair()+migrate()` + facturación/cierre
-de punta a punta) y **OK explícito del usuario** para push + deploy a clientes. La
-migración es JDBC-safe (solo `ALTER MODIFY`), pero el smoke del jar es el último gate.
+limpio contra V37.
+
+**✅ Smoke Flyway del Swing (2026-07-12):** se reprodujo el `runFlyway()` real del
+app (repair()+migrate(), Flyway 6.5.7 del classpath, `outOfOrder`, location common)
+contra un **clon en estado cliente real V32/float** (`admin_tools_smoke`, revertido con
+los backups pre_v34..37). Resultado: V33 (SP sobreventa) + V34–V37 aplicadas
+`success=1`, cero float base después. Los warnings `1265 Data truncated` de la
+conversión float→DECIMAL se **cuantificaron benignos**: delta 0.00 a 2 decimales
+(join por PK real en `movimiento_kardex`, 474 filas) — solo se descartó ruido binario
+sub-centavo. Además el resultado de Flyway == la migración manual (diff vacío). La BD
+local viva quedó en el estado post-deploy (schema_version V37). *Nota:* el smoke cubrió
+la **capa de migración/DB** vía el Flyway del propio app; NO se manejó la GUI JavaFX
+(facturación/cierre por pantalla) — el Swing usa JDBC `get/setDouble`, seguro sobre
+DECIMAL, y la misma lectura/escritura se validó por la API.
+
+⬜ *pendiente antes de deploy:* **OK explícito del usuario** para push + PR + deploy a
+clientes (opcional: click-through manual de facturación/cierre en la GUI del Swing).
 
 ---
 
