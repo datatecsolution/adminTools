@@ -19,8 +19,8 @@
 |------|-------------|--------|
 | 0 | Reconciliar backlog (verificar ya-hechas) | ✅ Hecho (2026-07-05: las 4 cubiertas, −23 SP) |
 | 1 | Hardening BD: float→DECIMAL (US-070..073) | ✅ Validado en local (US-070/071/072/073; esquema común con **cero float**). Sin push ni deploy — pendiente OK del usuario |
-| 2 | Completar features admin/POS (US-081/043/044/047/100) | 🟡 En curso (US-079 ✅ merged 2026-07-08 · US-101 ✅) |
-| 3 | Hardening app de pedidos (US-074..077) | ⬜ Pendiente |
+| 2 | Completar features admin/POS (US-081/043/044/047/100) | ✅ Full-stack validado en local 2026-07-13, sin push (US-079 ✅ merged · US-101 ✅). Pendiente smoke de navegador (imports, print del reporte, flujo QR) |
+| 3 | Hardening app de pedidos (US-074..077) | ✅ Hecho en local 2026-07-13 (sin push) |
 | 4 | Seguridad — auditoría OWASP (US-049) | ⬜ Pendiente |
 | 5 | Pasada de prueba integral (objetivo "probado") | ⬜ Pendiente |
 
@@ -110,11 +110,11 @@ clientes (opcional: click-through manual de facturación/cierre en la GUI del Sw
   > **Nota — análisis de eficiencia del blob-en-BD (medido contra Ronal, 2026-07-05).** Ronal: 3.408 productos (2.883 activos), `articulo_imagen` en 0 filas, BD común `admin_tools` = 324,6 MB, suma de todas las BD = 650,9 MB, **buffer pool en 128 MB** (default sin tunear). Proyección con JPEG 600 px ≈ 60 KB: 30% de activos con foto = ~52 MB; 60% = ~104 MB; **100% de activos = ~173 MB** (común pasaría a ~498 MB, +27% del backup total). Para alcanzar el umbral de "separar backups" (~2 GB de imágenes) harían falta ~34.000 fotos = 10× el catálogo → **no aplica**. Clave: las imágenes están **acotadas por el catálogo** (crece lento), no por las ventas (`movimiento_kardex` ya tiene 1,34 M filas). **Veredicto: el blob-en-BD es la opción correcta para este perfil de cliente; no hay caso para filesystem ni object storage.**
   >
   > **Acciones al desplegar US-079 en clientes:** (1) excluir `articulo_imagen` del `mysqldump` diario (`--ignore-table=admin_tools.articulo_imagen`) y respaldarla aparte ~1×/semana; (2) subir el `innodb_buffer_pool_size` a 512 MB–1 GB (pendiente preexistente por el tamaño transaccional, no por las fotos); (3) a futuro, evaluar backups físicos (XtraBackup) que evitan el inflado hex de los blobs. *(Colateral detectado en Ronal, ajeno a imágenes: `detalle_factura_temp` = 544 k filas / 104 MB y `encabezado_factura_temp` = 90 k / 32 MB — órdenes temporales sin limpiar que ya inflan todos los backups.)*
-- [ ] **US-081** — Categorías jerárquicas padre-hijo (Flyway `parent_id` self-FK en `marcas`; `GET /categories/tree`; UI árbol; selector con path "Padre > Hijo"; sin ciclos; borrar con hijos → 409) *(8 SP)*
-- [ ] **US-043** — Importación masiva de productos Excel/CSV (plantilla descargable, validación previa, reporte de errores, hasta 5000 filas, rollback) *(5 SP)*
-- [ ] **US-044** — Importación masiva de clientes Excel/CSV (plantilla con validación RTN, hasta 2000) *(3 SP)*
-- [ ] **US-047** — Reporte diario consolidado (ventas, desglose por método de pago, descuentos, anulaciones; export PDF/Excel) *(5 SP)*
-- [ ] **US-100** — Reimpresión de factura por QR (autoservicio) *(5 SP)*
+- [x] **US-081** — Categorías jerárquicas padre-hijo *(8 SP)* — **✅ validado en local 2026-07-13.** **V38** común (`marcas.parent_id` INT UNSIGNED NULL + self-FK; aditiva — `CategoriaDao` usa columnas explícitas, jar viejo OK; el FK protege el DELETE del Swing). API (commit `e983b46`): `GET /categories/tree` (huérfanos = raíces), `parentId` en DTOs, ciclos/self-parent → 409, parent inexistente → 400, DELETE con hijos → 409. E2E completo por curl. POS (commit `083f9fc`, rama `feature/us-081-categorias`): página de categorías en árbol (expandir/colapsar, indentación), selector de padre con path "Padre > Hijo" excluyendo la propia rama, selects de productos con path jerárquico.
+- [x] **US-043** — Importación masiva de productos Excel/CSV *(5 SP)* — **✅ backend validado en local 2026-07-13** (commit `a4d80c6`, + POI/commons-csv). `GET /products/import/template` (CSV BOM) + `POST /products/import?dryRun=` (ADMIN, máx 5000, .csv/.xlsx): valida nombre (dup en archivo y BD — anti stock-fantasma), precio, categoría por nombre, impuesto 15/18/0/EXENTO, barcodes múltiples `|` con unicidad global; reporte `{row,column,message}`; **todo-o-nada** (400 con reporte y 0 importado si hay errores). Reusa `ProductMasterService.create`. E2E: 6 tipos de error, count intacto tras 400, import 2 filas OK, re-import detecta dups, .xlsx OK. POS: botón Importar + `ImportDialog` reutilizable (dry-run → reporte → confirmar), commit `ee05301` en `feature/fase2-pos`.
+- [x] **US-044** — Importación masiva de clientes *(3 SP)* — **✅ backend validado en local 2026-07-13** (mismo commit): `POST /customers/import?dryRun=` (máx 2000), RTN 'CF'/14 dígitos con unicidad (archivo y BD), tipo CONTADO/CREDITO con las reglas del alta manual (crédito exige tel+dirección+límite>0). Reusa `CustomerService.create`. POS: comparte el `ImportDialog` (mismo commit `ee05301`).
+- [x] **US-047** — Reporte diario consolidado *(5 SP)* — **✅ backend validado en local 2026-07-13** (commit `1494184`): `GET /reports/daily?date=&caja=` (ADMIN/INVENTORY) — ventas, efectivo/tarjeta/crédito (fórmulas del cuadre del cierre), desglose por tasa, descuentos y anulaciones, por caja + consolidado; corte por día calendario en `app.timezone`. Cuadrado contra SQL directo y `/invoices/admin/summary` (2026-06-09: 15/11.281,00). **Export = print-to-PDF + CSV client-side (decisión 2026-07-13, sin libs server-side).** POS: página `/reports/daily` (KPIs + tabla por caja + ISV, imprimir con override de `@page` sobre el CSS del ticket, export CSV client-side), commit `2c8b4f2`.
+- [x] **US-100** — Reimpresión de factura por QR *(5 SP)* — **✅ backend validado en local 2026-07-13** (commit `357458c`). Sin migración: token HMAC-SHA256(caja|numero, `app.public-invoice.secret`) truncado a 128 bits; `GET /public/invoices/{caja}/{numero}?t=` público (404 con token inválido/ajeno/feature apagada); `qrToken`/`qrCaja` en los DTOs de factura para que el POS arme la URL. **Operativo por cliente: setear `APP_PUBLIC_INVOICE_SECRET` al desplegar** (vacío = QR apagado). POS: QR en Ticket80 (lib `qrcode`, data-URL precargado antes del flushSync) + página pública `/f/:caja/:numero` sin auth con membrete (la respuesta pública es `{invoice, empresa}` — `/company` NO se abrió al público), commits `520524b` + `c630a05`.
 - [x] **US-101** — Cajas + Datos de facturación CAI/rangos: endpoints backend réplica del Swing (provisioning de BD de caja + fiscal-ranges con ALTER AUTO_INCREMENT) *(8 SP · agregada 2026-07-02)* — **Terminado 2026-07-02** (api#22 → main 6bafe37, E2E verificado; pantalla POS queda como seguimiento)
 
 **DoD:** cada una full-stack, mergeada vía PR, criterios de aceptación cumplidos y
@@ -124,13 +124,14 @@ verificada local.
 
 ## Fase 3 — Hardening de la app de pedidos (`at-ordenes-ventas`)
 
-- [ ] **US-074** — **Lock pesimista anti-sobreventa** en `OrderService.save` (`SELECT articulo ... FOR UPDATE` dentro de `@Transactional`; conflicto → 409 con `[{productId, nombre, pedida, disponible}]`; React maneja 409). **API.** *(5 SP)*
-- [ ] **US-075** — `authFetch → apiClient` robusto (validar `response.ok`, throw tipado, parsing solo si JSON; `AbortController` en búsquedas; retry de `/auth/refresh` con backoff 1s/3s/9s) *(5 SP)*
-- [ ] **US-076** — Defensivo: helper `getUserSafe()` con try/catch (5 sitios de `JSON.parse(localStorage.user)`) + guard/UI de orden ya facturada (estado > 2) *(2 SP)*
-- [ ] **US-077** — Sanitizar `console.log` en prod (helper `logger` gateado por `NODE_ENV`; bundle de prod sin logs sensibles) *(1 SP)*
+- [x] **US-074** — **Lock pesimista anti-sobreventa** en `OrderService.save` *(5 SP)* — **✅ validado en local 2026-07-12** (API commit `6fc1439`, rama `feature/fase3-us074-lock-sobreventa`). Bloqueo **opt-in por usuario** con la misma semántica que el SP `crear_venta_kardex_v2` (V33): `facturar_sin_inventario=0` → exige stock; sin fila o =1 → histórico (cero impacto). `FOR UPDATE` sobre `articulo` (ids ascendentes) + `@Transactional(READ_COMMITTED)` — **gotcha real**: con REPEATABLE READ el read-view se crea en la primera lectura de la tx y el guard no veía el commit del competidor (los dos pasaban). Disponible = `f_existencia_y_ordenes` (kardex − pendientes, la cifra que ve el vendedor) + add-back de la propia orden en updates; solo artículos con kardex. 409 con `conflicts:[{productId,nombre,pedida,disponible}]`. **DoD verificado**: dos saves concurrentes → uno 201 y uno 409 (disponible 3.00); límite exacto pasa, +1 falla. React (app pedidos) maneja el 409 con toast por producto (commit `6ea21ff`).
+- [x] **US-075** — `authFetch → apiClient` robusto *(5 SP)* — **✅ 2026-07-13** (commit `6870516`, rama `feature/fase3-hardening` de at-ordenes-ventas): `ApiError{status,body}`, parsing JSON solo si corresponde, `AbortController` en búsquedas de clientes/productos, refresh 401 con backoff 1s/3s/9s (solo fallos de red) y dedupe; `authFetch.js` eliminado.
+- [x] **US-076** — Defensivo *(2 SP)* — **✅ 2026-07-13** (commit `8bc60a1`): `getUserSafe()` en los 6 sitios de `JSON.parse(localStorage.user)`; guard de orden procesada (estado > 2) al seleccionar y al re-guardar.
+- [x] **US-077** — Sanitizar `console.log` en prod *(1 SP)* — **✅ 2026-07-13** (commit `37daed2`): `utils/logger` gateado por NODE_ENV, 17 sitios migrados, `console.log(username)` eliminado.
 
-**DoD:** test concurrente de US-074 (dos threads → uno OK, uno 409); jest del happy path
-+ 1-2 paths de error; consola limpia en build de prod.
+**DoD:** ✅ test concurrente de US-074 (dos requests simultáneas → 201 + 409); ✅ 22
+tests verdes en 4 suites (apiClient, getUserSafe, logger, orderErrors); ✅ build de
+prod OK con emisión de logs gateada. **Pendiente: push + PR (regla solo-local).**
 
 ---
 
@@ -163,6 +164,17 @@ Lo que convierte "código terminado" en "sistema listo".
 ---
 
 ## Registro de decisiones / notas
+- 2026-07-13 — Fases 2 y 3 construidas y validadas EN LOCAL (sin push). Ramas
+  apiladas: API `feature/fase1-decimal` → `fase3-us074-lock-sobreventa` →
+  `us-081-categorias` → `us-043-044-import` → `us-047-reporte-diario` →
+  `us-100-qr-reimpresion` (apiladas porque `main` no arranca con validate
+  contra la BD local V37+). POS: `feature/us-081-categorias` → `fase2-pos`.
+  Pedidos: `feature/fase3-hardening`. Al aprobar el push, mergear en ese orden
+  (o un PR por repo con todo).
+- 2026-07-13 — US-047: export = imprimir→PDF del navegador + CSV client-side
+  (sin JasperReports/POI server-side). US-043/044: acepta .csv y .xlsx (POI).
+  US-100: URL pública firmada con HMAC (sin migración); requiere
+  APP_PUBLIC_INVOICE_SECRET por cliente al desplegar.
 - 2026-07-05 — US-101 TERMINADA full-stack (API + pantalla /cajas + regla de
   sobrepaso de rangos). Cierra el pendiente operativo CAI de US-040.
 - 2026-07-03 — Fuera de plan: fix sobreventa kardex V33 común + V9 caja + guard
