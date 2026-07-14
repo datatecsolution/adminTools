@@ -21,7 +21,7 @@
 | 1 | Hardening BD: float→DECIMAL (US-070..073) | ✅ Validado en local (US-070/071/072/073; esquema común con **cero float**). Sin push ni deploy — pendiente OK del usuario |
 | 2 | Completar features admin/POS (US-081/043/044/047/100) | ✅ Full-stack validado en local 2026-07-13, sin push (US-079 ✅ merged · US-101 ✅). Pendiente smoke de navegador (imports, print del reporte, flujo QR) |
 | 3 | Hardening app de pedidos (US-074..077) | ✅ Hecho en local 2026-07-13 (sin push) |
-| 4 | Seguridad — auditoría OWASP (US-049) | ⬜ Pendiente |
+| 4 | Seguridad — auditoría OWASP (US-049) | ✅ Auditada + arreglos en local 2026-07-14 (sin push). Código limpio en Fases 1-3; deuda heredada arreglada. 2 críticas operativas del deploy (rotar secretos) documentadas |
 | 5 | Pasada de prueba integral (objetivo "probado") | ⬜ Pendiente |
 
 Leyenda: ⬜ Pendiente · 🟡 En curso · ✅ Hecho
@@ -135,18 +135,49 @@ prod OK con emisión de logs gateada. **Pendiente: push + PR (regla solo-local).
 
 ---
 
-## Fase 4 — Seguridad (US-049 · 5 SP)
-Auditoría OWASP top 10 del sistema (API + POS + pedidos).
+## Fase 4 — Seguridad (US-049 · 5 SP) — ✅ auditoría hecha + arreglos en local 2026-07-14 (sin push)
+Auditoría OWASP top 10 del sistema (API + POS + pedidos) vía **3 auditores en
+paralelo** (API/auth/inyección, frontends, config). **Veredicto: el código nuevo
+de Fases 1-3 está limpio** — sin inyección SQL (todas las queries cross-DB validan
+el nombre de BD antes de concatenar; imports con binding), RBAC correcto en lo
+nuevo, QR público bien diseñado (HMAC constant-time, 404 indistinguible). La deuda
+real era **heredada**.
 
-- [ ] Headers de seguridad configurados
-- [ ] Authorization por endpoint revisada (`@PreAuthorize`)
-- [ ] Validación de inputs / manejo de JWT
-- [ ] Log de auditoría activo
-- [ ] Vulnerabilidades críticas resueltas
+- [x] **Headers de seguridad** — CSP `frame-ancestors 'none'`, Referrer-Policy
+  `no-referrer`, HSTS agregados en `SecurityConfig` (X-Frame-Options/nosniff ya
+  venían); tres headers seguros en los nginx del POS y pedidos (CSP estricta queda
+  como plantilla comentada, a validar contra el build de Vita).
+- [x] **Authorization por endpoint** — cerrado IDOR en `GET /orders/{id}` (usaba
+  `?user=` del atacante → ahora el JWT); `@PreAuthorize(ADMIN)` en
+  `/products/save` y `/products/delete` legacy que estaban sin gate.
+- [x] **Validación de inputs / JWT** — throttle anti-fuerza-bruta
+  (`LoginAttemptService`, 10 fallos/5min por usuario+IP) en `/auth/login` y
+  `/authorization/verify-admin`; login con mensaje genérico; `OrderCtl.save` deja
+  de filtrar `e.getMessage()`. El filtro JWT ya fallaba cerrado (HS256 con firma
+  verificada); Swagger apagado en `pdn`; `@CrossOrigin` hardcodeados removidos.
+- [x] **Exposición de datos** — endpoint público del QR recorta el login del
+  cajero y las facturas restantes del rango (`toPublic()`); `PublicInvoicePage`
+  saca el token del historial (`history.replaceState`); CSV del reporte diario
+  escapa contra formula-injection.
+- [ ] **Log de auditoría activo** — DIFERIDO a Fase 5 (no había logging de
+  auditoría; agregarlo es feature nueva, no fix de vulnerabilidad). El
+  `GlobalExceptionHandler` ya loguea errores server-side sin filtrar internals.
+- [x] **Vulnerabilidades críticas resueltas (código)** — todas las accionables en
+  código, arregladas y verificadas E2E en local.
 
-> Herramienta: correr `/security-review` sobre el diff de cada fase + una pasada global al final.
+**Operativo del deploy (NO código, gate del usuario):**
+- **C1 (crítica)**: **rotar `APP_JWT_SECRET` por cliente** — el default histórico
+  es público en el repo; con él se forja un JWT de admin contra el host de internet
+  (`pedidos.distribuidorasharon.com`). `DEPLOY.md` + `.env.example` ya corregidos
+  para exigir `openssl rand -base64 48` único. **Verificar/rotar en Ronal.**
+- **A2**: setear `APP_PUBLIC_INVOICE_SECRET` fuerte por cliente si se usa el QR.
+- CORS de `pdn`: `CORS_ALLOWED_ORIGINS` solo con orígenes vivos y HTTPS.
 
-**DoD:** checklist OWASP completo; críticas resueltas.
+Ramas: API `feature/us-049-owasp-hardening` (commits `81007f8` + `0e21d08`
+docs), POS `feature/us-049-owasp-frontend`, pedidos `feature/us-049-owasp`.
+
+**DoD:** ✅ auditoría OWASP completa; críticas de código resueltas y verificadas;
+las 2 críticas restantes son operativas del deploy (secretos), documentadas.
 
 ---
 
