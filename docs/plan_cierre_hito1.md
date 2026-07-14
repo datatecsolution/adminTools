@@ -22,7 +22,7 @@
 | 2 | Completar features admin/POS (US-081/043/044/047/100) | ✅ Full-stack validado en local 2026-07-13, sin push (US-079 ✅ merged · US-101 ✅). Pendiente smoke de navegador (imports, print del reporte, flujo QR) |
 | 3 | Hardening app de pedidos (US-074..077) | ✅ Hecho en local 2026-07-13 (sin push) |
 | 4 | Seguridad — auditoría OWASP (US-049) | ✅ Auditada + arreglos en local 2026-07-14 (sin push). Código limpio en Fases 1-3; deuda heredada arreglada. 2 críticas operativas del deploy (rotar secretos) documentadas |
-| 5 | Pasada de prueba integral (objetivo "probado") | ⬜ Pendiente |
+| 5 | Pasada de prueba integral (objetivo "probado") | ✅ Ejecutada en local 2026-07-14 ([`qa-hito1.md`](./qa-hito1.md)): 136 tests + 17 checks E2E verdes, regresión decimal y matriz jar/BD OK. Falta smoke manual (navegador + 1 corrida Swing) del usuario |
 
 Leyenda: ⬜ Pendiente · 🟡 En curso · ✅ Hecho
 
@@ -181,20 +181,42 @@ las 2 críticas restantes son operativas del deploy (secretos), documentadas.
 
 ---
 
-## Fase 5 — Pasada de prueba integral (objetivo "probado")
-Lo que convierte "código terminado" en "sistema listo".
+## Fase 5 — Pasada de prueba integral (objetivo "probado") — ✅ ejecutada en local 2026-07-14
+Lo que convierte "código terminado" en "sistema listo". Detalle completo y
+resultados en [`qa-hito1.md`](./qa-hito1.md).
 
-- [ ] **Tests automatizados** donde hay huecos — agente `test-doc-generator` por módulo (FacturacionService, CierreCaja, CxC, inventario, conversión decimal).
-- [ ] **E2E manual por escenario de negocio**, contra el stack **pruebas-dulce** (datos reales) y/o MySQL local:
-      venta contado/crédito → ticket fiscal → cierre de caja → CxC → anulación total/parcial → reporte diario → pedido desde la app.
-- [ ] **Regresión del Swing** (repetir tras el lote decimal de la Fase 1).
-- [ ] **Matriz de versiones**: confirmar en vivo que un Swing viejo coexiste con la BD nueva (analizado teóricamente; falta probarlo una vez).
+- [x] **Tests automatizados** — **136 tests, 0 fallos** (98 previos + 38 nuevos de
+  la lógica de Fases 2-4: throttle, HMAC del QR, parser de import, validación de
+  imports todo-o-nada, consolidación del reporte diario, árbol/ciclos de
+  categorías). Contrato endurecido de Fase 4 cubierto (429, IDOR, mensaje
+  genérico). Commit `bd78b8e`.
+- [x] **E2E por escenario de negocio** — script reproducible, **17 checks / 0
+  fallos** contra la API viva: venta contado → ticket fiscal (CAI real) → cierre
+  de caja → reporte diario (cuadra con summary US-099) → anulación total (kardex
+  repuesto, factura NULA) → CxC → controles de seguridad de Fase 4. La venta de
+  prueba se anula al final (no deja basura).
+- [x] **Regresión decimal** — cero float **base** en el común (los 2 restantes son
+  vistas con `SUM`, benignas); `schema_version` en V38.
+- [x] **Matriz jar-viejo/BD-nueva (nivel SQL)** — INSERT por columnas omitiendo
+  `parent_id` OK, `SELECT *` con columna extra no afecta al DAO viejo, `setDouble`
+  sobre DECIMAL limpio. ⬜ Falta **1 corrida real del Swing** (GUI, smoke del
+  usuario) — es la validación en vivo que no se reproduce headless.
 
-**DoD:** documento de pruebas con casos críticos cubiertos y bugs resueltos.
+**DoD:** ✅ documento de pruebas (`qa-hito1.md`) con casos críticos y resultados.
+⬜ Smoke manual del usuario (navegador POS + 1 corrida Swing) + rotación de
+secretos en el deploy — únicos pendientes del hito.
 
 ---
 
 ## Registro de decisiones / notas
+- 2026-07-14 — **Fase 5 (QA) ejecutada en local**: 136 tests + 17 E2E verdes,
+  regresión decimal y matriz jar/BD OK (ver `qa-hito1.md`). Con esto **el build y
+  la verificación del Hito 1 están completos**; quedan solo el smoke manual del
+  usuario (navegador + 1 corrida Swing) y el deploy (rotar secretos). Tests en API
+  commit `bd78b8e`.
+- 2026-07-14 — **Fase 4 (OWASP)**: código de Fases 1-3 limpio; arreglada la deuda
+  heredada (IDOR, gates, throttle, headers, Swagger off, recorte del DTO público).
+  2 críticas operativas del deploy (rotar `APP_JWT_SECRET`/`APP_PUBLIC_INVOICE_SECRET`).
 - 2026-07-13 — Fases 2 y 3 construidas y validadas EN LOCAL (sin push). Ramas
   apiladas: API `feature/fase1-decimal` → `fase3-us074-lock-sobreventa` →
   `us-081-categorias` → `us-043-044-import` → `us-047-reporte-diario` →

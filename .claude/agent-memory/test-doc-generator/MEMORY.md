@@ -1,0 +1,1 @@
+- [Mockito/JdbcTemplate en tests de la API](reference_api_test_mockito_jdbc.md) — convenciones de test de Desktop/admintools + gotchas de varargs queryForMap y NamedParameterJdbcTemplate
