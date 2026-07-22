@@ -1,0 +1,40 @@
+categoria	puesto	articulo	unidades	total_lps	pct_categoria
+Pasteleria	1	Pastel mediano	372	355364.00	31.6
+Pasteleria	2	Pastel pequeño	321	234745.00	20.9
+Pasteleria	3	Pastel de 2 pisos	62	148910.00	13.2
+Pasteleria	4	Pastel cuadrado	101	145129.00	12.9
+Pasteleria	5	Pastel mini	333	143958.00	12.8
+Pasteleria	6	Torta con caramelo	558	81857.00	7.3
+Pasteleria	7	Torta para cafe	117	12725.00	1.1
+Pasteleria	8	Pastel en porcion	30	2190.00	0.2
+Pasteleria	9	Empaques 	18	980.00	0.1
+Panaderia	1	Semita concha	8646	138188.00	16.2
+Panaderia	2	Dona sencilla	6061	119182.00	13.9
+Panaderia	3	Pan de banano	2976	74735.00	8.7
+Panaderia	4	Quesadilla	2217	59826.00	7.0
+Panaderia	5	Semita casera	2881	49374.00	5.8
+Panaderia	6	Roles pequeño	1037	37720.00	4.4
+Panaderia	7	Pastelitos de piña	2111	36068.00	4.2
+Panaderia	8	Empanadia de queso	2106	35830.00	4.2
+Panaderia	9	Pan de zanahoria	1057	31672.00	3.7
+Panaderia	10	Pan de coco	1729	27995.00	3.3
+Reposteria	1	Pastel 3 leche porcion	1792	102884.00	20.3
+Reposteria	2	Pastel humedo con frutas	132	80261.00	15.8
+Reposteria	3	Pastel 3 leches pequeño	135	64480.00	12.7
+Reposteria	4	Pastel humedo	77	42125.00	8.3
+Reposteria	5	Pastel 3 leches grande	41	37620.00	7.4
+Reposteria	6	Flan 1 porcion	533	34945.00	6.9
+Reposteria	7	Cupcake 	1027	26284.00	5.2
+Reposteria	8	Brazo gitano de galea de piña	595	19946.00	3.9
+Reposteria	9	Chochoflan en porcion	245	19010.00	3.8
+Reposteria	10	Tiramizu pedazo	205	14975.00	3.0
+Cafeteria	1	Cappuchino 8 onzas	642	29029.00	33.7
+Cafeteria	2	Cafe helado caramelo 16oz crema	253	20215.00	23.5
+Cafeteria	3	Cappuchino 12 onzas	301	18425.00	21.4
+Cafeteria	4	Refresco en lata	298	7029.00	8.2
+Cafeteria	5	Cafe helado caramelo 16oz	62	4385.00	5.1
+Cafeteria	6	Chai te 12oz	34	2360.00	2.7
+Cafeteria	7	Chai te 8oz	30	1760.00	2.0
+Cafeteria	8	Cafe americano 8 onzas	37	1110.00	1.3
+Cafeteria	9	Agua Azul 750ml	55	727.00	0.8
+Cafeteria	10	Cafe americano 12oz	16	693.00	0.8

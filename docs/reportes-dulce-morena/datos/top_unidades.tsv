@@ -1,0 +1,40 @@
+categoria	puesto	articulo	unidades	total_lps	total_categoria_lps
+Pasteleria	1	Torta con caramelo	558	81857.00	1125858.00
+Pasteleria	2	Pastel mediano	372	355364.00	1125858.00
+Pasteleria	3	Pastel mini	333	143958.00	1125858.00
+Pasteleria	4	Pastel pequeño	321	234745.00	1125858.00
+Pasteleria	5	Torta para cafe	117	12725.00	1125858.00
+Pasteleria	6	Pastel cuadrado	101	145129.00	1125858.00
+Pasteleria	7	Pastel de 2 pisos	62	148910.00	1125858.00
+Pasteleria	8	Pastel en porcion	30	2190.00	1125858.00
+Pasteleria	9	Empaques 	18	980.00	1125858.00
+Panaderia	1	Semita concha	8646	138188.00	855470.00
+Panaderia	2	Dona sencilla	6061	119182.00	855470.00
+Panaderia	3	Pan de banano	2976	74735.00	855470.00
+Panaderia	4	Semita casera	2881	49374.00	855470.00
+Panaderia	5	Quesadilla	2217	59826.00	855470.00
+Panaderia	6	Pastelitos de piña	2111	36068.00	855470.00
+Panaderia	7	Empanadia de queso	2106	35830.00	855470.00
+Panaderia	8	Pan de coco	1729	27995.00	855470.00
+Panaderia	9	Pan de zanahoria	1057	31672.00	855470.00
+Panaderia	10	Roles pequeño	1037	37720.00	855470.00
+Reposteria	1	Pastel 3 leche porcion	1792	102884.00	506416.00
+Reposteria	2	Cupcake 	1027	26284.00	506416.00
+Reposteria	3	Brazo gitano de galea de piña	595	19946.00	506416.00
+Reposteria	4	Flan 1 porcion	533	34945.00	506416.00
+Reposteria	5	Tartaletas pequenas	364	12755.00	506416.00
+Reposteria	6	Chochoflan en porcion	245	19010.00	506416.00
+Reposteria	7	Brownies	241	11266.00	506416.00
+Reposteria	8	Tiramizu pedazo	205	14975.00	506416.00
+Reposteria	9	Cheesecake porcion	166	14660.00	506416.00
+Reposteria	10	Pastel 3 leches pequeño	135	64480.00	506416.00
+Cafeteria	1	Cappuchino 8 onzas	642	29029.00	86193.00
+Cafeteria	2	Cappuchino 12 onzas	301	18425.00	86193.00
+Cafeteria	3	Refresco en lata	298	7029.00	86193.00
+Cafeteria	4	Cafe helado caramelo 16oz crema	253	20215.00	86193.00
+Cafeteria	5	Cafe helado caramelo 16oz	62	4385.00	86193.00
+Cafeteria	6	Agua Azul 750ml	55	727.00	86193.00
+Cafeteria	7	Cafe americano 8 onzas	37	1110.00	86193.00
+Cafeteria	8	Chai te 12oz	34	2360.00	86193.00
+Cafeteria	9	Chai te 8oz	30	1760.00	86193.00
+Cafeteria	10	Cafe americano 12oz	16	693.00	86193.00
