@@ -118,6 +118,11 @@ Ordenados por severidad:
 
 Regla operativa ya establecida en el proyecto: **todo se valida primero en local y en el stack de dulce; nada llega a clientes sin OK explícito** (misma disciplina que V33/US-074).
 
+## 4b. Decisiones ya tomadas (2026-07-27)
+
+1. **Caja del pedido = caja del vendedor**, resuelta con la misma lógica del `TenantInterceptor` (ver mecanismo en Fase 0).
+2. **Los usuarios VENDEDORES solo pueden tener UNA caja asignada** (a diferencia de los cajeros, que pueden tener varias — US-102/105). Esto hace la atribución del pedido inequívoca: no hay "por defecto entre varias", hay una sola. Enforcement pendiente en la administración de usuarios: al asignar cajas (`cajas_usuarios`) a un usuario con permiso de vendedor (tipo 3), la API debe rechazar más de una y la pantalla de usuarios del POS debe limitar la selección; además del guard, conviene una validación de datos existentes al migrar (detectar vendedores que hoy tengan 2+ cajas y normalizarlos).
+
 ## 5. Decisiones que hay que tomar (antes de la Fase 2)
 
 1. ¿La venta de mostrador debe **bloquearse** por reservas de pedidos, o solo **avisar**? (el opt-in por usuario permite un despliegue gradual)
