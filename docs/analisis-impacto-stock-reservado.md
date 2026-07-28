@@ -123,6 +123,14 @@ Regla operativa ya establecida en el proyecto: **todo se valida primero en local
 1. **Caja del pedido = caja del vendedor**, resuelta con la misma lógica del `TenantInterceptor` (ver mecanismo en Fase 0).
 2. **Los usuarios VENDEDORES solo pueden tener UNA caja asignada** (a diferencia de los cajeros, que pueden tener varias — US-102/105). Esto hace la atribución del pedido inequívoca: no hay "por defecto entre varias", hay una sola. Enforcement pendiente en la administración de usuarios: al asignar cajas (`cajas_usuarios`) a un usuario con permiso de vendedor (tipo 3), la API debe rechazar más de una y la pantalla de usuarios del POS debe limitar la selección; además del guard, conviene una validación de datos existentes al migrar (detectar vendedores que hoy tengan 2+ cajas y normalizarlos).
 
+## 4c. Decisiones de Fase 2/3 (2026-07-28, con el reservado real de dulce a la vista)
+
+1. **Enforcement mostrador: BLOQUEAR con opt-in por usuario** — la venta directa valida contra disponible usando el mismo flag `facturar_sin_inventario` de V33 (=0 bloquea; =1/sin fila permite). Despliegue gradual.
+2. **Estado 4 "Enviado" SIGUE RESERVANDO** — aclaración del usuario: "Enviado" es una etiqueta de SEGUIMIENTO del pedido (vendedor/cliente), no un cierre; el pedido sigue vivo. La reserva se libera SOLO al facturar (3) o eliminar (5) → el filtro pasa de `estado < 3` a `estado NOT IN (3,5)` en vista + función + add-backs.
+3. **Expiración: AUTO-ANULAR A LOS 7 DÍAS** — job diario que pasa a estado 5 los pedidos con más de 7 días (libera la reserva sola).
+4. **Alerta de mínimos: POR FÍSICO** (como quedó en Fase 1) — es señal de reposición.
+5. **Multi-bodega: DIFERIDO** — la limitación queda documentada; la atribución por caja del vendedor (US-109) ya deja el modelo listo.
+
 ## 5. Decisiones que hay que tomar (antes de la Fase 2)
 
 1. ¿La venta de mostrador debe **bloquearse** por reservas de pedidos, o solo **avisar**? (el opt-in por usuario permite un despliegue gradual)

@@ -8,6 +8,8 @@ para que el cliente (Urbina) llene su catálogo. Cada plantilla trae:
 
 Las columnas se alinean con el contrato del sistema:
   ProductRequest{name, price, categoryId(=categoría), taxId(=impuesto), altCode}
+  + Precio de costo → precios_articulos nivel codigo_precio=1 (costo), la misma
+    fuente que leen ArticuloDao y el trigger de kardex para el margen.
   CustomerCreateRequest{name, rtn, address, phone}
 
 Listas (categorías/impuestos) = snapshot de admin_tools al 2026-06-01.
@@ -110,6 +112,7 @@ def plantilla_productos():
         ("Categoria *", 20),
         ("Impuesto (ISV) *", 16),
         ("Precio de venta *", 16),
+        ("Precio de costo", 16),
         ("Codigo de barras", 20),
         ("Codigo alterno", 16),
     ]
@@ -119,9 +122,9 @@ def plantilla_productos():
     estilizar_encabezado(ws, len(headers))
 
     ejemplos = [
-        ["Coca Cola 600ml", "BEBIDAS", "Basicos (15%)", 25.00, "7501055300013", 1001],
-        ["Camiseta algodon M", "ROPA", "Basicos (15%)", 180.00, "", 1002],
-        ["Jabon de tocador", "CUIDADO PERSONAL", "Basicos (15%)", 18.50, "", ""],
+        ["Coca Cola 600ml", "BEBIDAS", "Basicos (15%)", 25.00, 18.00, "7501055300013", 1001],
+        ["Camiseta algodon M", "ROPA", "Basicos (15%)", 180.00, 110.00, "", 1002],
+        ["Jabon de tocador", "CUIDADO PERSONAL", "Basicos (15%)", 18.50, "", "", ""],
     ]
     for r, fila in enumerate(ejemplos, start=2):
         for c, val in enumerate(fila, start=1):
@@ -146,6 +149,13 @@ def plantilla_productos():
     ws.add_data_validation(dv_precio)
     dv_precio.add("D2:D%d" % last)
 
+    # Precio de costo (columna E): misma regla numérica que el de venta.
+    dv_costo = DataValidation(type="decimal", operator="greaterThanOrEqual", formula1="0", allow_blank=True)
+    dv_costo.error = "El costo debe ser un número mayor o igual a 0 (o dejarse vacío)."
+    dv_costo.errorTitle = "Costo inválido"
+    ws.add_data_validation(dv_costo)
+    dv_costo.add("E2:E%d" % last)
+
     instr = [
         "PLANTILLA DE CARGA INICIAL — PRODUCTOS",
         "",
@@ -161,6 +171,7 @@ def plantilla_productos():
         "• Categoria *  (obligatorio): elegí del desplegable — solo aparecen las categorías que cargaste en el PASO 1.",
         "• Impuesto (ISV) *  (obligatorio): Exectos (0%) = exonerado, Basicos (15%), Lujo (18%). Elegí del desplegable.",
         "• Precio de venta *  (obligatorio): precio al público, en Lempiras, CON impuesto incluido. Solo números (ej. 25.00).",
+        "• Precio de costo  (opcional): lo que te cuesta el producto (precio de compra), en Lempiras. Solo números (ej. 18.00). Se usa para calcular el margen y en los reportes de inventario; si no lo manejás, dejalo vacío.",
         "• Codigo de barras  (opcional): si el producto tiene código de barras escaneable.",
         "• Codigo alterno  (opcional): código interno/SKU si manejás uno.",
         "",
