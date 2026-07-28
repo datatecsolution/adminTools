@@ -13,6 +13,8 @@ public class ViewArticuloExistencias extends JDialog {
 	private final JTextField txtArticulo;
 	private final JTextField txtBodega;
 	private final JTextField txtExistencia;
+	/** US-114: disponible informativo (físico − pedidos pendientes). */
+	private final JLabel lblDisponible;
 	private final BotonCancelar btnCancelar;
 
 	public ViewArticuloExistencias(Window view) {
@@ -60,6 +62,10 @@ public class ViewArticuloExistencias extends JDialog {
 		txtExistencia.setBounds(26, 141, 314, 30);
 		getContentPane().add(txtExistencia);
 		txtExistencia.setColumns(10);
+
+		lblDisponible = new JLabel("");
+		lblDisponible.setBounds(26, 174, 314, 16);
+		getContentPane().add(lblDisponible);
 		
 		btnCancelar = new BotonCancelar();
 		btnCancelar.setBounds(194, 193, 130, 65);
@@ -96,4 +102,8 @@ public class ViewArticuloExistencias extends JDialog {
 		return txtExistencia;
 	}
 	
+
+	public JLabel getLblDisponible() {
+		return lblDisponible;
+	}
 }

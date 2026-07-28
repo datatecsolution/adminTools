@@ -1012,7 +1012,49 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		
 	}
 	
-public double getExistencia(int codigoArticulo,int codigoBodega){
+/**
+	 * US-114 (Fase 1 stock reservado): disponible = saldo kardex − pedidos
+	 * pendientes de la bodega (vista v_reservado_por_articulo, V39). SOLO
+	 * lectura informativa — las validaciones de venta siguen usando
+	 * getExistencia (físico) hasta la Fase 2.
+	 */
+	public double getDisponible(int codigoArticulo,int codigoBodega){
+		ResultSet res=null;
+		Connection conn=null;
+		double disponible=0;
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(
+				"select f_can_saldo_kardex(?,?) - IFNULL((select reservado from "
+				+ super.DbName+".v_reservado_por_articulo where codigo_articulo=? and codigo_bodega=?),0) as disponible");
+			psConsultas.setInt(1, codigoArticulo);
+			psConsultas.setInt(2, codigoBodega);
+			psConsultas.setInt(3, codigoArticulo);
+			psConsultas.setInt(4, codigoBodega);
+			res = psConsultas.executeQuery();
+			while(res.next()){
+				disponible=res.getDouble("disponible");
+			 }
+			} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+					System.out.println(e);
+			}
+			finally
+			{
+				try{
+					if(res!=null)res.close();
+					if(psConsultas != null)psConsultas.close();
+	                if(conn != null) conn.close();
+				}
+				catch ( SQLException excepcionSql )
+				{
+				excepcionSql.printStackTrace();
+				}
+			}
+		return disponible;
+	}
+
+	public double getExistencia(int codigoArticulo,int codigoBodega){
 		
 		
 		ResultSet res=null;

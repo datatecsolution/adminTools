@@ -51,8 +51,13 @@ public class CtlArticuloExistencias implements ActionListener {
 		view.getTxtArticulo().setText(myArticulo.getArticulo());
 		view.getTxtBodega().setText(myBodega.getDescripcion());
 		view.getTxtExistencia().setText(myArticulo.getExistencia()+"");
-		
-		
+		// US-114: disponible informativo (físico − pedidos pendientes). No
+		// altera el guardado — el ajuste sigue operando sobre el físico.
+		double disponible=articuloDao.getDisponible(myArticulo.getId(), myBodega.getId());
+		double enPedidos=myArticulo.getExistencia()-disponible;
+		view.getLblDisponible().setText(enPedidos>0
+				? "Disponible: "+disponible+"  ("+enPedidos+" en pedidos)"
+				: "Disponible: "+disponible);
 	}
 
 	@Override
