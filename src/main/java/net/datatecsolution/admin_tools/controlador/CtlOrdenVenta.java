@@ -172,7 +172,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 
 							}else{
 									//se comprueba que exista el producto en el inventario
-									double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+									double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 									//si es necesario comprobar los inventarios de articulos
 
@@ -181,7 +181,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 									if(myArticulo.getTipoArticulo()==1){
 
 											//se comprueba que exista el producto en el inventario
-											existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+											existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 										double cantidad=1;
 
@@ -229,7 +229,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 													for(int xx=0;xx<insumos.size();xx++){
 
 														//se comprueba que exista el insumo en el inventario
-														existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+														existencia=existenciaVendible(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 														if(existencia>0.0 && existencia>=insumos.get(xx).getCantidad().doubleValue()){
 															//se establece que esiste
@@ -629,7 +629,7 @@ public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModel
 
 
 					//se comprueba que exista el producto en el inventario
-					double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+					double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 					double cantidad=1;
 
@@ -1190,7 +1190,7 @@ public void calcularTotales(){
 										//si es un bien se procede de esta manera
 										if(myArticulo.getTipoArticulo()==1){
 												//se extre la exista del producto en el inventario
-												double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+												double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 
 												//se registra la cantida en la entrada del usuario
@@ -1231,7 +1231,7 @@ public void calcularTotales(){
 														for(int xx=0;xx<insumos.size();xx++){
 
 															//se comprueba que exista el insumo en el inventario
-															existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+															existencia=existenciaVendible(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 															BigDecimal cantRequerida=cantidadSaldoItem.multiply(insumos.get(xx).getCantidad());
 
@@ -1633,7 +1633,7 @@ public void calcularTotales(){
 					//se filtra se es un bien
 					if(myArticulo.getTipoArticulo()==1){
 						//se extre la exista del producto en el inventario
-						double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+						double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 						//se pasa a bigdecimal
 						BigDecimal cantidadSaldoKardex=new BigDecimal(existencia);
@@ -1679,7 +1679,7 @@ public void calcularTotales(){
 							for(int xx=0;xx<insumos.size();xx++){
 
 								//se comprueba que exista el insumo en el inventario
-								existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+								existencia=existenciaVendible(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 								BigDecimal cantRequerida=newCantSaldoItem.multiply(insumos.get(xx).getCantidad());
 
@@ -1912,7 +1912,7 @@ public void calcularTotales(){
 				if(myArticulo.getTipoArticulo()==1){
 
 						//se comprueba que exista el producto en el inventario
-						existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+						existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 						double cantidad=1;
 
@@ -1960,7 +1960,7 @@ public void calcularTotales(){
 								for(int xx=0;xx<insumos.size();xx++){
 
 									//se comprueba que exista el insumo en el inventario
-									existencia=myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+									existencia=existenciaVendible(insumos.get(xx).getArticulo().getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 									//insumos.get(xx).getCantidad().multiply(new BigDecimal(e))
 
 									//se valida la existencia solo para los bienes
@@ -2150,7 +2150,7 @@ public void guardarRemoto(){
 						//si es un bien se procede de esta manera
 						if(myArticulo.getTipoArticulo()==1){
 							//se extre la exista del producto en el inventario
-							double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+							double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 
 							//se registra la cantida en la entrada del usuario
@@ -2353,7 +2353,7 @@ public void guardarRemoto(){
 						//si es un bien se procede de esta manera
 						if(myArticulo.getTipoArticulo()==1){
 							//se extre la exista del producto en el inventario
-							double existencia=myArticuloDao.getExistencia(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
+							double existencia=existenciaVendible(myArticulo.getId(), ConexionStatic.getUsuarioLogin().getCajaActiva().getDetartamento().getId());
 
 
 							//se registra la cantida en la entrada del usuario
@@ -2396,6 +2396,21 @@ public void guardarRemoto(){
 		this.view.getTableDetalle().changeSelection(row, col, toggle, extend);
 		this.view.getTableDetalle().addColumnSelectionInterval(0, 6);
 
+	}
+
+
+	/**
+	 * US-117: existencia VENDIBLE para validar la venta — físico − pedidos
+	 * vivos, con add-back de la orden cargada (tipoView==2): facturarla no
+	 * choca contra su propia reserva. Los callers ya deciden con el flag
+	 * facturar_sin_inventario si validan o no.
+	 */
+	private double existenciaVendible(int codArticulo, int codBodega) {
+		int ordenExcluida = -1;
+		if (tipoView == 2 && myFactura != null && myFactura.getIdFactura() != null) {
+			ordenExcluida = myFactura.getIdFactura();
+		}
+		return myArticuloDao.getDisponibleVenta(codArticulo, codBodega, ordenExcluida);
 	}
 
 }

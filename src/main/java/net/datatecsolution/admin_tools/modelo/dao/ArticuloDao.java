@@ -1054,6 +1054,59 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		return disponible;
 	}
 
+	/**
+	 * US-117 (Fase 2 stock reservado): existencia VENDIBLE para las
+	 * validaciones de venta = saldo kardex − pedidos VIVOS (vista
+	 * v_reservado_por_articulo, V40: estado NOT IN (3,5) — "Enviado"
+	 * reserva) + add-back de la orden excluida (facturar una orden cargada
+	 * no debe chocar contra su propia reserva; misma regla que la API
+	 * US-074/US-116). ordenExcluida <= 0 = ninguna.
+	 */
+	public double getDisponibleVenta(int codigoArticulo,int codigoBodega,int ordenExcluida){
+		ResultSet res=null;
+		Connection conn=null;
+		double disponible=0;
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(
+				"select f_can_saldo_kardex(?,?) "
+				+ " - IFNULL((select reservado from "+super.DbName+".v_reservado_por_articulo "
+				+ "            where codigo_articulo=? and codigo_bodega=?),0) "
+				+ " + IFNULL((select SUM(d.cantidad) from "+super.DbName+".detalle_factura_temp d "
+				+ "            join "+super.DbName+".encabezado_factura_temp e on e.numero_factura=d.numero_factura "
+				+ "            join "+super.DbName+".cajas c on c.codigo=e.codigo_caja "
+				+ "            where d.codigo_articulo=? and d.numero_factura=? "
+				+ "              and c.codigo_bodega=? and e.estado not in (3,5)),0) as disponible");
+			psConsultas.setInt(1, codigoArticulo);
+			psConsultas.setInt(2, codigoBodega);
+			psConsultas.setInt(3, codigoArticulo);
+			psConsultas.setInt(4, codigoBodega);
+			psConsultas.setInt(5, codigoArticulo);
+			psConsultas.setInt(6, ordenExcluida);
+			psConsultas.setInt(7, codigoBodega);
+			res = psConsultas.executeQuery();
+			while(res.next()){
+				disponible=res.getDouble("disponible");
+			 }
+			} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+					System.out.println(e);
+			}
+			finally
+			{
+				try{
+					if(res!=null)res.close();
+					if(psConsultas != null)psConsultas.close();
+	                if(conn != null) conn.close();
+				}
+				catch ( SQLException excepcionSql )
+				{
+				excepcionSql.printStackTrace();
+				}
+			}
+		return disponible;
+	}
+
 	public double getExistencia(int codigoArticulo,int codigoBodega){
 		
 		

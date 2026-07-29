@@ -255,11 +255,11 @@ public class CtlFacturarFrame
 	}
 
 	private void agregarArticuloConInventario() {
-		double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
+		double existencia = existenciaVendible(myArticulo.getId(),
 				cajaActiva.getDetartamento().getId());
 
 		if (myArticulo.getTipoArticulo() == 1) {
-			existencia = myArticuloDao.getExistencia(myArticulo.getId(),
+			existencia = existenciaVendible(myArticulo.getId(),
 					cajaActiva.getDetartamento().getId());
 
 			double cantidad = 1;
@@ -304,7 +304,7 @@ public class CtlFacturarFrame
 
 			boolean exist = false;
 			for (int xx = 0; xx < insumos.size(); xx++) {
-				double existenciaInsumo = myArticuloDao.getExistencia(
+				double existenciaInsumo = existenciaVendible(
 						insumos.get(xx).getArticulo().getId(),
 						cajaActiva.getDetartamento().getId());
 
@@ -530,7 +530,7 @@ public class CtlFacturarFrame
 		if (!AbstractJasperReports.isNumberReal(entrada)) return;
 
 		if (myArticulo.getTipoArticulo() == 1) {
-			double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
+			double existencia = existenciaVendible(myArticulo.getId(),
 					cajaActiva.getDetartamento().getId());
 
 			BigDecimal cantidadSaldoItem = new BigDecimal(entrada);
@@ -560,7 +560,7 @@ public class CtlFacturarFrame
 
 			boolean exist = false;
 			for (int xx = 0; xx < insumos.size(); xx++) {
-				double existencia = myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(),
+				double existencia = existenciaVendible(insumos.get(xx).getArticulo().getId(),
 						cajaActiva.getDetartamento().getId());
 
 				BigDecimal cantRequerida = cantidadSaldoItem.multiply(insumos.get(xx).getCantidad());
@@ -704,7 +704,7 @@ public class CtlFacturarFrame
 	}
 
 	private void incrementarCantidadBien() {
-		double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
+		double existencia = existenciaVendible(myArticulo.getId(),
 				cajaActiva.getDetartamento().getId());
 
 		BigDecimal cantidadSaldoKardex = new BigDecimal(existencia);
@@ -740,7 +740,7 @@ public class CtlFacturarFrame
 
 		boolean exist = false;
 		for (int xx = 0; xx < insumos.size(); xx++) {
-			double existencia = myArticuloDao.getExistencia(insumos.get(xx).getArticulo().getId(),
+			double existencia = existenciaVendible(insumos.get(xx).getArticulo().getId(),
 					cajaActiva.getDetartamento().getId());
 
 			BigDecimal cantRequerida = newCantSaldoItem.multiply(insumos.get(xx).getCantidad());
@@ -1005,7 +1005,7 @@ public class CtlFacturarFrame
 					identificador = (int) this.view.getValorTabla(row, 0);
 					myArticulo = this.view.getDetalle(row).getArticulo();
 
-					double existencia = myArticuloDao.getExistencia(myArticulo.getId(),
+					double existencia = existenciaVendible(myArticulo.getId(),
 							cajaActiva.getDetartamento().getId());
 
 					double cantidad = 1;
@@ -2034,7 +2034,7 @@ public class CtlFacturarFrame
 			BigDecimal nuevaCantidad = view.getDetalle(x).getCantidad().add(new BigDecimal(entrada));
 
 			if (!config.isFacturarSinInventario() && art.getTipoArticulo() == 1) {
-				double existencia = myArticuloDao.getExistencia(art.getId(),
+				double existencia = existenciaVendible(art.getId(),
 						cajaActiva.getDetartamento().getId());
 				if (existencia <= 0.0 || nuevaCantidad.doubleValue() > existencia) {
 					JOptionPane.showMessageDialog(view.asComponent(),
@@ -2112,6 +2112,21 @@ public class CtlFacturarFrame
 				this.cajaActiva = usuario.getCajaActiva();
 			}
 		}
+	}
+
+
+	/**
+	 * US-117: existencia VENDIBLE para validar la venta — físico − pedidos
+	 * vivos, con add-back de la orden cargada (tipoView==2): facturarla no
+	 * choca contra su propia reserva. Los callers ya deciden con el flag
+	 * facturar_sin_inventario si validan o no.
+	 */
+	private double existenciaVendible(int codArticulo, int codBodega) {
+		int ordenExcluida = -1;
+		if (tipoView == 2 && myFactura != null && myFactura.getIdFactura() != null) {
+			ordenExcluida = myFactura.getIdFactura();
+		}
+		return myArticuloDao.getDisponibleVenta(codArticulo, codBodega, ordenExcluida);
 	}
 
 }
