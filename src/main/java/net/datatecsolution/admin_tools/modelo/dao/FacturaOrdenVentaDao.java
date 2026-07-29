@@ -402,71 +402,91 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 
 	
 	@Override
+	/**
+	 * US-119 (Fase 3 stock reservado): actualizar la orden es ATÓMICO. El
+	 * flujo histórico (UPDATE header + eliminar() + agregarDetalleTemp() en
+	 * conexiones separadas con autocommit) dejaba una ventana sin detalles:
+	 * la reserva de la orden desaparecía transitoriamente y, si el re-insert
+	 * fallaba, la orden quedaba VACÍA. Ahora todo corre en UNA conexión con
+	 * setAutoCommit(false): o queda el set nuevo completo, o rollback y los
+	 * detalles previos quedan intactos.
+	 */
 	public boolean actualizar(Object c) {
-		// TODO Auto-generated method stub
 		Factura factura=(Factura)c;
-		
 		boolean resultado=false;
 		Connection conn=null;
-		String sql=super.getQueryUpdate()+" "
+		String sqlHeader=super.getQueryUpdate()+" "
 				+ "SET fecha = now(),"
 				+ " subtotal = ? , "
 				+ "impuesto = ?, "
 				+ "total=?, "
 				+ "codigo_cliente=?,"
-
 				+ "estado_factura=?,"
 				+ "descuento=?,"
 				+ "tipo_factura=?, "
 				+ "estado=2 "
-				//+ "usuario=?"
 				+ " WHERE numero_factura = ?";
+		String sqlDeleteDetalles="DELETE FROM "+super.DbName+".detalle_factura_temp WHERE numero_factura = ?";
+		String sqlInsertDetalle="INSERT INTO "+super.DbName+".detalle_factura_temp ("
+				+ "numero_factura,codigo_articulo,precio,cantidad,impuesto,subtotal,descuento,total"
+				+ ") VALUES (?,?,?,?,?,?,?,?)";
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(sql);
+			conn.setAutoCommit(false);
 
-			//JOptionPane.showMessageDialog(null, f);
-			psConsultas.setBigDecimal(1,factura.getSubTotal());
-			psConsultas.setBigDecimal(2,factura.getTotalImpuesto());
-			psConsultas.setBigDecimal(3,factura.getTotal());
-			psConsultas.setInt(4, factura.getCliente().getId());
-			psConsultas.setString(5, "ACT");
-
-			psConsultas.setBigDecimal(6, factura.getTotalDescuento());
-
-			psConsultas.setInt(7, factura.getTipoFactura());
-			//psConsultas.setString(8, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(8, factura.getIdFactura());
-			psConsultas.executeUpdate();
-			
-			detallesDao.eliminar(factura);
-			//se guardan los detalles de la fatura
-			for(int x=0;x<factura.getDetalles().size();x++){
-				
-				if(factura.getDetalles().get(x).getArticulo().getId()!=-1)
-					detallesDao.agregarDetalleTemp(factura.getDetalles().get(x),factura.getIdFactura());
+			try (java.sql.PreparedStatement psHeader=conn.prepareStatement(sqlHeader)) {
+				psHeader.setBigDecimal(1,factura.getSubTotal());
+				psHeader.setBigDecimal(2,factura.getTotalImpuesto());
+				psHeader.setBigDecimal(3,factura.getTotal());
+				psHeader.setInt(4, factura.getCliente().getId());
+				psHeader.setString(5, "ACT");
+				psHeader.setBigDecimal(6, factura.getTotalDescuento());
+				psHeader.setInt(7, factura.getTipoFactura());
+				psHeader.setInt(8, factura.getIdFactura());
+				psHeader.executeUpdate();
 			}
-			
+
+			try (java.sql.PreparedStatement psDelete=conn.prepareStatement(sqlDeleteDetalles)) {
+				psDelete.setInt(1, factura.getIdFactura());
+				psDelete.executeUpdate();
+			}
+
+			try (java.sql.PreparedStatement psInsert=conn.prepareStatement(sqlInsertDetalle)) {
+				for(int x=0;x<factura.getDetalles().size();x++){
+					if(factura.getDetalles().get(x).getArticulo().getId()==-1) continue;
+					psInsert.setInt(1, factura.getIdFactura());
+					psInsert.setInt(2, factura.getDetalles().get(x).getArticulo().getId());
+					psInsert.setDouble(3, factura.getDetalles().get(x).getArticulo().getPrecioVenta());
+					psInsert.setBigDecimal(4, factura.getDetalles().get(x).getCantidad());
+					psInsert.setBigDecimal(5, factura.getDetalles().get(x).getImpuesto());
+					psInsert.setBigDecimal(6, factura.getDetalles().get(x).getSubTotal());
+					psInsert.setBigDecimal(7, factura.getDetalles().get(x).getDescuentoItem());
+					psInsert.setBigDecimal(8, factura.getDetalles().get(x).getTotal());
+					psInsert.addBatch();
+				}
+				psInsert.executeBatch();
+			}
+
+			conn.commit();
 			resultado= true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			if(conn!=null){
+				try{ conn.rollback(); }catch(SQLException ex){ ex.printStackTrace(); }
+			}
 			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
 			resultado=false;
 		}
 		finally
 		{
 			try{
-				//if(res != null) res.close();
-                if(psConsultas != null)psConsultas.close();
-                if(conn != null) conn.close();
-			} // fin de try
+				if(conn != null){ conn.setAutoCommit(true); conn.close(); }
+			}
 			catch ( SQLException excepcionSql )
 			{
 				excepcionSql.printStackTrace();
-				//conexion.desconectar();
-			} // fin de catch
-		} // fin de finally
+			}
+		}
 		return resultado;
 	}
 

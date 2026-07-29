@@ -131,6 +131,10 @@ Regla operativa ya establecida en el proyecto: **todo se valida primero en local
 4. **Alerta de mínimos: POR FÍSICO** (como quedó en Fase 1) — es señal de reposición.
 5. **Multi-bodega: DIFERIDO** — la limitación queda documentada; la atribución por caja del vendedor (US-109) ya deja el modelo listo.
 
+## 4d. Revisión US-119 — path `/invoices` con `orderId` (warn-and-skip)
+
+`markOrderInvoiced` (venta de carrito que referencia un pedido) marca estado 3 DESPUÉS del insert y, si el pedido no está visible o ya no está en estado 1, solo loguea warn y sigue. Con el guard US-116 el riesgo bajó: el add-back usa la reserva del pedido solo si sigue viva, y si quedara viva por un skip, ahora el disponible la sigue contando (conservador, no oversell). **Recomendación**: mantener warn-and-skip (una factura ya cobrada no debe fallar por el estado del pedido) + el job US-118 limpia cualquier pedido huérfano en ≤7 días. Revisar solo si los logs muestran skips frecuentes.
+
 ## 5. Decisiones que hay que tomar (antes de la Fase 2)
 
 1. ¿La venta de mostrador debe **bloquearse** por reservas de pedidos, o solo **avisar**? (el opt-in por usuario permite un despliegue gradual)
