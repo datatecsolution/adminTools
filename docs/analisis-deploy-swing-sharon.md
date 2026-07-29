@@ -95,13 +95,19 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 5. ¿A quién y cuándo se activa el bloqueo de sobreventa (`facturar_sin_inventario=0`)?
 6. Fecha/hora de la ventana + quién actualiza los jars en las terminales.
 
-## 8. Resultados del ensayo (2026-07-29, en curso)
+## 8. Resultados del ensayo (2026-07-29, COMPLETADO)
 
-Ensayo ejecutado en el propio servidor con un MySQL 8.0 descartable (`ensayo-sharon-mysql`, puerto local 3310) y dump fresco sanitizado de las 7 BDs (348 MB).
+Ensayo ejecutado en el propio servidor con un MySQL 8.0 descartable (`ensayo-sharon-mysql`, 127.0.0.1:3310 — sigue arriba para smoke del Swing por túnel SSH) y dump fresco sanitizado de las 7 BDs (348 MB, ~12 min de carga).
 
-**Hallazgo E1 — restore necesita `log_bin_trust_function_creators=1`.** La carga del dump aborta con `ERROR 1418` al recrear las funciones (MySQL 8 + binlog activo). Impacto directo en el plan de ROLLBACK de la ventana: antes de un restore hay que `SET GLOBAL log_bin_trust_function_creators=1` (o restaurar con un usuario con privilegios de SUPER/SET_USER_ID efectivos). Se agrega al runbook de la ventana.
+**Hallazgo E1 — el restore necesita `log_bin_trust_function_creators=1`.** La carga del dump aborta con `ERROR 1418` al recrear las funciones (MySQL 8 + binlog activo). Impacto directo en el ROLLBACK de la ventana: antes de un restore, `SET GLOBAL log_bin_trust_function_creators=1`. **Agregado al runbook.**
 
-*(Los resultados de migraciones V33-V41, validate de la API vieja y de la nueva se documentan al completar el ensayo.)*
+**Hallazgo E2 — V36 abortaba con los datos reales de Sharon.** `ERROR 1265 Data truncated ('precio_articulo')`: la columna nace nullable y Sharon tiene **60 artículos con precio NULL** — el retype a `NOT NULL` moría a mitad de migración (en la ventana real, Flyway habría quedado a medias). **Corregido en la propia V36** (commit del Swing): `UPDATE ... SET precio_articulo=0 WHERE IS NULL` antes del ALTER; el `repair()` del arranque realinea el checksum en los clientes que ya la aplicaron. Reaplicada en el ensayo: OK.
+
+**Hallazgo E3 — CONFIRMADO: la API vieja NO arranca contra el esquema migrado.** `39b795d` muere en el boot con `Schema-validation: wrong column type [precio_articulo] in [articulo_view]: found decimal, expecting float(53)`. La actualización de la API en la misma ventana pasa de "muy probable" a **obligatoria, con evidencia**.
+
+**Hallazgo E4 — la API nueva valida y arranca limpia** contra el esquema V41 con los datos reales de Sharon (`Started in 6.7s`), endpoints mapeados (401 limpio en /company, /orders/today, /inventory/stock). **Requisito de `.env` detectado en el ensayo**: además de rotar `APP_JWT_SECRET` y agregar `APP_PUBLIC_INVOICE_SECRET`, el `.env` de la v2 NO tiene `CORS_ALLOWED_ORIGINS` (obligatoria en la API nueva — sin ella el boot falla con "Could not resolve placeholder"). Incluir `https://pedidos.distribuidorasharon.com` (+IP LAN si aplica).
+
+Resto de migraciones (V33-V35, V37-V41 común y V9 ×6 cajas): aplicaron **limpio** sobre los datos reales; vista de reservado poblada (580 filas con los pedidos Activa/Modificada reales de Sharon).
 
 ---
 *Verificación en vivo 2026-07-29: schema_version común y ×6 cajas, contenedores, grants de `admin@%`, vendedores/cajas_usuarios, distribución de bodegas y conteo de pedidos vivos. Restricción vigente: la app de pedidos NO se despliega (solo se valida que siga funcionando).*

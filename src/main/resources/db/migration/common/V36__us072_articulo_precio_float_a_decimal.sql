@@ -25,6 +25,13 @@
 --   `precios_programados` no está mapeada como entidad (solo la usa el Swing).
 -- =====================================================================
 
+-- Ensayo Sharon 2026-07-29 (hallazgo E2): la columna nace NULLABLE y hay
+-- clientes con precios NULL (Sharon: 60 artículos, la mayoría de baja) —
+-- el MODIFY a NOT NULL abortaba con ERROR 1265 'Data truncated'. Fix de
+-- datos ANTES del retype (checksum: el repair() del arranque lo realinea
+-- en los clientes que ya aplicaron esta migración).
+UPDATE `articulo` SET `precio_articulo` = 0 WHERE `precio_articulo` IS NULL;
+
 ALTER TABLE `articulo`
     MODIFY `precio_articulo` DECIMAL(15,2) NOT NULL DEFAULT 0.00;
 
