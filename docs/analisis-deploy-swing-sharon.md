@@ -71,7 +71,7 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 ## 6. Plan de ventana propuesto
 
 **Pre-ventana (sin tocar prod):**
-1. Backup fresco de las 7 BDs de Sharon → **ensayo completo en local/stack**: aplicar V33-V40+V9, levantar API main con `validate` (la prueba que decide si la API vieja realmente rompe — si sorprendentemente valida, se reevalúa), smoke Swing nuevo + app pedidos vieja contra el ensayo.
+1. Backup fresco de las 7 BDs de Sharon → **ensayo completo en local/stack**: aplicar V33-V41+V9, levantar API main con `validate` (la prueba que decide si la API vieja realmente rompe — si sorprendentemente valida, se reevalúa), smoke Swing nuevo + app pedidos vieja contra el ensayo.
 2. Acordar con el cliente: limpieza de pedidos (§4.1), política de expiración, vendedores multi-caja (§3), multi-bodega (§4.2).
 3. Preparar `.env` nuevo de la API (secrets) y el jar firmado del Swing.
 
@@ -80,7 +80,7 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 2. Limpieza acordada de pedidos históricos.
 3. Aplicar migraciones común V33-V41 + caja V9 ×6 (Swing Flyway o manual como `admin`).
 4. Normalizar vendedores RONAL/MELVINC a una caja.
-5. Levantar API main (validate contra V40) + verificar `pedidos.distribuidorasharon.com` (login, listar, guardar pedido con la app VIEJA).
+5. Levantar API main (validate contra V41) + verificar `pedidos.distribuidorasharon.com` (login, listar, guardar pedido con la app VIEJA).
 6. Actualizar jar del Swing en las terminales; arrancar una, verificar Flyway alineado y venta E2E.
 7. Smoke: venta en 2 cajas de bodegas distintas, pedido desde la app, disponible en consulta de existencias.
 
@@ -94,6 +94,14 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 4. Multi-bodega: ¿aceptar el número de bodega 1 en la app, o reasignar vendedores?
 5. ¿A quién y cuándo se activa el bloqueo de sobreventa (`facturar_sin_inventario=0`)?
 6. Fecha/hora de la ventana + quién actualiza los jars en las terminales.
+
+## 8. Resultados del ensayo (2026-07-29, en curso)
+
+Ensayo ejecutado en el propio servidor con un MySQL 8.0 descartable (`ensayo-sharon-mysql`, puerto local 3310) y dump fresco sanitizado de las 7 BDs (348 MB).
+
+**Hallazgo E1 — restore necesita `log_bin_trust_function_creators=1`.** La carga del dump aborta con `ERROR 1418` al recrear las funciones (MySQL 8 + binlog activo). Impacto directo en el plan de ROLLBACK de la ventana: antes de un restore hay que `SET GLOBAL log_bin_trust_function_creators=1` (o restaurar con un usuario con privilegios de SUPER/SET_USER_ID efectivos). Se agrega al runbook de la ventana.
+
+*(Los resultados de migraciones V33-V41, validate de la API vieja y de la nueva se documentan al completar el ensayo.)*
 
 ---
 *Verificación en vivo 2026-07-29: schema_version común y ×6 cajas, contenedores, grants de `admin@%`, vendedores/cajas_usuarios, distribución de bodegas y conteo de pedidos vivos. Restricción vigente: la app de pedidos NO se despliega (solo se valida que siga funcionando).*
