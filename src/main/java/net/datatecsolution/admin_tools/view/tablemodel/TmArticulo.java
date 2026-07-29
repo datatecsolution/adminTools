@@ -13,6 +13,11 @@ public class TmArticulo extends TablaModelo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1222;
+	/** US-120: índice de la columna Disponible (visible). */
+	public static final int COL_DISPONIBLE = 6;
+	/** Columna Estado: OCULTA (getColumnCount la excluye) pero el renderer la
+	 *  lee del MODELO por índice para pintar de rojo las filas de baja. */
+	public static final int COL_ESTADO = 7;
 	private final String []columnNames={"Id","Nombre","Categoria","Impuesto","Precio Venta","Existencia","Disponible","Estado"};
 	private final List<Articulo> articulos = new ArrayList<Articulo>();
 	
@@ -86,7 +91,7 @@ public class TmArticulo extends TablaModelo {
         case 6:
         	// US-120: vendible = físico − pedidos vivos (lo llena el DAO)
         	return articulos.get(rowIndex).getDisponible();
-        case 7:
+        case COL_ESTADO:
         	return (articulos.get(rowIndex).isEstado()==true) ? "Alta":"Baja";
         default:
             return null;

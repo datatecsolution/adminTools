@@ -17,8 +17,13 @@ public class TablaRenderizadorArticulos implements TableCellRenderer {
             etiqueta.setBackground(Color.white);
         }
         
-       String entry = (String) table.getModel().getValueAt(row, 6);
-       
+       // US-120 fix: el estado se lee por su constante del modelo (la columna
+       // Disponible insertada lo corrió del 6 al 7 y el cast (String) sobre el
+       // Double reventaba con ClassCastException toda la tabla de búsqueda).
+       // equals sobre Object: sin cast y null-safe.
+       Object entry = table.getModel().getValueAt(row,
+               net.datatecsolution.admin_tools.view.tablemodel.TmArticulo.COL_ESTADO);
+
        if ("Baja".equals(entry)) {
     	   etiqueta.setBackground(Color.RED);
     	   etiqueta.setForeground(Color.WHITE);
