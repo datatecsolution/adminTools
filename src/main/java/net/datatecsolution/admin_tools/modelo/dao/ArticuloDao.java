@@ -1076,12 +1076,13 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		java.util.Map<Integer,Double> mapa=new java.util.HashMap<Integer,Double>();
 		ResultSet res=null;
 		Connection conn=null;
+		java.sql.PreparedStatement ps=null; // local: NO pisar el psConsultas compartido
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			psConsultas=conn.prepareStatement(
+			ps=conn.prepareStatement(
 				"select codigo_articulo, reservado from "+super.DbName+".v_reservado_por_articulo where codigo_bodega=?");
-			psConsultas.setInt(1, codigoBodega);
-			res = psConsultas.executeQuery();
+			ps.setInt(1, codigoBodega);
+			res = ps.executeQuery();
 			while(res.next()){
 				mapa.put(res.getInt("codigo_articulo"), res.getDouble("reservado"));
 			 }
@@ -1093,7 +1094,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 			{
 				try{
 					if(res!=null)res.close();
-					if(psConsultas != null)psConsultas.close();
+					if(ps != null)ps.close();
 	                if(conn != null) conn.close();
 				}
 				catch ( SQLException excepcionSql )
@@ -1107,6 +1108,14 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 	/** US-120: llena disponible = existencia − reservado en las filas del listado. */
 	private void aplicarDisponible(List<Articulo> articulos){
 		if(articulos==null || articulos.isEmpty()) return;
+		// El diálogo de búsqueda (CtlArticuloBuscar) crea su propio DAO y
+		// setMyBodega solo corre al tocar el combo: sin bodega no hay contexto
+		// de reserva → disponible = existencia (y NUNCA un NPE que mate la
+		// búsqueda — el catch de los listados solo agarra SQLException).
+		if(myBodega==null){
+			for(Articulo a: articulos){ a.setDisponible(a.getExistencia()); }
+			return;
+		}
 		java.util.Map<Integer,Double> reservado=getReservadoMapa(myBodega.getId());
 		for(Articulo a: articulos){
 			Double r=reservado.get(a.getId());
