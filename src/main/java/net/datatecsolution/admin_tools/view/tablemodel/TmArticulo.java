@@ -13,7 +13,7 @@ public class TmArticulo extends TablaModelo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1222;
-	private final String []columnNames={"Id","Nombre","Categoria","Impuesto","Precio Venta","Existencia","Estado"};
+	private final String []columnNames={"Id","Nombre","Categoria","Impuesto","Precio Venta","Existencia","Disponible","Estado"};
 	private final List<Articulo> articulos = new ArrayList<Articulo>();
 	
 	
@@ -59,8 +59,8 @@ public class TmArticulo extends TablaModelo {
 
 	@Override
 	public int getColumnCount() {
-		// TODO Auto-generated method stub
-		return 6;
+		// US-120: +1 por la columna Disponible (Estado sigue oculta, como antes)
+		return 7;
 	}
 
 	@Override
@@ -84,6 +84,9 @@ public class TmArticulo extends TablaModelo {
         case 5:
        	 return  articulos.get(rowIndex).getExistencia();//articulos.get(rowIndex).getPrecioVenta();
         case 6:
+        	// US-120: vendible = físico − pedidos vivos (lo llena el DAO)
+        	return articulos.get(rowIndex).getDisponible();
+        case 7:
         	return (articulos.get(rowIndex).isEstado()==true) ? "Alta":"Baja";
         default:
             return null;

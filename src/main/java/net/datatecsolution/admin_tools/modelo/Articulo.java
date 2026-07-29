@@ -22,6 +22,8 @@ public class Articulo {
 	private int  posicionPrecio=0;
 	private String codigoBarra="";
 	private double existencia;
+	/** US-120: existencia VENDIBLE (físico − pedidos vivos); la llena el DAO. */
+	private double disponible;
 	private boolean estado=true;
 	public Articulo(){
 		
@@ -170,6 +172,14 @@ public class Articulo {
 	/**
 	 * @param existencia the existencia to set
 	 */
+	public double getDisponible() {
+		return disponible;
+	}
+
+	public void setDisponible(double disponible) {
+		this.disponible = disponible;
+	}
+
 	public void setExistencia(double existencia) {
 		this.existencia = existencia;
 	}

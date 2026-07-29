@@ -202,6 +202,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 			} // fin de finally
 		
 			if (existe) {
+				aplicarDisponible(articulos); // US-120
 				return articulos;
 			}
 			else return null;
@@ -275,6 +276,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 			} // fin de finally
 		
 			if (existe) {
+				aplicarDisponible(articulos); // US-120
 				return articulos;
 			}
 			else return null;
@@ -801,6 +803,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		
 		
 			if (existe) {
+				aplicarDisponible(articulos); // US-120
 				return articulos;
 			}
 			else return null;
@@ -883,6 +886,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 		
 		
 			if (existe) {
+				aplicarDisponible(articulos); // US-120
 				return articulos;
 			}
 			else return null;
@@ -1062,6 +1066,54 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 	 * no debe chocar contra su propia reserva; misma regla que la API
 	 * US-074/US-116). ordenExcluida <= 0 = ninguna.
 	 */
+	/**
+	 * US-120: reservado por artículo de UNA bodega, en una sola consulta (la
+	 * vista solo tiene filas de artículos con pedidos vivos — es diminuta).
+	 * Para post-procesar listados sin tocar el sqlBaseJoin genérico ni sus
+	 * parámetros posicionales.
+	 */
+	public java.util.Map<Integer,Double> getReservadoMapa(int codigoBodega){
+		java.util.Map<Integer,Double> mapa=new java.util.HashMap<Integer,Double>();
+		ResultSet res=null;
+		Connection conn=null;
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(
+				"select codigo_articulo, reservado from "+super.DbName+".v_reservado_por_articulo where codigo_bodega=?");
+			psConsultas.setInt(1, codigoBodega);
+			res = psConsultas.executeQuery();
+			while(res.next()){
+				mapa.put(res.getInt("codigo_articulo"), res.getDouble("reservado"));
+			 }
+			} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+					System.out.println(e);
+			}
+			finally
+			{
+				try{
+					if(res!=null)res.close();
+					if(psConsultas != null)psConsultas.close();
+	                if(conn != null) conn.close();
+				}
+				catch ( SQLException excepcionSql )
+				{
+				excepcionSql.printStackTrace();
+				}
+			}
+		return mapa;
+	}
+
+	/** US-120: llena disponible = existencia − reservado en las filas del listado. */
+	private void aplicarDisponible(List<Articulo> articulos){
+		if(articulos==null || articulos.isEmpty()) return;
+		java.util.Map<Integer,Double> reservado=getReservadoMapa(myBodega.getId());
+		for(Articulo a: articulos){
+			Double r=reservado.get(a.getId());
+			a.setDisponible(a.getExistencia() - (r==null ? 0 : r.doubleValue()));
+		}
+	}
+
 	public double getDisponibleVenta(int codigoArticulo,int codigoBodega,int ordenExcluida){
 		ResultSet res=null;
 		Connection conn=null;
