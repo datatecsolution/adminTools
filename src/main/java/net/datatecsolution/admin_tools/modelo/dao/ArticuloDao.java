@@ -1061,8 +1061,8 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 	/**
 	 * US-117 (Fase 2 stock reservado): existencia VENDIBLE para las
 	 * validaciones de venta = saldo kardex − pedidos VIVOS (vista
-	 * v_reservado_por_articulo, V40: estado NOT IN (3,5) — "Enviado"
-	 * reserva) + add-back de la orden excluida (facturar una orden cargada
+	 * v_reservado_por_articulo, V41: estado IN (1,2) — solo Activa y
+	 * Modificada reservan) + add-back de la orden excluida (facturar una orden cargada
 	 * no debe chocar contra su propia reserva; misma regla que la API
 	 * US-074/US-116). ordenExcluida <= 0 = ninguna.
 	 */
@@ -1137,7 +1137,7 @@ public class ArticuloDao extends ModeloDaoBasic implements Runnable {
 				+ "            join "+super.DbName+".encabezado_factura_temp e on e.numero_factura=d.numero_factura "
 				+ "            join "+super.DbName+".cajas c on c.codigo=e.codigo_caja "
 				+ "            where d.codigo_articulo=? and d.numero_factura=? "
-				+ "              and c.codigo_bodega=? and e.estado not in (3,5)),0) as disponible");
+				+ "              and c.codigo_bodega=? and e.estado in (1,2)),0) as disponible");
 			psConsultas.setInt(1, codigoArticulo);
 			psConsultas.setInt(2, codigoBodega);
 			psConsultas.setInt(3, codigoArticulo);

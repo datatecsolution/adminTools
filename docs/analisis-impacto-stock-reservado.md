@@ -126,7 +126,7 @@ Regla operativa ya establecida en el proyecto: **todo se valida primero en local
 ## 4c. Decisiones de Fase 2/3 (2026-07-28, con el reservado real de dulce a la vista)
 
 1. **Enforcement mostrador: BLOQUEAR con opt-in por usuario** — la venta directa valida contra disponible usando el mismo flag `facturar_sin_inventario` de V33 (=0 bloquea; =1/sin fila permite). Despliegue gradual.
-2. **Estado 4 "Enviado" SIGUE RESERVANDO** — aclaración del usuario: "Enviado" es una etiqueta de SEGUIMIENTO del pedido (vendedor/cliente), no un cierre; el pedido sigue vivo. La reserva se libera SOLO al facturar (3) o eliminar (5) → el filtro pasa de `estado < 3` a `estado NOT IN (3,5)` en vista + función + add-backs.
+2. **REFINADA 2026-07-29 (US-121, supersede V40): SOLO "Activa" (1) y "Modificada" (2) reservan; todo lo demás libera** — en la práctica "Enviado" se usa como etiqueta terminal (Sharon acumula 292 desde dic-2024 que habrían distorsionado el disponible). Filtro definitivo `estado IN (1,2)` (V41) en vista + función + add-backs + job de expiración (que ya no toca Enviados).
 3. **Expiración: AUTO-ANULAR A LOS 7 DÍAS** — job diario que pasa a estado 5 los pedidos con más de 7 días (libera la reserva sola).
 4. **Alerta de mínimos: POR FÍSICO** (como quedó en Fase 1) — es señal de reposición.
 5. **Multi-bodega: DIFERIDO** — la limitación queda documentada; la atribución por caja del vendedor (US-109) ya deja el modelo listo.

@@ -4,7 +4,7 @@
 
 ## Resumen ejecutivo
 
-Actualizar el Swing en Sharon es viable y trae los fixes que ese cliente motivó (sobreventa V33, decimal, US-117). El gap de BD es menor de lo temido: **común V32 → V40 (8 migraciones) + caja V9 (×6)**. Pero hay una dependencia que condiciona todo:
+Actualizar el Swing en Sharon es viable y trae los fixes que ese cliente motivó (sobreventa V33, decimal, US-117). El gap de BD es menor de lo temido: **común V32 → V41 (9 migraciones) + caja V9 (×6)**. Pero hay una dependencia que condiciona todo:
 
 > **La app de pedidos (front React) SÍ puede quedarse como está. La API v2 que la sirve, NO.** La API de producción corre `39b795d` (pre-decimal, mayo) con `ddl-auto=validate`: al aplicar las migraciones decimal (V34-V37) es muy probable que deje de validar y el contenedor entre en crash-loop → `pedidos.distribuidorasharon.com` caído. **La API debe actualizarse a main en la misma ventana.** El contrato hacia el front viejo es retrocompatible (campos aditivos; los 409 del guard solo aparecen si se activa el bloqueo por usuario, que es opt-in) — el front no se toca (restricción vigente: no deploy de la app de pedidos sin orden explícita).
 
@@ -27,7 +27,8 @@ Actualizar el Swing en Sharon es viable y trae los fixes que ese cliente motivó
 | V34-V37 | Decimal (hito 1) en común | **Rompe el validate de la API vieja** → API a main obligatoria |
 | V38 | Categorías jerárquicas (`parent_id`) | Bajo |
 | V39 | Vista `v_reservado_por_articulo` + índice | Bajo |
-| V40 | Reserva vive hasta facturar/eliminar (`estado NOT IN (3,5)`) | **Cambia semántica de "Enviado" — ver §4.1** |
+| V40 | Reserva `estado NOT IN (3,5)` (superseded) | Transitoria — V41 la corrige |
+| V41 | **Reserva SOLO Activa/Modificada (`estado IN (1,2)`)** — US-121 | Semántica definitiva; "Enviado" no reserva |
 | caja V9 ×6 | Trigger llama al SP v2 con usuario | Depende de V33 |
 
 Las aplica el propio Flyway del Swing al arrancar (dueño de migraciones) o a mano en la ventana — el usuario de conexión del Swing en Sharon debe confirmarse en el ensayo (si no es `admin`, se aplican a mano como en dulce).
@@ -47,11 +48,11 @@ Hoy en `encabezado_factura_temp` con estado vivo:
 - 41 en estado 2 y 68 en estado 1 (julio, actividad real).
 - **295 tienen más de 7 días.**
 
-Interacción con lo nuevo:
-- **US-115**: los 292 "Enviado" **empezarían a reservar stock** → distorsión masiva del disponible el día uno.
-- **US-118**: el job de las 03:30 **auto-anularía los 295 viejos** la primera noche (liberando todo), dejando solo los ~106 recientes.
+Interacción con lo nuevo (**actualizado 2026-07-29 con US-121/V41**: solo Activa/Modificada reservan):
+- Los **292 "Enviado" ya NO reservan ni los toca el job** — dejan de ser un riesgo para el disponible (quedan como basura histórica inofensiva; limpiarlos es opcional/higiene).
+- **US-118**: el job solo anula Activa/Modificada con >7 días — de los 109 pedidos 1/2 actuales (jul-2026), anularía los que superen la semana la primera noche.
 
-**Recomendación**: limpieza acordada con el cliente ANTES de la ventana (anular en bloque los estado 4 previos a una fecha, p. ej. 2026-06-01), y arrancar la API con `app.orders.expiration-days=7` avisándole al cliente que los pedidos de más de una semana se anulan solos. Alternativa conservadora: `expiration-days=0` (job apagado) las primeras semanas.
+**Recomendación**: avisar al cliente de la expiración a 7 días (o arrancar con `expiration-days=0` y activarla después); la limpieza en bloque de los Enviado históricos queda como higiene opcional, sin urgencia.
 
 ### 4.2 Sharon es MULTI-BODEGA real
 
@@ -77,7 +78,7 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 **Ventana (estimo 60-90 min, fuera de horario):**
 1. Backup completo + stop API v2.
 2. Limpieza acordada de pedidos históricos.
-3. Aplicar migraciones común V33-V40 + caja V9 ×6 (Swing Flyway o manual como `admin`).
+3. Aplicar migraciones común V33-V41 + caja V9 ×6 (Swing Flyway o manual como `admin`).
 4. Normalizar vendedores RONAL/MELVINC a una caja.
 5. Levantar API main (validate contra V40) + verificar `pedidos.distribuidorasharon.com` (login, listar, guardar pedido con la app VIEJA).
 6. Actualizar jar del Swing en las terminales; arrancar una, verificar Flyway alineado y venta E2E.
@@ -87,7 +88,7 @@ Todo lo acumulado desde su build: fix sobreventa V33 + validación contra dispon
 
 ## 7. Checklist de decisiones antes de agendar
 
-1. ¿Limpieza en bloque de los 292 "Enviado" históricos? ¿Desde qué fecha?
+1. (Opcional, sin urgencia tras US-121) ¿Limpieza de higiene de los 292 "Enviado" históricos?
 2. ¿Expiración a 7 días activa desde el día uno, o apagada al inicio?
 3. ¿RONAL y MELVINC con cuál caja única?
 4. Multi-bodega: ¿aceptar el número de bodega 1 en la app, o reasignar vendedores?
