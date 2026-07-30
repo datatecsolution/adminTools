@@ -17,8 +17,8 @@
 
 - [ ] Orden explícita del usuario para ejecutar.
 - [ ] Fuera de horario de la distribuidora; cliente avisado (pedidos ~5-10 min caídos; re-login en la app por rotación de JWT).
-- [ ] **Decisión**: caja única para `RONAL` (hoy 2,4,3) y `MELVINC` (hoy 3,2) → `CAJA_RONAL=?` `CAJA_MELVINC=?`
-- [ ] **Decisión**: expiración de pedidos día uno (`app.orders.expiration-days`: 7 = activa / 0 = apagada). Default del build: 7.
+- [x] **DECIDIDO 2026-07-30**: `RONAL` y `MELVINC` quedan con **caja 2** (la de la mayoría de vendedores, bodega 1 — "solo manejan una bodega"). Ya la tienen asignada; solo se eliminan las extras.
+- [x] **DECIDIDO 2026-07-30**: expiración de pedidos **ACTIVA a 7 días** desde el día uno (default del build — sin cambio de env). Avisar al cliente: pedidos con >7 días sin facturar se anulan solos a las 03:30.
 - [ ] VPN arriba; `~/deploy-sharon/` completo (tabla anterior).
 
 ## Ventana (copy-paste, en orden)
@@ -54,11 +54,10 @@ for i in 1 2 3 4 5 6; do
     SELECT MAX(installed_rank)+1,9,'sharon deploy','SQL','V9.sql',NULL,'sharon-deploy',NOW(),0,1 FROM schema_version;"
 done
 
-# ===== 5. NORMALIZAR VENDEDORES (usar las cajas DECIDIDAS en GO/NO-GO) =====
-# RONAL → caja $CAJA_RONAL · MELVINC → caja $CAJA_MELVINC
+# ===== 5. NORMALIZAR VENDEDORES (decidido: ambos a caja 2, bodega 1) =====
 mysql -uadmin -p"$PW" -h127.0.0.1 admin_tools -e "
-DELETE FROM cajas_usuarios WHERE usuario='RONAL'   AND codigo_caja <> $CAJA_RONAL;
-DELETE FROM cajas_usuarios WHERE usuario='MELVINC' AND codigo_caja <> $CAJA_MELVINC;
+DELETE FROM cajas_usuarios WHERE usuario='RONAL'   AND codigo_caja <> 2;
+DELETE FROM cajas_usuarios WHERE usuario='MELVINC' AND codigo_caja <> 2;
 UPDATE cajas_usuarios SET por_defecto=1 WHERE usuario IN ('RONAL','MELVINC');
 SELECT usuario, GROUP_CONCAT(codigo_caja) FROM cajas_usuarios WHERE usuario IN ('RONAL','MELVINC') GROUP BY usuario;"
 
