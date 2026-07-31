@@ -98,6 +98,26 @@ curl -s -o /dev/null -w "dominio → %{http_code}\n" https://pedidos.distribuido
 # Terminales: siguen con el jar viejo (no distribuir el nuevo si hubo rollback)
 ```
 
+## EJECUTADA 2026-07-30 — resultado
+
+**Downtime de pedidos: 5m41s** (20:28:20 → 20:34:01). Sin rollback. Scripts en `docs/deploy-sharon/`.
+
+| Paso | Resultado |
+|---|---|
+| Backup | 349MB verificado (7 BDs, 46 rutinas, marca de cierre) en 10s |
+| Migraciones | V33 (0s) · **V34 103s** · V35 18s · V36 5s · **V37 96s** · V38 2s · V39 1s · V40 1s · V41 0s — todas con post-condición verificada |
+| Cajas V9 ×6 | OK, trigger apunta a `crear_venta_kardex_v2` en las 6 |
+| Vendedores | RONAL y MELVINC → caja 2; los 11 vendedores quedan mono-caja |
+| API nueva | `admintools-api:sharon-v41`, **Started 8.1s**, validate limpio, JWT rotado |
+| Verificación | schema V41, cajas V9, cero float en tablas migradas, **todos los conteos de filas idénticos al baseline** |
+
+**Incidencias (todas de los scripts de verificación, ninguna de datos):**
+1. `information_schema.statistics` devuelve **una fila por columna** del índice → el chequeo de V39 comparaba contra 1 y veía 2 (falso negativo; V39 estaba perfecta). Fix: `COUNT(DISTINCT index_name)` + el script quedó **reanudable** (salta lo ya registrado en `schema_version`).
+2. Las sumas float→decimal **cambian por definición** (`518699079.1` → `518699079.08`): el float redondeaba. No es pérdida de datos (conteo idéntico); se reportan como informativas.
+3. Consulta de vendedores multi-caja fallaba por tablas sin calificar (`No database selected`) y por *collation* en el JOIN. Fix: subconsulta correlacionada con nombres calificados.
+
+**Pendiente del cliente**: smoke funcional de la app de pedidos (login → guardar pedido) y distribución del jar `~/deploy-sharon/AdminTools-1.0_sharon_8fd9dc5.jar` a las terminales.
+
 ## Post-ventana
 
 - Verificar a la mañana siguiente el log del job de expiración (si quedó activo) y el reservado (`SELECT SUM(reservado) FROM v_reservado_por_articulo;`).
