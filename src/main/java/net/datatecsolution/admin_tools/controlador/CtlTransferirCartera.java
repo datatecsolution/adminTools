@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.ClienteCartera;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.MovimientoCartera;
 import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.UsuarioDao;
@@ -19,11 +20,12 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * US-127 — controlador de la transferencia de cartera de clientes entre
- * vendedores.
+ * US-127 — controlador de la transferencia de cartera de clientes.
  *
- * Las reglas de que se mueve viven en {@link TransferenciaCarteraService};
- * aca solo se orquesta la pantalla, se pide la confirmacion y se llama al DAO.
+ * La venta y la cobranza son movimientos independientes (ver
+ * {@link MovimientoCartera}); las reglas de que se mueve viven en
+ * {@link TransferenciaCarteraService} y aca solo se orquesta la pantalla, se
+ * pide la confirmacion y se llama al DAO.
  *
  * @author jdmayorga
  */
@@ -63,12 +65,13 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 		String comando = e.getActionCommand();
 
 		switch (comando) {
-		case "CAMBIO_ORIGEN":
+		case "CAMBIO_CRITERIO":
+			// Cambio en un origen o en un checkbox: cambia que clientes son
+			// candidatos, hay que volver a consultar.
 			cargarCartera(true);
 			break;
 
 		case "CAMBIO_DESTINO":
-		case "CAMBIO_ROLES":
 			actualizarResumen();
 			break;
 
@@ -102,27 +105,32 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 	}
 
 	/**
-	 * @param avisarSiVacia avisar cuando el vendedor no tiene clientes. Se
-	 *                      avisa al elegir el origen (el usuario espera ver
+	 * @param avisarSiVacia avisar cuando la busqueda no trae clientes. Se
+	 *                      avisa al cambiar el criterio (el usuario espera ver
 	 *                      algo), pero no al recargar despues de transferir:
-	 *                      ahi la cartera vacia es justamente el resultado
+	 *                      ahi la lista vacia es justamente el resultado
 	 *                      esperado y el aviso pisaria al de exito.
 	 */
 	private void cargarCartera(boolean avisarSiVacia) {
-		int origen = codigoOrigen();
-		if (origen <= 0) {
-			view.getModeloClientes().limpiar();
+		MovimientoCartera venta = view.getMovimientoVenta();
+		MovimientoCartera cobro = view.getMovimientoCobro();
+
+		int origenVenta = venta.origenBuscable();
+		int origenCobro = cobro.origenBuscable();
+
+		if (origenVenta <= 0 && origenCobro <= 0) {
+			view.getModeloClientes().cargar(null, 0, 0);
 			actualizarResumen();
 			return;
 		}
 
-		List<ClienteCartera> cartera = clienteDao.carteraDeEmpleado(origen);
-		view.getModeloClientes().cargar(cartera, origen);
+		List<ClienteCartera> cartera = clienteDao.carteraParaTransferencia(origenVenta, origenCobro);
+		view.getModeloClientes().cargar(cartera, origenVenta, origenCobro);
 		actualizarResumen();
 
 		if (cartera.isEmpty() && avisarSiVacia) {
 			JOptionPane.showMessageDialog(view,
-					"El vendedor seleccionado no tiene clientes asignados.",
+					"Los empleados de origen seleccionados no tienen clientes asignados.",
 					"Sin cartera", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -130,42 +138,43 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 	private void actualizarResumen() {
 		view.setResumen(servicio.resumenSeleccion(
 				view.getModeloClientes().getClientes(),
-				codigoOrigen(),
-				view.isMoverVenta(),
-				view.isMoverCobro()));
+				view.getMovimientoVenta(),
+				view.getMovimientoCobro()));
 	}
 
 	private void transferir() {
-		int origen = codigoOrigen();
-		int destino = codigoDestino();
-		boolean moverVenta = view.isMoverVenta();
-		boolean moverCobro = view.isMoverCobro();
+		MovimientoCartera venta = view.getMovimientoVenta();
+		MovimientoCartera cobro = view.getMovimientoCobro();
 
 		List<ClienteCartera> marcados = servicio.seleccionados(view.getModeloClientes().getClientes());
 
-		String error = servicio.validar(origen, destino, moverVenta, moverCobro, marcados);
+		String error = servicio.validar(venta, cobro, marcados);
 		if (error != null) {
 			JOptionPane.showMessageDialog(view, error, "No se puede transferir", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
-		List<ClienteCartera> afectados = servicio.afectados(marcados, origen, moverVenta, moverCobro);
+		List<ClienteCartera> cambianVenta = servicio.afectadosVenta(marcados, venta);
+		List<ClienteCartera> cambianCobro = servicio.afectadosCobro(marcados, cobro);
+		List<ClienteCartera> todos = servicio.afectados(marcados, venta, cobro);
 
-		if (!confirmar(afectados, moverVenta, moverCobro)) {
+		if (!confirmar(venta, cobro, cambianVenta, cambianCobro, todos)) {
 			return;
 		}
 
 		boolean resultado = clienteDao.transferirCartera(
-				servicio.codigos(afectados), origen, destino, moverVenta, moverCobro);
+				servicio.codigos(cambianVenta), venta,
+				servicio.codigos(cambianCobro), cobro);
 
 		if (resultado) {
 			JOptionPane.showMessageDialog(view,
-					"Se transfirieron " + afectados.size() + " clientes a "
-							+ view.getDestinoSeleccionado() + ".",
+					"Transferencia realizada sobre " + todos.size() + " clientes:\n"
+							+ "  Venta: " + cambianVenta.size() + "\n"
+							+ "  Cobro: " + cambianCobro.size(),
 					"Transferencia realizada", JOptionPane.INFORMATION_MESSAGE);
 			// Se recarga para que la tabla refleje lo que quedo en la base:
-			// si solo se movio uno de los dos roles, el vendedor de origen
-			// sigue teniendo esos clientes con el otro rol.
+			// si solo se movio uno de los dos roles, los clientes siguen
+			// apareciendo por el rol que no se toco.
 			cargarCartera(false);
 		} else {
 			JOptionPane.showMessageDialog(view,
@@ -175,22 +184,38 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 	}
 
 	/**
-	 * Dialogo de confirmacion con resumen y password de administrador, igual
-	 * que la transferencia de saldo entre cuentas: es una operacion masiva sin
-	 * deshacer.
+	 * Dialogo de confirmacion con el detalle de cada movimiento y password de
+	 * administrador, igual que la transferencia de saldo entre cuentas: es una
+	 * operacion masiva sin deshacer.
 	 */
-	private boolean confirmar(List<ClienteCartera> afectados, boolean moverVenta, boolean moverCobro) {
+	private boolean confirmar(MovimientoCartera venta, MovimientoCartera cobro,
+			List<ClienteCartera> cambianVenta, List<ClienteCartera> cambianCobro,
+			List<ClienteCartera> todos) {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-		panel.add(new JLabel("Se va a transferir " + servicio.descripcionRoles(moverVenta, moverCobro) + ":"));
+		panel.add(new JLabel("Se van a aplicar los siguientes movimientos:"));
 		panel.add(Box.createRigidArea(new Dimension(0, 10)));
-		panel.add(new JLabel("-> Origen:  " + view.getOrigenSeleccionado()));
-		panel.add(new JLabel("-> Destino: " + view.getDestinoSeleccionado()));
-		panel.add(new JLabel("-> Clientes que cambian: " + afectados.size()));
-		panel.add(new JLabel("-> Saldo involucrado: Lps " + servicio.saldoTotal(afectados)));
+
+		if (venta.esUtilizable()) {
+			panel.add(new JLabel("VENTA:  " + view.nombreOrigenVenta() + "  ->  " + view.nombreDestinoVenta()));
+			panel.add(new JLabel("    " + cambianVenta.size() + " clientes"
+					+ "   (saldo Lps " + servicio.saldoTotal(cambianVenta) + ")"));
+		} else {
+			panel.add(new JLabel("VENTA:  sin cambios"));
+		}
+
+		if (cobro.esUtilizable()) {
+			panel.add(new JLabel("COBRO:  " + view.nombreOrigenCobro() + "  ->  " + view.nombreDestinoCobro()));
+			panel.add(new JLabel("    " + cambianCobro.size() + " clientes"
+					+ "   (saldo Lps " + servicio.saldoTotal(cambianCobro) + ")"));
+		} else {
+			panel.add(new JLabel("COBRO:  sin cambios"));
+		}
+
 		panel.add(Box.createRigidArea(new Dimension(0, 10)));
+		panel.add(new JLabel("Clientes afectados en total: " + todos.size()));
 		panel.add(new JLabel("Esta operacion no se puede deshacer."));
 		panel.add(new JLabel("Escriba el password de admin para confirmar"));
 
@@ -211,15 +236,5 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 			return false;
 		}
 		return true;
-	}
-
-	private int codigoOrigen() {
-		Empleado origen = view.getOrigenSeleccionado();
-		return origen == null ? 0 : origen.getCodigo();
-	}
-
-	private int codigoDestino() {
-		Empleado destino = view.getDestinoSeleccionado();
-		return destino == null ? 0 : destino.getCodigo();
 	}
 }

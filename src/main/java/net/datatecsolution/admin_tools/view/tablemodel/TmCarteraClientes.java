@@ -33,11 +33,17 @@ public class TmCarteraClientes extends AbstractTableModel {
 
 	private final List<ClienteCartera> clientes = new ArrayList<ClienteCartera>();
 
-	/** Empleado consultado; define que dice la columna "Rol actual". */
-	private int codigoEmpleado;
+	/**
+	 * Empleados de origen de cada rol; definen que dice la columna "Rol
+	 * actual". Pueden ser personas DISTINTAS, y 0 significa que ese rol no se
+	 * esta moviendo.
+	 */
+	private int origenVenta;
+	private int origenCobro;
 
-	public void cargar(List<ClienteCartera> nuevos, int codigoEmpleado) {
-		this.codigoEmpleado = codigoEmpleado;
+	public void cargar(List<ClienteCartera> nuevos, int origenVenta, int origenCobro) {
+		this.origenVenta = origenVenta;
+		this.origenCobro = origenCobro;
 		clientes.clear();
 		if (nuevos != null) {
 			clientes.addAll(nuevos);
@@ -96,7 +102,7 @@ public class TmCarteraClientes extends AbstractTableModel {
 		case COL_TIPO:
 			return c.getTipoCliente() == 2 ? "Credito" : "Contado";
 		case COL_ROL:
-			return c.rolRespectoA(codigoEmpleado);
+			return c.rolEn(origenVenta, origenCobro);
 		case COL_SALDO:
 			return c.getSaldo();
 		default:

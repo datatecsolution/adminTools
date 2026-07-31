@@ -52,12 +52,20 @@ public class ClienteCartera {
 	public void setSeleccionado(boolean seleccionado) { this.seleccionado = seleccionado; }
 
 	/**
-	 * Describe con que rol figura el empleado consultado en este cliente.
+	 * Describe por que rol entro este cliente a la lista de la transferencia.
 	 * Es lo que ve el usuario en la columna "Rol actual" de la tabla.
+	 *
+	 * Los dos codigos pueden ser empleados DISTINTOS: la venta y la cobranza
+	 * se transfieren por separado. Pasar 0 en cualquiera de los dos significa
+	 * "ese rol no se esta moviendo" — los codigos de empleado arrancan en 1,
+	 * asi que 0 nunca coincide.
+	 *
+	 * @param origenVenta empleado cuya asignacion de venta se mueve, o 0
+	 * @param origenCobro empleado cuya cartera de cobro se mueve, o 0
 	 */
-	public String rolRespectoA(int codigoEmpleado) {
-		boolean venta = idVendedor == codigoEmpleado;
-		boolean cobro = idCobrador == codigoEmpleado;
+	public String rolEn(int origenVenta, int origenCobro) {
+		boolean venta = origenVenta > 0 && idVendedor == origenVenta;
+		boolean cobro = origenCobro > 0 && idCobrador == origenCobro;
 		if (venta && cobro) return "Venta y cobro";
 		if (venta) return "Venta";
 		if (cobro) return "Cobro";

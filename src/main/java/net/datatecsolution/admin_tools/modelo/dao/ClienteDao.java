@@ -4,6 +4,7 @@ import net.datatecsolution.admin_tools.modelo.Cliente;
 import net.datatecsolution.admin_tools.modelo.ClienteCartera;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.MovimientoCartera;
 import net.datatecsolution.admin_tools.modelo.RutaCobro;
 
 import javax.swing.*;
@@ -715,34 +716,63 @@ public class ClienteDao extends ModeloDaoBasic {
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< US-127: transferencia de cartera entre vendedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 
 	/**
-	 * US-127 — devuelve la cartera de un empleado: todo cliente donde figure
-	 * como vendedor de venta O como cobrador.
+	 * US-127 — devuelve los clientes candidatos a la transferencia: la UNION
+	 * de los que vende {@code origenVenta} y los que cobra {@code origenCobro}.
+	 *
+	 * Los dos codigos pueden ser empleados DISTINTOS (o el mismo), porque la
+	 * venta y la cobranza se transfieren por separado. Pasar 0 en cualquiera
+	 * de los dos significa "ese rol no se esta moviendo": esa condicion NO se
+	 * agrega al WHERE.
+	 *
+	 * OJO con el 0: `id_cobrador` es NOT NULL DEFAULT 0 (V9), asi que TODOS
+	 * los clientes de contado lo tienen en 0. Por eso el rol apagado se
+	 * resuelve omitiendo la condicion y no pasando 0 como comodin — eso
+	 * traeria el padron entero.
 	 *
 	 * Consulta plana a proposito. Los otros listados de este DAO resuelven
 	 * vendedor, cobrador y ruta con un buscarPorId() por fila (N+1); para una
 	 * cartera entera eso son miles de round-trips. Aca solo se traen las
 	 * columnas que la pantalla de transferencia necesita mostrar.
 	 *
-	 * @param codigoEmpleado codigo del empleado a consultar
-	 * @return la cartera ordenada por nombre, o lista vacia si no tiene
+	 * @param origenVenta empleado cuya asignacion de venta se mueve, o 0
+	 * @param origenCobro empleado cuya cartera de cobro se mueve, o 0
+	 * @return los clientes ordenados por nombre, o lista vacia
 	 */
-	public List<ClienteCartera> carteraDeEmpleado(int codigoEmpleado) {
+	public List<ClienteCartera> carteraParaTransferencia(int origenVenta, int origenCobro) {
 
 		List<ClienteCartera> clientes = new ArrayList<ClienteCartera>();
+		if (origenVenta <= 0 && origenCobro <= 0) {
+			return clientes;
+		}
+
 		Connection con = null;
 		ResultSet rs = null;
+
+		StringBuilder where = new StringBuilder();
+		if (origenVenta > 0) {
+			where.append("id_vendedor = ?");
+		}
+		if (origenCobro > 0) {
+			if (where.length() > 0) where.append(" OR ");
+			where.append("id_cobrador = ?");
+		}
 
 		String sql = "SELECT codigo_cliente, nombre_cliente, rtn, tipo_cliente, id_vendedor, id_cobrador, "
 				+ " ifnull(" + super.DbName + ".`f_saldo_cliente`(`codigo_cliente`),0) AS saldo "
 				+ "FROM " + super.DbName + ".cliente "
-				+ "WHERE id_vendedor = ? OR id_cobrador = ? "
+				+ "WHERE " + where + " "
 				+ "ORDER BY nombre_cliente";
 
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 			psConsultas = con.prepareStatement(sql);
-			psConsultas.setInt(1, codigoEmpleado);
-			psConsultas.setInt(2, codigoEmpleado);
+			int idx = 1;
+			if (origenVenta > 0) {
+				psConsultas.setInt(idx++, origenVenta);
+			}
+			if (origenCobro > 0) {
+				psConsultas.setInt(idx, origenCobro);
+			}
 			rs = psConsultas.executeQuery();
 
 			while (rs.next()) {
@@ -777,12 +807,18 @@ public class ClienteDao extends ModeloDaoBasic {
 	private static final int LOTE_TRANSFERENCIA = 500;
 
 	/**
-	 * US-127 — mueve la cartera de un vendedor a otro de forma ATOMICA.
+	 * US-127 — mueve la cartera de forma ATOMICA, tratando la venta y la
+	 * cobranza como movimientos INDEPENDIENTES.
 	 *
-	 * Los dos UPDATE (venta y cobro) van en UNA transaccion: o se mueve todo
-	 * el lote o no se mueve nada. Sin esto, un fallo entre ambos dejaria
-	 * clientes con el vendedor nuevo y el cobrador viejo, un estado que nadie
-	 * puede deshacer a mano sin conocer el corte.
+	 * Cada rol tiene su propio origen y su propio destino porque V9 los separo
+	 * justamente para que puedan ser personas distintas: un cliente que vende
+	 * Ana y cobra Beto puede pasar su venta a Carlos y su cobranza a Dora en
+	 * la misma corrida.
+	 *
+	 * Los dos UPDATE van en UNA transaccion: o se mueve todo el lote o no se
+	 * mueve nada. Sin esto, un fallo entre ambos dejaria clientes con el
+	 * vendedor nuevo y el cobrador viejo, un estado que nadie puede deshacer a
+	 * mano sin conocer el corte.
 	 *
 	 * Los codigos se agrupan de a {@value #LOTE_TRANSFERENCIA} en un IN en vez
 	 * de mandar un UPDATE por cliente. No es una micro-optimizacion: en los
@@ -796,17 +832,21 @@ public class ClienteDao extends ModeloDaoBasic {
 	 * hace la operacion idempotente y garantiza que no se pise la asignacion
 	 * de un tercer empleado si la pantalla quedo desactualizada.
 	 *
-	 * @param codigos      clientes a mover
-	 * @param origen       codigo del empleado que cede la cartera
-	 * @param destino      codigo del empleado que la recibe
-	 * @param moverVenta   mover {@code id_vendedor}
-	 * @param moverCobro   mover {@code id_cobrador}
+	 * @param codigosVenta clientes que cambian de vendedor (vacio = no mover venta)
+	 * @param venta        movimiento de la asignacion de venta
+	 * @param codigosCobro clientes que cambian de cobrador (vacio = no mover cobro)
+	 * @param cobro        movimiento de la cartera de cobro
 	 * @return true si la transaccion se confirmo
 	 */
-	public boolean transferirCartera(List<Integer> codigos, int origen, int destino,
-			boolean moverVenta, boolean moverCobro) {
+	public boolean transferirCartera(List<Integer> codigosVenta, MovimientoCartera venta,
+			List<Integer> codigosCobro, MovimientoCartera cobro) {
 
-		if (codigos == null || codigos.isEmpty() || (!moverVenta && !moverCobro)) {
+		boolean hayVenta = venta != null && venta.esUtilizable()
+				&& codigosVenta != null && !codigosVenta.isEmpty();
+		boolean hayCobro = cobro != null && cobro.esUtilizable()
+				&& codigosCobro != null && !codigosCobro.isEmpty();
+
+		if (!hayVenta && !hayCobro) {
 			return false;
 		}
 
@@ -817,12 +857,12 @@ public class ClienteDao extends ModeloDaoBasic {
 			conn = ConexionStatic.getPoolConexion().getConnection();
 			conn.setAutoCommit(false);
 
-			if (moverVenta) {
-				actualizarEnLotes(conn, "id_vendedor", codigos, origen, destino);
+			if (hayVenta) {
+				actualizarEnLotes(conn, "id_vendedor", codigosVenta, venta.getOrigen(), venta.getDestino());
 			}
 
-			if (moverCobro) {
-				actualizarEnLotes(conn, "id_cobrador", codigos, origen, destino);
+			if (hayCobro) {
+				actualizarEnLotes(conn, "id_cobrador", codigosCobro, cobro.getOrigen(), cobro.getDestino());
 			}
 
 			conn.commit();

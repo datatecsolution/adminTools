@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.service;
 
 import net.datatecsolution.admin_tools.modelo.ClienteCartera;
+import net.datatecsolution.admin_tools.modelo.MovimientoCartera;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,24 +11,28 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * US-127 — reglas de la transferencia de cartera entre vendedores.
+ * US-127 — reglas de la transferencia de cartera entre empleados.
  *
- * El caso que justifica esta clase: `cliente` tiene DOS asignaciones de
- * empleado (id_vendedor e id_cobrador, separadas en V9) y la pantalla lista
- * los clientes donde el origen figure en CUALQUIERA de las dos. Si el usuario
- * destilda uno de los roles, los clientes que solo figuran en el rol
- * destildado NO deben moverse.
+ * Lo que justifica esta clase: `cliente` tiene DOS asignaciones de empleado
+ * (id_vendedor e id_cobrador, separadas en V9) y V9 las separo PORQUE PUEDEN
+ * SER PERSONAS DISTINTAS. La transferencia trata cada rol como un movimiento
+ * independiente, con su propio origen y su propio destino: mover la venta de
+ * Ana no debe arrastrar la cobranza de Beto.
  */
 public class TransferenciaCarteraServiceTest {
 
-	private static final int ORIGEN = 10;
-	private static final int DESTINO = 20;
-	private static final int TERCERO = 30;
+	// Ana vende, Beto cobra; Carlos y Dora reciben. Eva es ajena a todo.
+	private static final int ANA = 10;
+	private static final int BETO = 20;
+	private static final int CARLOS = 30;
+	private static final int DORA = 40;
+	private static final int EVA = 50;
 
 	private TransferenciaCarteraService servicio;
 
@@ -46,123 +51,195 @@ public class TransferenciaCarteraServiceTest {
 		return c;
 	}
 
-	/* ---------------------- afectados() ---------------------- */
+	private MovimientoCartera mov(int origen, int destino) {
+		return new MovimientoCartera(true, origen, destino);
+	}
+
+	/* ============ el caso que motivo el rediseño: dos personas distintas ============ */
 
 	@Test
-	public void moverSoloCobroNoTocaAlQueSoloEsDeVenta() {
-		// El origen vende pero NO cobra: el cobrador es un tercero.
-		ClienteCartera soloVenta = cliente(1, ORIGEN, TERCERO, "0");
+	public void ventaYCobroSeMuevenAPersonasDISTINTASEnLaMismaCorrida() {
+		// Ana vende este cliente, Beto lo cobra.
+		ClienteCartera c = cliente(1, ANA, BETO, "500");
 
-		List<ClienteCartera> resultado = servicio.afectados(
-				Arrays.asList(soloVenta), ORIGEN, false, true);
+		MovimientoCartera venta = mov(ANA, CARLOS);   // la venta de Ana pasa a Carlos
+		MovimientoCartera cobro = mov(BETO, DORA);    // la cobranza de Beto pasa a Dora
 
-		assertTrue("un cliente que el origen no cobra no debe moverse al transferir solo la cobranza",
-				resultado.isEmpty());
+		assertEquals("el cliente cambia por los dos roles, pero se cuenta una vez",
+				1, servicio.afectados(Arrays.asList(c), venta, cobro).size());
+		assertEquals(1, servicio.afectadosVenta(Arrays.asList(c), venta).size());
+		assertEquals(1, servicio.afectadosCobro(Arrays.asList(c), cobro).size());
 	}
 
 	@Test
-	public void moverSoloVentaNoTocaAlQueSoloEsDeCobro() {
-		ClienteCartera soloCobro = cliente(2, TERCERO, ORIGEN, "0");
+	public void moverLaVentaDeAnaNoArrastraLaCobranzaDeBeto() {
+		ClienteCartera c = cliente(1, ANA, BETO, "0");
 
-		List<ClienteCartera> resultado = servicio.afectados(
-				Arrays.asList(soloCobro), ORIGEN, true, false);
+		MovimientoCartera venta = mov(ANA, CARLOS);
+		MovimientoCartera cobro = MovimientoCartera.inactivo();
 
-		assertTrue(resultado.isEmpty());
+		assertEquals(1, servicio.afectadosVenta(Arrays.asList(c), venta).size());
+		assertTrue("la cobranza de Beto no se toca",
+				servicio.afectadosCobro(Arrays.asList(c), cobro).isEmpty());
 	}
 
 	@Test
-	public void moverAmbosRolesTomaAlQueFiguraEnCualquiera() {
-		ClienteCartera soloVenta = cliente(1, ORIGEN, TERCERO, "0");
-		ClienteCartera soloCobro = cliente(2, TERCERO, ORIGEN, "0");
-		ClienteCartera ambos = cliente(3, ORIGEN, ORIGEN, "0");
+	public void moverLaCobranzaDeBetoNoArrastraLaVentaDeAna() {
+		ClienteCartera c = cliente(1, ANA, BETO, "0");
 
-		List<ClienteCartera> resultado = servicio.afectados(
-				Arrays.asList(soloVenta, soloCobro, ambos), ORIGEN, true, true);
+		MovimientoCartera venta = MovimientoCartera.inactivo();
+		MovimientoCartera cobro = mov(BETO, DORA);
 
-		assertEquals(3, resultado.size());
+		assertTrue(servicio.afectadosVenta(Arrays.asList(c), venta).isEmpty());
+		assertEquals(1, servicio.afectadosCobro(Arrays.asList(c), cobro).size());
+	}
+
+	@Test
+	public void cadaRolFiltraPorSuPROPIOOrigen() {
+		ClienteCartera soloAnaVende = cliente(1, ANA, EVA, "0");   // Eva cobra, no Beto
+		ClienteCartera soloBetoCobra = cliente(2, EVA, BETO, "0"); // Eva vende, no Ana
+		ClienteCartera ambos = cliente(3, ANA, BETO, "0");
+		ClienteCartera ajeno = cliente(4, EVA, EVA, "0");
+
+		List<ClienteCartera> cartera = Arrays.asList(soloAnaVende, soloBetoCobra, ambos, ajeno);
+		MovimientoCartera venta = mov(ANA, CARLOS);
+		MovimientoCartera cobro = mov(BETO, DORA);
+
+		assertEquals("solo los que vende Ana", 2, servicio.afectadosVenta(cartera, venta).size());
+		assertEquals("solo los que cobra Beto", 2, servicio.afectadosCobro(cartera, cobro).size());
+		assertEquals("la union, sin duplicar el que entra por ambos",
+				3, servicio.afectados(cartera, venta, cobro).size());
+	}
+
+	@Test
+	public void unRolPuedeIrAlEmpleadoQueEsOrigenDelOtro() {
+		// Valido: la venta de Ana pasa a Carlos y la cobranza de Beto pasa a Ana.
+		ClienteCartera c = cliente(1, ANA, BETO, "0");
+
+		MovimientoCartera venta = mov(ANA, CARLOS);
+		MovimientoCartera cobro = mov(BETO, ANA);
+
+		assertNull(servicio.validar(venta, cobro, Arrays.asList(c)));
+		assertEquals(1, servicio.afectados(Arrays.asList(c), venta, cobro).size());
+	}
+
+	@Test
+	public void elMismoEmpleadoEnLosDosRolesSigueFuncionando() {
+		// Caso simple: Ana se va y todo lo suyo pasa a Carlos.
+		ClienteCartera c = cliente(1, ANA, ANA, "0");
+
+		MovimientoCartera venta = mov(ANA, CARLOS);
+		MovimientoCartera cobro = mov(ANA, CARLOS);
+
+		assertEquals(1, servicio.afectadosVenta(Arrays.asList(c), venta).size());
+		assertEquals(1, servicio.afectadosCobro(Arrays.asList(c), cobro).size());
+		assertEquals(1, servicio.afectados(Arrays.asList(c), venta, cobro).size());
 	}
 
 	@Test
 	public void clienteDeUnTerceroNuncaSeMueve() {
-		ClienteCartera ajeno = cliente(4, TERCERO, TERCERO, "0");
+		ClienteCartera ajeno = cliente(1, EVA, EVA, "0");
 
-		assertTrue(servicio.afectados(Arrays.asList(ajeno), ORIGEN, true, true).isEmpty());
+		assertTrue(servicio.afectados(Arrays.asList(ajeno), mov(ANA, CARLOS), mov(BETO, DORA)).isEmpty());
 	}
 
 	@Test
 	public void afectadosToleraListaNula() {
-		assertTrue(servicio.afectados(null, ORIGEN, true, true).isEmpty());
+		assertTrue(servicio.afectados(null, mov(ANA, CARLOS), mov(BETO, DORA)).isEmpty());
+		assertTrue(servicio.afectadosVenta(null, mov(ANA, CARLOS)).isEmpty());
+		assertTrue(servicio.afectadosCobro(null, mov(BETO, DORA)).isEmpty());
+	}
+
+	/* ============ MovimientoCartera ============ */
+
+	@Test
+	public void movimientoInactivoNoEsUtilizableNiBuscable() {
+		MovimientoCartera m = MovimientoCartera.inactivo();
+
+		assertFalse(m.isActivo());
+		assertFalse(m.esUtilizable());
+		assertEquals("0 nunca coincide con un codigo de empleado", 0, m.origenBuscable());
 	}
 
 	@Test
-	public void atajosDeRolCoincidenConAfectados() {
-		List<ClienteCartera> cartera = Arrays.asList(
-				cliente(1, ORIGEN, TERCERO, "0"),
-				cliente(2, TERCERO, ORIGEN, "0"));
-
-		assertEquals(1, servicio.afectadosVenta(cartera, ORIGEN).size());
-		assertEquals(1, servicio.afectadosCobro(cartera, ORIGEN).size());
+	public void movimientoActivoSinDestinoNoEsUtilizable() {
+		assertFalse(new MovimientoCartera(true, ANA, 0).esUtilizable());
+		assertFalse(new MovimientoCartera(true, 0, CARLOS).esUtilizable());
+		assertFalse("origen igual a destino no mueve nada",
+				new MovimientoCartera(true, ANA, ANA).esUtilizable());
+		assertTrue(new MovimientoCartera(true, ANA, CARLOS).esUtilizable());
 	}
 
-	/* ---------------------- validar() ---------------------- */
+	@Test
+	public void origenBuscableSeApagaConElCheckbox() {
+		assertEquals(ANA, new MovimientoCartera(true, ANA, CARLOS).origenBuscable());
+		assertEquals(0, new MovimientoCartera(false, ANA, CARLOS).origenBuscable());
+	}
+
+	/* ============ validar() ============ */
 
 	@Test
 	public void validaCasoCorrecto() {
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, ORIGEN, "0"));
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
 
-		assertNull(servicio.validar(ORIGEN, DESTINO, true, true, cartera));
-	}
-
-	@Test
-	public void rechazaOrigenSinSeleccionar() {
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, ORIGEN, "0"));
-
-		assertNotNull(servicio.validar(0, DESTINO, true, true, cartera));
-	}
-
-	@Test
-	public void rechazaDestinoSinSeleccionar() {
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, ORIGEN, "0"));
-
-		assertNotNull(servicio.validar(ORIGEN, 0, true, true, cartera));
-	}
-
-	@Test
-	public void rechazaOrigenIgualADestino() {
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, ORIGEN, "0"));
-
-		assertNotNull(servicio.validar(ORIGEN, ORIGEN, true, true, cartera));
+		assertNull(servicio.validar(mov(ANA, CARLOS), mov(BETO, DORA), cartera));
 	}
 
 	@Test
 	public void rechazaSinNingunRolMarcado() {
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, ORIGEN, "0"));
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
 
-		assertNotNull(servicio.validar(ORIGEN, DESTINO, false, false, cartera));
+		assertNotNull(servicio.validar(MovimientoCartera.inactivo(), MovimientoCartera.inactivo(), cartera));
+	}
+
+	@Test
+	public void cadaRolSeValidaPORSEPARADO() {
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		// La venta esta mal (sin destino) aunque el cobro este perfecto.
+		assertNotNull(servicio.validar(new MovimientoCartera(true, ANA, 0), mov(BETO, DORA), cartera));
+		// Y al reves.
+		assertNotNull(servicio.validar(mov(ANA, CARLOS), new MovimientoCartera(true, BETO, 0), cartera));
+	}
+
+	@Test
+	public void rechazaOrigenIgualADestinoEnCualquierRol() {
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		assertNotNull(servicio.validar(mov(ANA, ANA), mov(BETO, DORA), cartera));
+		assertNotNull(servicio.validar(mov(ANA, CARLOS), mov(BETO, BETO), cartera));
+	}
+
+	@Test
+	public void unRolApagadoNoSeValida() {
+		// El cobro esta apagado con datos basura: no debe bloquear.
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		assertNull(servicio.validar(mov(ANA, CARLOS), new MovimientoCartera(false, 0, 0), cartera));
 	}
 
 	@Test
 	public void rechazaSeleccionVacia() {
-		assertNotNull(servicio.validar(ORIGEN, DESTINO, true, true, new ArrayList<ClienteCartera>()));
-		assertNotNull(servicio.validar(ORIGEN, DESTINO, true, true, null));
+		assertNotNull(servicio.validar(mov(ANA, CARLOS), mov(BETO, DORA), new ArrayList<ClienteCartera>()));
+		assertNotNull(servicio.validar(mov(ANA, CARLOS), mov(BETO, DORA), null));
 	}
 
 	@Test
 	public void rechazaCuandoNingunSeleccionadoCambia() {
-		// Solo es vendedor de ese cliente, pero se pidio mover unicamente la cobranza.
-		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ORIGEN, TERCERO, "0"));
+		// Los origenes no tienen nada que ver con este cliente.
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, EVA, EVA, "0"));
 
 		assertNotNull("no debe dejar disparar un UPDATE que no cambia nada",
-				servicio.validar(ORIGEN, DESTINO, false, true, cartera));
+				servicio.validar(mov(ANA, CARLOS), mov(BETO, DORA), cartera));
 	}
 
-	/* ---------------------- helpers de pantalla ---------------------- */
+	/* ============ helpers de pantalla ============ */
 
 	@Test
 	public void sumaSaldosDeLosAfectados() {
 		List<ClienteCartera> cartera = Arrays.asList(
-				cliente(1, ORIGEN, ORIGEN, "150.50"),
-				cliente(2, ORIGEN, ORIGEN, "49.50"));
+				cliente(1, ANA, ANA, "150.50"),
+				cliente(2, ANA, ANA, "49.50"));
 
 		assertEquals(new BigDecimal("200.00"), servicio.saldoTotal(cartera));
 	}
@@ -171,15 +248,15 @@ public class TransferenciaCarteraServiceTest {
 	public void saldoTotalToleraNulos() {
 		assertEquals(BigDecimal.ZERO, servicio.saldoTotal(null));
 
-		ClienteCartera sinSaldo = cliente(1, ORIGEN, ORIGEN, "0");
+		ClienteCartera sinSaldo = cliente(1, ANA, ANA, "0");
 		sinSaldo.setSaldo(null);
 		assertEquals(BigDecimal.ZERO, servicio.saldoTotal(Arrays.asList(sinSaldo)));
 	}
 
 	@Test
 	public void seleccionadosFiltraPorLaCasilla() {
-		ClienteCartera marcado = cliente(1, ORIGEN, ORIGEN, "0");
-		ClienteCartera desmarcado = cliente(2, ORIGEN, ORIGEN, "0");
+		ClienteCartera marcado = cliente(1, ANA, ANA, "0");
+		ClienteCartera desmarcado = cliente(2, ANA, ANA, "0");
 		desmarcado.setSeleccionado(false);
 
 		List<ClienteCartera> resultado = servicio.seleccionados(Arrays.asList(marcado, desmarcado));
@@ -191,46 +268,58 @@ public class TransferenciaCarteraServiceTest {
 	@Test
 	public void clientesNacenSeleccionados() {
 		assertTrue("la pantalla ofrece transferir toda la cartera por defecto",
-				cliente(1, ORIGEN, ORIGEN, "0").isSeleccionado());
+				cliente(1, ANA, ANA, "0").isSeleccionado());
 	}
 
 	@Test
 	public void codigosExtraeLosIdParaElDao() {
 		List<Integer> codigos = servicio.codigos(Arrays.asList(
-				cliente(7, ORIGEN, ORIGEN, "0"),
-				cliente(9, ORIGEN, ORIGEN, "0")));
+				cliente(7, ANA, ANA, "0"),
+				cliente(9, ANA, ANA, "0")));
 
 		assertEquals(Arrays.asList(7, 9), codigos);
 	}
 
 	@Test
 	public void resumenDistingueSeleccionadosDeLosQueCambian() {
-		// 3 en la cartera, 2 marcados, pero solo 1 cambia porque se mueve solo la cobranza.
-		ClienteCartera cobraElOrigen = cliente(1, TERCERO, ORIGEN, "0");
-		ClienteCartera soloVende = cliente(2, ORIGEN, TERCERO, "0");
-		ClienteCartera desmarcado = cliente(3, ORIGEN, ORIGEN, "0");
+		// 3 en la lista, 2 marcados, pero solo 1 cambia (el otro es de Eva).
+		ClienteCartera deAna = cliente(1, ANA, EVA, "0");
+		ClienteCartera deEva = cliente(2, EVA, EVA, "0");
+		ClienteCartera desmarcado = cliente(3, ANA, BETO, "0");
 		desmarcado.setSeleccionado(false);
 
 		String resumen = servicio.resumenSeleccion(
-				Arrays.asList(cobraElOrigen, soloVende, desmarcado), ORIGEN, false, true);
+				Arrays.asList(deAna, deEva, desmarcado), mov(ANA, CARLOS), mov(BETO, DORA));
 
 		assertEquals("2 de 3 clientes seleccionados - 1 cambian", resumen);
 	}
 
+	/* ============ columna "Rol actual" ============ */
+
 	@Test
-	public void describeLosRolesQueSeMueven() {
-		assertEquals("la asignacion de venta y la cartera de cobro", servicio.descripcionRoles(true, true));
-		assertEquals("la asignacion de venta", servicio.descripcionRoles(true, false));
-		assertEquals("la cartera de cobro", servicio.descripcionRoles(false, true));
+	public void rolIndicaPorQueCriterioEntroElCliente() {
+		assertEquals("Venta y cobro", cliente(1, ANA, BETO, "0").rolEn(ANA, BETO));
+		assertEquals("Venta", cliente(2, ANA, EVA, "0").rolEn(ANA, BETO));
+		assertEquals("Cobro", cliente(3, EVA, BETO, "0").rolEn(ANA, BETO));
+		assertEquals("", cliente(4, EVA, EVA, "0").rolEn(ANA, BETO));
 	}
 
-	/* ---------------------- columna "Rol actual" ---------------------- */
+	@Test
+	public void rolIgnoraElRolApagado() {
+		ClienteCartera c = cliente(1, ANA, BETO, "0");
+
+		assertEquals("con el cobro apagado solo debe reportar la venta", "Venta", c.rolEn(ANA, 0));
+		assertEquals("con la venta apagada solo debe reportar el cobro", "Cobro", c.rolEn(0, BETO));
+		assertEquals("", c.rolEn(0, 0));
+	}
 
 	@Test
-	public void rolRespectoAlEmpleadoConsultado() {
-		assertEquals("Venta y cobro", cliente(1, ORIGEN, ORIGEN, "0").rolRespectoA(ORIGEN));
-		assertEquals("Venta", cliente(2, ORIGEN, TERCERO, "0").rolRespectoA(ORIGEN));
-		assertEquals("Cobro", cliente(3, TERCERO, ORIGEN, "0").rolRespectoA(ORIGEN));
-		assertEquals("", cliente(4, TERCERO, TERCERO, "0").rolRespectoA(ORIGEN));
+	public void rolNoConfundeElCeroDeIdCobradorConUnEmpleado() {
+		// id_cobrador es NOT NULL DEFAULT 0 (V9): los clientes de contado lo
+		// tienen en 0. Un rol apagado (0) NO debe hacerlos coincidir.
+		ClienteCartera contado = cliente(1, ANA, 0, "0");
+
+		assertEquals("Venta", contado.rolEn(ANA, 0));
+		assertEquals("", contado.rolEn(0, 0));
 	}
 }

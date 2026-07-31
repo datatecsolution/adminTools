@@ -2,6 +2,7 @@ package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlTransferirCartera;
 import net.datatecsolution.admin_tools.modelo.Empleado;
+import net.datatecsolution.admin_tools.modelo.MovimientoCartera;
 import net.datatecsolution.admin_tools.view.botones.BotonCancelar;
 import net.datatecsolution.admin_tools.view.botones.BotonTransferir;
 import net.datatecsolution.admin_tools.view.rendes.PanelPadre;
@@ -13,24 +14,32 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * US-127 — pantalla para transferir la cartera de clientes de un vendedor a
- * otro.
+ * US-127 — pantalla para transferir la cartera de clientes entre empleados.
  *
- * El usuario elige origen y destino, decide si mueve la asignacion de venta
- * ({@code cliente.id_vendedor}), la cartera de cobro ({@code id_cobrador}) o
- * ambas, y destilda de la tabla los clientes que quiera dejar donde estan.
+ * La venta ({@code cliente.id_vendedor}) y la cobranza ({@code id_cobrador})
+ * son movimientos INDEPENDIENTES: cada uno con su propio origen y su propio
+ * destino. La migracion V9 separo los dos roles porque pueden ser personas
+ * distintas, y esta pantalla respeta esa separacion — se puede pasar la venta
+ * de Ana a Carlos y la cobranza de Beto a Dora en la misma corrida.
+ *
+ * La tabla muestra la UNION de los dos criterios; la columna "Rol actual"
+ * indica por cual entro cada cliente.
  *
  * @author jdmayorga
  */
 public class ViewTransferirCartera extends JDialog {
 
-	private final JComboBox<Empleado> cbxOrigen;
-	private final JComboBox<Empleado> cbxDestino;
-	private final DefaultComboBoxModel<Empleado> modeloOrigen;
-	private final DefaultComboBoxModel<Empleado> modeloDestino;
-
 	private final JCheckBox chkVenta;
+	private final JComboBox<Empleado> cbxOrigenVenta;
+	private final JComboBox<Empleado> cbxDestinoVenta;
+	private final DefaultComboBoxModel<Empleado> modeloOrigenVenta;
+	private final DefaultComboBoxModel<Empleado> modeloDestinoVenta;
+
 	private final JCheckBox chkCobro;
+	private final JComboBox<Empleado> cbxOrigenCobro;
+	private final JComboBox<Empleado> cbxDestinoCobro;
+	private final DefaultComboBoxModel<Empleado> modeloOrigenCobro;
+	private final DefaultComboBoxModel<Empleado> modeloDestinoCobro;
 
 	private final JTable tablaClientes;
 	private final TmCarteraClientes modeloClientes;
@@ -45,48 +54,70 @@ public class ViewTransferirCartera extends JDialog {
 	public ViewTransferirCartera(Window view) {
 		this.setTitle("Transferir cartera de clientes");
 		this.setModal(true);
-		this.setSize(900, 660);
+		this.setSize(900, 680);
 		this.setLocationRelativeTo(view);
 		getContentPane().setLayout(null);
 		getContentPane().setBackground(PanelPadre.color1);
 
-		JLabel lblOrigen = new JLabel("Vendedor de origen");
-		lblOrigen.setBounds(20, 15, 200, 15);
-		getContentPane().add(lblOrigen);
-
-		modeloOrigen = new DefaultComboBoxModel<Empleado>();
-		cbxOrigen = new JComboBox<Empleado>(modeloOrigen);
-		cbxOrigen.setBounds(20, 33, 400, 30);
-		getContentPane().add(cbxOrigen);
-
-		JLabel lblDestino = new JLabel("Vendedor de destino");
-		lblDestino.setBounds(450, 15, 200, 15);
-		getContentPane().add(lblDestino);
-
-		modeloDestino = new DefaultComboBoxModel<Empleado>();
-		cbxDestino = new JComboBox<Empleado>(modeloDestino);
-		cbxDestino.setBounds(450, 33, 400, 30);
-		getContentPane().add(cbxDestino);
-
 		JPanel panelQue = new JPanel();
 		panelQue.setLayout(null);
 		panelQue.setBackground(PanelPadre.color1);
-		panelQue.setBorder(new TitledBorder(null, "Que transferir", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		panelQue.setBounds(20, 75, 830, 60);
+		panelQue.setBorder(new TitledBorder(null, "Que transferir (los dos roles son independientes)",
+				TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		panelQue.setBounds(20, 15, 850, 120);
 		getContentPane().add(panelQue);
 
-		chkVenta = new JCheckBox("Asignacion de venta (vendedor)");
+		// --- fila VENTA ---
+		chkVenta = new JCheckBox("VENTA");
 		chkVenta.setSelected(true);
 		chkVenta.setBackground(PanelPadre.color1);
-		chkVenta.setBounds(15, 22, 280, 25);
+		chkVenta.setBounds(15, 28, 90, 25);
 		panelQue.add(chkVenta);
 
-		chkCobro = new JCheckBox("Cartera de cobro (cobrador)");
+		JLabel lblOrigenVenta = new JLabel("origen");
+		lblOrigenVenta.setBounds(110, 32, 50, 18);
+		panelQue.add(lblOrigenVenta);
+
+		modeloOrigenVenta = new DefaultComboBoxModel<Empleado>();
+		cbxOrigenVenta = new JComboBox<Empleado>(modeloOrigenVenta);
+		cbxOrigenVenta.setBounds(160, 28, 280, 26);
+		panelQue.add(cbxOrigenVenta);
+
+		JLabel lblFlechaVenta = new JLabel("->  destino");
+		lblFlechaVenta.setBounds(450, 32, 75, 18);
+		panelQue.add(lblFlechaVenta);
+
+		modeloDestinoVenta = new DefaultComboBoxModel<Empleado>();
+		cbxDestinoVenta = new JComboBox<Empleado>(modeloDestinoVenta);
+		cbxDestinoVenta.setBounds(530, 28, 300, 26);
+		panelQue.add(cbxDestinoVenta);
+
+		// --- fila COBRO ---
+		chkCobro = new JCheckBox("COBRO");
 		chkCobro.setSelected(true);
 		chkCobro.setBackground(PanelPadre.color1);
-		chkCobro.setBounds(310, 22, 280, 25);
+		chkCobro.setBounds(15, 70, 90, 25);
 		panelQue.add(chkCobro);
 
+		JLabel lblOrigenCobro = new JLabel("origen");
+		lblOrigenCobro.setBounds(110, 74, 50, 18);
+		panelQue.add(lblOrigenCobro);
+
+		modeloOrigenCobro = new DefaultComboBoxModel<Empleado>();
+		cbxOrigenCobro = new JComboBox<Empleado>(modeloOrigenCobro);
+		cbxOrigenCobro.setBounds(160, 70, 280, 26);
+		panelQue.add(cbxOrigenCobro);
+
+		JLabel lblFlechaCobro = new JLabel("->  destino");
+		lblFlechaCobro.setBounds(450, 74, 75, 18);
+		panelQue.add(lblFlechaCobro);
+
+		modeloDestinoCobro = new DefaultComboBoxModel<Empleado>();
+		cbxDestinoCobro = new JComboBox<Empleado>(modeloDestinoCobro);
+		cbxDestinoCobro.setBounds(530, 70, 300, 26);
+		panelQue.add(cbxDestinoCobro);
+
+		// --- tabla ---
 		modeloClientes = new TmCarteraClientes();
 		tablaClientes = new JTable(modeloClientes);
 		tablaClientes.setRowHeight(24);
@@ -96,35 +127,35 @@ public class ViewTransferirCartera extends JDialog {
 		JScrollPane scrollClientes = new JScrollPane(tablaClientes);
 		scrollClientes.setViewportBorder(new TitledBorder(null, "Clientes de la cartera", TitledBorder.LEFT,
 				TitledBorder.TOP, null, null));
-		scrollClientes.setBounds(20, 145, 830, 360);
+		scrollClientes.setBounds(20, 145, 850, 370);
 		getContentPane().add(scrollClientes);
 
 		btnMarcarTodos = new JButton("Marcar todos");
-		btnMarcarTodos.setBounds(20, 515, 140, 28);
+		btnMarcarTodos.setBounds(20, 525, 140, 28);
 		getContentPane().add(btnMarcarTodos);
 
 		btnDesmarcarTodos = new JButton("Desmarcar todos");
-		btnDesmarcarTodos.setBounds(170, 515, 150, 28);
+		btnDesmarcarTodos.setBounds(170, 525, 150, 28);
 		getContentPane().add(btnDesmarcarTodos);
 
 		lblResumen = new JLabel(" ");
-		lblResumen.setBounds(335, 515, 515, 28);
+		lblResumen.setBounds(335, 525, 535, 28);
 		getContentPane().add(lblResumen);
 
 		btnTransferir = new BotonTransferir();
 		// El icono es compartido con la transferencia de saldo entre cuentas,
 		// que trae su propio tooltip; aca significa otra cosa.
-		btnTransferir.setToolTipText("Transferir la cartera seleccionada al vendedor de destino");
-		btnTransferir.setLocation(280, 555);
+		btnTransferir.setToolTipText("Aplicar los movimientos marcados a los clientes seleccionados");
+		btnTransferir.setLocation(280, 570);
 		getContentPane().add(btnTransferir);
 
 		btnCancelar = new BotonCancelar();
-		btnCancelar.setLocation(490, 555);
+		btnCancelar.setLocation(490, 570);
 		getContentPane().add(btnCancelar);
 	}
 
 	private void ajustarAnchoColumnas() {
-		int[] anchos = { 30, 70, 320, 110, 80, 110, 100 };
+		int[] anchos = { 30, 70, 330, 110, 80, 110, 110 };
 		for (int i = 0; i < anchos.length && i < tablaClientes.getColumnCount(); i++) {
 			tablaClientes.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
 		}
@@ -132,17 +163,26 @@ public class ViewTransferirCartera extends JDialog {
 	}
 
 	public void conectarCtl(CtlTransferirCartera c) {
-		cbxOrigen.addActionListener(c);
-		cbxOrigen.setActionCommand("CAMBIO_ORIGEN");
+		// Cualquier cambio en los origenes o en los checkboxes redefine que
+		// clientes son candidatos, asi que hay que recargar la tabla.
+		cbxOrigenVenta.addActionListener(c);
+		cbxOrigenVenta.setActionCommand("CAMBIO_CRITERIO");
 
-		cbxDestino.addActionListener(c);
-		cbxDestino.setActionCommand("CAMBIO_DESTINO");
+		cbxOrigenCobro.addActionListener(c);
+		cbxOrigenCobro.setActionCommand("CAMBIO_CRITERIO");
 
 		chkVenta.addActionListener(c);
-		chkVenta.setActionCommand("CAMBIO_ROLES");
+		chkVenta.setActionCommand("CAMBIO_CRITERIO");
 
 		chkCobro.addActionListener(c);
-		chkCobro.setActionCommand("CAMBIO_ROLES");
+		chkCobro.setActionCommand("CAMBIO_CRITERIO");
+
+		// Los destinos no cambian la lista, solo el resumen.
+		cbxDestinoVenta.addActionListener(c);
+		cbxDestinoVenta.setActionCommand("CAMBIO_DESTINO");
+
+		cbxDestinoCobro.addActionListener(c);
+		cbxDestinoCobro.setActionCommand("CAMBIO_DESTINO");
 
 		btnMarcarTodos.addActionListener(c);
 		btnMarcarTodos.setActionCommand("MARCAR_TODOS");
@@ -160,21 +200,23 @@ public class ViewTransferirCartera extends JDialog {
 	}
 
 	/**
-	 * Llena los dos combos con la misma lista de empleados, precedida por un
-	 * elemento vacio para que ninguno arranque preseleccionado (una
+	 * Llena los cuatro combos con la misma lista de empleados, precedida por
+	 * un elemento vacio para que ninguno arranque preseleccionado (una
 	 * transferencia mal disparada por descuido no tiene deshacer).
 	 */
 	public void cargarEmpleados(List<Empleado> empleados) {
-		modeloOrigen.removeAllElements();
-		modeloDestino.removeAllElements();
+		llenar(modeloOrigenVenta, empleados);
+		llenar(modeloDestinoVenta, empleados);
+		llenar(modeloOrigenCobro, empleados);
+		llenar(modeloDestinoCobro, empleados);
+	}
 
-		modeloOrigen.addElement(vacio());
-		modeloDestino.addElement(vacio());
-
+	private void llenar(DefaultComboBoxModel<Empleado> modelo, List<Empleado> empleados) {
+		modelo.removeAllElements();
+		modelo.addElement(vacio());
 		if (empleados != null) {
 			for (Empleado e : empleados) {
-				modeloOrigen.addElement(e);
-				modeloDestino.addElement(e);
+				modelo.addElement(e);
 			}
 		}
 	}
@@ -187,21 +229,27 @@ public class ViewTransferirCartera extends JDialog {
 		return e;
 	}
 
-	public Empleado getOrigenSeleccionado() {
-		return (Empleado) cbxOrigen.getSelectedItem();
+	/** Movimiento de la asignacion de venta tal como esta configurado en pantalla. */
+	public MovimientoCartera getMovimientoVenta() {
+		return new MovimientoCartera(chkVenta.isSelected(),
+				codigoDe(cbxOrigenVenta), codigoDe(cbxDestinoVenta));
 	}
 
-	public Empleado getDestinoSeleccionado() {
-		return (Empleado) cbxDestino.getSelectedItem();
+	/** Movimiento de la cartera de cobro tal como esta configurado en pantalla. */
+	public MovimientoCartera getMovimientoCobro() {
+		return new MovimientoCartera(chkCobro.isSelected(),
+				codigoDe(cbxOrigenCobro), codigoDe(cbxDestinoCobro));
 	}
 
-	public boolean isMoverVenta() {
-		return chkVenta.isSelected();
+	private int codigoDe(JComboBox<Empleado> combo) {
+		Empleado e = (Empleado) combo.getSelectedItem();
+		return e == null ? 0 : e.getCodigo();
 	}
 
-	public boolean isMoverCobro() {
-		return chkCobro.isSelected();
-	}
+	public String nombreOrigenVenta() { return String.valueOf(cbxOrigenVenta.getSelectedItem()); }
+	public String nombreDestinoVenta() { return String.valueOf(cbxDestinoVenta.getSelectedItem()); }
+	public String nombreOrigenCobro() { return String.valueOf(cbxOrigenCobro.getSelectedItem()); }
+	public String nombreDestinoCobro() { return String.valueOf(cbxDestinoCobro.getSelectedItem()); }
 
 	public TmCarteraClientes getModeloClientes() {
 		return modeloClientes;
