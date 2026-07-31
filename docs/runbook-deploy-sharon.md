@@ -116,6 +116,8 @@ curl -s -o /dev/null -w "dominio → %{http_code}\n" https://pedidos.distribuido
 2. Las sumas float→decimal **cambian por definición** (`518699079.1` → `518699079.08`): el float redondeaba. No es pérdida de datos (conteo idéntico); se reportan como informativas.
 3. Consulta de vendedores multi-caja fallaba por tablas sin calificar (`No database selected`) y por *collation* en el JOIN. Fix: subconsulta correlacionada con nombres calificados.
 
+**Incidencia 4 (post-ventana, consolidación)**: al armar el `.env` nuevo lo derivé de las variables del CONTENEDOR filtrando por prefijos (`APP_|MYSQL_|SPRING_|TZ|SERVER_`) — ese filtro excluía `CORS_`, así que agregué `CORS_ALLOWED_ORIGINS` a mano creyéndola nueva, cuando el archivo real ya la tenía **con 5 orígenes** (dominio + `localhost:5173/3000` + `10.10.0.2:5173/3000`, la Mac por VPN). El `.env` quedó con uno solo hasta que el diff de nombres lo destapó; restaurada y API recreada (Started 6.1s). **REGLA para el próximo cliente: partir del archivo `.env` REAL (con sudo), nunca de `docker exec env` filtrado**; y correr siempre el diff de nombres viejo-vs-nuevo.
+
 **Pendiente del cliente**: smoke funcional de la app de pedidos (login → guardar pedido) y distribución del jar `~/deploy-sharon/AdminTools-1.0_sharon_8fd9dc5.jar` a las terminales.
 
 ## Post-ventana
