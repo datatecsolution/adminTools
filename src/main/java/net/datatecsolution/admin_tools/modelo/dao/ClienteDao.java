@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
 import net.datatecsolution.admin_tools.modelo.Cliente;
+import net.datatecsolution.admin_tools.modelo.ClienteCartera;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.RutaCobro;
@@ -710,5 +711,172 @@ public class ClienteDao extends ModeloDaoBasic {
 			} // fin de catch
 		} // fin de finally
 	}
-	
+
+	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< US-127: transferencia de cartera entre vendedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+
+	/**
+	 * US-127 — devuelve la cartera de un empleado: todo cliente donde figure
+	 * como vendedor de venta O como cobrador.
+	 *
+	 * Consulta plana a proposito. Los otros listados de este DAO resuelven
+	 * vendedor, cobrador y ruta con un buscarPorId() por fila (N+1); para una
+	 * cartera entera eso son miles de round-trips. Aca solo se traen las
+	 * columnas que la pantalla de transferencia necesita mostrar.
+	 *
+	 * @param codigoEmpleado codigo del empleado a consultar
+	 * @return la cartera ordenada por nombre, o lista vacia si no tiene
+	 */
+	public List<ClienteCartera> carteraDeEmpleado(int codigoEmpleado) {
+
+		List<ClienteCartera> clientes = new ArrayList<ClienteCartera>();
+		Connection con = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT codigo_cliente, nombre_cliente, rtn, tipo_cliente, id_vendedor, id_cobrador, "
+				+ " ifnull(" + super.DbName + ".`f_saldo_cliente`(`codigo_cliente`),0) AS saldo "
+				+ "FROM " + super.DbName + ".cliente "
+				+ "WHERE id_vendedor = ? OR id_cobrador = ? "
+				+ "ORDER BY nombre_cliente";
+
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+			psConsultas = con.prepareStatement(sql);
+			psConsultas.setInt(1, codigoEmpleado);
+			psConsultas.setInt(2, codigoEmpleado);
+			rs = psConsultas.executeQuery();
+
+			while (rs.next()) {
+				ClienteCartera c = new ClienteCartera();
+				c.setCodigo(rs.getInt("codigo_cliente"));
+				c.setNombre(rs.getString("nombre_cliente"));
+				c.setRtn(rs.getString("rtn"));
+				c.setTipoCliente(rs.getInt("tipo_cliente"));
+				c.setIdVendedor(rs.getInt("id_vendedor"));
+				c.setIdCobrador(rs.getInt("id_cobrador"));
+				c.setSaldo(rs.getBigDecimal("saldo"));
+				clientes.add(c);
+			}
+			return clientes;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			return clientes;
+		} finally {
+			try {
+				if (rs != null) rs.close();
+				if (psConsultas != null) psConsultas.close();
+				if (con != null) con.close();
+			} catch (SQLException excepcionSql) {
+				excepcionSql.printStackTrace();
+			}
+		}
+	}
+
+	/** Clientes por sentencia en la transferencia de cartera (ver transferirCartera). */
+	private static final int LOTE_TRANSFERENCIA = 500;
+
+	/**
+	 * US-127 — mueve la cartera de un vendedor a otro de forma ATOMICA.
+	 *
+	 * Los dos UPDATE (venta y cobro) van en UNA transaccion: o se mueve todo
+	 * el lote o no se mueve nada. Sin esto, un fallo entre ambos dejaria
+	 * clientes con el vendedor nuevo y el cobrador viejo, un estado que nadie
+	 * puede deshacer a mano sin conocer el corte.
+	 *
+	 * Los codigos se agrupan de a {@value #LOTE_TRANSFERENCIA} en un IN en vez
+	 * de mandar un UPDATE por cliente. No es una micro-optimizacion: en los
+	 * clientes reales medidos (Ferro 29.396, Wendy 44.244) casi TODO el padron
+	 * cuelga del id_vendedor=1 —el DEFAULT del baseline, o sea clientes que
+	 * nunca se asignaron—, asi que una sola transferencia puede ser de 44.000
+	 * clientes. Fila por fila serian 44.000 viajes al servidor manteniendo la
+	 * transaccion abierta; de a 500 son 89 sentencias.
+	 *
+	 * Cada UPDATE lleva {@code AND id_... = origen} ademas de los codigos: eso
+	 * hace la operacion idempotente y garantiza que no se pise la asignacion
+	 * de un tercer empleado si la pantalla quedo desactualizada.
+	 *
+	 * @param codigos      clientes a mover
+	 * @param origen       codigo del empleado que cede la cartera
+	 * @param destino      codigo del empleado que la recibe
+	 * @param moverVenta   mover {@code id_vendedor}
+	 * @param moverCobro   mover {@code id_cobrador}
+	 * @return true si la transaccion se confirmo
+	 */
+	public boolean transferirCartera(List<Integer> codigos, int origen, int destino,
+			boolean moverVenta, boolean moverCobro) {
+
+		if (codigos == null || codigos.isEmpty() || (!moverVenta && !moverCobro)) {
+			return false;
+		}
+
+		boolean resultado = false;
+		Connection conn = null;
+
+		try {
+			conn = ConexionStatic.getPoolConexion().getConnection();
+			conn.setAutoCommit(false);
+
+			if (moverVenta) {
+				actualizarEnLotes(conn, "id_vendedor", codigos, origen, destino);
+			}
+
+			if (moverCobro) {
+				actualizarEnLotes(conn, "id_cobrador", codigos, origen, destino);
+			}
+
+			conn.commit();
+			resultado = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			if (conn != null) {
+				try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+			}
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			resultado = false;
+		} finally {
+			try {
+				if (conn != null) { conn.setAutoCommit(true); conn.close(); }
+			} catch (SQLException excepcionSql) {
+				excepcionSql.printStackTrace();
+			}
+		}
+		return resultado;
+	}
+
+	/**
+	 * Reasigna un campo de empleado en lotes de {@value #LOTE_TRANSFERENCIA}
+	 * clientes, dentro de la conexion/transaccion que le pasen.
+	 *
+	 * El nombre del campo se concatena porque un placeholder no puede ocupar
+	 * el lugar de una columna; los unicos valores posibles son las constantes
+	 * "id_vendedor" e "id_cobrador" que pasa transferirCartera, nunca entrada
+	 * del usuario. Los codigos de cliente si van parametrizados.
+	 */
+	private void actualizarEnLotes(Connection conn, String campo, List<Integer> codigos,
+			int origen, int destino) throws SQLException {
+
+		for (int inicio = 0; inicio < codigos.size(); inicio += LOTE_TRANSFERENCIA) {
+			List<Integer> lote = codigos.subList(inicio,
+					Math.min(inicio + LOTE_TRANSFERENCIA, codigos.size()));
+
+			StringBuilder sql = new StringBuilder(super.getQueryUpdate())
+					.append(" SET ").append(campo).append(" = ? ")
+					.append("WHERE ").append(campo).append(" = ? AND codigo_cliente IN (");
+			for (int i = 0; i < lote.size(); i++) {
+				sql.append(i == 0 ? "?" : ",?");
+			}
+			sql.append(")");
+
+			try (java.sql.PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+				ps.setInt(1, destino);
+				ps.setInt(2, origen);
+				for (int i = 0; i < lote.size(); i++) {
+					ps.setInt(3 + i, lote.get(i));
+				}
+				ps.executeUpdate();
+			}
+		}
+	}
+
 }

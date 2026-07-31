@@ -374,6 +374,19 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 				}
 				break;
 
+			case "TRANSFERIR_CARTERA":
+				// US-127: mueve clientes de un vendedor a otro. Es un UPDATE
+				// masivo sin deshacer, por eso queda igual que CLIENTES:
+				// solo supervisor (1) y administrador (4).
+				if (permiso == 1 || permiso == 4) {
+					ViewTransferirCartera viewCartera = new ViewTransferirCartera(view);
+					CtlTransferirCartera ctlCartera = new CtlTransferirCartera(viewCartera);
+					viewCartera.dispose();
+					viewCartera = null;
+					ctlCartera = null;
+				}
+				break;
+
 			case "EMPLEADOS":
 
 				ViewListaEmpleados viewEmpleados = new ViewListaEmpleados(view);
