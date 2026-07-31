@@ -11,6 +11,49 @@ import java.util.List;
 
 
 public class FacturaOrdenVentaDao extends ModeloDaoBasic {
+
+	/** US-125: roles que SUPERVISAN la operación completa (ven todas las órdenes). */
+	private static final int TIPO_SUPERVISOR = 1;
+	private static final int TIPO_ADMIN = 4;
+
+	/**
+	 * US-125: ¿el usuario logueado ve TODAS las órdenes pendientes?
+	 *
+	 * Regla del negocio: cada cajero atiende a los vendedores que tiene
+	 * asignados (empleados.usuario) y solo ve/factura esas órdenes. Un
+	 * SUPERVISOR o un ADMIN, en cambio, supervisa la operación completa y
+	 * necesita verlas todas — antes veían CERO, porque no tienen vendedores
+	 * asignados ni crean órdenes propias.
+	 */
+	private boolean veTodasLasOrdenes() {
+		Usuario u = ConexionStatic.getUsuarioLogin();
+		if (u == null) {
+			return false;
+		}
+		return u.getTipoPermiso() == TIPO_SUPERVISOR || u.getTipoPermiso() == TIPO_ADMIN;
+	}
+
+	/**
+	 * US-125: fragmento SQL que restringe las órdenes al usuario logueado.
+	 * Vacío para supervisores/admins (sin restricción). Si devuelve el
+	 * fragmento, consume DOS parámetros — usar junto con
+	 * {@link #bindVisibilidad(java.sql.PreparedStatement, int)}.
+	 */
+	private String filtroVisibilidadOrdenes() {
+		return veTodasLasOrdenes()
+				? ""
+				: "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) ";
+	}
+
+	/** US-125: liga los parámetros del filtro y devuelve el índice siguiente. */
+	private int bindVisibilidad(java.sql.PreparedStatement ps, int idx) throws SQLException {
+		if (!veTodasLasOrdenes()) {
+			ps.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+			ps.setString(idx++, ConexionStatic.getUsuarioLogin().getUser());
+		}
+		return idx;
+	}
+
 	
 	
 	
@@ -279,15 +322,14 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ super.DbName + ".encabezado_factura_temp LEFT JOIN "
 				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
 				+ "WHERE encabezado_factura_temp.estado < 3 "
-				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ filtroVisibilidadOrdenes()
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
 				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
 			psConsultas = con.prepareStatement(sqlOrdenes);
-			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(3, 0);
-			psConsultas.setInt(4, 20);
+			int idxOrd = bindVisibilidad(psConsultas, 1);
+			psConsultas.setInt(idxOrd++, 0);
+			psConsultas.setInt(idxOrd, 20);
 
 			res = psConsultas.executeQuery();
 
@@ -509,15 +551,14 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 				+ super.DbName + ".encabezado_factura_temp LEFT JOIN "
 				+ DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
 				+ "WHERE encabezado_factura_temp.estado < 3 "
-				+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+				+ filtroVisibilidadOrdenes()
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
 				+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
 				+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
 			psConsultas = con.prepareStatement(sqlTodos);
-			psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
-			psConsultas.setInt(3, limSupe);
-			psConsultas.setInt(4, limInf);
+			int idxTodos = bindVisibilidad(psConsultas, 1);
+			psConsultas.setInt(idxTodos++, limSupe);
+			psConsultas.setInt(idxTodos, limInf);
 
 
 			System.out.println(psConsultas);
@@ -939,17 +980,16 @@ public class FacturaOrdenVentaDao extends ModeloDaoBasic {
 					+ "LEFT JOIN " + DbNameBase + ".empleados ON (encabezado_factura_temp.codigo_vendedor = empleados.codigo_empleado) "
 					+ "JOIN " + super.DbName + ".cliente ON (encabezado_factura_temp.codigo_cliente = cliente.codigo_cliente) "
 					+ "WHERE encabezado_factura_temp.estado < 3 "
-					+ "AND (empleados.usuario = ? OR encabezado_factura_temp.usuario = ?) "
+					+ filtroVisibilidadOrdenes()
 					+ "AND cliente.nombre_cliente LIKE ? "
 					+ "ORDER BY encabezado_factura_temp.numero_factura DESC LIMIT ?,?) tabla2 "
 					+ "ON (tabla2.numero_factura = encabezado_factura_temp.numero_factura) "
 					+ "ORDER BY encabezado_factura_temp.numero_factura DESC";
 				psConsultas = con.prepareStatement(sqlBuscarTodos);
-				psConsultas.setString(1, ConexionStatic.getUsuarioLogin().getUser());
-				psConsultas.setString(2, ConexionStatic.getUsuarioLogin().getUser());
-				psConsultas.setString(3, "%" + nombre + "%");
-				psConsultas.setInt(4, limitInferio);
-				psConsultas.setInt(5, canItemPag);
+				int idxBuscar = bindVisibilidad(psConsultas, 1);
+				psConsultas.setString(idxBuscar++, "%" + nombre + "%");
+				psConsultas.setInt(idxBuscar++, limitInferio);
+				psConsultas.setInt(idxBuscar, canItemPag);
 			} else {
 				psConsultas = con.prepareStatement(super.getQuerySearchJoin("encabezado_factura_temp.estado<3 and codigo_vendedor=? and nombre_cliente", "LIKE", "cliente", "codigo_cliente", "codigo_cliente"));
 				psConsultas.setInt(1, codigoVendedor);
