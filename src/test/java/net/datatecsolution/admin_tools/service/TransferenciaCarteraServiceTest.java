@@ -55,6 +55,35 @@ public class TransferenciaCarteraServiceTest {
 		return new MovimientoCartera(true, origen, destino);
 	}
 
+	/* ============ control de acceso: SOLO administrador ============ */
+
+	@Test
+	public void soloElAdministradorPuedeTransferir() {
+		assertTrue("4 = Administrador", servicio.puedeTransferir(4));
+
+		assertFalse("1 = Supervisor: queda afuera aunque otras pantallas de clientes lo dejen pasar",
+				servicio.puedeTransferir(1));
+		assertFalse("2 = Cajero", servicio.puedeTransferir(2));
+		assertFalse("3 = Vendedor", servicio.puedeTransferir(3));
+	}
+
+	@Test
+	public void permisoDesconocidoONuloNoPasa() {
+		assertFalse(servicio.puedeTransferir(null));
+		assertFalse(servicio.puedeTransferir(0));
+		assertFalse(servicio.puedeTransferir(5));
+		assertFalse(servicio.puedeTransferir(-1));
+	}
+
+	@Test
+	public void puedeTransferirComparaPORVALORNoPorReferencia() {
+		// Integer fuera del cache de -128..127: un == entre objetos daria false
+		// y dejaria afuera al admin. Cubre la regresion si alguien cambia la
+		// firma o el desempaquetado.
+		assertTrue(servicio.puedeTransferir(Integer.valueOf(TransferenciaCarteraService.TIPO_ADMIN)));
+		assertEquals(4, TransferenciaCarteraService.TIPO_ADMIN);
+	}
+
 	/* ============ el caso que motivo el rediseño: dos personas distintas ============ */
 
 	@Test

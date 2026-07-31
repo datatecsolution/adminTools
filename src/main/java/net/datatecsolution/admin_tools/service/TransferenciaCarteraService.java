@@ -26,6 +26,25 @@ import java.util.List;
  */
 public class TransferenciaCarteraService {
 
+	/** {@code usuario.tipo_permiso} del Administrador (1=Supervisor, 2=Cajero, 3=Vendedor, 4=Admin). */
+	public static final int TIPO_ADMIN = 4;
+
+	/**
+	 * Unico lugar donde se decide quien puede transferir cartera: SOLO el
+	 * administrador (tipo_permiso 4).
+	 *
+	 * El supervisor (1) queda afuera a proposito, aunque para otras pantallas
+	 * de clientes se lo trate como equivalente al admin. Mover cartera
+	 * reasigna comisiones de venta y responsabilidad de cobro de miles de
+	 * clientes de una sola vez y no tiene deshacer.
+	 *
+	 * Lo usan el menu principal (para no abrir la pantalla) y el controlador
+	 * de la pantalla (por si alguna vez se agrega otra via de entrada).
+	 */
+	public boolean puedeTransferir(Integer tipoPermiso) {
+		return tipoPermiso != null && tipoPermiso == TIPO_ADMIN;
+	}
+
 	/**
 	 * Valida los parametros de la transferencia.
 	 *

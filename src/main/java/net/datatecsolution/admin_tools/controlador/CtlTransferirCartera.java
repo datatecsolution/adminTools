@@ -1,6 +1,7 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.ClienteCartera;
+import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.MovimientoCartera;
 import net.datatecsolution.admin_tools.modelo.dao.ClienteDao;
@@ -45,11 +46,27 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 		usuarioDao = new UsuarioDao();
 		servicio = new TransferenciaCarteraService();
 
+		// Segunda barrera: el menu ya filtra por tipo_permiso, pero la pantalla
+		// no se abre sola si alguna vez se agrega otra via de entrada.
+		if (!servicio.puedeTransferir(permisoUsuarioLogueado())) {
+			JOptionPane.showMessageDialog(view,
+					"Solo un usuario Administrador puede transferir cartera de clientes.",
+					"Acceso denegado", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
 		view.conectarCtl(this);
 		cargarEmpleados();
 		actualizarResumen();
 
 		view.setVisible(true);
+	}
+
+	private Integer permisoUsuarioLogueado() {
+		if (ConexionStatic.getUsuarioLogin() == null) {
+			return null;
+		}
+		return ConexionStatic.getUsuarioLogin().getTipoPermiso();
 	}
 
 	private void cargarEmpleados() {
@@ -229,8 +246,10 @@ public class CtlTransferirCartera implements ActionListener, TableModelListener 
 			return false;
 		}
 
+		// comprobarAdministrador (no comprobarAdmin): el estricto, que NO acepta
+		// la clave de un supervisor.
 		String pwd = new String(pwdAdmin.getPassword());
-		if (!usuarioDao.comprobarAdmin(pwd)) {
+		if (!usuarioDao.comprobarAdministrador(pwd)) {
 			JOptionPane.showMessageDialog(view, "Password de administrador incorrecto.",
 					"Error", JOptionPane.ERROR_MESSAGE);
 			return false;
