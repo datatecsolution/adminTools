@@ -515,11 +515,25 @@ public class EmpleadoDao extends ModeloDaoBasic {
 		return empleados;
 	}
 
+	/**
+	 * US-126: quita la asignación de empleados(vendedores) a un usuario.
+	 *
+	 * `empleados.usuario` es NOT NULL DEFAULT 'system' en el baseline y en
+	 * TODOS los clientes, así que el `SET usuario = NULL` original reventaba
+	 * con "Column 'usuario' cannot be null" — pero solo cuando el usuario
+	 * editado TENÍA empleados asignados (con 0 filas afectadas MySQL no
+	 * valida, por eso pasaba desapercibido). Detectado en Ronal al reasignar
+	 * vendedores (2026-07-31).
+	 *
+	 * DEFAULT respeta el esquema de cada cliente: 'system' donde la columna
+	 * es NOT NULL, NULL donde lo permita. Ninguna consulta de lectura espera
+	 * NULL: todas filtran por `usuario = ?` con el username real.
+	 */
 	public boolean desasignarUsuariosDe(String usuario) {
 		Connection con = null;
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
-			psConsultas = con.prepareStatement(super.getQueryUpdate() + " SET usuario = NULL WHERE usuario = ?");
+			psConsultas = con.prepareStatement(super.getQueryUpdate() + " SET usuario = DEFAULT WHERE usuario = ?");
 			psConsultas.setString(1, usuario);
 			psConsultas.executeUpdate();
 			return true;
