@@ -31,6 +31,10 @@ import java.util.List;
  */
 public class ViewTransferirCartera extends JDialog {
 
+	/** Tamano de BotonCancelar; el de transferir se iguala a este. */
+	private static final int ANCHO_BOTON = 136;
+	private static final int ALTO_BOTON = 77;
+
 	private final JCheckBox chkVenta;
 	private final JComboBox<Empleado> cbxOrigenVenta;
 	private final JComboBox<Empleado> cbxDestinoVenta;
@@ -56,7 +60,9 @@ public class ViewTransferirCartera extends JDialog {
 	public ViewTransferirCartera(Window view) {
 		this.setTitle("Transferir cartera de clientes");
 		this.setModal(true);
-		this.setSize(900, 680);
+		// Alto suficiente para los botones de 77px: terminan en y=645 y la
+		// barra de titulo se come ~28px del alto declarado.
+		this.setSize(900, 710);
 		this.setLocationRelativeTo(view);
 		getContentPane().setLayout(null);
 		getContentPane().setBackground(PanelPadre.color1);
@@ -149,14 +155,24 @@ public class ViewTransferirCartera extends JDialog {
 		getContentPane().add(lblResumen);
 
 		btnTransferir = new BotonTransferir();
-		// El icono es compartido con la transferencia de saldo entre cuentas,
-		// que trae su propio tooltip; aca significa otra cosa.
+		// BotonTransferir se queda con el 128x45 de BotonesApp, pero
+		// BotonCancelar lo sobrescribe con 136x77, asi que uno al lado del
+		// otro quedaban desparejos. Se iguala ACA y no en la clase porque
+		// BotonTransferir tambien lo usa ViewCuentasFacturas, donde cambiarle
+		// el tamano correria su layout.
+		btnTransferir.setText("Transferir");
+		btnTransferir.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnTransferir.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnTransferir.setPreferredSize(new Dimension(ANCHO_BOTON, ALTO_BOTON));
+		btnTransferir.setSize(ANCHO_BOTON, ALTO_BOTON);
+		// El icono viene con el tooltip de la transferencia de saldo entre
+		// cuentas; aca significa otra cosa.
 		btnTransferir.setToolTipText("Aplicar los movimientos marcados a los clientes seleccionados");
-		btnTransferir.setLocation(280, 570);
+		btnTransferir.setLocation(280, 568);
 		getContentPane().add(btnTransferir);
 
 		btnCancelar = new BotonCancelar();
-		btnCancelar.setLocation(490, 570);
+		btnCancelar.setLocation(490, 568);
 		getContentPane().add(btnCancelar);
 
 		// Los combos de cada fila quedan inertes mientras su casilla este
