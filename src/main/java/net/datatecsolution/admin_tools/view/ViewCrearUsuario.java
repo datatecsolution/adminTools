@@ -1,6 +1,8 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlUsuario;
+import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.Departamento;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 import net.datatecsolution.admin_tools.view.botones.BotonActualizar;
@@ -54,6 +56,8 @@ public class ViewCrearUsuario extends JDialog {
 
 	private final JComboBox<Empleado> cbxEmpleadoMovil;
 	private final DefaultComboBoxModel<Empleado> modeloCbxEmpleadoMovil;
+	private final JComboBox<Caja> cbxCajaMovil;
+	private final DefaultComboBoxModel<Caja> modeloCbxCajaMovil;
 	private final JPanel panelPreciosMovil;
 	private final Map<Integer, JCheckBox> preciosCheckboxes = new HashMap<Integer, JCheckBox>();
 
@@ -188,7 +192,7 @@ public class ViewCrearUsuario extends JDialog {
 
 		panelCards.add(cardEscritorio, CARD_ESCRITORIO);
 
-		// CARD MOVIL: combo empleado + lista precios
+		// CARD MOVIL: combo empleado + CAJA + lista precios
 		JPanel cardMovil = new JPanel(null);
 		cardMovil.setBackground(PanelPadre.color1);
 
@@ -201,12 +205,26 @@ public class ViewCrearUsuario extends JDialog {
 		cbxEmpleadoMovil.setBounds(0, 22, 500, 28);
 		cardMovil.add(cbxEmpleadoMovil);
 
+		// US-128: la caja FALTABA en este card. El selector de cajas vivia solo
+		// en cardEscritorio, asi que todo usuario creado como Movil —o sea,
+		// todo vendedor— nacia sin caja y la API le rechazaba cada pedido con
+		// 409. Va un combo simple y no la lista del otro card porque US-110
+		// define al vendedor como mono-caja.
+		JLabel lblCajaMovil = new JLabel("Caja asignada (obligatoria)");
+		lblCajaMovil.setBounds(0, 58, 300, 15);
+		cardMovil.add(lblCajaMovil);
+
+		modeloCbxCajaMovil = new DefaultComboBoxModel<Caja>();
+		cbxCajaMovil = new JComboBox<Caja>(modeloCbxCajaMovil);
+		cbxCajaMovil.setBounds(0, 75, 500, 28);
+		cardMovil.add(cbxCajaMovil);
+
 		panelPreciosMovil = new JPanel();
 		panelPreciosMovil.setLayout(new BoxLayout(panelPreciosMovil, BoxLayout.Y_AXIS));
 		panelPreciosMovil.setBackground(PanelPadre.color1);
 		JScrollPane scrollPrecios = new JScrollPane(panelPreciosMovil);
 		scrollPrecios.setViewportBorder(new TitledBorder(null, "Precios visibles", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		scrollPrecios.setBounds(0, 60, 500, 200);
+		scrollPrecios.setBounds(0, 113, 500, 150);
 		cardMovil.add(scrollPrecios);
 
 		panelCards.add(cardMovil, CARD_MOVIL);
@@ -242,6 +260,50 @@ public class ViewCrearUsuario extends JDialog {
 				modeloCbxEmpleadoMovil.addElement(e);
 			}
 		}
+	}
+
+	/**
+	 * US-128 — llena el combo de caja del card Movil.
+	 *
+	 * El placeholder lleva un {@link Departamento} vacio a proposito:
+	 * {@code Caja.toString()} desreferencia el departamento sin comprobarlo,
+	 * asi que una Caja sin el revienta con NPE al pintar el combo.
+	 */
+	public void cargarCajasMovil(java.util.List<Caja> todas) {
+		modeloCbxCajaMovil.removeAllElements();
+		modeloCbxCajaMovil.addElement(cajaVacia());
+		if (todas != null) {
+			for (Caja c : todas) {
+				modeloCbxCajaMovil.addElement(c);
+			}
+		}
+	}
+
+	private Caja cajaVacia() {
+		Caja vacia = new Caja();
+		vacia.setCodigo(0);
+		vacia.setDescripcion("(seleccione)");
+		Departamento sinDepto = new Departamento();
+		sinDepto.setDescripcion("");
+		vacia.setDetartamento(sinDepto);
+		return vacia;
+	}
+
+	/** Caja elegida en el card Movil, o {@code null} si esta el placeholder. */
+	public Caja getCajaMovilSeleccionada() {
+		Caja seleccionada = (Caja) cbxCajaMovil.getSelectedItem();
+		return (seleccionada == null || seleccionada.getCodigo() == 0) ? null : seleccionada;
+	}
+
+	/** Deja seleccionada la caja del usuario al abrirlo para editar. */
+	public void seleccionarCajaMovil(int codigoCaja) {
+		for (int i = 0; i < modeloCbxCajaMovil.getSize(); i++) {
+			if (modeloCbxCajaMovil.getElementAt(i).getCodigo() == codigoCaja) {
+				cbxCajaMovil.setSelectedIndex(i);
+				return;
+			}
+		}
+		cbxCajaMovil.setSelectedIndex(0);
 	}
 
 	public void cargarPreciosMovil(java.util.List<PrecioArticulo> todos) {
