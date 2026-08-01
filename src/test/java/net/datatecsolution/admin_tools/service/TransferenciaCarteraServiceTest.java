@@ -179,6 +179,81 @@ public class TransferenciaCarteraServiceTest {
 		assertTrue(servicio.afectadosCobro(null, mov(BETO, DORA)).isEmpty());
 	}
 
+	/* ============ transferir UN SOLO rol (casilla del otro destildada) ============ */
+
+	@Test
+	public void soloVentaDejaAlCobradorDONDEESTA() {
+		// El escenario mas comun: se reasigna la fuerza de ventas y la
+		// cobranza no se toca. Incluye el caso en que el MISMO empleado tiene
+		// los dos roles: la venta se va, la cobranza se queda.
+		ClienteCartera cobraOtro = cliente(1, ANA, BETO, "0");
+		ClienteCartera cobraLaMisma = cliente(2, ANA, ANA, "0");
+		ClienteCartera contadoSinCobrador = cliente(3, ANA, 0, "0");
+
+		List<ClienteCartera> cartera = Arrays.asList(cobraOtro, cobraLaMisma, contadoSinCobrador);
+		MovimientoCartera venta = mov(ANA, CARLOS);
+		MovimientoCartera cobro = MovimientoCartera.inactivo();
+
+		assertNull("debe dejar transferir con un solo rol", servicio.validar(venta, cobro, cartera));
+		assertEquals("los tres cambian de vendedor", 3, servicio.afectadosVenta(cartera, venta).size());
+		assertTrue("NINGUN cobrador se toca, ni siquiera el de Ana",
+				servicio.afectadosCobro(cartera, cobro).isEmpty());
+		assertEquals(3, servicio.afectados(cartera, venta, cobro).size());
+	}
+
+	@Test
+	public void soloCobroDejaAlVendedorDONDEESTA() {
+		ClienteCartera vendeOtro = cliente(1, ANA, BETO, "0");
+		ClienteCartera vendeElMismo = cliente(2, BETO, BETO, "0");
+
+		List<ClienteCartera> cartera = Arrays.asList(vendeOtro, vendeElMismo);
+		MovimientoCartera venta = MovimientoCartera.inactivo();
+		MovimientoCartera cobro = mov(BETO, DORA);
+
+		assertNull(servicio.validar(venta, cobro, cartera));
+		assertEquals(2, servicio.afectadosCobro(cartera, cobro).size());
+		assertTrue("ningun vendedor se toca", servicio.afectadosVenta(cartera, venta).isEmpty());
+	}
+
+	@Test
+	public void conUnRolApagadoElOtroNoNecesitaSusCombos() {
+		// La casilla destildada puede dejar basura en sus combos: no bloquea.
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		assertNull(servicio.validar(mov(ANA, CARLOS), new MovimientoCartera(false, 999, 999), cartera));
+		assertNull(servicio.validar(new MovimientoCartera(false, 999, 999), mov(BETO, DORA), cartera));
+	}
+
+	@Test
+	public void elRolApagadoNoAportaClientesALaLista() {
+		// Un cliente que SOLO entra por el rol apagado no debe contarse.
+		ClienteCartera soloLoCobraBeto = cliente(1, EVA, BETO, "0");
+
+		assertTrue(servicio.afectados(Arrays.asList(soloLoCobraBeto),
+				mov(ANA, CARLOS), MovimientoCartera.inactivo()).isEmpty());
+	}
+
+	/* ============ mensajes de validacion ============ */
+
+	@Test
+	public void losMensajesNombranElRolCorrectamente() {
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		String faltaDestinoVenta = servicio.validar(
+				new MovimientoCartera(true, ANA, 0), MovimientoCartera.inactivo(), cartera);
+		String faltaDestinoCobro = servicio.validar(
+				MovimientoCartera.inactivo(), new MovimientoCartera(true, BETO, 0), cartera);
+
+		assertTrue("debe decir de que rol habla: " + faltaDestinoVenta,
+				faltaDestinoVenta.contains(TransferenciaCarteraService.ROL_VENTA));
+		assertTrue("debe decir de que rol habla: " + faltaDestinoCobro,
+				faltaDestinoCobro.contains(TransferenciaCarteraService.ROL_COBRO));
+
+		// Concatenar "la " + "cobro" daba "de la cobro".
+		assertFalse(faltaDestinoCobro.contains("la cobro"));
+		assertFalse(faltaDestinoVenta.contains("la venta."));
+	}
+
 	/* ============ MovimientoCartera ============ */
 
 	@Test

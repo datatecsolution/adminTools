@@ -58,11 +58,11 @@ public class TransferenciaCarteraService {
 			return "Marque al menos que transferir: la asignacion de venta, la cartera de cobro o ambas.";
 		}
 
-		String errorVenta = validarMovimiento(venta, "venta");
+		String errorVenta = validarMovimiento(venta, ROL_VENTA);
 		if (errorVenta != null) {
 			return errorVenta;
 		}
-		String errorCobro = validarMovimiento(cobro, "cobro");
+		String errorCobro = validarMovimiento(cobro, ROL_COBRO);
 		if (errorCobro != null) {
 			return errorCobro;
 		}
@@ -77,18 +77,25 @@ public class TransferenciaCarteraService {
 		return null;
 	}
 
+	/**
+	 * Los mensajes nombran el rol con la frase completa y no con una palabra
+	 * suelta: concatenar "la " + "cobro" daba "de la cobro".
+	 */
+	static final String ROL_VENTA = "la asignacion de venta";
+	static final String ROL_COBRO = "la cartera de cobro";
+
 	private String validarMovimiento(MovimientoCartera m, String rol) {
 		if (!m.isActivo()) {
 			return null;
 		}
 		if (m.getOrigen() <= 0) {
-			return "Seleccione el empleado de origen de la " + rol + ".";
+			return "Seleccione el empleado de origen de " + rol + ".";
 		}
 		if (m.getDestino() <= 0) {
-			return "Seleccione el empleado de destino de la " + rol + ".";
+			return "Seleccione el empleado de destino de " + rol + ".";
 		}
 		if (m.getOrigen() == m.getDestino()) {
-			return "En la " + rol + ", el empleado de origen y el de destino son el mismo.";
+			return "En " + rol + ", el empleado de origen y el de destino son el mismo.";
 		}
 		return null;
 	}
