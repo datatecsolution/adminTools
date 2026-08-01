@@ -11,6 +11,8 @@ import net.datatecsolution.admin_tools.view.tablemodel.TmCarteraClientes;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -68,8 +70,12 @@ public class ViewTransferirCartera extends JDialog {
 		getContentPane().add(panelQue);
 
 		// --- fila VENTA ---
+		// Las dos casillas arrancan APAGADAS a proposito: el usuario tiene que
+		// elegir explicitamente que mueve. Con una marcada por defecto, quien
+		// solo queria transferir el otro rol se lleva puesto uno que no
+		// pensaba tocar, y esto no tiene deshacer.
 		chkVenta = new JCheckBox("VENTA");
-		chkVenta.setSelected(true);
+		chkVenta.setSelected(false);
 		chkVenta.setBackground(PanelPadre.color1);
 		chkVenta.setBounds(15, 28, 90, 25);
 		panelQue.add(chkVenta);
@@ -94,7 +100,7 @@ public class ViewTransferirCartera extends JDialog {
 
 		// --- fila COBRO ---
 		chkCobro = new JCheckBox("COBRO");
-		chkCobro.setSelected(true);
+		chkCobro.setSelected(false);
 		chkCobro.setBackground(PanelPadre.color1);
 		chkCobro.setBounds(15, 70, 90, 25);
 		panelQue.add(chkCobro);
@@ -152,6 +158,26 @@ public class ViewTransferirCartera extends JDialog {
 		btnCancelar = new BotonCancelar();
 		btnCancelar.setLocation(490, 570);
 		getContentPane().add(btnCancelar);
+
+		// Los combos de cada fila quedan inertes mientras su casilla este
+		// apagada: deja ver de un vistazo que rol esta en juego y evita que
+		// alguien elija empleados creyendo que va a mover algo.
+		ActionListener sincronizador = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sincronizarHabilitacion();
+			}
+		};
+		chkVenta.addActionListener(sincronizador);
+		chkCobro.addActionListener(sincronizador);
+		sincronizarHabilitacion();
+	}
+
+	private void sincronizarHabilitacion() {
+		cbxOrigenVenta.setEnabled(chkVenta.isSelected());
+		cbxDestinoVenta.setEnabled(chkVenta.isSelected());
+		cbxOrigenCobro.setEnabled(chkCobro.isSelected());
+		cbxDestinoCobro.setEnabled(chkCobro.isSelected());
 	}
 
 	private void ajustarAnchoColumnas() {

@@ -179,6 +179,35 @@ public class TransferenciaCarteraServiceTest {
 		assertTrue(servicio.afectadosCobro(null, mov(BETO, DORA)).isEmpty());
 	}
 
+	/* ============ estado inicial: nada marcado ============ */
+
+	@Test
+	public void laPantallaArrancaSinRolElegidoYLoDICE() {
+		// Las dos casillas nacen apagadas para que el usuario elija a
+		// proposito. Un contador en cero no orientaria.
+		String resumen = servicio.resumenSeleccion(
+				new ArrayList<ClienteCartera>(), MovimientoCartera.inactivo(), MovimientoCartera.inactivo());
+
+		assertEquals(TransferenciaCarteraService.SIN_ROL_ELEGIDO, resumen);
+	}
+
+	@Test
+	public void alMarcarUnRolElResumenVuelveAContar() {
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		String resumen = servicio.resumenSeleccion(cartera, mov(ANA, CARLOS), MovimientoCartera.inactivo());
+
+		assertEquals("1 de 1 clientes seleccionados - 1 cambian", resumen);
+	}
+
+	@Test
+	public void sinRolElegidoNoSePuedeTransferir() {
+		List<ClienteCartera> cartera = Arrays.asList(cliente(1, ANA, BETO, "0"));
+
+		assertNotNull("el estado inicial no debe poder disparar nada",
+				servicio.validar(MovimientoCartera.inactivo(), MovimientoCartera.inactivo(), cartera));
+	}
+
 	/* ============ transferir UN SOLO rol (casilla del otro destildada) ============ */
 
 	@Test

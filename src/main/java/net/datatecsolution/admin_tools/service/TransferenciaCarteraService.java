@@ -173,11 +173,20 @@ public class TransferenciaCarteraService {
 		return total;
 	}
 
+	/** Pie de la pantalla cuando todavia no se eligio que transferir. */
+	public static final String SIN_ROL_ELEGIDO = "Marque VENTA y/o COBRO para elegir que transferir.";
+
 	/**
 	 * Texto de una linea con el estado de la seleccion, para el pie de la
 	 * pantalla ("12 de 40 clientes seleccionados - 9 cambian").
+	 *
+	 * Con las dos casillas apagadas —el estado inicial— un contador en cero no
+	 * le dice nada al usuario, asi que se devuelve la instruccion.
 	 */
 	public String resumenSeleccion(List<ClienteCartera> todos, MovimientoCartera venta, MovimientoCartera cobro) {
+		if (!venta.isActivo() && !cobro.isActivo()) {
+			return SIN_ROL_ELEGIDO;
+		}
 		int total = todos == null ? 0 : todos.size();
 		List<ClienteCartera> marcados = seleccionados(todos);
 		int cambian = afectados(marcados, venta, cobro).size();
