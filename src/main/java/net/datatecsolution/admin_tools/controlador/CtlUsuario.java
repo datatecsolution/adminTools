@@ -113,8 +113,12 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			int conf2 = JOptionPane.showConfirmDialog(view, "Desea establecer default la caja [" + cajaSelect2 + "] del usuario?");
 			if (conf2 == 0) this.view.getModeloListaCajas().setCajaDefault(idxCodigo2);
 			break;
+		case "CAMBIO_ROL":
+			sincronizarCajasSegunRol();
+			break;
 		case "TIPO_ESCRITORIO":
 			view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
+			sincronizarCajasSegunRol();
 			break;
 		case "TIPO_MOVIL":
 			view.mostrarCard(ViewCrearUsuario.CARD_MOVIL);
@@ -235,32 +239,43 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 	}
 
 	/**
-	 * US-128 — comprueba, ANTES de guardar, que un vendedor quede utilizable.
-	 * Lee la pantalla en el mismo orden en que lo hara {@link #setUser()}.
+	 * US-128 — comprueba, ANTES de guardar, que la configuracion sea coherente
+	 * con el rol. Lee la pantalla en el mismo orden en que lo hara
+	 * {@link #setUser()}.
 	 */
 	private String errorConfiguracionVendedor() {
-		int tipoPermiso;
 		int codigoEmpleado;
 		List<Caja> cajas;
 
 		if (view.getRdbtnTipoMovil().isSelected()) {
-			tipoPermiso = ConfiguracionUsuarioService.TIPO_VENDEDOR;
 			codigoEmpleado = view.getCodigoEmpleadoMovilSeleccionado();
 			cajas = new ArrayList<Caja>();
 			if (view.getCajaMovilSeleccionada() != null) {
 				cajas.add(view.getCajaMovilSeleccionada());
 			}
-		} else if (view.getRdbtnVendedor().isSelected()) {
-			// Vendedor creado en modo Escritorio: ese camino fuerza
-			// codigo_empleado = 0, asi que nunca puede quedar completo.
-			tipoPermiso = ConfiguracionUsuarioService.TIPO_VENDEDOR;
+		} else {
+			// Modo Escritorio fuerza codigo_empleado = 0; por eso un Vendedor
+			// creado por este camino nunca puede quedar completo.
 			codigoEmpleado = 0;
 			cajas = view.getModeloListaCajas().getCajas();
-		} else {
-			return null;
 		}
 
-		return configService.validarVendedor(tipoPermiso, codigoEmpleado, cajas);
+		return configService.validar(tipoPermisoSeleccionado(), codigoEmpleado, cajas);
+	}
+
+	/** Rol elegido en pantalla, con la misma logica que usa {@link #setUser()}. */
+	private int tipoPermisoSeleccionado() {
+		if (view.getRdbtnTipoMovil().isSelected()) return ConfiguracionUsuarioService.TIPO_VENDEDOR;
+		if (view.getRdbtnAdministrador().isSelected()) return ConfiguracionUsuarioService.TIPO_ADMIN;
+		if (view.getRdbtnCajero().isSelected()) return ConfiguracionUsuarioService.TIPO_CAJERO;
+		if (view.getRdbtnVendedor().isSelected()) return ConfiguracionUsuarioService.TIPO_VENDEDOR;
+		if (view.getRdbtnSupervisor().isSelected()) return ConfiguracionUsuarioService.TIPO_SUPERVISOR;
+		return 0;
+	}
+
+	/** US-128: Supervisor y Administrador no facturan -> sin cajas. */
+	private void sincronizarCajasSegunRol() {
+		view.habilitarCajasEscritorio(configService.admiteCaja(tipoPermisoSeleccionado()));
 	}
 
 	public boolean agregarUsuario() {

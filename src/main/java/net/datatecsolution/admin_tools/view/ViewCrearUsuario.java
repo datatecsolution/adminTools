@@ -35,6 +35,7 @@ public class ViewCrearUsuario extends JDialog {
 	private final ButtonGroup grupoOpciones;
 	private final BotonActualizar btnActualizar;
 	private final JList lCajas;
+	private final JScrollPane scrollCajas;
 
 	private final ListaModeloCajas modeloListaCajas;
 	private final JButton btnAgregar;
@@ -167,20 +168,20 @@ public class ViewCrearUsuario extends JDialog {
 		JPanel cardEscritorio = new JPanel(null);
 		cardEscritorio.setBackground(PanelPadre.color1);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportBorder(new TitledBorder(null, "Cajas asignadas", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		scrollPane.setBounds(0, 0, 500, 130);
-		scrollPane.setBackground(PanelPadre.color1);
-		cardEscritorio.add(scrollPane);
+		scrollCajas = new JScrollPane();
+		scrollCajas.setViewportBorder(new TitledBorder(null, "Cajas asignadas", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		scrollCajas.setBounds(0, 0, 500, 130);
+		scrollCajas.setBackground(PanelPadre.color1);
+		cardEscritorio.add(scrollCajas);
 
 		modeloListaCajas = new ListaModeloCajas();
 		lCajas = new JList();
 		lCajas.setModel(modeloListaCajas);
 		lCajas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		scrollPane.setViewportView(lCajas);
+		scrollCajas.setViewportView(lCajas);
 
 		btnAgregar = new BotonAgregar();
-		scrollPane.setRowHeaderView(btnAgregar);
+		scrollCajas.setRowHeaderView(btnAgregar);
 
 		panelEmpleadosEscritorio = new JPanel();
 		panelEmpleadosEscritorio.setLayout(new BoxLayout(panelEmpleadosEscritorio, BoxLayout.Y_AXIS));
@@ -306,6 +307,26 @@ public class ViewCrearUsuario extends JDialog {
 		cbxCajaMovil.setSelectedIndex(0);
 	}
 
+	/**
+	 * US-128 — habilita o bloquea la seccion de cajas del card Escritorio.
+	 *
+	 * Supervisor y Administrador no facturan, asi que no deben tener cajas.
+	 * Se desactiva la lista y el boton de agregar (y se vacia lo que hubiera)
+	 * para que el error no llegue a producirse, en vez de solo rechazarlo al
+	 * guardar.
+	 */
+	public void habilitarCajasEscritorio(boolean habilitar) {
+		lCajas.setEnabled(habilitar);
+		btnAgregar.setEnabled(habilitar);
+		scrollCajas.setViewportBorder(new TitledBorder(null,
+				habilitar ? "Cajas asignadas" : "Cajas asignadas (este rol no factura)",
+				TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		if (!habilitar && modeloListaCajas.getSize() > 0) {
+			modeloListaCajas.setCajas(new java.util.ArrayList<Caja>());
+		}
+		scrollCajas.repaint();
+	}
+
 	public void cargarPreciosMovil(java.util.List<PrecioArticulo> todos) {
 		panelPreciosMovil.removeAll();
 		preciosCheckboxes.clear();
@@ -416,6 +437,20 @@ public class ViewCrearUsuario extends JDialog {
 
 		rdbtnTipoMovil.addActionListener(c);
 		rdbtnTipoMovil.setActionCommand("TIPO_MOVIL");
+
+		// US-128: al cambiar de rol hay que rehabilitar o bloquear las cajas —
+		// Supervisor y Administrador no facturan y no deben tenerlas.
+		rdbtnCajero.addActionListener(c);
+		rdbtnCajero.setActionCommand("CAMBIO_ROL");
+
+		rdbtnVendedor.addActionListener(c);
+		rdbtnVendedor.setActionCommand("CAMBIO_ROL");
+
+		rdbtnSupervisor.addActionListener(c);
+		rdbtnSupervisor.setActionCommand("CAMBIO_ROL");
+
+		rdbtnAdministrador.addActionListener(c);
+		rdbtnAdministrador.setActionCommand("CAMBIO_ROL");
 	}
 
 	public ListaModeloCajas getModeloListaCajas() { return modeloListaCajas; }
