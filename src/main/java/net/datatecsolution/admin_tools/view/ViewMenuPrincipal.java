@@ -36,6 +36,7 @@ public class ViewMenuPrincipal extends JFrame {
 	private final JMenuItem mntmCierresDeCaja;
 
 	private final JMenuItem mntmEmpleados;
+	private final JMenuItem mntmTransferirCartera;
 	private final JMenuItem mntmComisiones;
 	private final JMenu mnCompras;
 	private final JMenuItem mntmGestionCompas;
@@ -79,7 +80,10 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmEmpleados = new JMenuItem("Empleados");
 		mnArchivo.add(mntmEmpleados);
-		
+
+		mntmTransferirCartera = new JMenuItem("Transferir cartera de clientes");
+		mnArchivo.add(mntmTransferirCartera);
+
 		mntmAplicarInteresA = new JMenuItem("Interes a facturas venc");
 		mnArchivo.add(mntmAplicarInteresA);
 		
@@ -317,6 +321,9 @@ public class ViewMenuPrincipal extends JFrame {
 		
 		mntmEmpleados.addActionListener(c);
 		mntmEmpleados.setActionCommand("EMPLEADOS");
+
+		mntmTransferirCartera.addActionListener(c);
+		mntmTransferirCartera.setActionCommand("TRANSFERIR_CARTERA");
 		
 		mntmComisiones.addActionListener(c);
 		mntmComisiones.setActionCommand("COMISIONES");

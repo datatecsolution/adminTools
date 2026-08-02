@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.modelo.ConexionStatic;
 import net.datatecsolution.admin_tools.modelo.dao.ArticuloDao;
 import net.datatecsolution.admin_tools.modelo.dao.FacturaDao;
 import net.datatecsolution.admin_tools.service.CierreCajaService;
+import net.datatecsolution.admin_tools.service.TransferenciaCarteraService;
 import net.datatecsolution.admin_tools.view.*;
 
 import javax.swing.*;
@@ -371,6 +372,20 @@ public class CtlMenuPrincipal implements ActionListener,WindowListener, Runnable
 					viewCierres.dispose();
 					viewCierres = null;
 					ctlCierres = null;
+				}
+				break;
+
+			case "TRANSFERIR_CARTERA":
+				// US-127: SOLO administrador (tipo_permiso 4). Mas estricto que
+				// CLIENTES, que tambien deja pasar al supervisor (1): esto
+				// reasigna comisiones de venta y responsabilidad de cobro de
+				// miles de clientes de un saque y no tiene deshacer.
+				if (new TransferenciaCarteraService().puedeTransferir(permiso)) {
+					ViewTransferirCartera viewCartera = new ViewTransferirCartera(view);
+					CtlTransferirCartera ctlCartera = new CtlTransferirCartera(viewCartera);
+					viewCartera.dispose();
+					viewCartera = null;
+					ctlCartera = null;
 				}
 				break;
 

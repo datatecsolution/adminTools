@@ -141,6 +141,7 @@ Todo 404/500/409 es un frente roto. En Sharon aparecieron tres:
 - Un fallo de mapeo de rutas revienta **al arrancar**, no en caliente: un arranque limpio ya es evidencia de que las rutas quedaron registradas.
 
 **Swing**
+- **Arrancar el Swing APLICA las migraciones del classpath contra lo que apunte el `.dat` activo** — que puede ser la produccion de un cliente por VPN. Una migracion sin commitear en el working tree se aplica igual (paso con V42 en Sharon: se aplico al mediodia, se descarto del repo a la tarde, y quedo deriva de esquema que hubo que reparar reponiendo el archivo byte a byte para que coincidiera el checksum CRC32). Antes de arrancar el Swing con trabajo a medias: verificar el `.dat` o apuntar a localhost.
 - Los renderers leen columnas **ocultas** del modelo por índice fijo: al insertar una columna, `grep getValueAt(row, N)` en `view/rendes/`.
 - Los DAO se instancian por pantalla con estado parcial (`myBodega` puede venir null) → todo acceso debe tolerarlo.
 - Un `NullPointerException` no lo captura el `catch (SQLException)` de los listados: rompe la pantalla **en silencio**.
