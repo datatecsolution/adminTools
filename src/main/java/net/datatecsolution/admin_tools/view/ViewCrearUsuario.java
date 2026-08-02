@@ -1,6 +1,8 @@
 package net.datatecsolution.admin_tools.view;
 
 import net.datatecsolution.admin_tools.controlador.CtlUsuario;
+import net.datatecsolution.admin_tools.modelo.Caja;
+import net.datatecsolution.admin_tools.modelo.Departamento;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 import net.datatecsolution.admin_tools.view.botones.BotonActualizar;
@@ -33,6 +35,7 @@ public class ViewCrearUsuario extends JDialog {
 	private final ButtonGroup grupoOpciones;
 	private final BotonActualizar btnActualizar;
 	private final JList lCajas;
+	private final JScrollPane scrollCajas;
 
 	private final ListaModeloCajas modeloListaCajas;
 	private final JButton btnAgregar;
@@ -54,6 +57,8 @@ public class ViewCrearUsuario extends JDialog {
 
 	private final JComboBox<Empleado> cbxEmpleadoMovil;
 	private final DefaultComboBoxModel<Empleado> modeloCbxEmpleadoMovil;
+	private final JComboBox<Caja> cbxCajaMovil;
+	private final DefaultComboBoxModel<Caja> modeloCbxCajaMovil;
 	private final JPanel panelPreciosMovil;
 	private final Map<Integer, JCheckBox> preciosCheckboxes = new HashMap<Integer, JCheckBox>();
 
@@ -163,20 +168,20 @@ public class ViewCrearUsuario extends JDialog {
 		JPanel cardEscritorio = new JPanel(null);
 		cardEscritorio.setBackground(PanelPadre.color1);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportBorder(new TitledBorder(null, "Cajas asignadas", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		scrollPane.setBounds(0, 0, 500, 130);
-		scrollPane.setBackground(PanelPadre.color1);
-		cardEscritorio.add(scrollPane);
+		scrollCajas = new JScrollPane();
+		scrollCajas.setViewportBorder(new TitledBorder(null, "Cajas asignadas", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		scrollCajas.setBounds(0, 0, 500, 130);
+		scrollCajas.setBackground(PanelPadre.color1);
+		cardEscritorio.add(scrollCajas);
 
 		modeloListaCajas = new ListaModeloCajas();
 		lCajas = new JList();
 		lCajas.setModel(modeloListaCajas);
 		lCajas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		scrollPane.setViewportView(lCajas);
+		scrollCajas.setViewportView(lCajas);
 
 		btnAgregar = new BotonAgregar();
-		scrollPane.setRowHeaderView(btnAgregar);
+		scrollCajas.setRowHeaderView(btnAgregar);
 
 		panelEmpleadosEscritorio = new JPanel();
 		panelEmpleadosEscritorio.setLayout(new BoxLayout(panelEmpleadosEscritorio, BoxLayout.Y_AXIS));
@@ -188,7 +193,7 @@ public class ViewCrearUsuario extends JDialog {
 
 		panelCards.add(cardEscritorio, CARD_ESCRITORIO);
 
-		// CARD MOVIL: combo empleado + lista precios
+		// CARD MOVIL: combo empleado + CAJA + lista precios
 		JPanel cardMovil = new JPanel(null);
 		cardMovil.setBackground(PanelPadre.color1);
 
@@ -201,12 +206,26 @@ public class ViewCrearUsuario extends JDialog {
 		cbxEmpleadoMovil.setBounds(0, 22, 500, 28);
 		cardMovil.add(cbxEmpleadoMovil);
 
+		// US-128: la caja FALTABA en este card. El selector de cajas vivia solo
+		// en cardEscritorio, asi que todo usuario creado como Movil —o sea,
+		// todo vendedor— nacia sin caja y la API le rechazaba cada pedido con
+		// 409. Va un combo simple y no la lista del otro card porque US-110
+		// define al vendedor como mono-caja.
+		JLabel lblCajaMovil = new JLabel("Caja asignada (obligatoria)");
+		lblCajaMovil.setBounds(0, 58, 300, 15);
+		cardMovil.add(lblCajaMovil);
+
+		modeloCbxCajaMovil = new DefaultComboBoxModel<Caja>();
+		cbxCajaMovil = new JComboBox<Caja>(modeloCbxCajaMovil);
+		cbxCajaMovil.setBounds(0, 75, 500, 28);
+		cardMovil.add(cbxCajaMovil);
+
 		panelPreciosMovil = new JPanel();
 		panelPreciosMovil.setLayout(new BoxLayout(panelPreciosMovil, BoxLayout.Y_AXIS));
 		panelPreciosMovil.setBackground(PanelPadre.color1);
 		JScrollPane scrollPrecios = new JScrollPane(panelPreciosMovil);
 		scrollPrecios.setViewportBorder(new TitledBorder(null, "Precios visibles", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		scrollPrecios.setBounds(0, 60, 500, 200);
+		scrollPrecios.setBounds(0, 113, 500, 150);
 		cardMovil.add(scrollPrecios);
 
 		panelCards.add(cardMovil, CARD_MOVIL);
@@ -242,6 +261,70 @@ public class ViewCrearUsuario extends JDialog {
 				modeloCbxEmpleadoMovil.addElement(e);
 			}
 		}
+	}
+
+	/**
+	 * US-128 — llena el combo de caja del card Movil.
+	 *
+	 * El placeholder lleva un {@link Departamento} vacio a proposito:
+	 * {@code Caja.toString()} desreferencia el departamento sin comprobarlo,
+	 * asi que una Caja sin el revienta con NPE al pintar el combo.
+	 */
+	public void cargarCajasMovil(java.util.List<Caja> todas) {
+		modeloCbxCajaMovil.removeAllElements();
+		modeloCbxCajaMovil.addElement(cajaVacia());
+		if (todas != null) {
+			for (Caja c : todas) {
+				modeloCbxCajaMovil.addElement(c);
+			}
+		}
+	}
+
+	private Caja cajaVacia() {
+		Caja vacia = new Caja();
+		vacia.setCodigo(0);
+		vacia.setDescripcion("(seleccione)");
+		Departamento sinDepto = new Departamento();
+		sinDepto.setDescripcion("");
+		vacia.setDetartamento(sinDepto);
+		return vacia;
+	}
+
+	/** Caja elegida en el card Movil, o {@code null} si esta el placeholder. */
+	public Caja getCajaMovilSeleccionada() {
+		Caja seleccionada = (Caja) cbxCajaMovil.getSelectedItem();
+		return (seleccionada == null || seleccionada.getCodigo() == 0) ? null : seleccionada;
+	}
+
+	/** Deja seleccionada la caja del usuario al abrirlo para editar. */
+	public void seleccionarCajaMovil(int codigoCaja) {
+		for (int i = 0; i < modeloCbxCajaMovil.getSize(); i++) {
+			if (modeloCbxCajaMovil.getElementAt(i).getCodigo() == codigoCaja) {
+				cbxCajaMovil.setSelectedIndex(i);
+				return;
+			}
+		}
+		cbxCajaMovil.setSelectedIndex(0);
+	}
+
+	/**
+	 * US-128 — habilita o bloquea la seccion de cajas del card Escritorio.
+	 *
+	 * Supervisor y Administrador no facturan, asi que no deben tener cajas.
+	 * Se desactiva la lista y el boton de agregar (y se vacia lo que hubiera)
+	 * para que el error no llegue a producirse, en vez de solo rechazarlo al
+	 * guardar.
+	 */
+	public void habilitarCajasEscritorio(boolean habilitar) {
+		lCajas.setEnabled(habilitar);
+		btnAgregar.setEnabled(habilitar);
+		scrollCajas.setViewportBorder(new TitledBorder(null,
+				habilitar ? "Cajas asignadas" : "Cajas asignadas (este rol no factura)",
+				TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		if (!habilitar && modeloListaCajas.getSize() > 0) {
+			modeloListaCajas.setCajas(new java.util.ArrayList<Caja>());
+		}
+		scrollCajas.repaint();
 	}
 
 	public void cargarPreciosMovil(java.util.List<PrecioArticulo> todos) {
@@ -354,6 +437,20 @@ public class ViewCrearUsuario extends JDialog {
 
 		rdbtnTipoMovil.addActionListener(c);
 		rdbtnTipoMovil.setActionCommand("TIPO_MOVIL");
+
+		// US-128: al cambiar de rol hay que rehabilitar o bloquear las cajas —
+		// Supervisor y Administrador no facturan y no deben tenerlas.
+		rdbtnCajero.addActionListener(c);
+		rdbtnCajero.setActionCommand("CAMBIO_ROL");
+
+		rdbtnVendedor.addActionListener(c);
+		rdbtnVendedor.setActionCommand("CAMBIO_ROL");
+
+		rdbtnSupervisor.addActionListener(c);
+		rdbtnSupervisor.setActionCommand("CAMBIO_ROL");
+
+		rdbtnAdministrador.addActionListener(c);
+		rdbtnAdministrador.setActionCommand("CAMBIO_ROL");
 	}
 
 	public ListaModeloCajas getModeloListaCajas() { return modeloListaCajas; }

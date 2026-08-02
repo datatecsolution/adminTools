@@ -4,9 +4,11 @@ import net.datatecsolution.admin_tools.modelo.Caja;
 import net.datatecsolution.admin_tools.modelo.Empleado;
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 import net.datatecsolution.admin_tools.modelo.Usuario;
+import net.datatecsolution.admin_tools.modelo.dao.CajaDao;
 import net.datatecsolution.admin_tools.modelo.dao.EmpleadoDao;
 import net.datatecsolution.admin_tools.modelo.dao.PrecioArticuloDao;
 import net.datatecsolution.admin_tools.modelo.dao.UsuarioDao;
+import net.datatecsolution.admin_tools.service.ConfiguracionUsuarioService;
 import net.datatecsolution.admin_tools.view.ViewCrearUsuario;
 import net.datatecsolution.admin_tools.view.ViewListaCajas;
 
@@ -25,6 +27,8 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 	private UsuarioDao myDao = null;
 	private EmpleadoDao empleadoDao = null;
 	private PrecioArticuloDao precioDao = null;
+	private CajaDao cajaDao = null;
+	private final ConfiguracionUsuarioService configService = new ConfiguracionUsuarioService();
 	private List<Empleado> todosEmpleados = null;
 	private List<PrecioArticulo> todosPrecios = null;
 	private boolean resultaOperacion = false;
@@ -36,6 +40,7 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		myDao = new UsuarioDao();
 		empleadoDao = new EmpleadoDao();
 		precioDao = new PrecioArticuloDao();
+		cajaDao = new CajaDao();
 
 		view.conectarCtl(this);
 		cargarListasReferencia();
@@ -48,8 +53,13 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 		todosPrecios = precioDao.getTipoPrecios();
 		if (todosPrecios == null) todosPrecios = new ArrayList<PrecioArticulo>();
 
+		// US-128: el card Movil ahora tiene su propio selector de caja.
+		List<Caja> todasCajas = cajaDao.todosList();
+		if (todasCajas == null) todasCajas = new ArrayList<Caja>();
+
 		view.cargarEmpleadosEscritorio(todosEmpleados);
 		view.cargarComboEmpleadoMovil(todosEmpleados);
+		view.cargarCajasMovil(todasCajas);
 		view.cargarPreciosMovil(todosPrecios);
 	}
 
@@ -103,8 +113,12 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			int conf2 = JOptionPane.showConfirmDialog(view, "Desea establecer default la caja [" + cajaSelect2 + "] del usuario?");
 			if (conf2 == 0) this.view.getModeloListaCajas().setCajaDefault(idxCodigo2);
 			break;
+		case "CAMBIO_ROL":
+			sincronizarCajasSegunRol();
+			break;
 		case "TIPO_ESCRITORIO":
 			view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
+			sincronizarCajasSegunRol();
 			break;
 		case "TIPO_MOVIL":
 			view.mostrarCard(ViewCrearUsuario.CARD_MOVIL);
@@ -142,6 +156,18 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			myUsuario.setTipoPermiso(3);
 			myUsuario.setPermiso("Vendedor");
 			myUsuario.setCodigoEmpleado(view.getCodigoEmpleadoMovilSeleccionado());
+
+			// US-128: la caja del vendedor sale del combo de ESTE card, no de
+			// la lista del card Escritorio (que en modo Movil queda vacia y
+			// por eso el usuario nacia sin caja). Va marcada como activa
+			// porque asignarCajas persiste por_defecto desde isActiva().
+			List<Caja> cajaDelVendedor = new ArrayList<Caja>();
+			Caja elegida = view.getCajaMovilSeleccionada();
+			if (elegida != null) {
+				elegida.setActiva(true);
+				cajaDelVendedor.add(elegida);
+			}
+			myUsuario.setCajas(cajaDelVendedor);
 
 			List<PrecioArticulo> seleccionados = new ArrayList<PrecioArticulo>();
 			for (Integer codigo : view.getPreciosMarcados()) {
@@ -181,6 +207,7 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 	private boolean validar() {
 		String jpf1Text = Arrays.toString(view.getPwd().getPassword());
 		String jpf2Text = Arrays.toString(view.getRePwd().getPassword());
+		String errorVendedor = errorConfiguracionVendedor();
 		boolean resul = false;
 		if (view.getTxtUser().getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(view, "Debe rellenar todos los campos");
@@ -199,10 +226,56 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			view.getPwd().requestFocusInWindow();
 		} else if (view.getRdbtnTipoMovil().isSelected() && view.getCodigoEmpleadoMovilSeleccionado() == 0) {
 			JOptionPane.showMessageDialog(view, "Debe seleccionar un vendedor para el usuario movil");
+		} else if (errorVendedor != null) {
+			// US-128: un vendedor sin caja (o sin empleado) se guardaba "con
+			// exito" y quedaba inutilizable — la API le rechaza cada pedido
+			// con 409. Ahora no se guarda hasta que este completo.
+			JOptionPane.showMessageDialog(view, errorVendedor,
+					"Configuracion incompleta", JOptionPane.WARNING_MESSAGE);
 		} else {
 			resul = true;
 		}
 		return resul;
+	}
+
+	/**
+	 * US-128 — comprueba, ANTES de guardar, que la configuracion sea coherente
+	 * con el rol. Lee la pantalla en el mismo orden en que lo hara
+	 * {@link #setUser()}.
+	 */
+	private String errorConfiguracionVendedor() {
+		int codigoEmpleado;
+		List<Caja> cajas;
+
+		if (view.getRdbtnTipoMovil().isSelected()) {
+			codigoEmpleado = view.getCodigoEmpleadoMovilSeleccionado();
+			cajas = new ArrayList<Caja>();
+			if (view.getCajaMovilSeleccionada() != null) {
+				cajas.add(view.getCajaMovilSeleccionada());
+			}
+		} else {
+			// Modo Escritorio fuerza codigo_empleado = 0; por eso un Vendedor
+			// creado por este camino nunca puede quedar completo.
+			codigoEmpleado = 0;
+			cajas = view.getModeloListaCajas().getCajas();
+		}
+
+		return configService.validar(tipoPermisoSeleccionado(), codigoEmpleado, cajas);
+	}
+
+	/** Rol elegido en pantalla, con la misma logica que usa {@link #setUser()}. */
+	private int tipoPermisoSeleccionado() {
+		if (view.getRdbtnTipoMovil().isSelected()) return ConfiguracionUsuarioService.TIPO_VENDEDOR;
+		if (view.getRdbtnAdministrador().isSelected()) return ConfiguracionUsuarioService.TIPO_ADMIN;
+		if (view.getRdbtnCajero().isSelected()) return ConfiguracionUsuarioService.TIPO_CAJERO;
+		if (view.getRdbtnVendedor().isSelected()) return ConfiguracionUsuarioService.TIPO_VENDEDOR;
+		if (view.getRdbtnSupervisor().isSelected()) return ConfiguracionUsuarioService.TIPO_SUPERVISOR;
+		return 0;
+	}
+
+	/** US-128: Supervisor y Administrador no facturan -> sin cajas. */
+	private void sincronizarCajasSegunRol() {
+		view.habilitarCajasEscritorio(configService.admiteCaja(tipoPermisoSeleccionado()));
 	}
 
 	public boolean agregarUsuario() {
@@ -225,6 +298,13 @@ public class CtlUsuario extends MouseAdapter implements ActionListener {
 			view.mostrarCard(ViewCrearUsuario.CARD_MOVIL);
 			view.seleccionarEmpleadoMovil(myUsuario.getCodigoEmpleado());
 			view.marcarPreciosAsignados(myUsuario.getPreciosAsignados());
+			// US-128: reflejar la caja que ya tiene (o dejar el placeholder si
+			// quedo sin ninguna, como WACAESTRA, para que se vea que falta).
+			if (myUsuario.getCajas() != null && !myUsuario.getCajas().isEmpty()) {
+				view.seleccionarCajaMovil(myUsuario.getCajas().get(0).getCodigo());
+			} else {
+				view.seleccionarCajaMovil(0);
+			}
 		} else {
 			view.getRdbtnTipoEscritorio().setSelected(true);
 			view.mostrarCard(ViewCrearUsuario.CARD_ESCRITORIO);
