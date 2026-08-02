@@ -36,6 +36,68 @@ public class UsuarioDao  extends ModeloDaoBasic {
 		cajasDao=new CajaDao();
 	}
 	
+	/**
+	 * US-127 — variante ESTRICTA de {@link #comprobarAdmin(String)}: acepta
+	 * unicamente la clave de un usuario con {@code tipo_permiso = 4}
+	 * (Administrador).
+	 *
+	 * {@code comprobarAdmin} acepta tambien al Supervisor (tipo_permiso 1),
+	 * asi que no sirve para confirmar una operacion reservada al admin: el
+	 * supervisor podria confirmarla aunque el menu no le abra la pantalla.
+	 * No se endurecio aquel metodo porque lo usan 13 pantallas (anular
+	 * facturas, requisiciones, ordenes, entradas y salidas) donde el
+	 * supervisor SI debe poder autorizar.
+	 *
+	 * @param pwd clave escrita en el dialogo de confirmacion
+	 * @return true si corresponde a algun Administrador
+	 */
+	public boolean comprobarAdministrador(String pwd){
+
+		boolean resultado=false;
+
+        Connection con = null;
+
+    	String sql=super.getQuerySelect()+" where tipo_permiso=4";
+
+		ResultSet res=null;
+
+		try {
+			con = ConexionStatic.getPoolConexion().getConnection();
+
+			psConsultas = con.prepareStatement(sql);
+			res = psConsultas.executeQuery();
+			while(res.next()){
+				String claveAlmacenada = res.getString("clave");
+				if (PasswordHasher.verify(pwd, claveAlmacenada)) {
+					resultado = true;
+					if (!PasswordHasher.isHashed(claveAlmacenada)) {
+						migrarPassword(con, res.getString("usuario"), claveAlmacenada, pwd);
+					}
+					break;
+				}
+			 }
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+				resultado=false;
+			}
+		finally
+		{
+			try{
+				if(res != null) res.close();
+                if(psConsultas != null)psConsultas.close();
+                if(con != null) con.close();
+				} // fin de try
+				catch ( SQLException excepcionSql )
+				{
+					excepcionSql.printStackTrace();
+				} // fin de catch
+		} // fin de finally
+
+		return resultado;
+	}
+
 	public boolean comprobarAdmin(String pwd){
 
 		boolean resultado=false;
