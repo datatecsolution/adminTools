@@ -1,6 +1,6 @@
 # Estrategia de actualización automática del Swing
 
-**Fecha:** 2026-08-01 · **Estado:** propuesta, pendiente de GO para fase 1
+**Fecha:** 2026-08-01 · **Revisión:** 2026-08-02 (canal centralizado, decisión de hosting) · **Estado:** diseño aprobado, implementación pendiente de GO
 
 ## 1. El problema
 
@@ -26,38 +26,65 @@ diseño obvio (un canal global "última versión para todos"):
 > nadie mirando. La deriva V42 (2026-07-31) fue una versión en miniatura del
 > mismo mecanismo.
 
-**Regla de la estrategia: el canal es POR CLIENTE, y publicar una versión en
-él es el ÚLTIMO paso del deploy** — después de backup, migraciones y API,
+**Regla de la estrategia (INVARIANTE, sobrevive a cualquier hosting): la
+VERSIÓN es POR CLIENTE, y publicar en el canal de un cliente es el ÚLTIMO
+paso del deploy DE ESE cliente** — después de backup, migraciones y API,
 exactamente donde el playbook pone hoy "distribuir el jar". La actualización
 automática no reemplaza la ventana de deploy: reemplaza únicamente el ir
 terminal por terminal.
 
-## 3. Arquitectura
+## 3. Arquitectura — un solo punto en internet, un canal por cliente
 
-Tres piezas, ninguna nueva en el ecosistema:
+Revisión 2026-08-02 (decisión del usuario): en vez de hospedar `/updates/` en
+el servidor de cada cliente, hay UN punto único en internet. Lo que antes
+estaba pegado se separa: el HOSTING es centralizado; la VERSIÓN sigue siendo
+por cliente. Publicar para venecia no toca a Sharon.
 
 ```
-┌─ Servidor del cliente (ya existe: docker + nginx) ─────────────┐
-│  /updates/                                                     │
-│    version.json   { "version": "2026.08.01-1",                 │
-│                     "jar": "AdminTools-2026.08.01-1.jar",      │
-│                     "sha256": "…", "notas": "US-127, US-128" } │
-│    AdminTools-2026.08.01-1.jar                                 │
+┌─ updates.datatecsolution.com (punto unico) ────────────────────┐
+│  sharon/   version.json + AdminTools-2026.08.01-1.jar          │
+│  venecia/  version.json + jar                                  │
+│  dulce/    version.json + jar                                  │
+│    version.json = { "version", "jar", "sha256", "notas" }      │
 └────────────────────────────────────────────────────────────────┘
-        ▲ publicar-jar.sh <cliente>              │ HTTP(S)/LAN
-        │ (desde la Mac, por SSH;                ▼
-        │  ultimo paso del deploy)      ┌─ Terminal ────────────────┐
+        ▲ publicar-jar.sh <cliente>              │ HTTPS
+        │ (desde la Mac; ultimo paso             ▼
+        │  del deploy DE ESE cliente)   ┌─ Terminal ────────────────┐
 ┌─ Operador ──────────────┐             │  lanzador.jar  (~150 loc) │
 │  construye + checksum + │             │  jre/                     │
-│  sube + regenera json   │             │  AdminTools.jar           │
-└─────────────────────────┘             │  AdminTools-prev.jar      │
-                                        │  updates.properties (URL) │
+│  sube al canal del      │             │  AdminTools.jar           │
+│  cliente + regenera SU  │             │  AdminTools-prev.jar      │
+│  version.json           │             │  updates.properties (URL  │
+└─────────────────────────┘             │   de SU canal)            │
                                         └───────────────────────────┘
 ```
 
+### 3.1 Hosting elegido: servidor de Ronal bajo dominio datatec
+
+Evaluado 2026-08-02; opciones: Cloudflare R2, servidor de Ronal, VPS propio,
+GitHub Releases. **Decisión del usuario: servidor de Ronal** — cero
+infraestructura nueva: un contenedor nginx estático más (volumen propiedad de
+`ronal`, solo lectura) detrás del nginx-proxy-manager existente, con
+`updates.datatecsolution.com` apuntando a la IP pública de Ronal y TLS por el
+mismo mecanismo que ya emite los certificados de posdulce.
+
+Trade-offs aceptados y sus mitigaciones:
+
+- **El servidor de UN cliente distribuye a TODOS.** Si Ronal está caído, no
+  salen actualizaciones — pero ninguna terminal se rompe: el lanzador arranca
+  la versión local ante cualquier fallo del canal (§6). Las actualizaciones
+  se retrasan, no se pierden.
+- **Mezcla rol de prod de un cliente con infraestructura propia.** Aislado a
+  un contenedor estático de solo lectura; no comparte volumen ni red interna
+  con el stack del cliente más allá del proxy.
+- **Migrable sin tocar terminales**: las terminales conocen solo la URL del
+  dominio. Mover el hosting (a R2, a un VPS) el día de mañana es cambiar el
+  DNS — ninguna terminal se reinstala.
+
 **Flujo en la terminal, en cada arranque:**
 
-1. El lanzador lee la URL de su `updates.properties`.
+1. El lanzador lee la URL de SU canal (`updates.properties`, p. ej.
+   `https://updates.datatecsolution.com/sharon/`).
 2. `GET version.json` con timeout de 3 s. **Sin internet o sin respuesta →
    arranca la versión local sin avisar nada.** La actualización jamás puede
    dejar a un cajero sin facturar.
@@ -65,10 +92,12 @@ Tres piezas, ninguna nueva en el ecosistema:
    atómicamente, guarda el jar anterior como `AdminTools-prev.jar`.
 4. Lanza el AdminTools real como proceso hijo y termina.
 
-Por cliente: Sharon puede servir por el dominio público con HTTPS (cubre
-vendedores fuera del local); venecia y dulce por LAN
-(`http://192.168.88.251/updates/`). Servir el directorio es un contenedor
-nginx mínimo con un volumen, o una ruta más en el proxy existente.
+Todas las terminales — Sharon, venecia, dulce — consultan el mismo dominio
+por HTTPS; solo cambia el segmento del canal. Requisito nuevo respecto al
+diseño original: las terminales necesitan salida a internet (las de venecia
+la tienen). Si algún cliente quedara sin internet en el local, el lanzador
+degrada con gracia (arranca local) y ese cliente puede volver al espejo LAN
+del diseño original — la URL del canal es configurable por terminal.
 
 ## 4. Alternativas evaluadas
 
@@ -99,9 +128,14 @@ esquema real:
 
 - **SHA-256 obligatorio** antes de reemplazar: un download truncado o
   corrupto se descarta y se arranca la versión local.
-- HTTPS donde exista dominio (Sharon); en LAN, HTTP + checksum es aceptable
-  (el atacante que puede alterar el tráfico LAN ya está dentro de la red del
-  negocio). Fase 2: firma RSA del manifiesto si se quiere elevar.
+- **HTTPS siempre** (el canal es público en internet; no hay caso LAN-HTTP en
+  el diseño centralizado).
+- **La firma del manifiesto sube de prioridad** con el punto único: un solo
+  lugar comprometido alcanzaría a TODOS los clientes, y además vive en el
+  servidor de un cliente. Fase 1.5 (antes de sumar al segundo cliente): firmar
+  `version.json` con una clave RSA que vive SOLO en la Mac; el lanzador lleva
+  la pública embebida y no actualiza nada sin firma válida. Con eso, ni el
+  acceso root al servidor de Ronal permite empujar un jar a las terminales.
 - Descarga a `.tmp` + rename atómico: nunca hay un jar a medias en el nombre
   activo.
 - `AdminTools-prev.jar` siempre presente: volver atrás es renombrar.
@@ -117,8 +151,10 @@ esquema real:
 3. `publicar-jar.sh <cliente>`: construye, calcula checksum, sube por SSH,
    regenera `version.json`. Con guarda: pide confirmación mostrando la
    versión de esquema que lleva el jar vs la del cliente.
-4. Directorio `/updates/` en el servidor de UN cliente piloto (dulce, que es
-   de pruebas) y luego Sharon.
+4. Punto único en el servidor de Ronal: contenedor nginx estático de solo
+   lectura con `sharon/ venecia/ dulce/`, proxy host en NPM para
+   `updates.datatecsolution.com` + DNS + TLS. Piloto con el canal `dulce/`
+   (es de pruebas) y luego `sharon/`.
 5. Playbook: "distribuir jar" pasa a ser "publicar en /updates/".
 
 **Fase 2 — endurecimiento:**
