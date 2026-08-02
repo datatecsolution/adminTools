@@ -81,6 +81,47 @@ Trade-offs aceptados y sus mitigaciones:
   dominio. Mover el hosting (a R2, a un VPS) el día de mañana es cambiar el
   DNS — ninguna terminal se reinstala.
 
+### 3.2 Opt-in por cliente y autorización de uso (revisión 2026-08-02)
+
+El canal por cliente modela ambas cosas sin piezas nuevas:
+
+**Opt-in al deploy automático.** Es por cliente y por contrato, no global:
+
+- Cliente que lo desea → sus terminales llevan el lanzador y su canal activo.
+- Cliente que no → no se le instala el lanzador (sigue con jar manual), o su
+  `version.json` lleva `"pausado": true` y el lanzador no actualiza aunque
+  haya versión nueva. Pausar un canal no toca a los demás.
+
+**Autorización de uso.** El `version.json` de cada canal incorpora un bloque
+de licencia, y TODO el manifiesto va firmado (la firma de fase 1.5 pasa a
+cubrir también la autorización):
+
+```json
+{ "version": "2026.08.10-1", "jar": "…", "sha256": "…",
+  "licencia": { "cliente": "sharon", "valida_hasta": "2026-12-31" },
+  "firma": "…" }
+```
+
+El lanzador verifica, ANTES de actualizar: firma válida (clave pública
+embebida) → el `cliente` coincide con su canal → la fecha está vigente. Si
+algo falla, **no actualiza** — y arranca la versión local con normalidad.
+Como la clave privada vive solo en la Mac del operador, un cliente no puede
+editarse el `version.json` para extenderse la licencia ni cambiarse de canal,
+y ni siquiera root en el servidor que hospeda el punto único puede hacerlo.
+
+**Regla de oro de la autorización: condiciona ACTUALIZACIONES, nunca el
+ARRANQUE.** Un POS que deja de facturar por una licencia vencida o un canal
+caído es un incidente en el negocio del cliente. El límite duro de este
+diseño: sin autorización no hay versiones nuevas (y a lo sumo un aviso no
+bloqueante "contacte a Datatec para renovar soporte"); la aplicación
+instalada sigue funcionando siempre. Si algún día el negocio exigiera algo
+más fuerte, se diseña aparte, con períodos de gracia y avisos — nunca
+apagado remoto.
+
+Efecto lateral valioso: el punto único se vuelve el registro operativo de
+qué versión tiene autorizada cada cliente y hasta cuándo — la base para
+formalizar contratos de soporte.
+
 **Flujo en la terminal, en cada arranque:**
 
 1. El lanzador lee la URL de SU canal (`updates.properties`, p. ej.
@@ -156,6 +197,12 @@ esquema real:
    `updates.datatecsolution.com` + DNS + TLS. Piloto con el canal `dulce/`
    (es de pruebas) y luego `sharon/`.
 5. Playbook: "distribuir jar" pasa a ser "publicar en /updates/".
+
+**Fase 1.5 — firma + autorización (antes de sumar al segundo cliente):**
+- Firma RSA del manifiesto (clave privada solo en la Mac; pública embebida
+  en el lanzador).
+- Bloque `licencia` en el manifiesto (§3.2): opt-in por cliente, vigencia,
+  y la regla de oro — condiciona actualizaciones, nunca el arranque.
 
 **Fase 2 — endurecimiento:**
 - Rollback automático: si el jar nuevo no llega al login en N segundos, el
