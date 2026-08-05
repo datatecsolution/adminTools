@@ -1,3 +1,8 @@
+-- US-133 (fix 4): las claves seed van en BCrypt — la API (Spring) solo
+-- compara BCrypt; con texto plano el login del POS era imposible en una
+-- instalacion fresca hasta que alguien entrara por el Swing (que si
+-- migra legacy). Clave inicial de los 3 usuarios: 4321 — CAMBIARLA al
+-- entregar el sistema.
 -- US-133: seed IDEMPOTENTE. El bootstrap corre las migraciones ANTES
 -- del seed, y varias insertan defaults propios (V17 siembra bodega 1 y
 -- 'Perdidas', V25 proveedor de ajuste): con INSERT plano la instalacion
@@ -131,8 +136,8 @@ INSERT IGNORE INTO `tipo_pago` (`codigo_tipo_pago`,`descripcion`) VALUES (3,'Cre
 -- ============================================
 -- usuario (todas las filas)
 -- ============================================
-INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (1,'tecnico','system system','abc','Cajero',2,0,'na',NULL,'2020-05-11 18:09:56.0');
-INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (2,'admin','NA','4321','administrador',4,0,'',NULL,NULL);
-INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (3,'ventas','NA','123','Ventas',3,0,NULL,NULL,NULL);
+INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (1,'tecnico','system system','$2a$10$pl/9FdjdxR9EsGYPmA9VUukBqj7NhfmzER5bD4muGTWXcoe7eqNbm','Cajero',2,0,'na',NULL,'2020-05-11 18:09:56.0');
+INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (2,'admin','NA','$2a$10$pl/9FdjdxR9EsGYPmA9VUukBqj7NhfmzER5bD4muGTWXcoe7eqNbm','administrador',4,0,'',NULL,NULL);
+INSERT IGNORE INTO `usuario` (`id`,`usuario`,`nombre_completo`,`clave`,`permiso`,`tipo_permiso`,`codigo_caja`,`api_token`,`created_at`,`updated_at`) VALUES (3,'ventas','NA','$2a$10$pl/9FdjdxR9EsGYPmA9VUukBqj7NhfmzER5bD4muGTWXcoe7eqNbm','Ventas',3,0,NULL,NULL,NULL);
 
 SET FOREIGN_KEY_CHECKS=1;
