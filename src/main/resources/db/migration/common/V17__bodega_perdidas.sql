@@ -65,6 +65,20 @@ BEGIN
 
     -- Caso D: no existe en ninguna → crear con código nuevo igual en ambas
     ELSE
+        -- US-133: en INSTALACIÓN FRESCA ambas tablas están vacías y el
+        -- "siguiente código libre" daría 1 — Pérdidas usurparía el código
+        -- de la bodega operativa por defecto (todo el sistema asume
+        -- bodega 1 = principal: SPs del kardex, cajas, articulo_view).
+        -- Se siembra primero la bodega principal; el seed posterior es
+        -- INSERT IGNORE y no choca. En clientes ya migrados este bloque
+        -- no re-ejecuta (repair() realinea el checksum).
+        IF (SELECT COUNT(*) FROM bodega) = 0 THEN
+            INSERT INTO bodega       (codigo_bodega,       descripcion_bodega) VALUES (1, 'Bodega 1');
+        END IF;
+        IF (SELECT COUNT(*) FROM departamento) = 0 THEN
+            INSERT INTO departamento (codigo_departamento, nombre)             VALUES (1, 'Bodega 1');
+        END IF;
+
         -- siguiente código libre que NO colisione con ninguna de las dos secuencias
         SELECT GREATEST(
             IFNULL((SELECT MAX(codigo_bodega)       FROM bodega),       0),
