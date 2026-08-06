@@ -6,6 +6,20 @@
 
 ---
 
+## Regla cero: backup antes de borrar
+
+**Antes de cualquier `DROP`, `DELETE` masivo, restore que pise una BD
+existente o borrado de volúmenes: backup verificado primero.** Y si el
+entorno pudo recibir trabajo manual (imágenes cargadas a mano, datos de
+prueba, configuraciones), **preguntar qué conservar ANTES de tocar nada**.
+
+**"Es solo un stack de pruebas" no es excepción** — es donde baja la guardia
+y donde vive trabajo que nadie más tiene. Incidente que la origina
+(2026-08-06): al refrescar el stack de pruebas de dulce se hizo `DROP
+DATABASE` de sus 5 BDs; el usuario tenía imágenes de productos cargadas a
+mano que no existen en producción. Se salvaron por un respaldo del mes
+anterior que existía por casualidad.
+
 ## Las 4 reglas de oro
 
 1. **El contrato se valida contra el BUILD EN PRODUCCIÓN, nunca contra el repo del front.** Fue el error más caro del día: el código fuente de la app de pedidos ya había migrado a los endpoints nuevos, pero el build desplegado seguía llamando a los viejos. Costó dos incidentes con vendedores bloqueados (US-123 y US-124).
