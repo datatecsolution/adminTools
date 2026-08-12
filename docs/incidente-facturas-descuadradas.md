@@ -85,22 +85,28 @@ Más tarde ese mismo día entró una compra de 72 unidades de Alka Seltzer. Lleg
 
 Once facturas entre el 31 de julio y el 11 de agosto:
 
-| Caja | Factura | Fecha | Cobrado de más |
-|---|---|---|---|
-| CAJA 2 | 260411 | 31-jul | L 546.00 |
-| CAJA 2 | 260492 | 31-jul | L 62.00 |
-| CAJA 2 | 260700 | 03-ago | L 90.00 |
-| CAJA 2 | 260753 | 03-ago | L 216.00 |
-| CAJA 2 | 260908 | 04-ago | L 400.00 |
-| CAJA 2 | 261055 | 04-ago | L 150.00 |
-| CAJA_SAR | 35654 | 05-ago | L 224.00 |
-| CAJA_SAR | 35778 | 06-ago | L 216.00 |
-| CAJA_SAR | 35916 | 07-ago | L 780.00 |
-| CAJA_SAR | 35981 | 07-ago | L 100.02 |
-| CAJA_SAR | 36114 | 11-ago | L 250.00 |
-| | | **Total** | **L 3,034.02** |
+| Caja | Factura | Fecha | Cliente | Vendedor | Cajero | Facturado | Productos | Cobrado de más |
+|---|---|---|---|---|---|---|---|---|
+| CAJA 2 | 260411 | 31-jul 11:58 | ERICK RUBI CARRANZA | RONAL RAMIREZ | JAFETH2 | 43,693.00 | 43,147.00 | **L 546.00** |
+| CAJA 2 | 260492 | 31-jul 14:33 | PULPERIA DIANA | CARLOS LOPEZ | JAFETH2 | 1,174.00 | 1,112.00 | **L 62.00** |
+| CAJA 2 | 260700 | 03-ago 10:11 | VARIEDADES MI FE | NORLAN FIGUEROA | SURTYIYI | 535.00 | 445.00 | **L 90.00** |
+| CAJA 2 | 260753 | 03-ago 17:08 | PULP SOFIA | NORLAN FIGUEROA | SURTYIYI | 1,332.00 | 1,116.00 | **L 216.00** |
+| CAJA 2 | 260908 | 04-ago 14:10 | PULP RAQUEL | ALEJANDRO SERRANO | JAFETH2 | 2,476.00 | 2,076.00 | **L 400.00** |
+| CAJA 2 | 261055 | 04-ago 22:14 | PUL SAN ANTONIO | CARLOS LOPEZ | JAFETH2 | 966.00 | 816.00 | **L 150.00** |
+| CAJA_SAR | 35654 | 05-ago 16:51 | PUL. FRANKLIN | SELVIN PERDOMO | JAFETH2 | 2,734.00 | 2,510.00 | **L 224.00** |
+| CAJA_SAR | 35778 | 06-ago 16:35 | PULP. ELEODORO | MELVIN CALLEJAS | JAFETH2 | 2,364.00 | 2,148.00 | **L 216.00** |
+| CAJA_SAR | 35916 | 07-ago 16:03 | PULPERIA ALEX | CARLOS LOPEZ | JAFETH2 | 1,629.00 | 849.00 | **L 780.00** |
+| CAJA_SAR | 35981 | 07-ago 17:38 | EDDY MYM | MYMEDDY | JAFETH2 | 7,057.30 | 6,957.28 | **L 100.02** |
+| CAJA_SAR | 36114 | 11-ago 11:35 | PUL. IVET | LUIS AVILA | JAFETH2 | 546.00 | 296.00 | **L 250.00** |
+| | | | | | | | **Total** | **L 3,034.02** |
 
-**Aparte, la factura 36113** (CAJA_SAR, 11 de agosto) es el mismo caso llevado al extremo: su pedido tenía **un solo producto**, el mismo Alka Seltzer. Al rechazarse, quedó una factura activa de **L 250.00 sin ningún producto detallado**.
+**Aparte, la factura 36113** (CAJA_SAR, 11 de agosto 11:35, cliente **PULP ESPERANZA**, vendedor **LUIS AVILA**) es el mismo caso llevado al extremo: su pedido tenía **un solo producto**, el mismo Alka Seltzer. Al rechazarse, quedó una factura activa de **L 250.00 sin ningún producto detallado**.
+
+### Qué muestran estos datos
+
+- Son **ocho vendedores distintos** y **once clientes distintos**, ninguno repetido. No es un problema de un vendedor en particular ni afecta siempre al mismo cliente: es el proceso de facturación de pedidos.
+- El caso de **PULPERIA ALEX** es el más desproporcionado: se facturaron L 1,629.00 sobre productos por L 849.00.
+- El de **ERICK RUBI CARRANZA** es el de mayor volumen (106 productos), donde una diferencia de L 546.00 es fácil de pasar por alto al revisar.
 
 ---
 
