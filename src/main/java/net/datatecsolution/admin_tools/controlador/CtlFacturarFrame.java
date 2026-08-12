@@ -787,6 +787,15 @@ public class CtlFacturarFrame
 
 		myFactura.setDetalles(facturacionService.detallesOrdenPendiente(numeroFactura));
 
+		// US-143: este es el SEGUNDO camino por el que se abre un pedido (desde
+		// el panel de pendientes). Necesita la misma revision de existencias
+		// que el de la lista de ordenes, o el aviso dependeria de por donde
+		// entro el cajero.
+		if (!resolverFaltantesDeExistencia()) {
+			this.myFactura = null;
+			return;
+		}
+
 		cargarFacturaView();
 		this.calcularTotales();
 		this.view.setEstadoBotonesEditandoOrden();
