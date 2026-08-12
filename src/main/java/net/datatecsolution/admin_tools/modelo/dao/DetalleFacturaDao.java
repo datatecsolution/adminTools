@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.modelo.*;
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -57,9 +58,54 @@ public class DetalleFacturaDao extends ModeloDaoBasic {
 	}
 	
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para agreagar detalles de facturas>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+	/**
+	 * US-142 — variante TRANSACCIONAL: inserta la linea en la conexion que se
+	 * le pasa y PROPAGA cualquier SQLException al llamador.
+	 *
+	 * La version historica (abajo) abre su propia conexion, se traga el error
+	 * mostrando un JOptionPane y devuelve false — pero {@code FacturaDao.registrar}
+	 * ignoraba ese false y seguia con la linea siguiente. Cuando el guard de
+	 * sobreventa (V33) rechazaba una linea con SIGNAL 45000, la factura quedaba
+	 * guardada con el encabezado completo y el detalle incompleto: cobrando de
+	 * mas y sin descargar ese producto del inventario.
+	 *
+	 * Acá no se captura nada a proposito: el que abre la transaccion es el que
+	 * decide el rollback.
+	 */
+	public void agregarDetalleEnTransaccion(Connection conn, DetalleFactura detalle, int idFactura)
+			throws SQLException {
+
+		String dbCaja = ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd();
+		String sql = "INSERT INTO " + dbCaja + ".detalle_factura ("
+				+ "numero_factura,"
+				+ "codigo_articulo,"
+				+ "precio,"
+				+ "cantidad,"
+				+ "impuesto,"
+				+ "subtotal,"
+				+ "descuento,"
+				+ "total,"
+				+ "codigo_barra"
+				+ ") VALUES (?,?,?,?,?,?,?,?,?)";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, idFactura);
+			ps.setInt(2, detalle.getArticulo().getId());
+			ps.setDouble(3, detalle.getArticulo().getPrecioVenta());
+			ps.setBigDecimal(4, detalle.getCantidad());
+			ps.setBigDecimal(5, detalle.getImpuesto());
+			ps.setBigDecimal(6, detalle.getSubTotal());
+			ps.setBigDecimal(7, detalle.getDescuentoItem());
+			ps.setBigDecimal(8, detalle.getTotal());
+			ps.setString(9, detalle.getArticulo().getCodigoBarra() != null
+					? detalle.getArticulo().getCodigoBarra() : "NA");
+			ps.executeUpdate();
+		}
+	}
+
 	public boolean agregarDetalle(DetalleFactura detalle, int idFactura) {
 		boolean resultado=false;
-		
+
 		//se cambia la base de datos para las facturas de la caja seleccionada
 		super.DbName=ConexionStatic.getUsuarioLogin().getCajaActiva().getNombreBd();
 		setSqlQueryJoin();
