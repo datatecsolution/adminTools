@@ -28,6 +28,17 @@ public class Factura {
 	private BigDecimal cambio=new BigDecimal(0.0);
 	private BigDecimal cobroEfectivo=new BigDecimal(0.0);
 	private BigDecimal cobroTarjeta=new BigDecimal(0.0);
+
+	/**
+	 * US-144 — pedido (encabezado_factura_temp) que origina esta factura, o
+	 * null si es una venta directa de mostrador.
+	 *
+	 * Lo necesita FacturaDao.registrar() para marcarlo como facturado DENTRO
+	 * de la transaccion y antes de insertar el detalle: si no, el pedido
+	 * seguiria reservando su propia mercaderia y el guard de disponible lo
+	 * rechazaria a si mismo.
+	 */
+	private Integer pedidoOrigen = null;
 	private String observacion="";
 	private Empleado vendedor=new Empleado();
 	private boolean deseaPagar=false;
@@ -274,6 +285,15 @@ public class Factura {
 	}
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+
+
+	public Integer getPedidoOrigen() {
+		return pedidoOrigen;
+	}
+
+	public void setPedidoOrigen(Integer pedidoOrigen) {
+		this.pedidoOrigen = pedidoOrigen;
 	}
 
 }

@@ -231,6 +231,18 @@ public class FacturaDao extends ModeloDaoBasic {
 
 			}
 
+			// US-144: si esta factura viene de un pedido, el pedido deja de
+			// reservar AHORA — antes de que los triggers del detalle evaluen el
+			// disponible. Si no, el pedido se bloquearia con su propia reserva:
+			// el guard veria disponible = fisico - (lo que este mismo pedido
+			// tiene apartado) y rechazaria una venta perfectamente valida.
+			//
+			// Va dentro de la transaccion: si la factura falla, el rollback
+			// devuelve el pedido a activo y su reserva vuelve sola.
+			if (myFactura.getPedidoOrigen() != null) {
+				marcarPedidoFacturado(conn, myFactura.getPedidoOrigen());
+			}
+
 			// se guardan los detalles de la fatura
 			// US-142: en la MISMA conexion/transaccion y propagando el error.
 			// Si una linea falla, la SQLException sube al catch de abajo y se
@@ -346,6 +358,26 @@ public class FacturaDao extends ModeloDaoBasic {
 	 * con SIGNAL SQLSTATE 45000 y un texto tecnico ("usuario bloqueado para
 	 * sobrevender"). El cajero necesita saber QUE hacer, no el detalle interno.
 	 */
+	/**
+	 * US-144 — marca el pedido como facturado (estado 3) en la conexion de la
+	 * transaccion en curso.
+	 *
+	 * Estado 3 = Facturada. La vista v_reservado_por_articulo solo suma
+	 * pedidos en estado 1 (Activa) y 2 (Modificada), asi que este UPDATE es lo
+	 * que libera la reserva.
+	 *
+	 * El WHERE incluye el estado para que sea idempotente: si el pedido ya
+	 * estaba facturado, no hace nada y no falla.
+	 */
+	private void marcarPedidoFacturado(Connection conn, int numeroPedido) throws SQLException {
+		String sql = "UPDATE " + DbNameBase + ".encabezado_factura_temp "
+				+ "SET estado = 3 WHERE numero_factura = ? AND estado IN (1,2)";
+		try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, numeroPedido);
+			ps.executeUpdate();
+		}
+	}
+
 	// package-private para poder testear la traduccion sin levantar la UI
 	String mensajeParaElCajero(SQLException e) {
 		String msg = e.getMessage() == null ? "" : e.getMessage();
