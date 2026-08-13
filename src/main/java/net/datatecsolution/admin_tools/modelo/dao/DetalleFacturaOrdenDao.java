@@ -34,6 +34,7 @@ public class DetalleFacturaOrdenDao extends ModeloDaoBasic {
 							+ " detalle_factura_temp.subtotal, "
 							+ " detalle_factura_temp.total, "
 							+ " articulo.codigo_articulo, "
+							+ " articulo.tipo_articulo, "
 							+ " detalle_factura_temp.id "
 					+ " FROM "
 						+ super.DbName+".detalle_factura_temp  "
@@ -137,6 +138,10 @@ public class DetalleFacturaOrdenDao extends ModeloDaoBasic {
 				
 				articuloDetalle.setId(res.getInt("codigo_articulo"));
 				articuloDetalle.setArticulo(res.getString("articulo"));
+				// US-143: el tipo (1 bien / 2 insumo) decide si aplica el control de
+				// existencias al cargar el pedido; sin el, los insumos se marcarian
+				// como faltantes.
+				articuloDetalle.setTipoArticulo(res.getInt("tipo_articulo"));
 				articuloDetalle.setPrecioVenta(res.getDouble("precio"));//se estable el precio del articulo
 				articuloDetalle.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				articuloDetalle.getImpuestoObj().setId(res.getInt("codigo_impuesto"));

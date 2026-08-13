@@ -787,6 +787,15 @@ public class CtlFacturarFrame
 
 		myFactura.setDetalles(facturacionService.detallesOrdenPendiente(numeroFactura));
 
+		// US-143: este es el SEGUNDO camino por el que se abre un pedido (desde
+		// el panel de pendientes). Necesita la misma revision de existencias
+		// que el de la lista de ordenes, o el aviso dependeria de por donde
+		// entro el cajero.
+		if (!resolverFaltantesDeExistencia()) {
+			this.myFactura = null;
+			return;
+		}
+
 		cargarFacturaView();
 		this.calcularTotales();
 		this.view.setEstadoBotonesEditandoOrden();
@@ -1669,6 +1678,17 @@ public class CtlFacturarFrame
 
 			myFactura.setDetalles(facturacionService.detallesOrdenPendiente(myFactura.getIdFactura()));
 
+			// US-143: revisar existencias ANTES de mostrar el pedido. Si algun
+			// producto se agoto desde que el vendedor lo levanto, el cajero lo
+			// sabe ahora y decide, en vez de descubrirlo al cobrar.
+			if (!resolverFaltantesDeExistencia()) {
+				// el cajero eligio revisarlo antes: no se carga el pedido
+				sincronizarPanelPendientes(false);
+				viewListaOrdenes.dispose();
+				ctlBuscarOrden = null;
+				return;
+			}
+
 			cargarFacturaView();
 			this.calcularTotales();
 			this.view.setEstadoBotonesEditandoOrden();
@@ -2128,6 +2148,131 @@ public class CtlFacturarFrame
 	 * choca contra su propia reserva. Los callers ya deciden con el flag
 	 * facturar_sin_inventario si validan o no.
 	 */
+	/**
+	 * US-143 — revisa las existencias del pedido recien cargado y, si falta
+	 * algo, deja que el cajero decida.
+	 *
+	 * Por que aca: entre que el vendedor levanta el pedido en la calle y el
+	 * cajero lo cobra pueden pasar horas, y en el medio el producto se agota
+	 * (una requisicion, otra venta). Antes eso se descubria al cobrar: el
+	 * guard de sobreventa rechazaba la linea, la factura se guardaba igual sin
+	 * ella y el cliente terminaba pagando un producto que no le llegaba
+	 * (US-142). Revisando al cargar, el cajero puede ajustar el inventario,
+	 * avisarle al vendedor o quitar el producto ANTES de cobrar.
+	 *
+	 * Como Sharon trabaja preventa (se entrega despues de facturar), quitar la
+	 * linea es seguro: el producto no se factura y tampoco se entrega.
+	 *
+	 * Se usa {@link #existenciaVendible} — el mismo calculo que ya se aplica
+	 * cuando el cajero teclea un articulo a mano, que descuenta reservas de
+	 * otros pedidos y excluye la reserva de ESTE pedido.
+	 *
+	 * @return true si se puede seguir cargando el pedido; false si el cajero
+	 *         prefirio revisarlo antes.
+	 */
+	private boolean resolverFaltantesDeExistencia() {
+		if (myFactura == null || myFactura.getDetalles() == null || cajaActiva == null) {
+			return true;
+		}
+
+		final int bodega = cajaActiva.getDetartamento().getId();
+		List<DetalleFactura> faltantes = detectarFaltantes(myFactura.getDetalles(),
+				new Disponibilidad() {
+					@Override
+					public double de(int codigoArticulo) {
+						return existenciaVendible(codigoArticulo, bodega);
+					}
+				});
+
+		if (faltantes.isEmpty()) {
+			return true;
+		}
+
+		StringBuilder detalleFaltantes = new StringBuilder();
+		for (DetalleFactura d : faltantes) {
+			detalleFaltantes.append("   • ").append(d.getArticulo().getArticulo())
+					.append("  —  pedidas: ").append(formatearCantidad(d.getCantidad().doubleValue()))
+					.append(", disponibles: ")
+					.append(formatearCantidad(existenciaVendible(d.getArticulo().getId(), bodega)))
+					.append("\n");
+		}
+
+		// Si no queda NADA facturable, no tiene sentido ofrecer "quitar":
+		// quedaria un pedido vacio (fue justo lo que paso con la factura 36113).
+		if (faltantes.size() == myFactura.getDetalles().size()) {
+			JOptionPane.showMessageDialog(view.asComponent(),
+					"Este pedido no se puede cobrar: NINGUN producto tiene existencia\n"
+							+ "suficiente en " + cajaActiva.getDetartamento().getDescripcion() + ".\n\n"
+							+ detalleFaltantes
+							+ "\nRevise el inventario o avise al vendedor antes de cobrarlo.",
+					"Pedido sin existencias", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+
+		int opcion = JOptionPane.showOptionDialog(view.asComponent(),
+				"Este pedido tiene productos sin existencia suficiente en "
+						+ cajaActiva.getDetartamento().getDescripcion() + ":\n\n"
+						+ detalleFaltantes
+						+ "\nPudieron agotarse desde que el vendedor levanto el pedido.\n\n"
+						+ "Si los quita, el pedido se cobra SIN esos productos y el total\n"
+						+ "se recalcula: al cliente no se le cobra lo que no se le entrega.",
+				"Productos sin existencia",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
+				new Object[] { "Quitar y continuar", "Revisar antes" }, "Revisar antes");
+
+		if (opcion != JOptionPane.YES_OPTION) {
+			return false;
+		}
+
+		// cargarFacturaView() pinta lo que quede y calcularTotales() rehace el
+		// encabezado: por eso alcanza con sacarlos de la lista aca.
+		myFactura.getDetalles().removeAll(faltantes);
+		return true;
+	}
+
+	/** Fuente de existencia disponible por articulo; se inyecta para poder testear. */
+	interface Disponibilidad {
+		double de(int codigoArticulo);
+	}
+
+	/**
+	 * US-143 — que lineas del pedido no se pueden cobrar por falta de
+	 * existencia. Logica pura (sin UI ni BD) para poder testearla.
+	 *
+	 * Reglas:
+	 *  - se compara la cantidad PEDIDA contra la disponible; igual alcanza,
+	 *    solo falta si pedida > disponible;
+	 *  - los insumos (tipo 2) no llevan kardex propio, se saltan;
+	 *  - las filas sin articulo resuelto (id -1) son la linea en blanco de la
+	 *    tabla, no un producto.
+	 */
+	static List<DetalleFactura> detectarFaltantes(List<DetalleFactura> detalles, Disponibilidad fuente) {
+		List<DetalleFactura> faltantes = new ArrayList<>();
+		if (detalles == null) {
+			return faltantes;
+		}
+		for (DetalleFactura d : detalles) {
+			if (d == null || d.getArticulo() == null || d.getArticulo().getId() == -1) {
+				continue;
+			}
+			if (d.getArticulo().getTipoArticulo() == 2) {
+				continue;
+			}
+			double pedida = d.getCantidad() == null ? 0 : d.getCantidad().doubleValue();
+			if (pedida > fuente.de(d.getArticulo().getId())) {
+				faltantes.add(d);
+			}
+		}
+		return faltantes;
+	}
+
+	/** Cantidades sin decimales cuando son enteras: "3" en vez de "3.00". */
+	private String formatearCantidad(double v) {
+		return (v == Math.floor(v) && !Double.isInfinite(v))
+				? String.valueOf((long) v)
+				: String.valueOf(v);
+	}
+
 	private double existenciaVendible(int codArticulo, int codBodega) {
 		int ordenExcluida = -1;
 		if (tipoView == 2 && myFactura != null && myFactura.getIdFactura() != null) {
