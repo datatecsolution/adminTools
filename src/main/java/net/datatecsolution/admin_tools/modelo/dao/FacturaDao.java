@@ -185,6 +185,13 @@ public class FacturaDao extends ModeloDaoBasic {
 				myFactura.getCliente().setId(myClienteDao.getIdClienteRegistrado());
 			}
 			conn = ConexionStatic.getPoolConexion().getConnection();
+			// US-142: encabezado y detalle van en UNA transaccion. Antes cada
+			// insert iba con autocommit y por su propia conexion: si una linea
+			// era rechazada (p. ej. el guard de sobreventa V33 con su SIGNAL),
+			// el encabezado YA estaba confirmado y la factura quedaba cobrando
+			// mas de lo que respaldaban sus items, sin descargar ese producto
+			// del inventario. Ahora: entra completa o no entra.
+			conn.setAutoCommit(false);
 			psConsultas = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
 			psConsultas.setBigDecimal(1, myFactura.getSubTotal());
 			psConsultas.setBigDecimal(2, myFactura.getTotalImpuesto());
@@ -225,10 +232,14 @@ public class FacturaDao extends ModeloDaoBasic {
 			}
 
 			// se guardan los detalles de la fatura
+			// US-142: en la MISMA conexion/transaccion y propagando el error.
+			// Si una linea falla, la SQLException sube al catch de abajo y se
+			// hace rollback de toda la factura.
 			for (int x = 0; x < myFactura.getDetalles().size(); x++) {
 
 				if (myFactura.getDetalles().get(x).getArticulo().getId() != -1)
-					detallesDao.agregarDetalle(myFactura.getDetalles().get(x), idFacturaGuardada);
+					detallesDao.agregarDetalleEnTransaccion(conn, myFactura.getDetalles().get(x),
+							idFacturaGuardada);
 			}
 
 			// si la factura es al credito se guarda el credito del cliente
@@ -286,11 +297,23 @@ public class FacturaDao extends ModeloDaoBasic {
 				}
 			}
 
+			// US-142: recien aca la factura es definitiva.
+			conn.commit();
 			resultado = true;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			// US-142: deshacer TODO. Sin esto quedaba el encabezado guardado y
+			// el detalle a medias.
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+			JOptionPane.showMessageDialog(null, mensajeParaElCajero(e),
+					"No se pudo emitir la factura", JOptionPane.ERROR_MESSAGE);
 			resultado = false;
 		} finally {
 			// se restablece el nombre de la base de datos por defecto
@@ -300,8 +323,11 @@ public class FacturaDao extends ModeloDaoBasic {
 					rs.close();
 				if (psConsultas != null)
 					psConsultas.close();
-				if (conn != null)
+				if (conn != null) {
+					// la conexion vuelve al pool como se la encontro
+					conn.setAutoCommit(true);
 					conn.close();
+				}
 			} // fin de try
 			catch (SQLException excepcionSql) {
 				excepcionSql.printStackTrace();
@@ -310,6 +336,28 @@ public class FacturaDao extends ModeloDaoBasic {
 		} // fin de finally
 
 		return resultado;
+	}
+
+	/**
+	 * US-142 — traduce el error de base de datos a algo que el cajero pueda
+	 * accionar.
+	 *
+	 * El caso que motivo esto: el guard de sobreventa (V33) rechaza la linea
+	 * con SIGNAL SQLSTATE 45000 y un texto tecnico ("usuario bloqueado para
+	 * sobrevender"). El cajero necesita saber QUE hacer, no el detalle interno.
+	 */
+	// package-private para poder testear la traduccion sin levantar la UI
+	String mensajeParaElCajero(SQLException e) {
+		String msg = e.getMessage() == null ? "" : e.getMessage();
+		if ("45000".equals(e.getSQLState()) && msg.toLowerCase().contains("stock insuficiente")) {
+			return "No se emitio la factura: uno de los productos ya no tiene existencia\n"
+					+ "suficiente en esta bodega.\n\n"
+					+ "Puede haberse agotado entre que se levanto el pedido y ahora.\n"
+					+ "Revise las existencias, quite o ajuste ese producto y vuelva a cobrar.\n\n"
+					+ "Detalle tecnico: " + msg;
+		}
+		return "No se emitio la factura. No se guardo nada, puede volver a intentar.\n\n"
+				+ "Detalle tecnico: " + msg;
 	}
 
 	public String getDbNameDefault() {
