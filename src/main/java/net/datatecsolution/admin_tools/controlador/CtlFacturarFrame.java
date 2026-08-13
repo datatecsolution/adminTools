@@ -1887,6 +1887,13 @@ public class CtlFacturarFrame
 		}
 
 		Integer idFacturaTemporal = myFactura.getIdFactura();
+
+		// US-144: avisarle al DAO que esta factura sale de un pedido, para que
+		// lo marque como facturado dentro de la transaccion y su reserva no
+		// bloquee su propia venta. tipoView == 2 = se esta facturando un
+		// pedido; en venta directa de mostrador queda null.
+		myFactura.setPedidoOrigen(this.tipoView == 2 ? idFacturaTemporal : null);
+
 		boolean resul = facturacionService.registrarFactura(myFactura);
 
 		if (resul) {
