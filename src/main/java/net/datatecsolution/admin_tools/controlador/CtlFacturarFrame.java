@@ -791,7 +791,7 @@ public class CtlFacturarFrame
 		// el panel de pendientes). Necesita la misma revision de existencias
 		// que el de la lista de ordenes, o el aviso dependeria de por donde
 		// entro el cajero.
-		if (!resolverFaltantesDeExistencia()) {
+		if (!resolverFaltantesDeExistencia(numeroFactura)) {
 			this.myFactura = null;
 			return;
 		}
@@ -1681,7 +1681,8 @@ public class CtlFacturarFrame
 			// US-143: revisar existencias ANTES de mostrar el pedido. Si algun
 			// producto se agoto desde que el vendedor lo levanto, el cajero lo
 			// sabe ahora y decide, en vez de descubrirlo al cobrar.
-			if (!resolverFaltantesDeExistencia()) {
+			if (!resolverFaltantesDeExistencia(
+					myFactura.getIdFactura() != null ? myFactura.getIdFactura() : -1)) {
 				// el cajero eligio revisarlo antes: no se carga el pedido
 				sincronizarPanelPendientes(false);
 				viewListaOrdenes.dispose();
@@ -2163,26 +2164,32 @@ public class CtlFacturarFrame
 	 * Como Sharon trabaja preventa (se entrega despues de facturar), quitar la
 	 * linea es seguro: el producto no se factura y tampoco se entrega.
 	 *
-	 * Se usa {@link #existenciaVendible} — el mismo calculo que ya se aplica
-	 * cuando el cajero teclea un articulo a mano, que descuenta reservas de
-	 * otros pedidos y excluye la reserva de ESTE pedido.
+	 * Se usa el mismo calculo que cuando el cajero teclea un articulo a mano
+	 * (descuenta reservas de otros pedidos), pero la orden que se esta
+	 * cargando se pasa EXPLICITA en vez de tomarse de tipoView: en este punto
+	 * tipoView todavia vale 1 (se asigna al final de la carga), asi que
+	 * {@link #existenciaVendible} no excluiria la reserva del propio pedido y
+	 * este se bloquearia a si mismo — US-145: pedido de 40 con existencia 43
+	 * rechazado por "sin existencia" (disponible = 43-40 = 3 &lt; 40).
 	 *
+	 * @param ordenEnCarga numero de la orden que se esta cargando; su reserva
+	 *                     no cuenta en su contra
 	 * @return true si se puede seguir cargando el pedido; false si el cajero
 	 *         prefirio revisarlo antes.
 	 */
-	private boolean resolverFaltantesDeExistencia() {
+	private boolean resolverFaltantesDeExistencia(final int ordenEnCarga) {
 		if (myFactura == null || myFactura.getDetalles() == null || cajaActiva == null) {
 			return true;
 		}
 
 		final int bodega = cajaActiva.getDetartamento().getId();
-		List<DetalleFactura> faltantes = detectarFaltantes(myFactura.getDetalles(),
-				new Disponibilidad() {
-					@Override
-					public double de(int codigoArticulo) {
-						return existenciaVendible(codigoArticulo, bodega);
-					}
-				});
+		final Disponibilidad disponible = new Disponibilidad() {
+			@Override
+			public double de(int codigoArticulo) {
+				return myArticuloDao.getDisponibleVenta(codigoArticulo, bodega, ordenEnCarga);
+			}
+		};
+		List<DetalleFactura> faltantes = detectarFaltantes(myFactura.getDetalles(), disponible);
 
 		if (faltantes.isEmpty()) {
 			return true;
@@ -2193,7 +2200,9 @@ public class CtlFacturarFrame
 			detalleFaltantes.append("   • ").append(d.getArticulo().getArticulo())
 					.append("  —  pedidas: ").append(formatearCantidad(d.getCantidad().doubleValue()))
 					.append(", disponibles: ")
-					.append(formatearCantidad(existenciaVendible(d.getArticulo().getId(), bodega)))
+					// misma fuente que el chequeo: si no, la cifra del aviso
+					// contradiria a la que decidio el faltante
+					.append(formatearCantidad(disponible.de(d.getArticulo().getId())))
 					.append("\n");
 		}
 

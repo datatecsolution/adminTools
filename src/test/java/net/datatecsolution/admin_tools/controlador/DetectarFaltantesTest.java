@@ -129,6 +129,36 @@ public class DetectarFaltantesTest {
 				stock(new HashMap<Integer, Double>())).isEmpty());
 	}
 
+	/**
+	 * US-145 — el caso de Ronal: pedido 103614, articulo 1137, 40 pedidas con
+	 * existencia 43 y NINGUNA otra reserva. La fuente de disponibilidad DEBE
+	 * excluir la reserva del propio pedido (disponible=43): asi no hay
+	 * faltante. El bug era que tipoView aun valia 1 al cargar, la orden no se
+	 * excluia y el pedido se descontaba a si mismo (disponible=43-40=3).
+	 */
+	@Test
+	public void pedidoPropio_unicaReserva_noSeBloqueaASiMismo() {
+		Map<Integer, Double> m = new HashMap<>();
+		m.put(1137, 43.0);   // disponible CON la propia orden excluida
+
+		assertTrue(CtlFacturarFrame.detectarFaltantes(
+				Arrays.asList(linea(1137, "ART 1137", 1, 40)), stock(m)).isEmpty());
+	}
+
+	/**
+	 * La contracara: si la fuente NO excluye la propia orden (el bug), el
+	 * mismo pedido sale como faltante. Documenta la aritmetica exacta del
+	 * fallo: se bloquea siempre que pedida > existencia/2.
+	 */
+	@Test
+	public void pedidoPropio_siLaFuenteNoExcluye_seAutobloquea() {
+		Map<Integer, Double> m = new HashMap<>();
+		m.put(1137, 3.0);    // 43 fisicas - 40 de su propia reserva
+
+		assertEquals(1, CtlFacturarFrame.detectarFaltantes(
+				Arrays.asList(linea(1137, "ART 1137", 1, 40)), stock(m)).size());
+	}
+
 	/** Si NINGUNO tiene existencia, salen todos: el controlador usa eso para
 	 *  no ofrecer "quitar" y dejar un pedido vacio (caso de la factura 36113). */
 	@Test
