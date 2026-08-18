@@ -1,0 +1,38 @@
+-- =====================================================================
+-- V46 — US-146: bandera `se_pesa` en articulo (productos de báscula)
+--
+-- ORIGEN: el cliente vende productos a granel (granos, carnes) que hoy se
+-- facturan tecleando la cantidad a mano. El POS React va a exigir la
+-- lectura de la báscula (Web Serial) para estos productos: sin respuesta
+-- de la pesa, el producto NO se agrega al ticket.
+--
+-- DISEÑO:
+--   se_pesa = 0  ->  se vende por unidad (comportamiento actual, default)
+--   se_pesa = 1  ->  requiere pesarse en el POS; la cantidad es el peso
+--                    en LIBRAS con 2 decimales (detalle_factura.cantidad
+--                    es float(11,2) / decimal(38,2) en temp: alcanza sin
+--                    migrar cantidades)
+--
+-- ALCANCE:
+--   - Solo esta columna. Las vistas articulo_view, v_articulos y
+--     v_articulo_codigo_barra seleccionan columnas explícitas y no se ven
+--     afectadas; no se recrean.
+--   - El Swing IGNORA la bandera: su INSERT/UPDATE de artículo lista
+--     columnas explícitas, así que las altas desde el Swing quedan en 0.
+--     Las cajas con báscula facturan por el POS.
+--   - Presentaciones de venta (docena/quintal con precio propio) quedan
+--     DISEÑADAS aparte (docs/us146-presentaciones-diseno.md), sin tabla
+--     todavía; esta bandera no las bloquea.
+--
+-- ORDEN DE DEPLOY: Swing primero (aplica esta migración al arrancar),
+-- luego la API (mapea se_pesa y con ddl-auto=validate exige la columna),
+-- luego el POS. Una API vieja contra la columna nueva no rompe (no la
+-- mapea).
+--
+-- Idempotencia: MySQL 8 no soporta ADD COLUMN IF NOT EXISTS; la sentencia
+-- va a secas (patrón V29). Si se re-aplicara a mano fallaría con 1060
+-- "Duplicate column", que es el comportamiento esperado de Flyway.
+-- =====================================================================
+
+ALTER TABLE `articulo`
+    ADD COLUMN `se_pesa` TINYINT(1) NOT NULL DEFAULT 0;
