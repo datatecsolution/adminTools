@@ -33,7 +33,9 @@
 	datos_empresa.correo,
 	datos_empresa.propietario,
 	datos_empresa.direccion
-FROM $P!{bD_admin}.datos_empresa]]>
+FROM $P!{bD_admin}.datos_empresa
+WHERE datos_empresa.id = IFNULL(@empresa_print,
+	(SELECT MIN(de2.id) FROM $P!{bD_admin}.datos_empresa de2))]]>
 	</queryString>
 	<field name="nombre" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
