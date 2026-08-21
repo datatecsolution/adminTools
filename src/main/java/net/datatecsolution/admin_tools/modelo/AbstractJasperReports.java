@@ -26,6 +26,8 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +39,61 @@ import java.util.regex.Pattern;
 public abstract class AbstractJasperReports implements Runnable {
 	private static JasperReport report;
 	private static JasperPrint reportFilled;
+
+	/**
+	 * US-148 — multi-empresa por caja: TODA impresion pasa por aca. Antes de
+	 * llenar el reporte se marca la conexion con la empresa de la caja del
+	 * documento (parametro bD_facturacion, que todos los caminos de factura,
+	 * cierre y REIMPRESION desde admin ya traen); los 2 subreportes de datos
+	 * de empresa filtran por esa marca.
+	 *
+	 * La marca se setea SIEMPRE (NULL si no hay contexto de caja): las
+	 * conexiones son del pool y una marca vieja de otro print no debe
+	 * sobrevivir. Sin marca, el subreporte cae a la primera empresa
+	 * (IFNULL) — identico al comportamiento historico.
+	 */
+	static JasperPrint fillConEmpresa(JasperReport report, Map parametros, Connection conn) throws JRException {
+		Integer empresa = resolverEmpresaDeCaja(conn,
+				parametros == null ? null : (String) parametros.get("bD_facturacion"));
+		try (PreparedStatement ps = conn.prepareStatement("SET @empresa_print = ?")) {
+			if (empresa == null) {
+				ps.setNull(1, java.sql.Types.INTEGER);
+			} else {
+				ps.setInt(1, empresa);
+			}
+			ps.execute();
+		} catch (SQLException e) {
+			// sin marca el subreporte imprime la empresa 1: preferible a no imprimir
+			e.printStackTrace();
+		}
+		return JasperFillManager.fillReport(report, parametros, conn);
+	}
+
+	/** Empresa de la caja (cajas.codigo_empresa, V47) por su nombre de BD; null = sin contexto. */
+	private static Integer resolverEmpresaDeCaja(Connection conn, String dbCaja) {
+		if (dbCaja == null || dbCaja.trim().isEmpty()) {
+			return null;
+		}
+		// JOIN a datos_empresa: si codigo_empresa apunta a una empresa que NO
+		// existe (cliente cuya unica fila no es id=1, tipico de datos
+		// recreados), la marca queda NULL y el subreporte cae al MIN(id) —
+		// el comportamiento historico. Nunca un encabezado vacio.
+		String db = facturaDao.getDbNameDefault();
+		String sql = "SELECT c.codigo_empresa FROM " + db + ".cajas c "
+				+ "JOIN " + db + ".datos_empresa de ON de.id = c.codigo_empresa "
+				+ "WHERE c.nombre_db = ?";
+		try (PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, dbCaja);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			// BD sin V47 u otro problema: caer a empresa 1, nunca romper el print
+		}
+		return null;
+	}
 	private static JasperViewer viewer;
 
 	private static InputStream factura = null;
@@ -318,7 +375,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCodigoBarra, parametros, conn);
+			reportFilled = fillConEmpresa(reportCodigoBarra, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -337,7 +394,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportAlertaExistencia, parametros, conn);
+			reportFilled = fillConEmpresa(reportAlertaExistencia, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -357,7 +414,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportOrdenCarta, parametros, conn);
+			reportFilled = fillConEmpresa(reportOrdenCarta, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -377,7 +434,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSalidaCaja, parametros, conn);
+			reportFilled = fillConEmpresa(reportSalidaCaja, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -397,7 +454,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportEntradaCaja, parametros, conn);
+			reportFilled = fillConEmpresa(reportEntradaCaja, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -417,7 +474,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportMovimientoBanco, parametros, conn);
+			reportFilled = fillConEmpresa(reportMovimientoBanco, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -445,8 +502,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasUsuarios != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasUsuarios, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportVentasUsuarios, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -478,8 +535,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasArticulo != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasArticulo, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportVentasArticulo, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -510,7 +567,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasArticuloVendedor != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasArticuloVendedor, parametros, conn);
+				reportFilled = fillConEmpresa(reportVentasArticuloVendedor, parametros, conn);
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reporte");
 		} catch (JRException e) {
@@ -539,7 +596,7 @@ public abstract class AbstractJasperReports implements Runnable {
 				return;
 			}
 			JasperReport jr = JasperCompileManager.compileReport(in);
-			reportFilled = JasperFillManager.fillReport(jr, parametros, conn);
+			reportFilled = fillConEmpresa(jr, parametros, conn);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}
@@ -566,8 +623,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasCategoriaTotal != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasCategoriaTotal, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportVentasCategoriaTotal, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );createReportArticulosXvencer
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -593,7 +650,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("dias", dias);
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportArticulosXvencer, parametros, conn);
+			reportFilled = fillConEmpresa(reportArticulosXvencer, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -625,8 +682,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportRuta != null)
-				reportFilled = JasperFillManager.fillReport(reportRuta, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportRuta, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -658,8 +715,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasDetalleTurno != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasDetalleTurno, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportVentasDetalleTurno, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -691,8 +748,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasDetalleTurno != null)
-				reportFilled = JasperFillManager.fillReport(reportCierreVentasDetalleCateg, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportCierreVentasDetalleCateg, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -722,8 +779,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportVentasCategoria != null)
-				reportFilled = JasperFillManager.fillReport(reportVentasCategoria, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportVentasCategoria, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -754,8 +811,8 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 			if (reportComisiones != null)
-				reportFilled = JasperFillManager.fillReport(reportComisiones, parametros, conn);
-			// reportFilled = JasperFillManager.fillReport( reportComisiones, parametros,
+				reportFilled = fillConEmpresa(reportComisiones, parametros, conn);
+			// reportFilled = fillConEmpresa( reportComisiones, parametros,
 			// new JREmptyDataSource() );
 			else
 				JOptionPane.showMessageDialog(null, "No se encontro el reportes");
@@ -779,7 +836,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSalidasEmpleados, parametros, conn);
+			reportFilled = fillConEmpresa(reportSalidasEmpleados, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -800,7 +857,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportEntradasBanco, parametros, conn);
+			reportFilled = fillConEmpresa(reportEntradasBanco, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -821,7 +878,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSaldoBanco, parametros, conn);
+			reportFilled = fillConEmpresa(reportSaldoBanco, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -842,7 +899,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportPagosCliente, parametros, conn);
+			reportFilled = fillConEmpresa(reportPagosCliente, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -866,7 +923,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_facturacion", bD_facturacion);
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSarVentas, parametros, conn);
+			reportFilled = fillConEmpresa(reportSarVentas, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -888,7 +945,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSarCompras, parametros, conn);
+			reportFilled = fillConEmpresa(reportSarCompras, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -906,7 +963,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("usuario", user);
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportInventario, parametros, conn);
+			reportFilled = fillConEmpresa(reportInventario, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -925,7 +982,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("codigo_categoria", codigoCategoria);
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportArticulosPrecios, parametros, conn);
+			reportFilled = fillConEmpresa(reportArticulosPrecios, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -945,7 +1002,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportExistenciaBodega, parametros, conn);
+			reportFilled = fillConEmpresa(reportExistenciaBodega, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -967,7 +1024,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportExistenciaBodegaCategoria, parametros, conn);
+			reportFilled = fillConEmpresa(reportExistenciaBodegaCategoria, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -988,7 +1045,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 
-			reportFilled = JasperFillManager.fillReport(reportCotizacion, parametros, conn);
+			reportFilled = fillConEmpresa(reportCotizacion, parametros, conn);
 		} catch (JRException ex) {
 			ex.printStackTrace();
 		}
@@ -1007,7 +1064,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportPagoCaja, parametros, conn);
+			reportFilled = fillConEmpresa(reportPagoCaja, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1026,7 +1083,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCobroCaja, parametros, conn);
+			reportFilled = fillConEmpresa(reportCobroCaja, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1046,7 +1103,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSaldosClientes, parametros, conn);
+			reportFilled = fillConEmpresa(reportSaldosClientes, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1066,7 +1123,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportSaldosProveedores, parametros, conn);
+			reportFilled = fillConEmpresa(reportSaldosProveedores, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1086,7 +1143,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCuentaCliente, parametros, conn);
+			reportFilled = fillConEmpresa(reportCuentaCliente, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1107,7 +1164,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		// dsd
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCuentaFactura, parametros, conn);
+			reportFilled = fillConEmpresa(reportCuentaFactura, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1127,7 +1184,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCuentaProveedor, parametros, conn);
+			reportFilled = fillConEmpresa(reportCuentaProveedor, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1151,7 +1208,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportDevolucion, parametros, conn);
+			reportFilled = fillConEmpresa(reportDevolucion, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1177,7 +1234,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		try {
 			// fsdfs
 
-			reportFilled = JasperFillManager.fillReport(reportFacturaTiketCredito, parametros, conn);
+			reportFilled = fillConEmpresa(reportFacturaTiketCredito, parametros, conn);
 
 		} catch (JRException ex) {
 			ex.printStackTrace();
@@ -1210,7 +1267,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 
-			reportFilled = JasperFillManager.fillReport(reportFacturaCarta, parametros, conn);
+			reportFilled = fillConEmpresa(reportFacturaCarta, parametros, conn);
 
 		} catch (JRException ex) {
 			ex.printStackTrace();
@@ -1237,7 +1294,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 
-			reportFilled = JasperFillManager.fillReport(reportFacturaCartaCredito, parametros, conn);
+			reportFilled = fillConEmpresa(reportFacturaCartaCredito, parametros, conn);
 
 		} catch (JRException ex) {
 			ex.printStackTrace();
@@ -1267,33 +1324,33 @@ public abstract class AbstractJasperReports implements Runnable {
 		try {
 
 			if (tipoReporte == 1) {
-				reportFilled = JasperFillManager.fillReport(reportFactura, parametros, conn);
+				reportFilled = fillConEmpresa(reportFactura, parametros, conn);
 			}
 			if (tipoReporte == 2) {
-				reportFilled = JasperFillManager.fillReport(reportFacturaCompra, parametros, conn);
+				reportFilled = fillConEmpresa(reportFacturaCompra, parametros, conn);
 			}
 			if (tipoReporte == 3) {
-				reportFilled = JasperFillManager.fillReport(reportFacturaReimpresion, parametros, conn);
+				reportFilled = fillConEmpresa(reportFacturaReimpresion, parametros, conn);
 			}
 			if (tipoReporte == 4) {
-				reportFilled = JasperFillManager.fillReport(reportFacturaCierreCaja, parametros, conn);
+				reportFilled = fillConEmpresa(reportFacturaCierreCaja, parametros, conn);
 			}
 			if (tipoReporte == 5) {
-				reportFilled = JasperFillManager.fillReport(reportReciboPago, parametros, conn);
+				reportFilled = fillConEmpresa(reportReciboPago, parametros, conn);
 			}
 			/*
 			 * if(tipoReporte==6){
-			 * reportFilled = JasperFillManager.fillReport( reportFactura2, parametros, conn
+			 * reportFilled = fillConEmpresa( reportFactura2, parametros, conn
 			 * );
 			 * }
 			 * 
 			 */
 			if (tipoReporte == 7) {
-				reportFilled = JasperFillManager.fillReport(reportDevolucion, parametros, conn);
+				reportFilled = fillConEmpresa(reportDevolucion, parametros, conn);
 			}
 			/*
 			 * if(tipoReporte==8){
-			 * reportFilled = JasperFillManager.fillReport( reportFacturaCredito2,
+			 * reportFilled = fillConEmpresa( reportFacturaCredito2,
 			 * parametros, conn );
 			 * }
 			 */
@@ -1325,7 +1382,7 @@ public abstract class AbstractJasperReports implements Runnable {
 
 		try {
 
-			reportFilled = JasperFillManager.fillReport(reportOrdenVenta, parametros, conn);
+			reportFilled = fillConEmpresa(reportOrdenVenta, parametros, conn);
 
 		} catch (JRException ex) {
 			ex.printStackTrace();
@@ -1345,7 +1402,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCierresCaja, parametros, conn);
+			reportFilled = fillConEmpresa(reportCierresCaja, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1367,7 +1424,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportKardex, parametros, conn);
+			reportFilled = fillConEmpresa(reportKardex, parametros, conn);
 		} catch (JRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1394,7 +1451,7 @@ public abstract class AbstractJasperReports implements Runnable {
 			ticketReportStream = AbstractJasperReports.class.getResourceAsStream("/reportes/" + path);
 			// report = (JasperReport) JRLoader.loadObjectFromFile( path );
 			report = (JasperReport) JRLoader.loadObject(ticketReportStream);
-			reportFilled = JasperFillManager.fillReport(report, parametros, conn);
+			reportFilled = fillConEmpresa(report, parametros, conn);
 
 		} catch (JRException ex) {
 			ex.printStackTrace();
@@ -1511,7 +1568,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportPagosClienteVendedor, parametros, conn);
+			reportFilled = fillConEmpresa(reportPagosClienteVendedor, parametros, conn);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}
@@ -1528,7 +1585,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCobroCajaFactura, parametros, conn);
+			reportFilled = fillConEmpresa(reportCobroCajaFactura, parametros, conn);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}
@@ -1549,7 +1606,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportDevolucionCompra, parametros, conn);
+			reportFilled = fillConEmpresa(reportDevolucionCompra, parametros, conn);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}
@@ -1587,7 +1644,7 @@ public abstract class AbstractJasperReports implements Runnable {
 		parametros.put("bD_admin", facturaDao.getDbNameDefault());
 
 		try {
-			reportFilled = JasperFillManager.fillReport(reportCuentaFacturaMora, parametros, conn);
+			reportFilled = fillConEmpresa(reportCuentaFacturaMora, parametros, conn);
 		} catch (JRException e) {
 			e.printStackTrace();
 		}

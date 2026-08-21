@@ -1,0 +1,33 @@
+-- =====================================================================
+-- V47 — US-148: multi-empresa por caja (Fase Swing)
+--
+-- ORIGEN: Ronal factura con DOS razones sociales (RTN distintos) sobre un
+-- MISMO stock. Hasta ahora la empresa 2 usaba un jar bifurcado con el
+-- encabezado estático, hoy muy atrasado. La tabla datos_empresa siempre
+-- soportó N filas (id AUTO_INCREMENT); lo que faltaba era saber QUÉ
+-- empresa le corresponde a cada documento.
+--
+-- DISEÑO: la empresa es un atributo de la CAJA. Todo documento imprimible
+-- (factura, cierre, cobro, devolución) pertenece a una caja, así que el
+-- encabezado se resuelve por la caja del documento — también al REIMPRIMIR
+-- desde el módulo admin en cualquier terminal.
+--
+--   codigo_empresa = 1 (default) -> la empresa histórica (primera fila de
+--   datos_empresa). Nada cambia para clientes de una sola empresa.
+--
+-- El Swing marca cada impresión con SET @empresa_print = <empresa de la
+-- caja del documento> sobre la conexión del reporte, y los 2 subreportes
+-- de datos de empresa filtran:
+--   WHERE id = IFNULL(@empresa_print, (SELECT MIN(id) FROM datos_empresa))
+-- Sin marca (reportes sin caja: compras, generales) cae a la empresa 1.
+--
+-- ALCANCE: solo la columna. La fila de la empresa 2 es DATO del cliente
+-- (INSERT en datos_empresa + UPDATE cajas SET codigo_empresa=2), no
+-- migración. API/POS (Opción A completa) reutilizarán esta columna.
+--
+-- Idempotencia: MySQL 8 no soporta ADD COLUMN IF NOT EXISTS; sentencia a
+-- secas (patrón V29/V46).
+-- =====================================================================
+
+ALTER TABLE `cajas`
+    ADD COLUMN `codigo_empresa` INT NOT NULL DEFAULT 1;
