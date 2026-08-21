@@ -74,8 +74,14 @@ public abstract class AbstractJasperReports implements Runnable {
 		if (dbCaja == null || dbCaja.trim().isEmpty()) {
 			return null;
 		}
-		String sql = "SELECT codigo_empresa FROM " + facturaDao.getDbNameDefault()
-				+ ".cajas WHERE nombre_db = ?";
+		// JOIN a datos_empresa: si codigo_empresa apunta a una empresa que NO
+		// existe (cliente cuya unica fila no es id=1, tipico de datos
+		// recreados), la marca queda NULL y el subreporte cae al MIN(id) —
+		// el comportamiento historico. Nunca un encabezado vacio.
+		String db = facturaDao.getDbNameDefault();
+		String sql = "SELECT c.codigo_empresa FROM " + db + ".cajas c "
+				+ "JOIN " + db + ".datos_empresa de ON de.id = c.codigo_empresa "
+				+ "WHERE c.nombre_db = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, dbCaja);
 			try (ResultSet rs = ps.executeQuery()) {
