@@ -934,7 +934,10 @@ public class FacturaDao extends ModeloDaoBasic {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la base de datos", JOptionPane.ERROR_MESSAGE);
+			//US-149: la apertura y el cierre usan esta consulta para fijar el
+			//rango del turno; un error confundido con "sin facturas" envenena
+			//el rango (venecia 7175)
+			throw new ConsultaCierreException(e);
 		} finally {
 			// se restablece el nombre de la base de datos por defecto
 			super.DbName = DbNameBase;
