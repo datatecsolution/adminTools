@@ -1249,13 +1249,24 @@ public class CtlFacturarFrame
 
 		CierreCaja oldCierre = cierreCajaService.getUltimoCierreUsuario();
 
-		if (cierreCajaService.verificarCierrePendiente(usuario.getCajas()) && oldCierre.getEstado() == true) {
+		boolean cierrePendiente;
+		try {
+			cierrePendiente = cierreCajaService.verificarCierrePendiente(usuario.getCajas());
+		} catch (ConsultaCierreException e) {
+			//US-149: sin poder leer el estado del turno no se intenta cerrar
+			JOptionPane.showMessageDialog(null,
+					"No se pudo verificar el estado del turno.\nEl cierre fue cancelado; intente de nuevo.",
+					"Cierre de caja", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		if (cierrePendiente && oldCierre.getEstado() == true) {
 
 			ViewCuentaEfectivo viewContar = new ViewCuentaEfectivo(null);
 			CtlContarEfectivo ctlContar = new CtlContarEfectivo(viewContar);
 
 			if (ctlContar.getEstado())
-				if (cierreCajaService.actualizarCierre(ctlContar.getTotal()))
+				if (actualizarCierreSeguro(ctlContar.getTotal()))
 				{
 					if (config.isImprReportCategCierre()) {
 						CierreCaja elCierre = cierreCajaService.buscarPorId(cierreCajaService.getIdUltimoRegistro());
@@ -1840,6 +1851,21 @@ public class CtlFacturarFrame
 		return this.myFactura;
 	}
 
+	/**
+	 * US-149: el cierre se cancela (y el turno queda abierto) si alguna
+	 * consulta del rango falla o el rango de la apertura quedo envenenado.
+	 */
+	private boolean actualizarCierreSeguro(BigDecimal totalContado) {
+		try {
+			return cierreCajaService.actualizarCierre(totalContado);
+		} catch (ConsultaCierreException e) {
+			JOptionPane.showMessageDialog(null,
+					"No se pudo completar el cierre de caja.\nEl turno sigue abierto; intente de nuevo.",
+					"Cierre de caja", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+
 	private boolean setCierre() {
 		/* seccion de cierre de caja */
 		/* seccion de cierre de caja */
@@ -1857,24 +1883,23 @@ public class CtlFacturarFrame
 				newCierre.setEfectivoInicial(ctlContar.getTotal());
 				newCierre.setUsuario(usuario.getUser());
 
-				for (int xx = 0; xx < usuario.getCajas().size(); xx++) {
-					CierreFacturacion unaC = cierreCajaService.buscarFacturacionPorCajaUsuario(
-							usuario.getCajas().get(xx),
-							usuario.getUser());
-
-					if (unaC != null) {
-						CierreFacturacion una = new CierreFacturacion();
-						una.setCaja(unaC.getCaja());
-						una.setNoFacturaInicio(unaC.getNoFacturaFinal() + 1);
-						una.setUsuario(usuario.getUser());
-						newCierre.getCierreFacturas().add(una);
-					} else {
+				try {
+					for (int xx = 0; xx < usuario.getCajas().size(); xx++) {
 						CierreFacturacion una = new CierreFacturacion();
 						una.setCaja(usuario.getCajas().get(xx));
-						una.setNoFacturaInicio(1);
+						una.setNoFacturaInicio(cierreCajaService.calcularFacturaInicialApertura(
+								usuario.getCajas().get(xx),
+								usuario.getUser()));
 						una.setUsuario(usuario.getUser());
 						newCierre.getCierreFacturas().add(una);
 					}
+				} catch (ConsultaCierreException e) {
+					//US-149: sin el rango real del turno anterior no se abre turno
+					JOptionPane.showMessageDialog(null,
+							"No se pudo verificar el turno anterior.\nLa apertura de caja fue cancelada; intente de nuevo.",
+							"Apertura de caja", JOptionPane.ERROR_MESSAGE);
+					viewContar.dispose();
+					return false;
 				}
 
 				newCierre.setNoSalidaInicial(oldCierre.getNoSalidaFinal() + 1);

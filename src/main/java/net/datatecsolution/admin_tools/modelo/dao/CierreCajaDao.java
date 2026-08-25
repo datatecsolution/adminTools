@@ -1,5 +1,6 @@
 package net.datatecsolution.admin_tools.modelo.dao;
 
+import net.datatecsolution.admin_tools.modelo.AperturaTurno;
 import net.datatecsolution.admin_tools.modelo.CierreCaja;
 import net.datatecsolution.admin_tools.modelo.CierreFacturacion;
 import net.datatecsolution.admin_tools.modelo.ConexionStatic;
@@ -176,6 +177,22 @@ public class CierreCajaDao extends ModeloDaoBasic {
 			 //sin los registro de la caja no es null se calculan los otros elementos
 			 if(registroFacturasCaja!=null)
 			 {
+				 //US-149: si la apertura registro un rango envenenado (inicial<=1
+				 //con turnos cerrados previos), cerrar sumaria toda la historia
+				 //de la caja (incidente venecia 7175); se cancela el cierre
+				 Integer finalTurnoAnterior=cierreFacturasDao.ultimoFinalPorCajaUsuario(
+						 ConexionStatic.getUsuarioLogin().getCajas().get(x),
+						 ConexionStatic.getUsuarioLogin().getUser(),
+						 ultimoCierreUser.getId());
+				 if(AperturaTurno.esRangoEnvenenado(registroFacturasCaja.getNoFacturaInicio(), finalTurnoAnterior)){
+					 JOptionPane.showMessageDialog(null,
+							 "El rango de facturas del turno es invalido en la caja "
+									 + ConexionStatic.getUsuarioLogin().getCajas().get(x).getDescripcion()
+									 + ".\nEl cierre fue cancelado; contacte a soporte.",
+							 "Cierre de caja", JOptionPane.ERROR_MESSAGE);
+					 return false;
+				 }
+
 				 //se registra el numero de factura final
 				 registroFacturasCaja.setNoFacturaFinal(ultimaFactura.getIdFactura());
 				

@@ -46,6 +46,11 @@ public class CierreCajaService {
 					newFacturasCaja.setCodigoCierre(ultimoCierreUser.getId());
 					newFacturasCaja.setUsuario(usuario);
 					newFacturasCaja.setCaja(caja);
+					//US-149: la fila reparada continua el ultimo turno cerrado;
+					//con el 0 por defecto el cierre sumaria toda la historia
+					Integer finalPrevio = cierreFacturacionDao.ultimoFinalPorCajaUsuario(
+							caja, usuario, ultimoCierreUser.getId());
+					newFacturasCaja.setNoFacturaInicio(finalPrevio != null ? finalPrevio + 1 : 1);
 					cierreFacturacionDao.registrar(newFacturasCaja);
 				}
 			}
@@ -88,6 +93,20 @@ public class CierreCajaService {
 
 	public CierreFacturacion buscarFacturacionPorCajaUsuario(Caja caja, String usuario) {
 		return cierreFacturacionDao.buscarPorCajaUsuario(caja, usuario);
+	}
+
+	/**
+	 * US-149: numero de factura inicial para la apertura del turno en una caja.
+	 * Propaga ConsultaCierreException si alguna consulta falla: la apertura
+	 * debe abortarse, nunca continuar con un rango inventado.
+	 */
+	public int calcularFacturaInicialApertura(Caja caja, String usuario) {
+		CierreFacturacion previa = cierreFacturacionDao.buscarPorCajaUsuario(caja, usuario);
+		if (AperturaTurno.tieneFinalUsable(previa)) {
+			return previa.getNoFacturaFinal() + 1;
+		}
+		Factura ultima = facturaDao.getUltimaFacturaUser(usuario, caja);
+		return AperturaTurno.calcularFacturaInicial(previa, ultima);
 	}
 
 	public void getVentasCategorias(Integer noFacturaInicial, Integer noFacturaFinal,

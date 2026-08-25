@@ -324,8 +324,10 @@ public List<CierreFacturacion> buscarIdCierre(Integer id){
 				
 			}
 		}catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+			//US-149: un error de consulta no es "no hay registro previo"; devolver
+			//null aqui envenena la apertura con factura_inicial=1 (venecia 7175)
+			throw new ConsultaCierreException(e);
 	}
 	finally
 	{
@@ -390,8 +392,10 @@ public List<CierreFacturacion> buscarIdCierre(Integer id){
 				
 			}
 		}catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+			//US-149: un error de consulta no es "no hay registro previo"; devolver
+			//null aqui envenena la apertura con factura_inicial=1 (venecia 7175)
+			throw new ConsultaCierreException(e);
 	}
 	finally
 	{
@@ -415,6 +419,53 @@ public List<CierreFacturacion> buscarIdCierre(Integer id){
 		else{
 			return null;
 		}
+	}
+
+	/**
+	 * US-149: ultimo numero de factura final registrado para el usuario en la
+	 * caja, excluyendo el cierre indicado (el turno en curso). null si el
+	 * usuario nunca ha cerrado turno en esa caja.
+	 */
+	public Integer ultimoFinalPorCajaUsuario(Caja caja, String user, int idCierreExcluir) {
+
+		Connection conn=null;
+		ResultSet res=null;
+		Integer resultado=null;
+
+		try{
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			psConsultas=conn.prepareStatement(
+					"SELECT factura_final FROM "+DbNameBase+".cierre_facturacion "
+					+ "WHERE usuario=? AND codigo_caja=? AND codigo_cierre<>? AND factura_final>0 "
+					+ "ORDER BY id DESC LIMIT 1");
+
+			psConsultas.setString(1, user);
+			psConsultas.setInt(2, caja.getCodigo());
+			psConsultas.setInt(3, idCierreExcluir);
+
+			res=psConsultas.executeQuery();
+
+			while(res.next()){
+				resultado=res.getInt("factura_final");
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new ConsultaCierreException(e);
+		}
+		finally
+		{
+			try{
+				if(res != null) res.close();
+				if(psConsultas != null)psConsultas.close();
+				if(conn != null) conn.close();
+			}
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+			}
+		}
+
+		return resultado;
 	}
 
 }
