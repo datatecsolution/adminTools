@@ -1,0 +1,25 @@
+[Unit]
+Description=POS - servidor estatico de prueba (provisional, se reemplaza por el backend Node en Fase 3)
+After=network.target
+
+[Service]
+Type=exec
+User=caja1
+Group=caja1
+WorkingDirectory=/opt/pos/www
+ExecStart=/usr/bin/python3 -m http.server 8080 --bind 127.0.0.1
+Restart=always
+RestartSec=2
+
+# Endurecimiento basico
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+
+[Install]
+WantedBy=multi-user.target

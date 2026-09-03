@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>POS · página de prueba</title>
+<style>
+  * { box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+  html,body { height:100%; margin:0; }
+  body { font: 16px/1.5 system-ui, sans-serif; background:#0f172a; color:#e2e8f0;
+         display:flex; align-items:center; justify-content:center; }
+  .card { text-align:center; padding:2rem; }
+  h1 { font-size:2.2rem; margin:0 0 .5rem; }
+  p  { color:#94a3b8; margin:.25rem 0; }
+  .pad { margin-top:2rem; display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem; }
+  button { font-size:1.6rem; padding:1.4rem 0; border:0; border-radius:.6rem;
+           background:#1e293b; color:#e2e8f0; touch-action:manipulation; }
+  button:active { background:#2563eb; }
+  #out { margin-top:1.5rem; font-size:1.8rem; min-height:2.2rem; letter-spacing:.05em; }
+  #log { margin-top:1rem; color:#64748b; font-size:.85rem; }
+</style>
+<div class="card">
+  <h1>Terminal POS lista</h1>
+  <p id="ua"></p>
+  <p>Probá el táctil con el teclado numérico. El scanner escribe como teclado.</p>
+  <div class="pad">
+    <button>1</button><button>2</button><button>3</button>
+    <button>4</button><button>5</button><button>6</button>
+    <button>7</button><button>8</button><button>9</button>
+    <button data-k="C">C</button><button>0</button><button data-k="←">←</button>
+  </div>
+  <div id="out"></div>
+  <div id="log">esperando eventos…</div>
+</div>
+<script>
+  const out = document.getElementById('out'), log = document.getElementById('log');
+  let buf = '', scan = '', t0 = 0;
+  document.getElementById('ua').textContent =
+    (window.innerWidth + '×' + window.innerHeight) + ' · touch: ' + ('ontouchstart' in window ? 'sí' : 'no');
+  document.querySelectorAll('button').forEach(b => b.addEventListener('pointerdown', e => {
+    const k = b.dataset.k || b.textContent;
+    if (k === 'C') buf = ''; else if (k === '←') buf = buf.slice(0, -1); else buf += k;
+    out.textContent = buf;
+    log.textContent = 'pointerdown · type=' + e.pointerType + ' · ' + new Date().toLocaleTimeString();
+  }));
+  addEventListener('keydown', e => {
+    const now = Date.now();
+    if (now - t0 > 100) scan = '';
+    t0 = now;
+    if (e.key === 'Enter' && scan.length > 3) { log.textContent = 'SCANNER → ' + scan; scan = ''; }
+    else if (e.key.length === 1) scan += e.key;
+  });
+</script>

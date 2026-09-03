@@ -1,0 +1,26 @@
+{
+  "_comentario": [
+    "Politica de Chromium para el terminal POS (caja1-samuel).",
+    "Destino: /etc/chromium/policies/managed/chromium-pos.json (root:root 644).",
+    "Concede de antemano el hardware a la app remota, para que en el kiosco NO",
+    "aparezca el selector de dispositivos (que en modo --app y con tactil es un",
+    "estorbo) y para que el permiso sobreviva a un borrado del perfil.",
+    "IDs en DECIMAL, que es como los pide la politica:",
+    "  impresora Epson TM-T20IV-SP  04b8:0e39 -> 1208:3641",
+    "  bascula   CH340 (Torrey)     1a86:7523 -> 6790:29987"
+  ],
+
+  "WebUsbAllowDevicesForUrls": [
+    {
+      "devices": [{ "vendor_id": 1208, "product_id": 3641 }],
+      "urls": ["https://admintools.supermercadosurbina.com"]
+    }
+  ],
+
+  "SerialAllowUsbDevicesForUrls": [
+    {
+      "devices": [{ "vendor_id": 6790, "product_id": 29987 }],
+      "urls": ["https://admintools.supermercadosurbina.com"]
+    }
+  ]
+}
