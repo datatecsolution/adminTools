@@ -1,0 +1,15 @@
+# Terminal POS — acceso al USB crudo para WebUSB / WebSerial.
+# Destino: /etc/udev/rules.d/99-pos-webusb.rules
+#
+# Chromium habla WebUSB por /dev/bus/usb/BBB/DDD, no por /dev/usb/lp0.
+# El nodo de la impresora ya sale root:lp 0664 y caja1 esta en lp, asi que
+# hoy alcanza; el TAG uaccess es el cinturon de seguridad por si un dia el
+# nodo cambia de grupo (le da ACL al usuario con sesion activa en seat0,
+# que es exactamente caja1 en tty1).
+
+# Impresora Epson TM-T20IV-SP
+SUBSYSTEM=="usb", ATTR{idVendor}=="04b8", ATTR{idProduct}=="0e39", TAG+="uaccess"
+
+# Adaptador CH340 de la bascula Torrey (WebSerial usa /dev/ttyUSB0, que ya es
+# root:dialout y caja1 esta en dialout; esto es solo por simetria)
+SUBSYSTEM=="usb", ATTR{idVendor}=="1a86", ATTR{idProduct}=="7523", TAG+="uaccess"

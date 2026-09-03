@@ -1,0 +1,14 @@
+# ⚠️ NO INSTALAR TODAVIA — red de emergencia, solo si hace falta.
+# Destino (si se necesita): /etc/udev/rules.d/99-pos-liberar-usblp.rules
+#
+# El kernel engancha el modulo `usblp` a la interfaz 0 de la impresora
+# (hoy: 3-8.1:1.0 -> usblp) y por eso existe /dev/usb/lp0.
+# Si al emparejar la impresora en la app WebUSB falla con algo del estilo
+# "Unable to claim interface" / "No se pudo reclamar la interfaz", es por eso:
+# hay que soltar la interfaz del driver del kernel.
+#
+# Esta regla desengancha usblp SOLO de esta impresora, sin tocar el modulo.
+# Efecto colateral: DESAPARECE /dev/usb/lp0, y con el deja de funcionar
+# `fase3-impresora.py`. Por eso no se instala de entrada: primero se prueba
+# WebUSB tal cual y se conserva el camino ya validado.
+ACTION=="bind", SUBSYSTEM=="usb", DRIVER=="usblp", ATTRS{idVendor}=="04b8", ATTRS{idProduct}=="0e39", RUN+="/bin/sh -c 'echo -n %k > /sys/bus/usb/drivers/usblp/unbind'"

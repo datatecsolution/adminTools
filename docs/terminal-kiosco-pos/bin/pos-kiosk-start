@@ -1,0 +1,40 @@
+#!/bin/bash
+# Lanza Chromium en modo kiosco dentro de cage (compositor Wayland de una sola ventana).
+# cage sale cuando sale Chromium; systemd (Restart=always) vuelve a levantar todo.
+set -u
+
+URL="${POS_URL:-http://localhost:8080}"
+PROFILE="${HOME}/.config/pos-chromium"
+mkdir -p "$PROFILE"
+
+# Chromium marca el perfil como "sucio" si se lo mata; eso dispara el globo de
+# "restaurar páginas". Lo limpiamos en cada arranque.
+PREFS="$PROFILE/Default/Preferences"
+if [ -f "$PREFS" ]; then
+  sed -i 's/"exit_type":"[^"]*"/"exit_type":"Normal"/; s/"exited_cleanly":false/"exited_cleanly":true/' "$PREFS" 2>/dev/null || true
+fi
+
+# SIN -s (Fase 4): el cajero no puede cambiar de terminal virtual.
+# Para reabrirlo:  sudo bash ~/pos-terminal/bin/fase4-cerrar-consola.sh --abrir
+exec cage -d -- chromium \
+  --kiosk \
+  --app="$URL" \
+  --user-data-dir="$PROFILE" \
+  --ozone-platform=wayland \
+  --start-maximized \
+  --noerrdialogs \
+  --disable-infobars \
+  --no-first-run \
+  --no-default-browser-check \
+  --disable-session-crashed-bubble \
+  --disable-features=TranslateUI,Translate \
+  --disable-translate \
+  --disable-pinch \
+  --overscroll-history-navigation=0 \
+  --touch-events=enabled \
+  --disable-notifications \
+  --disable-background-networking \
+  --disable-component-update \
+  --check-for-update-interval=31536000 \
+  --autoplay-policy=no-user-gesture-required \
+  --password-store=basic

@@ -1,0 +1,43 @@
+[Unit]
+Description=POS - kiosco Chromium sobre cage (tty1)
+Documentation=file:///home/adminpos/pos-terminal/CLAUDE.md
+After=systemd-user-sessions.service
+# La app vive en admintools.supermercadosurbina.com: sin red, Chromium abriria
+# una pagina de error y se quedaria ahi (no reintenta solo). Esto arrastra
+# NetworkManager-wait-online, que ya esta enabled pero que nadie invocaba.
+Wants=network-online.target
+After=network-online.target
+# No convivir con un getty en tty1
+Conflicts=getty@tty1.service
+After=getty@tty1.service
+# Sin limite de reintentos: un kiosco tiene que insistir para siempre.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=caja1
+Group=caja1
+
+# PAMName=login crea una sesion logind real con seat, que es lo que cage
+# necesita para tomar el DRM y los dispositivos de entrada sin ser root.
+PAMName=login
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+StandardInput=tty-fail
+StandardOutput=journal
+StandardError=journal
+
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=XDG_SESSION_TYPE=wayland
+Environment=POS_URL=https://admintools.supermercadosurbina.com/
+
+ExecStart=/opt/pos/bin/pos-kiosk-start
+
+# Si Chromium se cierra o crashea, cage termina y systemd relevanta todo.
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
