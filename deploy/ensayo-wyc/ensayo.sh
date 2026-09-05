@@ -79,6 +79,17 @@ for db in "${DBS[@]}"; do
 done
 echo "   · dump datos de admin_tools.cajas (para descubrir las cajas)"
 dump --no-create-info --skip-triggers admin_tools cajas > "$DUMPS/_cajas_data.sql"
+# US-150: si el cliente YA corre Flyway (Ronal), el historial debe viajar con el
+# esquema — con schema_version vacía, Flyway re-aplica desde V1 y choca con las
+# tablas existentes. En clientes sin Flyway (Wyc) la tabla no existe y esto
+# queda vacío sin romper nada.
+for db in "${DBS[@]}"; do
+  if dump --no-create-info --skip-triggers "$db" schema_version > "$DUMPS/_sv_$db.sql" 2>/dev/null; then
+    echo "   · dump historial schema_version de $db"
+  else
+    rm -f "$DUMPS/_sv_$db.sql"; echo "   · $db sin schema_version (cliente pre-Flyway, ok)"
+  fi
+done
 
 # ---------- 2. MySQL efímero ----------
 log "2/6  Levantando MySQL efímero ($MYSQL_IMG, utf8mb3)"
@@ -100,9 +111,13 @@ myc(){ docker exec -i -e MYSQL_PWD="$ENS_PASS" "$MYC" mysql -uroot "$@"; }
 log "3/6  Restaurando esquema en la copia efímera"
 for db in "${DBS[@]}"; do echo "   · restore $db"; myc < "$DUMPS/$db.sql"; done
 echo "   · datos de cajas"; myc admin_tools < "$DUMPS/_cajas_data.sql"
+for db in "${DBS[@]}"; do
+  [ -f "$DUMPS/_sv_$db.sql" ] && { echo "   · historial schema_version de $db"; myc "$db" < "$DUMPS/_sv_$db.sql"; }
+done
 
 # ---------- 4. migrar (runner real) ----------
 log "4/6  Aplicando migraciones (SchemaMigrator real)"
+mkdir -p "$WORK/classes"
 javac -cp "$JAR" "$HERE/EnsayoMigrate.java" -d "$WORK/classes"
 ENS_HOST=127.0.0.1 ENS_PORT="$ENS_PORT" ENS_USER=root ENS_PASS="$ENS_PASS" \
   java -cp "$JAR:$WORK/classes" EnsayoMigrate
@@ -117,8 +132,9 @@ check(){ # check <db> <target>
   if [ "$maxv" = "$target" ] && [ "$fails" = "0" ]; then echo "   ✓ $db → V$maxv, 0 fallidas"
   else echo "   ✗ $db → V$maxv (esperado V$target), fallidas=$fails"; PASS=0; fi
 }
-check admin_tools 31
-for db in "${DBS[@]}"; do [ "$db" = admin_tools ] && continue; check "$db" 8; done
+# Targets parametrizables (US-150: CLIENT=ronal usa 48/9; default = los de Wyc)
+check admin_tools "${EXPECT_COMMON:-31}"
+for db in "${DBS[@]}"; do [ "$db" = admin_tools ] && continue; check "$db" "${EXPECT_CAJA:-8}"; done
 # backfill V18: existencia_articulo_bodega debería tener filas (si hay datos de kardex)
 EAB=$(myc -N -e "SELECT COUNT(*) FROM admin_tools.existencia_articulo_bodega" 2>/dev/null || echo "n/a")
 echo "   · existencia_articulo_bodega (backfill V18): $EAB filas  (nota: esquema-only → puede ser 0; con datos debe poblar)"
@@ -146,5 +162,5 @@ fi
 
 # ---------- veredicto ----------
 echo
-if [ "$PASS" = 1 ]; then printf '\033[1;32m✔ ENSAYO OK — las migraciones aplican limpio sobre el esquema real de Wyc.\033[0m\n'
+if [ "$PASS" = 1 ]; then printf '\033[1;32m✔ ENSAYO OK — las migraciones aplican limpio sobre el esquema real de %s.\033[0m\n' "$CLIENT"
 else printf '\033[1;31m✘ ENSAYO CON FALLAS — revisá arriba ANTES de tocar producción.\033[0m\n'; exit 1; fi
