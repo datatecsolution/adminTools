@@ -134,7 +134,16 @@ check(){ # check <db> <target>
 }
 # Targets parametrizables (US-150: CLIENT=ronal usa 48/9; default = los de Wyc)
 check admin_tools "${EXPECT_COMMON:-31}"
-for db in "${DBS[@]}"; do [ "$db" = admin_tools ] && continue; check "$db" "${EXPECT_CAJA:-8}"; done
+# Solo las cajas REGISTRADAS en admin_tools.cajas — es de ahí que el migrador
+# (SchemaMigrator.listCajaDatabases) descubre qué migrar, igual que el boot
+# real. Las BDs de caja huérfanas (p.ej. las cajas viejas intactas de venecia)
+# no se migran y por lo tanto no se verifican; se listan como omitidas.
+mapfile -t CAJAS_MIG < <(myc -N -e "SELECT nombre_db FROM admin_tools.cajas" | sort -u)
+for db in "${CAJAS_MIG[@]}"; do check "$db" "${EXPECT_CAJA:-8}"; done
+for db in "${DBS[@]}"; do
+  [ "$db" = admin_tools ] && continue
+  printf '%s\n' "${CAJAS_MIG[@]}" | grep -qx "$db" || echo "   · $db no registrada en cajas → NO se migra (omitida, esperado)"
+done
 # backfill V18: existencia_articulo_bodega debería tener filas (si hay datos de kardex)
 EAB=$(myc -N -e "SELECT COUNT(*) FROM admin_tools.existencia_articulo_bodega" 2>/dev/null || echo "n/a")
 echo "   · existencia_articulo_bodega (backfill V18): $EAB filas  (nota: esquema-only → puede ser 0; con datos debe poblar)"
