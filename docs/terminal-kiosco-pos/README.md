@@ -85,3 +85,30 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
 7. **Redes guardadas en NM**: la del sitio donde se prepara el equipo + las dos del
    cliente (`Samuel 5G` y `Samuel 2.4G`), con `autoconnect-priority` mayor en las del
    cliente, así al llegar se conecta sin tocar nada.
+
+### Estado de `caja2-samuel` — PENDIENTE (al 2026-09-12)
+
+Listo y validado con reinicios reales: Debian mínimo, kiosco arrancando solo,
+`video=DP-1:d`, NetworkManager con las 3 redes (la del sitio de preparación +
+`Samuel 5G`/`Samuel 2.4G` con prioridad mayor) y **VPN peer `10.10.0.5`**
+(`ssh caja2-samuel`).
+
+Queda por hacer:
+
+1. **Fase 3 — impresora y báscula**: requiere que alguien **conecte el hardware**
+   y confirme físicamente que imprime / que pesa. El software (IDs USB, reglas
+   udev, grupos, política de Chromium para pre-autorizar el USB) se hace en remoto.
+2. **Fase 4 — endurecimiento**: `overlayroot`, contraseña de GRUB,
+   `PasswordAuthentication no`. Hacer `overlayroot` **con alguien cerca del
+   equipo**: es el único paso cuyo fallo deja la máquina sin arrancar y sin
+   acceso remoto.
+3. **Quitar los dos permisos temporales de la instalación** (paso obligatorio del
+   cierre): `/etc/sudoers.d/90-instalacion-kiosco` (sudo sin contraseña) y
+   `net-fallback.service` (la unidad de rescate que restaura ifupdown si no hay
+   red a los 90 s del arranque).
+4. **Traslado al sitio del cliente**: no hay que tocar la red, se conecta sola.
+
+> Capacidad útil para el trabajo remoto: con `grim` (disponible en trixie) se
+> puede **capturar la pantalla del kiosco** desde SSH usando el socket Wayland de
+> la sesión (`/run/user/<UID>/wayland-*`), así no hace falta que nadie describa
+> lo que se ve.
