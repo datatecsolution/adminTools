@@ -51,3 +51,37 @@ activo, VPN operativa (peer `10.10.0.4`). La regla
 
 Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
 `PasswordAuthentication` de SSH, contraseña de GRUB.
+
+## Terminales montadas con esta plantilla
+
+| Terminal | VPN | Notas de la instalación |
+|---|---|---|
+| `caja1-samuel` | `10.10.0.4` | Origen de la plantilla (2026-09-03). Se instaló con GNOME y hubo que purgarlo (386 paquetes). |
+| `caja2-samuel` | `10.10.0.5` | **2026-09-11/12**. Instalación mínima desde el inicio (331 paquetes, sin escritorio) → no hizo falta purgar. Ver «Lecciones de caja2» abajo. |
+
+### Lecciones de caja2 (aplicar en la próxima)
+
+1. **En el instalador de Debian**: desmarcar todo entorno de escritorio; dejar solo
+   «utilidades estándar del sistema» + «servidor SSH». Eso evita la purga de GNOME.
+2. **Con contraseña de root, Debian NO instala `sudo` ni mete al primer usuario en
+   ese grupo**: hay que instalarlo a mano (`su -` → `apt-get install sudo` →
+   `usermod -aG sudo adminpos`). Y **guardar la contraseña de root**: si se pierde,
+   se recupera desde GRUB con `init=/bin/bash` (`mount -o remount,rw /` + `passwd root`).
+3. **Las unidades systemd traen el usuario `caja1` cableado**: adaptar `User=`/`Group=`
+   **y** `XDG_RUNTIME_DIR=/run/user/<UID>` en `pos-kiosk.service` **y** en
+   `pos-web.service` (este último se olvidó y falló con `status=217/USER`).
+4. **`video=DP-1:d` hace falta igual** en otro CX20: el conector fantasma corre la
+   consola y el kiosco hacia la derecha.
+5. **Migrar de ifupdown a NetworkManager: hacerlo con un REINICIO, no en caliente.**
+   En caliente falla porque el `wpa_supplicant` lanzado por ifupdown sigue sujetando
+   la tarjeta y NM deja el dispositivo `unmanaged`. Procedimiento que funcionó:
+   comentar la estrofa de la interfaz en `/etc/network/interfaces`, `systemctl disable
+   networking`, `enable NetworkManager`, cargar las conexiones con `nmcli` y **reiniciar**.
+   Conviene dejar una unidad de rescate (`net-fallback.service`) que restaure ifupdown
+   si a los 90 s del arranque no hay conectividad.
+6. **No dar por buena una migración de red porque «hay conectividad»**: verificar
+   QUIÉN la sostiene (`nmcli dev status` debe decir `connected`, no `unmanaged`) y
+   validar con reinicio.
+7. **Redes guardadas en NM**: la del sitio donde se prepara el equipo + las dos del
+   cliente (`Samuel 5G` y `Samuel 2.4G`), con `autoconnect-priority` mayor en las del
+   cliente, así al llegar se conecta sin tocar nada.
