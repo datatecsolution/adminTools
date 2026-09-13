@@ -86,6 +86,48 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    cliente (`Samuel 5G` y `Samuel 2.4G`), con `autoconnect-priority` mayor en las del
    cliente, así al llegar se conecta sin tocar nada.
 
+### Fase 3 en remoto: configurar impresoras y báscula sin estar delante (2026-09-13)
+
+Toda la fase 3 se puede hacer por SSH. Lo aprendido montándola en caja2:
+
+1. **Los IDs USB cambian por terminal.** caja2 NO tiene la Epson de caja1: la
+   ticketera es una 3nStar RPT004 (`1fc9:2016`), la etiquetera una 4BARCODE
+   4B-2054TC (`2d84:8ffa`, la «3nStar LTT214» rebadgeada) y la báscula un FTDI
+   (`0403:6001`). Copiar las reglas de caja1 sin cambiar los IDs no hace nada.
+2. **La política de Chromium pide los IDs en DECIMAL**, no en hexadecimal
+   (`1fc9:2016` → `8137:8214`). Con ella el cajero **nunca ve el selector de
+   dispositivos** y el permiso sobrevive al borrado del perfil.
+3. **Las impresoras van por WebUSB y la báscula por WebSerial**, y son caminos
+   distintos: las primeras necesitan que udev las suelte de `usblp`; la báscula
+   **no** hay que desengancharla de `ftdi_sio` — Chromium la usa por su
+   `/dev/ttyUSB*`, y basta que el usuario del kiosco esté en `dialout`.
+4. **Si se reconecta un USB con Chromium corriendo, hay que reiniciar Chromium.**
+   El navegador conserva la referencia al dispositivo viejo: abre el puerto sin
+   error pero **toda lectura muere al instante con «The device has been lost»**,
+   y el puerto queda abierto con su lado de lectura inutilizable. Costó media
+   tarde de diagnóstico. Regla: **cualquier manipulación de USB termina con
+   `systemctl restart pos-kiosk.service`.**
+5. **La config de impresora y báscula vive en el `localStorage` de CADA terminal**
+   (`admintools-pos.scale`, `admintools-pos.printer`), y la pantalla que la edita
+   (`/settings`) **es solo para ADMIN**. O sea: configurarla desde el
+   administrador de otra PC no sirve de nada — hay que entrar como admin **en esa
+   terminal**, o escribirla en remoto (punto siguiente).
+6. **Para tocar la terminal en remoto** el script de arranque acepta
+   `POS_EXTRA_FLAGS`. Con un drop-in de systemd
+   (`Environment=POS_EXTRA_FLAGS=--remote-debugging-port=9222`) se levanta el
+   puerto de depuración **solo en loopback**, y desde la propia máquina se puede
+   evaluar JavaScript en la página (leer o escribir `localStorage`, comprobar
+   permisos de dispositivo, pulsar botones). Dos detalles: hace falta
+   `python3-websocket`, y hay que conectarse **sin cabecera `Origin`**
+   (`suppress_origin=True`) o Chromium responde 403 — la alternativa sería
+   `--remote-allow-origins=*`, que en una caja no se debe usar. **Quitar el
+   drop-in al terminar.**
+7. **Diagnóstico del hardware sin navegador**: `python3-serial` para la báscula
+   (comando `P` pelado, sin retorno de carro, 9600 8N1) y `python3-usb` para las
+   impresoras. Este último es imprescindible **después** de aplicar la regla que
+   suelta `usblp`, porque ahí desaparece `/dev/usb/lp*` y ya no se puede probar
+   escribiendo a un archivo.
+
 ### Estado de `caja2-samuel` — PENDIENTE (al 2026-09-12)
 
 Listo y validado con reinicios reales: Debian mínimo, kiosco arrancando solo,
@@ -95,9 +137,11 @@ Listo y validado con reinicios reales: Debian mínimo, kiosco arrancando solo,
 
 Queda por hacer:
 
-1. **Fase 3 — impresora y báscula**: requiere que alguien **conecte el hardware**
-   y confirme físicamente que imprime / que pesa. El software (IDs USB, reglas
-   udev, grupos, política de Chromium para pre-autorizar el USB) se hace en remoto.
+1. ~~**Fase 3 — impresora y báscula**~~ **HECHA el 2026-09-13** (ver la sección de
+   arriba). Estado real: ticketera ✔ imprime y corta, por WebUSB desde el
+   navegador; báscula ✔ lee (`1.06 lb`) por WebSerial desde la página del POS;
+   **etiquetera ✘ jala papel pero no marca** — pendiente de resolver con el
+   rollo/cinta correctos, el software ya le habla (responde TSPL).
 2. **Fase 4 — endurecimiento**: `overlayroot`, contraseña de GRUB,
    `PasswordAuthentication no`. Hacer `overlayroot` **con alguien cerca del
    equipo**: es el único paso cuyo fallo deja la máquina sin arrancar y sin
