@@ -128,6 +128,49 @@ Toda la fase 3 se puede hacer por SSH. Lo aprendido montándola en caja2:
    suelta `usblp`, porque ahí desaparece `/dev/usb/lp*` y ya no se puede probar
    escribiendo a un archivo.
 
+### Etiquetera 3nStar LTT214 / 4BARCODE 4B-2054TC — lo que hay que saber
+
+**Antes de diagnosticar nada por software, mirar el LED.** Es la información más
+barata y la que más tiempo ahorra (manual LTT204/LTT214, §4.1):
+
+| LED | Significa |
+|---|---|
+| Azul fijo | Lista |
+| Azul parpadeando | Recibiendo datos o en pausa |
+| Morado | Formateando los datos |
+| **Rojo fijo** | **Cabezal o tapa ABIERTOS** (o error del cortador) |
+| Rojo parpadeando | Sin papel, atasco o error de memoria |
+
+**Síntoma real (caja2, 2026-09-13): «jala el papel pero no imprime».** La
+impresora **aceptaba bytes por USB pero no respondía a ninguna consulta**, ni
+siquiera al reinicio en tiempo real `<ESC>!R`. Causa: **el cabezal no había
+quedado bien cerrado** — el LED estaba en rojo fijo. El manual lo marca como
+paso crítico al instalar la cinta: *«asegúrese de que el cabezal quede
+completamente cerrado»*, presionando con las dos manos a ambos lados.
+
+**Regla que se deduce: si acepta datos y no contesta NADA, es físico.** No
+gastar tiempo en densidad, calibración ni formatos de etiqueta.
+
+**El otro clásico de este modelo — la cinta**: las especificaciones exigen
+cinta **con la tinta hacia AFUERA** (*Ink outside Coating*, *Outer roll type*).
+Con una cinta de tinta hacia adentro, la tinta nunca toca la etiqueta: avanza el
+papel y no marca, exactamente el mismo síntoma. Y si el papel es **térmico
+directo**, la cinta sobra: se comprueba rayando una etiqueta con la uña (si deja
+marca gris, es térmico directo).
+
+**La prueba que resuelve la duda sin software**: apagar, mantener el botón FEED,
+encender y soltar cuando el LED parpadee **morado** → calibra los sensores e
+imprime su hoja de configuración interna. Si esa hoja sale, el mecanismo, la
+cinta y el papel están bien y el problema es el formato que se le manda.
+
+**Herramientas dejadas en la terminal** (`~/pos-terminal/bin/`, requieren
+`python3-usb` porque la regla de `usblp` elimina `/dev/usb/lp*`):
+`etiquetera-estado.py` (consulta sin imprimir), `etiquetera-reset.py`
+(`<ESC>!R` + limpieza de endpoints), `etiquetera-puesta-a-punto.py` (calibra y
+saca tres etiquetas **numeradas** —  bloque negro, texto normal y térmico
+directo — para que quien esté delante solo tenga que decir *cuál* salió; también
+`--config` para la autoprueba interna y `--fabrica` para `INITIALPRINTER`).
+
 ### Estado de `caja2-samuel` — PENDIENTE (al 2026-09-12)
 
 Listo y validado con reinicios reales: Debian mínimo, kiosco arrancando solo,
