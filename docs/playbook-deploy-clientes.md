@@ -154,6 +154,11 @@ Todo 404/500/409 es un frente roto. En Sharon aparecieron tres:
 - Compatibilidad de nombres JSON: par getter/setter con el **mismo** `@JsonProperty` (Jackson lo trata como una propiedad; mezclar `@JsonAlias` con un getter homónimo genera ambigüedad).
 - Un fallo de mapeo de rutas revienta **al arrancar**, no en caliente: un arranque limpio ya es evidencia de que las rutas quedaron registradas.
 
+**Migraciones (el runner y el fat-jar)**
+- **Reconstruir `build/libs/AdminTools-1.0.jar` desde master ANTES de migrar a un cliente.** El runner (`deploy/ensayo-wyc/EnsayoMigrate.java`) lee las migraciones **del jar**, no del working tree: con un jar viejo se aplica el **archivo viejo**. Pasó el 2026-09-13 en Samuel — la V51 se había corregido de `TINYINT(1)` a `TINYINT` después de construir el jar, y el cliente se quedó con el tipo malo mientras el resto de los clientes recibiría el bueno.
+- El `repair()` que corre antes de cada `migrate()` **realinea el checksum, no el DDL ya ejecutado**: después de aplicar un archivo equivocado la tabla `schema_version` se ve sana y el error queda invisible. La única forma de corregirlo es **otra migración** que normalice (así nació la V52).
+- Por eso, tras migrar: **verificar el DDL real**, no solo `max(version)` — `select column_type from information_schema.columns …` y compararlo con las columnas hermanas.
+
 **Swing**
 - **Arrancar el Swing APLICA las migraciones del classpath contra lo que apunte el `.dat` activo** — que puede ser la produccion de un cliente por VPN. Una migracion sin commitear en el working tree se aplica igual (paso con V42 en Sharon: se aplico al mediodia, se descarto del repo a la tarde, y quedo deriva de esquema que hubo que reparar reponiendo el archivo byte a byte para que coincidiera el checksum CRC32). Antes de arrancar el Swing con trabajo a medias: verificar el `.dat` o apuntar a localhost.
 - Los renderers leen columnas **ocultas** del modelo por índice fijo: al insertar una columna, `grep getValueAt(row, N)` en `view/rendes/`.
@@ -162,6 +167,9 @@ Todo 404/500/409 es un frente roto. En Sharon aparecieron tres:
 - Commits que normalizan CRLF→LF inflan el diff: verificar cambios reales con `diff <(git show A:f | tr -d '\r') <(git show B:f | tr -d '\r')`.
 
 **Docker / infra**
+- **Orden que minimiza el corte** (Samuel 2026-09-13: **8,3 s** de indisponibilidad total): construir las imágenes nuevas **con los contenedores viejos vivos** → respaldo → migrar (una migración aditiva no molesta a la API vieja, que solo valida al arrancar) → recién entonces `docker compose up -d`. Un servicio cuyo código no cambió **no se toca**: comparar el hash del clon contra el tag corriendo y saltarlo.
+- En el server de Ronal hay **directorios que parecen el clon y no lo son**: `~/admintools` y `~/at-ordenes-ventas` son copias manuales **sin `.git`**, y `~/admintools-pos` es un clon **de root** que el usuario de deploy no puede actualizar. Los buenos son `~/admintools-api`, `~/admintools-pos-deploy` y `~/at-ordenes-ventas-v2`.
+- Calcular el hash para el tag **en un comando aparte del `git pull`**: si el pull falla dentro del mismo `&&`, el tag sale vacío (`cliente-`) y se publica una imagen sin identificar.
 - `docker logs` **muere con cada recreate** → la fuente persistente son los logs del proxy.
 - Un contenedor lanzado con `docker run` sin `restart: unless-stopped` no vuelve tras un reinicio del daemon.
 - Tras recrear la API, el proxy puede cachear la IP vieja (502) → `docker exec nginx-proxy-manager nginx -s reload`.
