@@ -148,8 +148,13 @@ quedado bien cerrado** — el LED estaba en rojo fijo. El manual lo marca como
 paso crítico al instalar la cinta: *«asegúrese de que el cabezal quede
 completamente cerrado»*, presionando con las dos manos a ambos lados.
 
-**Regla que se deduce: si acepta datos y no contesta NADA, es físico.** No
-gastar tiempo en densidad, calibración ni formatos de etiqueta.
+**CORRECCIÓN (2026-09-14): el silencio a las consultas NO es señal de nada.**
+Aquí quedó escrito que «si acepta datos y no contesta, es físico». Es falso:
+una vez cerrada la tapa la impresora **imprime perfectamente y sigue sin
+contestar** ni a `<ESC>!?` ni a `~!F` (solo respondió la primera vez que se la
+interrogó, recién conectada). O sea que su canal de lectura por USB no es
+fiable. **La señal buena es el LED**, y el papel que sale. No diagnosticar por
+la ausencia de respuesta.
 
 **El otro clásico de este modelo — la cinta**: las especificaciones exigen
 cinta **con la tinta hacia AFUERA** (*Ink outside Coating*, *Outer roll type*).
@@ -162,6 +167,20 @@ marca gris, es térmico directo).
 encender y soltar cuando el LED parpadee **morado** → calibra los sensores e
 imprime su hoja de configuración interna. Si esa hoja sale, el mecanismo, la
 cinta y el papel están bien y el problema es el formato que se le manda.
+
+**⚠️ El POS todavía NO puede imprimir etiquetas en estas terminales.** US-162
+imprime con `window.print()`, que necesita una impresora dada de alta en el
+sistema operativo — y estas terminales **no tienen CUPS** (se purgó en caja1 y
+nunca se instaló en caja2), así que el diálogo de impresión no tendría a dónde
+mandar el trabajo. El camino que sí funciona está probado: **TSPL por WebUSB**,
+igual que el ticket, que ya tiene su vía directa en `features/printing/escpos/`
++ `webusb.ts` (US-107). Falta el equivalente para la etiqueta — un
+`etiquetaBytes.ts` que emita TSPL espejando `EtiquetaProducto.tsx`, con la misma
+regla que el ticket: **los cambios de diseño van en los dos lados**.
+
+Verificado el 2026-09-14 en caja2 con cinta y papel reales: la impresora dibuja
+el EAN-13 con su comando nativo `BARCODE ... "EAN13"` a 203 dpi, que sale mucho
+mejor que mandar una imagen.
 
 **Herramientas dejadas en la terminal** (`~/pos-terminal/bin/`, requieren
 `python3-usb` porque la regla de `usblp` elimina `/dev/usb/lp*`):
