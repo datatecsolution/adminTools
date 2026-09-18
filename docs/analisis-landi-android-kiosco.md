@@ -128,10 +128,47 @@ monta como una caja más de Samuel **sin desarrollo**; solo cambia el
 provisionamiento (kiosco Android en vez de cage/overlayroot) y el método de
 soporte remoto. Lo primero es encender el equipo y mirar si tiene Play Store.
 
+## Sin Play Store (confirmado 2026-09-18): dos rutas
+
+Es AOSP puro, así que no hay Chrome de fábrica ni actualizaciones por Play. El
+**WebView del sistema NO expone WebUSB**, o sea que "una app con WebView"
+sola tampoco imprime. Quedan dos caminos:
+
+**Ruta 1 — Chrome instalado a mano (sideload). Probar primero, cuesta 1 hora.**
+Chrome para Android **no necesita Google Play Services** para navegar ni para
+WebUSB (solo pierde sincronización/inicio de sesión de Google). Se instala el
+APK oficial para la arquitectura del equipo (casi seguro `arm64-v8a`; se
+confirma con `adb shell getprop ro.product.cpu.abi`) por `adb install` o
+desde un USB con "orígenes desconocidos" activado. Ventaja añadida: **sin
+Play no se actualiza solo** — versión fija, como nos gusta en un kiosco (y la
+actualizamos nosotros cuando queramos). Comprobación: `chrome://version`,
+`chrome://device-log` con la ticketera conectada, y en el POS Configuración →
+Impresora → WebUSB → prueba. Si imprime, el resto es provisionamiento:
+device owner por `adb shell dpm set-device-owner` + lock task con Chrome
+fijado, o el launcher de Landi si trae modo kiosco. **Cero código en el POS.**
+Riesgo: alguna ROM de POS bloquea instalar APKs ajenos o corre 32 bits; se ve
+en la prueba.
+
+**Ruta 2 — App envoltorio propia (si la ruta 1 no imprime o el cliente no
+quiere Chrome "a mano").** Una app Android mínima (Capacitor o WebView) que
+carga `https://admintools.supermercadosurbina.com` y expone un puente
+`window.AndroidPrinter.print(bytesBase64)` → **USB Host API de Android** →
+bulk transfer a la ticketera. El POS ya genera los bytes ESC/POS
+(`ticketBytes.ts`); solo se agrega un `TicketTransport` `android-bridge` al
+lado de `webusb`/`browser`. **No hace falta el SDK de Landi** (es una
+impresora USB normal), y la propia app puede ser el kiosco (lock task) y
+manejar reconexión de USB. ~5–8 SP + firmar/instalar el APK por `adb`.
+Es la ruta más robusta a largo plazo (no dependemos de un Chrome sideloaded),
+pero es otra pieza que mantener.
+
+Recomendación: **ruta 1 como prueba de concepto ya**; si funciona y el
+cliente acepta, se queda. La ruta 2 se presupuesta solo si la 1 falla.
+
 ## Preguntas para decidir
 1. ~~Modelo exacto~~ Respondido: All-in-One Android 13, 15,6" FHD. Falta
-   confirmar si trae **Google Play / Chrome** (los AOSP puros no sirven para
-   la ruta web) y si tiene **impresora integrada**.
+   ~~confirmar si trae Google Play~~ **No trae Play Store** (ver "Sin Play
+   Store"). Falta confirmar si tiene **impresora integrada** y la arquitectura
+   (`arm64-v8a`).
 2. ¿Qué se quiere resolver: **movilidad** (vender en piso/ruta) o **reemplazar
    una caja fija** (ticket integrado, báscula)? Cambia entre A/C y B.
 3. ¿Se acepta un **EMM** (Android Enterprise) para kiosco y políticas, o se
