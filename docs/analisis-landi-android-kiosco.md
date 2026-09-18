@@ -93,9 +93,45 @@ integrada imprime bien con su SDK y el cliente la quiere sí o sí, se
 presupuesta la app envoltorio como US propia (app + transporte + 58 mm). Si
 acepta una externa, se arranca hoy con USB (80 mm, cero código) o BLE (3 SP).
 
+## Modelo concreto (usuario, 2026-09-18): Landi All-in-One, Android 13, 15,6" FHD, 4/32 GB
+
+Cambia el cuadro a favor: **no es un equipo de mano, es una caja de mostrador
+como el CX20 pero con Android**. Consecuencias:
+
+- **Pantalla 15,6" táctil** → misma UI de escritorio/táctil que caja1/caja2
+  (parrilla US-160, OSK propio, toma de inventario); no hace falta el modo
+  Móvil. Android Chrome renderiza igual que el Chromium de Debian.
+- **USB host de sobra** (los all-in-one traen varios USB-A) → la ticketera
+  ESC/POS **externa por WebUSB funciona con el código actual**, igual que en
+  caja1/caja2 y sin hub OTG. Android no tiene `usblp`, así que tampoco hay
+  que "liberar" la impresora con reglas udev; el sistema pregunta una vez
+  "¿Permitir que Chrome acceda al dispositivo USB?" (marcar "usar por
+  defecto") y Chrome recuerda el permiso por sitio.
+- Si el modelo trae **impresora integrada en la base** (algunas variantes
+  la tienen), aplica lo del escenario anterior: solo por SDK → app
+  envoltorio. Si no la trae, **cero código**.
+- **Android 13** → kiosco por *lock task* (device owner) o el launcher de
+  Landi; WireGuard con la app oficial (always-on). Sin SSH: soporte remoto
+  por AnyDesk/TeamViewer Host para Android o `adb` por red.
+- El teclado del sistema aparecerá además del OSK propio; se resuelve usando
+  el del sistema (`admintools-pos.osk = never`) o poniendo `inputmode="none"`
+  en los campos cuando el OSK propio está activo (ajuste chico en el POS).
+
+**Condición que lo decide todo: que traiga Google Play / Chrome.** Muchos
+all-in-one Android para POS vienen con AOSP sin GMS; ahí no hay Chrome y sin
+Chrome no hay WebUSB (WebView y otros navegadores no lo soportan). Si no trae
+GMS, la salida es la app envoltorio (WebView + SDK Landi para la impresora),
+es decir, el escenario B reducido.
+
+**Veredicto**: con Chrome disponible y ticketera externa, este equipo se
+monta como una caja más de Samuel **sin desarrollo**; solo cambia el
+provisionamiento (kiosco Android en vez de cage/overlayroot) y el método de
+soporte remoto. Lo primero es encender el equipo y mirar si tiene Play Store.
+
 ## Preguntas para decidir
-1. **Modelo exacto** del Landi Android y si trae **Google Play / Chrome** (los
-   AOSP puros no sirven para la ruta web).
+1. ~~Modelo exacto~~ Respondido: All-in-One Android 13, 15,6" FHD. Falta
+   confirmar si trae **Google Play / Chrome** (los AOSP puros no sirven para
+   la ruta web) y si tiene **impresora integrada**.
 2. ¿Qué se quiere resolver: **movilidad** (vender en piso/ruta) o **reemplazar
    una caja fija** (ticket integrado, báscula)? Cambia entre A/C y B.
 3. ¿Se acepta un **EMM** (Android Enterprise) para kiosco y políticas, o se
