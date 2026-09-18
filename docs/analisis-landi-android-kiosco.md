@@ -72,6 +72,27 @@ UI móvil que ya está — sin impresión local (el ticket se imprime en la caja
 fija al cerrar la venta, o por la externa USB si hace falta). Cero desarrollo
 nuevo; solo provisionar.
 
+## Escenario concreto (usuario, 2026-09-18): sin báscula, solo impresora de tickets
+
+Con ese alcance el problema se reduce a **una sola pregunta: ¿qué impresora?**
+
+| Impresora | Código nuevo | Cómo queda |
+|---|---|---|
+| **Integrada del Landi** (58 mm) | App Android envoltorio (WebView/TWA + puente JS → SDK Landi) + `TicketTransport` `android-bridge` en el POS + **layout 58 mm** (`ticketBytes.ts` hoy está a 48 columnas / 576 dots = 80 mm; la integrada es 32 col / 384 dots) | ~8–10 SP + mantener un APK. Es la única forma de usar la térmica interna: el navegador no la ve. |
+| **Externa USB ESC/POS** (80 mm o 58 mm) por cable OTG | **Ninguno** para 80 mm (WebUSB + `ticketBytes.ts` actuales). Para 58 mm, solo el layout (~2–3 SP) | Funciona hoy. Contras: ocupa el único USB (cargar el equipo = hub OTG alimentado), cable colgando de un equipo pensado para ir en la mano. |
+| **Externa Bluetooth** 58/80 mm | `TicketTransport` `webbluetooth` (~3 SP) — **solo si la impresora es BLE** (GATT con característica de escritura, típica en las portátiles chinas); las Bluetooth clásicas (SPP) NO se ven desde Chrome | Sin cables, el equipo sigue siendo móvil. Hay que validar el modelo de impresora con `chrome://bluetooth-internals` antes de comprar. |
+
+Lo que NO cambia con ninguna de las tres: el POS web corre en Chrome Android
+sin tocar código; la gaveta (si la hubiera) va por pulso ESC/POS solo en las
+externas; el kiosco/políticas siguen siendo tema de provisionamiento (lock
+task o launcher), no de código; y sin SSH el soporte remoto cambia de método.
+
+**Recomendación**: antes de decidir, la prueba de 1 hora de abajo con el equipo
+en la mano, sobre todo el punto 4 (el APK demo del fabricante): si la
+integrada imprime bien con su SDK y el cliente la quiere sí o sí, se
+presupuesta la app envoltorio como US propia (app + transporte + 58 mm). Si
+acepta una externa, se arranca hoy con USB (80 mm, cero código) o BLE (3 SP).
+
 ## Preguntas para decidir
 1. **Modelo exacto** del Landi Android y si trae **Google Play / Chrome** (los
    AOSP puros no sirven para la ruta web).
@@ -79,7 +100,7 @@ nuevo; solo provisionar.
    una caja fija** (ticket integrado, báscula)? Cambia entre A/C y B.
 3. ¿Se acepta un **EMM** (Android Enterprise) para kiosco y políticas, o se
    prefiere launcher + permisos manuales?
-4. ¿Hay **productos pesados** en esa caja? Si sí, B (o báscula en otra caja).
+4. ~~¿Hay productos pesados en esa caja?~~ Respondido: **no hay báscula**, solo impresora de tickets (ver escenario concreto).
 
 ## Cómo verificarlo en 1 hora con el equipo en la mano
 1. Abrir `https://admintools.supermercadosurbina.com` en Chrome del Landi:
