@@ -14,7 +14,8 @@ la VPN va por la subred `10.10.0.0/24`.
 | **caja1-samuel** | `10.10.0.4` | Peer (terminal kiosco Samuel) | `ssh caja1-samuel` |
 | **caja2-samuel** | `10.10.0.5` | Peer (terminal kiosco Samuel, 2ª) | `ssh caja2-samuel` |
 | **caja1-lafe** | `10.10.0.6` | Peer (terminal POS Farmacia La Fe, OptiPlex, no táctil) | `ssh caja1-lafe-vpn` · pubkey `AiOmz5/HNkdvtyTvTWwKH11sqotxGSmovo6CrnEhDUo=` (2026-09-19) |
-| *(próximo)* | `10.10.0.7` | — | siguiente IP libre |
+| **pc-lafe** | `10.10.0.7` | Peer (PC del Swing viejo de Farmacia La Fe, Ubuntu 24.04, OptiPlex 3050; hoy corre el POS en Chromium --app y tiene la ticketera POS-80 por CUPS) | `ssh pc-lafe-vpn` (user `fabio`) · pubkey `zR5RwLswCrewaVdUGh6gHoL6nOlukkJHs/BOIBuqa0Y=` (2026-09-19) |
+| *(próximo)* | `10.10.0.8` | — | siguiente IP libre |
 
 - El **hub (Ronal)** es el único con IP pública fija y `ListenPort`. Todos los
   peers se conectan a él; el hub **reenvía** el tráfico entre peers.
