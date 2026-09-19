@@ -13,7 +13,8 @@ la VPN va por la subred `10.10.0.0/24`.
 | **venecia** | `10.10.0.3` | Peer (server cliente) | `ssh <user>@10.10.0.3` |
 | **caja1-samuel** | `10.10.0.4` | Peer (terminal kiosco Samuel) | `ssh caja1-samuel` |
 | **caja2-samuel** | `10.10.0.5` | Peer (terminal kiosco Samuel, 2ª) | `ssh caja2-samuel` |
-| *(próximo)* | `10.10.0.6` | — | siguiente IP libre |
+| **caja1-lafe** | `10.10.0.6` | Peer (terminal POS Farmacia La Fe, OptiPlex, no táctil) | `ssh caja1-lafe-vpn` · pubkey `AiOmz5/HNkdvtyTvTWwKH11sqotxGSmovo6CrnEhDUo=` (2026-09-19) |
+| *(próximo)* | `10.10.0.7` | — | siguiente IP libre |
 
 - El **hub (Ronal)** es el único con IP pública fija y `ListenPort`. Todos los
   peers se conectan a él; el hub **reenvía** el tráfico entre peers.

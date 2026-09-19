@@ -58,6 +58,12 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
 |---|---|---|
 | `caja1-samuel` | `10.10.0.4` | Origen de la plantilla (2026-09-03). Se instaló con GNOME y hubo que purgarlo (386 paquetes). |
 | `caja2-samuel` | `10.10.0.5` | **2026-09-11/12**. Instalación mínima desde el inicio (331 paquetes, sin escritorio) → no hizo falta purgar. Ver «Lecciones de caja2» abajo. |
+- **caja1-lafe** (Farmacia La Fe, 2026-09-19): Dell OptiPlex 3070, Debian 13.7 mínimo,
+  **no táctil** (mouse+teclado), wifi por adaptador USB Realtek `0bda:c820`, solo
+  impresora de tickets (sin báscula ni etiquetera). Admin `farmacialafe`, kiosco `caja1`
+  (uid 1001, sin `dialout`). VPN `10.10.0.6`. Fases 1 y 2 hechas por SSH; fase 3
+  (ticketera) y 4 pendientes. Lección nueva: `su -c` sin `-` no tiene `/usr/sbin` en
+  el PATH → `usermod` "no encontrado"; usar rutas completas o `su -`.
 
 ### Lecciones de caja2 (aplicar en la próxima)
 
