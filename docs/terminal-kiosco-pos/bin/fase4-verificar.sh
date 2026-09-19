@@ -8,7 +8,7 @@ no(){ printf '  \033[31mX\033[0m %-42s %s\n' "$1" "${2:-}"; }
 nn(){ printf '  \033[33m·\033[0m %-42s %s\n' "$1" "${2:-}"; }
 
 if [ "$(id -u)" -ne 0 ]; then
-  echo "  aviso: sin root no se puede mirar dentro de /home/caja1 (perfil de Chromium)."
+  echo "  aviso: sin root no se puede mirar dentro del /home del kiosco (perfil de Chromium)."
   echo "         Para el informe completo:  sudo bash $0"
 fi
 
@@ -43,7 +43,7 @@ else
 fi
 h=$(findmnt -no FSTYPE,OPTIONS /home 2>/dev/null)
 case "$h" in *rw*) ok "/home escribible" "$(echo "$h" | cut -c1-40)";; *) no "/home escribible" "$h";; esac
-P=/home/caja1/.config/pos-chromium
+P=/home/$(sed -n 's/^User=//p' /etc/systemd/system/pos-kiosk.service)/.config/pos-chromium
 [ -d "$P" ] && ok "perfil de Chromium presente" "$(du -sh "$P" 2>/dev/null | cut -f1)" || no "perfil de Chromium" "no existe"
 
 echo; echo "D · Kiosco encerrado"
@@ -61,7 +61,13 @@ fi
 
 echo; echo "E · Hardware"
 [ -e /dev/ttyUSB0 ] && ok "bascula /dev/ttyUSB0" "$(stat -c '%U:%G %a' /dev/ttyUSB0)" || no "bascula /dev/ttyUSB0" "ausente"
-lsusb 2>/dev/null | grep -q 04b8:0e39 && ok "impresora Epson en el bus USB" || no "impresora Epson" "no enumerada"
+# los IDs del hardware concedido a WebUSB/WebSerial salen de la regla udev
+# (distintos en cada caja: Epson en caja1, 3nStar + etiquetera en caja2)
+sed -n 's/.*idVendor}=="\([0-9a-f]*\)".*idProduct}=="\([0-9a-f]*\)".*/\1:\2/p' \
+    /etc/udev/rules.d/99-pos-webusb.rules 2>/dev/null | while read -r id; do
+  d=$(lsusb 2>/dev/null | grep -i "$id" | sed 's/.*ID [0-9a-f:]* //')
+  [ -n "$d" ] && ok "USB $id en el bus" "$d" || no "USB $id" "no enumerado"
+done
 [ -e /dev/usb/lp0 ] && nn "/dev/usb/lp0" "existe (usblp la sujeta; Chromium la suelta al reclamarla)" \
                     || nn "/dev/usb/lp0" "no existe (usblp desenganchado)"
 echo
