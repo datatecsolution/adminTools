@@ -7,7 +7,7 @@
 # un /etc tocado, ni un disco lleno de logs, ni nada que deje el cajero.
 #
 # /home (sda4) SE QUEDA ESCRIBIBLE — eso es lo que hace 'recurse=0'.
-# Es deliberado: ahi vive /home/caja1/.config/pos-chromium, y dentro el
+# Es deliberado: ahi vive /home/<usuario-kiosco>/.config/pos-chromium, y dentro el
 # localStorage con la clave admintools-pos.scale, o sea el protocolo de la
 # bascula ("Torrey (a demanda)", 9600 8N1) y el emparejamiento de la impresora.
 # Si /home se congelara tambien, la caja volveria al protocolo "simulator" —
@@ -37,6 +37,8 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 CONF=/etc/overlayroot.conf
+# El usuario del kiosco se lee de la unidad (caja1, caja2, ...): no cablearlo.
+KIOSK_USER="${KIOSK_USER:-$(sed -n 's/^User=//p' /etc/systemd/system/pos-kiosk.service)}"
 ACTIVO=no
 grep -qE '^overlay(root)? / ' /proc/mounts && ACTIVO=si
 [ -d /media/root-ro ] && ACTIVO=si
@@ -79,7 +81,7 @@ grep -qE '^[^#].*[[:space:]]/home[[:space:]]' /etc/fstab \
   || { echo "   !! /home no aparece en /etc/fstab — abortando" >&2; exit 1; }
 
 # el perfil de Chromium (config de bascula e impresora) tiene que vivir en /home
-PERFIL=/home/caja1/.config/pos-chromium
+PERFIL=/home/$KIOSK_USER/.config/pos-chromium
 if [ -d "$PERFIL" ]; then
   echo "   perfil de Chromium en /home             OK  ($(du -sh "$PERFIL" 2>/dev/null | cut -f1))"
 else
@@ -112,14 +114,14 @@ fi
 
 echo "== 3/5 · Escribiendo $CONF"
 cp -n "$CONF" "$CONF.bak" 2>/dev/null || true
-cat > "$CONF" <<'CONF'
-# Fase 4 — terminal POS caja1-samuel.
+cat > "$CONF" <<CONF
+# Fase 4 — terminal POS $(hostname).
 #
 # tmpfs     : el overlay vive en RAM y se descarta en cada reinicio.
 # swap=1    : si la RAM se llena en un turno largo, tira de la swap (7.7G)
 #             en vez de quedarse sin memoria.
 # recurse=0 : congela SOLO la raiz. /home (sda4) sigue escribiendose, que es
-#             donde estan el perfil de Chromium de caja1 y con el la config de
+#             donde estan el perfil de Chromium de $KIOSK_USER y con el la config de
 #             la bascula (admintools-pos.scale) y el emparejamiento WebUSB.
 #             Si esto pasara a 1, la caja volveria a "simulator" —pesos
 #             inventados— en cada arranque.
