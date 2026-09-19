@@ -50,8 +50,8 @@ URLS=(
   "https://mariposasdoradas.datatecsolution.com/|200|Mariposas POS (demo)"
   "https://mariposasdoradas.datatecsolution.com/admin_tools/api/cierre-caja|401|Mariposas API (demo)"
   "https://pedidosmariposas.datatecsolution.com/|200|Mariposas app de pedidos (demo)"
-  "https://lafe.datatecsolution.com/|200|La Fe POS (demo)"
-  "https://lafe.datatecsolution.com/admin_tools/api/cierre-caja|401|La Fe API (demo)"
+  "https://lafe.datatecsolution.com/|200|La Fe POS (prod)"
+  "https://lafe.datatecsolution.com/admin_tools/api/cierre-caja|401|La Fe API (prod)"
 )
 
 enviar() { # asunto, cuerpo
