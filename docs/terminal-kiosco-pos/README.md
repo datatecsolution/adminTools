@@ -61,9 +61,11 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
 - **caja1-lafe** (Farmacia La Fe, 2026-09-19): Dell OptiPlex 3070, Debian 13.7 mínimo,
   **no táctil** (mouse+teclado), wifi por adaptador USB Realtek `0bda:c820`, solo
   impresora de tickets (sin báscula ni etiquetera). Admin `farmacialafe`, kiosco `caja1`
-  (uid 1001, sin `dialout`). VPN `10.10.0.6`. Fases 1 y 2 hechas por SSH; fase 3
-  (ticketera) y 4 pendientes. Lección nueva: `su -c` sin `-` no tiene `/usr/sbin` en
-  el PATH → `usermod` "no encontrado"; usar rutas completas o `su -`.
+  (uid 1001, sin `dialout`). VPN `10.10.0.6`. Fases 1, 2 y 3 (ticketera NXP
+  Printer-80 por WebUSB) hechas por SSH; fase 4: A, B y D aplicados, `/home` movido a
+  `sda3` (la swap), pendientes E (hash de GRUB) y C (overlayroot + reinicio) y el
+  cierre. Lección nueva: `su -c` sin `-` no tiene `/usr/sbin` en el PATH → `usermod`
+  "no encontrado"; usar rutas completas o `su -`.
 
 ### Lecciones de caja1-lafe (2026-09-19)
 
@@ -93,6 +95,17 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    o `systemd-run`.
 4. Con cable y wifi a la vez NM deja el cable como ruta principal (métrica 100 vs 600) y
    la wifi de respaldo; la VPN no se entera del cambio.
+5. **Mover `/home` a otra partición en fase 4**: `rsync` NO viene en el Debian mínimo y
+   un `a && b && c` bajo `set -e` no aborta si falla `a` → la caja reinició con `/home`
+   vacío (sin llave SSH ni perfil del kiosco). Recuperada desde `tty2` (bloque D aún
+   sin aplicar) con `sudo mount --bind / /mnt/raiz && sudo cp -a /mnt/raiz/home/. /home/`.
+   Reglas: verificar la copia (`du`, `ls .ssh`) ANTES de tocar `fstab` o reiniciar; la
+   plantilla ya instala `rsync`; tras trabajar en la consola local, cerrar la sesión de
+   `tty2` o `chvt 1`, si no `cage` no arranca; borrar la copia vieja con un bind mount.
+6. Chromium mostraba el globo «Traducir» sobre el kiosco (app en español, Chromium en
+   inglés) → `TranslateEnabled: false` en la política (ya en la plantilla). Para ver la
+   pantalla del kiosco por SSH: `sudo -u caja1 env XDG_RUNTIME_DIR=/run/user/1001
+   WAYLAND_DISPLAY=wayland-0 grim /tmp/kiosco.png` (`grim` ya en la plantilla).
 
 ### Lecciones de caja2 (aplicar en la próxima)
 
