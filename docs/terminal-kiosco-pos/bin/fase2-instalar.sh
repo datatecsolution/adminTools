@@ -6,10 +6,13 @@ set -euo pipefail
 S=/home/adminpos/pos-terminal
 if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo"; fi
 
-echo "### 1/7 · Instalando cage + chromium + libinput-tools"
+echo "### 1/7 · Instalando cage + chromium + libinput-tools (+ rsync y grim para soporte)"
 $SUDO apt-get update -qq
+# rsync: el Debian minimo no lo trae y la fase 4 lo usa para mover /home
+# (caja1-lafe 2026-09-19 quedo sin /home por su ausencia). grim: capturar la
+# pantalla del kiosco por SSH (sudo -u <kiosco> WAYLAND_DISPLAY=wayland-0 grim).
 $SUDO env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-     cage chromium libinput-tools
+     cage chromium libinput-tools rsync grim
 
 echo "### 2/7 · Desplegando /opt/pos"
 $SUDO install -d -o root -g root -m 755 /opt/pos /opt/pos/bin /opt/pos/www

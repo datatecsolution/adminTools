@@ -10,6 +10,9 @@
     "  bascula   CH340 (Torrey)     1a86:7523 -> 6790:29987"
   ],
 
+  "_comentario_translate": "Sin el globo 'Traducir' de Chromium (aparecio en caja1-lafe con la app en espanol).",
+  "TranslateEnabled": false,
+
   "WebUsbAllowDevicesForUrls": [
     {
       "devices": [{ "vendor_id": 1208, "product_id": 3641 }],
