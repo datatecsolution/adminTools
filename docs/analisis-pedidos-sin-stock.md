@@ -1,8 +1,10 @@
 # Análisis — App de pedidos sin verificar stock (modo cliente final)
 
 **Fecha**: 2026-09-20 · **Origen**: canales de venta de Samuel (2026-09-09/10) y decisión #3 de
-`analisis-tienda-app-pedidos.md` · **Estado**: análisis listo, implementación pendiente de que
-el cliente confirme que quiere pedidos sin verificación de inventario.
+`analisis-tienda-app-pedidos.md` · **Estado**: **CONFIRMADO por el cliente el 2026-09-20** —
+Samuel necesita que la app permita pedidos sin inventario; la bandera es **por usuario**
+(la misma `facturar_sin_inventario` que ya usa el cajero) y el inventario queda **informativo**
+para el cliente. US-187 desbloqueada.
 
 ## 1. El problema
 
@@ -60,11 +62,11 @@ Total **~4 SP**, sin migración, reversible (apagar la bandera vuelve a verifica
 
 ## 5. Riesgos y decisiones pendientes
 
-| # | Punto | Propuesta |
+| # | Punto | Decisión |
 |---|---|---|
-| 1 | ¿Samuel quiere pedidos sin verificar stock? | **Pendiente del cliente** (2026-09-10: "probablemente sí"). Sin esto no se arranca. |
-| 2 | ¿Bandera por usuario o global para la instalación? | Por usuario (ya existe y permite mezclar vendedores de ruta y clientes finales). |
-| 3 | ¿El cliente final debe ver el stock? | Sí, informativo: ayuda a pedir realista. Si Samuel prefiere ocultarlo, es un `if` en el badge. |
+| 1 | ¿Samuel quiere pedidos sin verificar stock? | **Sí** (confirmado 2026-09-20). |
+| 2 | ¿Bandera por usuario o global para la instalación? | **Por usuario**, como en el cajero (confirmado 2026-09-20). |
+| 3 | ¿El cliente final debe ver el stock? | **Sí, informativo** (confirmado 2026-09-20). |
 | 4 | Facturar un pedido con líneas sin stock | Ya lo resuelve el flujo actual: al facturar la orden en el POS/Swing el guard de mostrador (si está activo) avisa el conflicto y el cajero ajusta cantidades. |
 
 ## 6. Referencias
