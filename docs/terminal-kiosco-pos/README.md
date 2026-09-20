@@ -133,6 +133,25 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    se instala con `sudo bash ~/pos-terminal/bin/fix-pagina-espera.sh` (escribe en el disco
    real por `overlayroot-chroot` y reinicia el kiosco). El POS necesita `/healthz` en su nginx
    (admintools-pos#99); con un POS anterior el 404 se toma como "servidor vivo".
+10. **Con overlayroot, NetworkManager no puede reescribir `/etc/resolv.conf`** (la raíz es ro
+   y el overlay no admite `remount,rw`): el archivo queda congelado con lo que tuviera al
+   congelar. En caja1-lafe quedó VACÍO → la caja tenía red y VPN pero **no resolvía nombres** y
+   el POS no cargaba (2026-09-20). Además el DNS que reparte el router de la farmacia (8.8.8.8)
+   no responde desde esa red. Fix `bin/fix-dns-resolv-nm.sh`: en el disco real
+   `/etc/resolv.conf → /run/NetworkManager/resolv.conf` (tmpfs, NM lo regenera en cada
+   arranque) y `dns=192.168.1.1;1.1.1.1;` + `ignore-auto-dns=true` en los keyfiles de NM; en
+   vivo, `mount --bind` del resolv.conf de NM y `nmcli device modify` (cambia la conexión
+   activa en memoria sin tocar disco). caja1-samuel tiene el mismo archivo congelado pero con
+   el router adentro (por eso no falla): aplicarle el mismo fix en la próxima visita.
+   Regla general para cajas endurecidas: lo que NM/systemd necesiten escribir en `/etc` debe
+   ser un enlace a `/run`.
+11. **pc-lafe (Ubuntu 24.04.3, kernel 7.0) con TP-Link Archer T2U Nano (RTL8811AU)**: el driver
+   del kernel `rtw88_8821au` ve la red pero no se asocia al router WPA/TKIP mixto (mismo
+   síntoma que la caja1). El driver de fabricante `8821au` de Morrownr **no compila con
+   kernels > 6.14** (el proyecto lo abandonó a favor del in-kernel) y su instalador deja un
+   blacklist del driver del kernel aunque falle → hay que retirarlo. Sin plan B de driver:
+   pc-lafe queda por cable; la solución real es el router en WPA2-AES (o un adaptador
+   MediaTek MT7921AU/MT7612U).
 8. Chromium mostraba el globo «Traducir» sobre el kiosco (app en español, Chromium en
    inglés) → `TranslateEnabled: false` en la política (ya en la plantilla). Para ver la
    pantalla del kiosco por SSH: `sudo -u caja1 env XDG_RUNTIME_DIR=/run/user/1001
