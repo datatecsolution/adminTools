@@ -120,7 +120,7 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    Un reinicio más y queda fijo. Si el cierre (`fase4-cierre-instalacion.sh --sudo`)
    deja `/media/root-ro` en rw ("mount point is busy") y el `remount,ro` no entra, un
    reinicio lo deja `ro` (nada escribe ahí mientras tanto).
-8. Un `grub-mkpasswd-pbkdf2 | grep …` por SSH parece colgado: el «Enter password:» va a
+7. Un `grub-mkpasswd-pbkdf2 | grep …` por SSH parece colgado: el «Enter password:» va a
    stdout y se lo traga el `grep`. Usar `grub-mkpasswd-pbkdf2 | tee /dev/tty | grep -o
    "grub.pbkdf2.*" | sudo tee /root/grub-pass.hash` y comprobar con `test -s` — el
    `tee` no falla aunque reciba vacío, así que el "HASH GUARDADO" del eco no prueba nada.
