@@ -65,6 +65,35 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
   (ticketera) y 4 pendientes. Lección nueva: `su -c` sin `-` no tiene `/usr/sbin` en
   el PATH → `usermod` "no encontrado"; usar rutas completas o `su -`.
 
+### Lecciones de caja1-lafe (2026-09-19)
+
+1. **No validar una migración de red antes de que corra la red de seguridad.** En el
+   reinicio de validación comprobé la red a los 30 s; `net-fallback` corría a los 90 s,
+   su ping falló en ese instante y **restauró ifupdown y deshabilitó NetworkManager**: la
+   caja llegó al cliente sabiendo solo la wifi del sitio de preparación. Regla: retirar
+   `net-fallback` (o esperar sus 90 s) antes de dar por buena la migración; y no dejar en
+   un equipo que cambia de sitio un fallback que deshabilite NM.
+2. **Adaptador wifi USB Realtek RTL8821CU (`0bda:c820`) con un router WPA/WPA2 mixto
+   TKIP en 2,4 GHz**: el driver del kernel `rtw88_8821cu` lo ve en el escaneo pero nunca
+   se asocia (NM: `ssid-not-found` a los 25 s, sin intento de autenticación en el kernel);
+   con un hotspot WPA2/WPA3-AES sí conecta. Probado sin éxito: proto/cifrados fijos,
+   banda 2,4, powersave off, MAC aleatoria, recarga del driver + `wpa_supplicant`,
+   BSSID/canal fijos, hidden, Bluetooth bloqueado. **Solución**: driver de fabricante
+   `8821cu` de Morrownr por DKMS (`apt install dkms bc build-essential git
+   firmware-realtek linux-headers-$(uname -r)`; `git clone
+   https://github.com/morrownr/8821cu-20210916 /usr/src/8821cu-20210916 &&
+   ./install-driver.sh NoPrompt`; blacklist `rtw88_8821cu`/`rtw88_8821c` en
+   `/etc/modprobe.d/`) y recrear la conexión **desde el escaneo** (`nmcli dev wifi connect
+   <BSSID> password … name …`), luego quitar el `bssid` y renombrar. Conecta por SSID
+   solo y sobrevive al reinicio (DKMS recompila con cada kernel). El TP-Link "Archer T2U
+   V2" que descargó el usuario era MediaTek MT7610U de 2015: otro chip, no aplica.
+3. `rfkill` no viene en el Debian mínimo (bloquear BT: `echo 1 >
+   /sys/class/rfkill/rfkillN/soft`). `nmcli con up` por SSH sin sesión gráfica necesita
+   `sudo` (polkit) y un proceso lanzado con `&` muere al cerrar el SSH: usar `sudo` directo
+   o `systemd-run`.
+4. Con cable y wifi a la vez NM deja el cable como ruta principal (métrica 100 vs 600) y
+   la wifi de respaldo; la VPN no se entera del cambio.
+
 ### Lecciones de caja2 (aplicar en la próxima)
 
 1. **En el instalador de Debian**: desmarcar todo entorno de escritorio; dejar solo
