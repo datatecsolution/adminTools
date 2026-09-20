@@ -61,11 +61,11 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
 - **caja1-lafe** (Farmacia La Fe, 2026-09-19): Dell OptiPlex 3070, Debian 13.7 mínimo,
   **no táctil** (mouse+teclado), wifi por adaptador USB Realtek `0bda:c820`, solo
   impresora de tickets (sin báscula ni etiquetera). Admin `farmacialafe`, kiosco `caja1`
-  (uid 1001, sin `dialout`). VPN `10.10.0.6`. Fases 1, 2 y 3 (ticketera NXP
-  Printer-80 por WebUSB) hechas por SSH; fase 4: A, B y D aplicados, `/home` movido a
-  `sda3` (la swap), pendientes E (hash de GRUB) y C (overlayroot + reinicio) y el
-  cierre. Lección nueva: `su -c` sin `-` no tiene `/usr/sbin` en el PATH → `usermod`
-  "no encontrado"; usar rutas completas o `su -`.
+  (uid 1001, sin `dialout`). VPN `10.10.0.6`. **Las 4 fases completas por SSH el
+  2026-09-19** (ticketera NXP Printer-80 por WebUSB; `/home` en `sda3`, la antigua swap;
+  overlayroot ensayado con un arranque de un solo uso antes de dejarlo fijo; GRUB con
+  clave; sudo pide contraseña). Lección: `su -c` sin `-` no tiene `/usr/sbin` en el
+  PATH → `usermod` "no encontrado"; usar rutas completas o `su -`.
 
 ### Lecciones de caja1-lafe (2026-09-19)
 
@@ -102,7 +102,29 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    Reglas: verificar la copia (`du`, `ls .ssh`) ANTES de tocar `fstab` o reiniciar; la
    plantilla ya instala `rsync`; tras trabajar en la consola local, cerrar la sesión de
    `tty2` o `chvt 1`, si no `cage` no arranca; borrar la copia vieja con un bind mount.
-6. Chromium mostraba el globo «Traducir» sobre el kiosco (app en español, Chromium en
+6. **Ensayar overlayroot con un arranque de un solo uso antes de dejarlo fijo** (sirve
+   para cualquier caja sin nadie al lado). overlayroot también se activa por parámetro
+   del kernel, así que: (a) entrada extra en `/etc/grub.d/40_custom` — copia de la
+   línea `linux` de la entrada normal más `overlayroot=tmpfs:swap=1,recurse=0`, con
+   `--unrestricted` si GRUB ya tiene clave — y `update-grub`; (b) `grub-reboot 'Debian
+   (ensayo overlayroot, un solo arranque)'` (usa `next_entry` de `grubenv`: vale UNA vez,
+   el siguiente arranque vuelve solo a la entrada normal); (c) `reboot` y, si vuelve por
+   VPN, verificar `/` overlay, `/media/root-ro` ro, `/home` rw, kiosco y VPN; si NO
+   vuelve, basta apagar y encender: arranca escribible como antes. (d) Aprobado el
+   ensayo, la config permanente se puede dejar desde ese mismo arranque con
+   `overlayroot-chroot` (escribir `/etc/overlayroot.conf`, quitar la entrada de ensayo,
+   `update-initramfs -u`); **`update-grub` dentro de `overlayroot-chroot` falla**
+   (`grub-probe: failed to get canonical path of /dev/sda2`, no monta `/dev`): hacer
+   `mount -o remount,rw /media/root-ro`, bind-montar `dev dev/pts proc sys run` en
+   `/media/root-ro`, `chroot /media/root-ro update-grub`, desmontar y `remount,ro`.
+   Un reinicio más y queda fijo. Si el cierre (`fase4-cierre-instalacion.sh --sudo`)
+   deja `/media/root-ro` en rw ("mount point is busy") y el `remount,ro` no entra, un
+   reinicio lo deja `ro` (nada escribe ahí mientras tanto).
+8. Un `grub-mkpasswd-pbkdf2 | grep …` por SSH parece colgado: el «Enter password:» va a
+   stdout y se lo traga el `grep`. Usar `grub-mkpasswd-pbkdf2 | tee /dev/tty | grep -o
+   "grub.pbkdf2.*" | sudo tee /root/grub-pass.hash` y comprobar con `test -s` — el
+   `tee` no falla aunque reciba vacío, así que el "HASH GUARDADO" del eco no prueba nada.
+8. Chromium mostraba el globo «Traducir» sobre el kiosco (app en español, Chromium en
    inglés) → `TranslateEnabled: false` en la política (ya en la plantilla). Para ver la
    pantalla del kiosco por SSH: `sudo -u caja1 env XDG_RUNTIME_DIR=/run/user/1001
    WAYLAND_DISPLAY=wayland-0 grim /tmp/kiosco.png` (`grim` ya en la plantilla).
