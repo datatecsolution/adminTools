@@ -18,6 +18,7 @@ echo "### 2/7 · Desplegando /opt/pos"
 $SUDO install -d -o root -g root -m 755 /opt/pos /opt/pos/bin /opt/pos/www
 $SUDO install -o root -g root -m 755 "$S/bin/pos-kiosk-start" /opt/pos/bin/pos-kiosk-start
 $SUDO install -o root -g root -m 644 "$S/www/index.html"     /opt/pos/www/index.html
+$SUDO install -o root -g root -m 644 "$S/www/esperando.html" /opt/pos/www/esperando.html
 
 echo "### 3/7 · Instalando unidades systemd"
 $SUDO install -o root -g root -m 644 "$S/etc/pos-web.service"   /etc/systemd/system/

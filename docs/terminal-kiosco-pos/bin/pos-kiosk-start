@@ -14,11 +14,21 @@ if [ -f "$PREFS" ]; then
   sed -i 's/"exit_type":"[^"]*"/"exit_type":"Normal"/; s/"exited_cleanly":false/"exited_cleanly":true/' "$PREFS" 2>/dev/null || true
 fi
 
+# Si el POS aún no responde (wifi que tarda, servidor caído al arrancar),
+# se abre primero la página de espera local, que sondea /healthz y salta al
+# POS sola. Chromium en kiosco no reintenta una carga fallida: sin esto la
+# caja quedaba en la página de error hasta reiniciarla (caja1-lafe 2026-09-20).
+ESPERA="/opt/pos/www/esperando.html"
+INICIAL="$URL"
+if [ -f "$ESPERA" ] && ! wget -q --spider -T 5 -t 1 "${URL%/}/healthz" 2>/dev/null; then
+  INICIAL="file://$ESPERA?url=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1],safe=""))' "$URL" 2>/dev/null || echo "$URL")"
+fi
+
 # SIN -s (Fase 4): el cajero no puede cambiar de terminal virtual.
 # Para reabrirlo:  sudo bash ~/pos-terminal/bin/fase4-cerrar-consola.sh --abrir
 exec cage -d -- chromium \
   --kiosk \
-  --app="$URL" \
+  --app="$INICIAL" \
   --user-data-dir="$PROFILE" \
   --ozone-platform=wayland \
   --start-maximized \

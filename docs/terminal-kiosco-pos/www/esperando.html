@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectando con el sistema</title>
+<style>
+  html,body{height:100%;margin:0}
+  body{display:grid;place-items:center;background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif;text-align:center}
+  .c{max-width:32rem;padding:2rem}
+  h1{font-size:1.75rem;margin:0 0 .5rem}
+  p{margin:.35rem 0;color:#94a3b8;font-size:1.05rem}
+  .dot{display:inline-block;width:.9rem;height:.9rem;border-radius:50%;background:#22c55e;margin-right:.5rem;animation:p 1.2s infinite}
+  @keyframes p{0%,100%{opacity:.25}50%{opacity:1}}
+  #n{font-variant-numeric:tabular-nums}
+  small{display:block;margin-top:1.5rem;color:#64748b}
+</style>
+<div class="c">
+  <h1><span class="dot"></span>Conectando con el sistema…</h1>
+  <p id="m">Esperando la red de la tienda.</p>
+  <p id="n"></p>
+  <small>La caja abrirá el punto de venta sola en cuanto haya conexión. No hace falta tocar nada.</small>
+</div>
+<script>
+// Página de espera del kiosco (docs/terminal-kiosco-pos). Chromium en modo
+// kiosco NO reintenta una carga fallida: si arranca antes de que la wifi o el
+// servidor respondan, se queda en su página de error hasta que alguien
+// reinicie la caja (caja1-lafe 2026-09-20). Esta página sondea GET /healthz
+// del POS (200 real de su nginx, con CORS) y recién entonces abre el POS.
+// Un 5xx del proxy/Cloudflare o un fallo de red siguen esperando. Un 404 se
+// toma como "servidor vivo" (POS anterior a /healthz).
+const url = new URLSearchParams(location.search).get('url') || 'http://localhost:8080/';
+const base = url.endsWith('/') ? url : url + '/';
+let intento = 0, inicio = Date.now();
+const m = document.getElementById('m'), n = document.getElementById('n');
+async function sondear() {
+  intento++;
+  const seg = Math.round((Date.now() - inicio) / 1000);
+  n.textContent = 'Intento ' + intento + ' · ' + seg + ' s';
+  try {
+    const r = await fetch(base + 'healthz', { cache: 'no-store', signal: AbortSignal.timeout(5000) });
+    if (r.ok || r.status === 404) { m.textContent = 'Conexión establecida. Abriendo el punto de venta…'; location.replace(url); return; }
+    m.textContent = 'El servidor respondió ' + r.status + '. Reintentando…';
+  } catch (e) {
+    m.textContent = seg < 90 ? 'Esperando la red de la tienda.' : 'Sin conexión con el servidor. Revisá el cable o la wifi; se reintenta solo.';
+  }
+  setTimeout(sondear, 3000);
+}
+sondear();
+</script>
+</html>

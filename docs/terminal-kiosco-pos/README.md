@@ -124,6 +124,15 @@ Pendientes de la caja original: scanner y gaveta (falta el hardware), apagar
    stdout y se lo traga el `grep`. Usar `grub-mkpasswd-pbkdf2 | tee /dev/tty | grep -o
    "grub.pbkdf2.*" | sudo tee /root/grub-pass.hash` y comprobar con `test -s` — el
    `tee` no falla aunque reciba vacío, así que el "HASH GUARDADO" del eco no prueba nada.
+9. **Chromium en kiosco no reintenta una carga fallida.** Si arranca antes de que la wifi
+   tenga salida o mientras el servidor no responde (2026-09-20: reinicio de Ronal con el proxy
+   caído), se queda en su página de error hasta que alguien reinicie la caja. Ahora
+   `pos-kiosk-start` comprueba `GET /healthz` del POS y, si no responde, abre primero
+   `www/esperando.html` (local), que sondea `/healthz` cada 3 s y salta al POS sola cuando
+   hay un 200 real (un 5xx del proxy/Cloudflare sigue esperando). En una caja ya endurecida
+   se instala con `sudo bash ~/pos-terminal/bin/fix-pagina-espera.sh` (escribe en el disco
+   real por `overlayroot-chroot` y reinicia el kiosco). El POS necesita `/healthz` en su nginx
+   (admintools-pos#99); con un POS anterior el 404 se toma como "servidor vivo".
 8. Chromium mostraba el globo «Traducir» sobre el kiosco (app en español, Chromium en
    inglés) → `TranslateEnabled: false` en la política (ya en la plantilla). Para ver la
    pantalla del kiosco por SSH: `sudo -u caja1 env XDG_RUNTIME_DIR=/run/user/1001
