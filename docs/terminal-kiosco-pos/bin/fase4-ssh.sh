@@ -20,13 +20,16 @@
 #
 # Uso:  sudo bash /home/adminpos/pos-terminal/bin/fase4-ssh.sh
 set -euo pipefail
+# Usuario administrador de la caja (el que entra por SSH y corre estos scripts con sudo).
+# Se toma de SUDO_USER; se puede forzar con ADMIN_USER=... (caja1/caja2-samuel: adminpos, caja1-lafe: farmacialafe).
+ADMIN_USER="${ADMIN_USER:-${SUDO_USER:-adminpos}}"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Este script necesita root:  sudo bash $0" >&2
   exit 1
 fi
 
-AUTH=/home/adminpos/.ssh/authorized_keys
+AUTH=/home/$ADMIN_USER/.ssh/authorized_keys
 
 echo "== 1/5 · Instalando openssh-server"
 if dpkg -s openssh-server >/dev/null 2>&1; then
@@ -39,10 +42,10 @@ fi
 echo "== 2/5 · Decidiendo si se permite contrasena"
 if [ -s "$AUTH" ]; then
   PW=no
-  echo "   adminpos tiene clave publica ($(grep -c . "$AUTH") linea/s) -> contrasena APAGADA"
+  echo "   $ADMIN_USER tiene clave publica ($(grep -c . "$AUTH") linea/s) -> contrasena APAGADA"
 else
   PW=yes
-  echo "   adminpos NO tiene ~/.ssh/authorized_keys -> contrasena ENCENDIDA (ver aviso final)"
+  echo "   $ADMIN_USER NO tiene ~/.ssh/authorized_keys -> contrasena ENCENDIDA (ver aviso final)"
 fi
 
 echo "== 3/5 · Escribiendo /etc/ssh/sshd_config.d/99-pos.conf"
@@ -51,7 +54,7 @@ cat > /etc/ssh/sshd_config.d/99-pos.conf <<CONF
 # Fase 4 — consola de administracion del terminal POS.
 # Este fichero manda sobre /etc/ssh/sshd_config (se incluye antes).
 PermitRootLogin no
-AllowUsers adminpos
+AllowUsers $ADMIN_USER
 PasswordAuthentication $PW
 KbdInteractiveAuthentication $PW
 PubkeyAuthentication yes
@@ -96,7 +99,7 @@ cat <<TXT
    ---------------------------------------------------------------
    PRUEBALO AHORA desde otro equipo de la red, ANTES de seguir:
 
-       ssh adminpos@$(ip -4 -o addr show scope global | awk 'NR==1{split($4,a,"/"); print a[1]}')
+       ssh $ADMIN_USER@$(ip -4 -o addr show scope global | awk 'NR==1{split($4,a,"/"); print a[1]}')
 
    No cierres esa sesion hasta terminar la fase.
    ---------------------------------------------------------------
@@ -104,11 +107,11 @@ TXT
 
 if [ "$PW" = yes ]; then
 cat <<'TXT'
-   AVISO — la entrada por contrasena esta encendida porque adminpos no tiene
+   AVISO — la entrada por contrasena esta encendida porque $ADMIN_USER no tiene
    clave publica. Es aceptable en una LAN, pero lo correcto es dejar tu clave
    y apagarla. Desde TU equipo:
 
-       ssh-copy-id adminpos@<ip-de-la-caja>
+       ssh-copy-id $ADMIN_USER@<ip-de-la-caja>
 
    y despues, aqui:
 

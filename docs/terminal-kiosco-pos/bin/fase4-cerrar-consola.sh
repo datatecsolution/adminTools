@@ -18,13 +18,16 @@
 # Uso:  sudo bash /home/adminpos/pos-terminal/bin/fase4-cerrar-consola.sh
 #       sudo bash .../fase4-cerrar-consola.sh --abrir   (vuelve a poner el -s)
 set -euo pipefail
+# Usuario administrador de la caja (el que entra por SSH y corre estos scripts con sudo).
+# Se toma de SUDO_USER; se puede forzar con ADMIN_USER=... (caja1/caja2-samuel: adminpos, caja1-lafe: farmacialafe).
+ADMIN_USER="${ADMIN_USER:-${SUDO_USER:-adminpos}}"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Este script necesita root:  sudo bash $0" >&2
   exit 1
 fi
 
-S=/home/adminpos/pos-terminal
+S=/home/$ADMIN_USER/pos-terminal
 SRC=$S/bin/pos-kiosk-start
 DST=/opt/pos/bin/pos-kiosk-start
 MODO="${1:---cerrar}"

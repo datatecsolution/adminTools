@@ -9,8 +9,11 @@
 #   sudo bash ~/usblp.sh            instala la regla
 #   sudo bash ~/usblp.sh --quitar   la desinstala y devuelve /dev/usb/lp0
 set -euo pipefail
+# Usuario administrador de la caja (el que entra por SSH y corre estos scripts con sudo).
+# Se toma de SUDO_USER; se puede forzar con ADMIN_USER=... (caja1/caja2-samuel: adminpos, caja1-lafe: farmacialafe).
+ADMIN_USER="${ADMIN_USER:-${SUDO_USER:-adminpos}}"
 
-S=/home/adminpos/pos-terminal
+S=/home/$ADMIN_USER/pos-terminal
 REGLA=/etc/udev/rules.d/99-pos-liberar-usblp.rules
 if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo"; fi
 

@@ -22,13 +22,16 @@
 #
 # Uso:  sudo bash /home/adminpos/pos-terminal/bin/fase4-endurecer.sh
 set -euo pipefail
+# Usuario administrador de la caja (el que entra por SSH y corre estos scripts con sudo).
+# Se toma de SUDO_USER; se puede forzar con ADMIN_USER=... (caja1/caja2-samuel: adminpos, caja1-lafe: farmacialafe).
+ADMIN_USER="${ADMIN_USER:-${SUDO_USER:-adminpos}}"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Este script necesita root:  sudo bash $0" >&2
   exit 1
 fi
 
-S=/home/adminpos/pos-terminal
+S=/home/$ADMIN_USER/pos-terminal
 
 echo "== 1/6 · Congelando las actualizaciones automaticas"
 for u in apt-daily.timer apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service; do
