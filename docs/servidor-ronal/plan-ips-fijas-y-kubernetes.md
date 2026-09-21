@@ -95,3 +95,44 @@ custom locations literales del NPM por un proxy que re-resuelva (Traefik con lab
 1. ¿Ejecuto el paso 1 esta noche después del cierre de Samuel (o mañana antes de las 07:00)?
 2. ¿Autorizás el paso 2 (auto-reparación en el arranque)?
 3. Los reinicios del server: ¿quién puede revisar UPS/energía del T140?
+
+## 6. Ejecución — 2026-09-20
+
+**Paso 0/1 (19:37–19:47) HECHO.** Respaldos: compose `.bak-ips-20260920_193720` en los 4 stacks y
+`~/backups-npm/npm-data-20260920_193720.tgz` (config + certificados del proxy). Scripts en
+`~/ips-fijas/` (copias en esta carpeta): `mover.sh <stack> <api> <ip> [servicio]` y `verificar.sh`.
+**Ensayo previo en dulce**, ida (`.22→.204`) y vuelta (`.204→.22`): destapó que en dulce el servicio
+del compose (`api-pruebas`) no se llama como el contenedor (`api-pruebas-dulce`) — corregido antes de
+tocar producción. Mejora sobre el plan: el proxy **no se reinicia**; tras recrear la API se hace
+`nginx -t` + `nginx -s reload` (recarga graciosa, re-resuelve la IP sin cortar a nadie).
+
+| Stack | IP | API arriba en |
+|---|---|---|
+| Samuel | `.21 → .201` | 8,4 s |
+| La Fe | `.18 → .202` | 8,3 s |
+| Mariposas | `.14 → .203` | 8,4 s |
+| Dulce (pruebas) | `.22 → .204` | 8,4 s |
+
+16 dominios verificados tras cada movimiento; 0 errores en las APIs. Corte real: ~8 s de API por
+cliente, uno a la vez. Rollback = `mover.sh` con la IP anterior (probado).
+
+**Paso 2 (20:05–20:08) HECHO.** `~/bin/docker-repair.sh` (copia aquí), llamado por `docker-watch.sh`
+en cada corrida (cada 2 min) y en `@reboot`. Reglas implementadas tal como se acordaron:
+1. contenedor de cliente no running → `compose up -d` de su servicio, máx. 3 intentos (0/4/8 min);
+   al 3º se rinde con correo y diagnóstico (IP tomada + quién la tiene, disco, dependencia, log) y
+   no insiste hasta verlo running o hasta que se borre `~/.docker-watch/rep_<contenedor>`;
+2. el proxy solo se reinicia si NO sirve (443 sin respuesta y sin workers), máx. 1 vez/30 min;
+   si sirve pero `nginx -t` falla, solo avisa (1 vez/30 min) — nunca lo reinicia;
+3. `~/.docker-watch/pausa` desactiva las reparaciones (ponerlo durante los deploys) y `flock`
+   evita corridas solapadas;
+4. nunca desconecta/mueve otros contenedores, ni toca BD, ni reinicia lo que funciona.
+`docker-repair.sh --status` = simulacro sin actuar ni escribir estado.
+
+**Pruebas en dulce**: (A) `docker stop api-pruebas-dulce` → levantado solo en el intento 1, con su
+IP `.204`, API en 6,3 s; (B) IP fija apuntada a una tomada (`.2`, de `pedidos-mariposas`) → 3
+intentos fallidos con `Address already in use` → «ME RINDO» con el diagnóstico correcto → tras
+corregir el compose y borrar el contador, reparado en el intento 1. Durante la prueba A, con la
+API parada, el vigilante detectó «proxy sirviendo pero su config NO valida» y **no** lo reinició (la
+regla 2 funcionando; ese aviso sí salió por correo).
+
+**Paso 3 pendiente**: energía/UPS del T140 (8 arranques sin apagado limpio desde el 16-sep).
