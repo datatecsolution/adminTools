@@ -137,6 +137,7 @@ case "${1:-}" in
     echo "resumen de prueba enviado a $DEST"; exit 0;;
   --boot)
     sleep 120
+    "$HOME/bin/docker-repair.sh" || true
     chequear
     enviar "[$HOST] el servidor se REINICIO ($(uptime -s))" "$(cuadro)"
     # el arranque ya se reporto: el cuadro queda como avisado
@@ -145,6 +146,10 @@ case "${1:-}" in
   --status)
     chequear; cuadro; exit 0;;
 esac
+
+# US: auto-reparacion (docker-repair.sh) ANTES de chequear: reglas y pruebas en
+# adminTools/docs/servidor-ronal/plan-ips-fijas-y-kubernetes.md (2026-09-20).
+"$HOME/bin/docker-repair.sh" || true
 
 chequear
 
