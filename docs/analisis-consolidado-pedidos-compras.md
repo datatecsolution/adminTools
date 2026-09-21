@@ -56,15 +56,45 @@ piden sin verificar stock, el supermercado necesita ver el agregado de lo pedido
    mandar al proveedor. Vista previa por orden (qué cliente pidió qué) al expandir una fila.
 3. Sin migración. Sin persistir nada: es un reporte.
 
-### Fase 2 — consolidado persistente y compra sugerida (~4 SP, opcional)
+### Fase 2 — consolidado persistente y compra (US-190, ~4–5 SP)
 
-- Guardar el consolidado como documento (`consolidados_pedidos` + `consolidados_pedidos_ordenes`,
-  estado Abierto/Comprado/Cerrado), con la misma regla del Swing: **una orden no puede estar en dos
-  consolidados abiertos** (equivalente a `verificarExistenciaEnRuta`). Sirve para no comprar dos
-  veces lo mismo y para el historial.
-- Botón **«Generar compra»**: pre-carga el formulario de compras del POS con los faltantes
-  agrupados por proveedor (si el maestro trae proveedor; si no, elección manual). Cierra el
-  círculo pedido → compra → recepción → despacho.
+**Estado 2026-09-20**: la fase 1 (US-188) está en producción en Samuel. Es **solo un reporte**: no
+guarda nada, no marca las órdenes, y una misma orden puede entrar en tantos consolidados como se
+quiera. La fase 2 añade lo que el Swing sí tiene en Rutas de entrega (la ruta se guarda y una
+factura no puede estar en dos rutas) y el enlace con la compra.
+
+#### 2a. Consolidado persistente (~2,5 SP)
+
+- **Migración V54 (aditiva)**: `consolidados_pedidos` (`id`, `fecha`, `usuario`, `codigo_bodega`,
+  `estado` = Abierto / Comprado / Cerrado, `observacion`, `numero_compra` nullable) y
+  `consolidados_pedidos_ordenes` (`id_consolidado`, `numero_factura` de la orden). Equivalentes a
+  `rutas_entregas` + `entregas_facturas`.
+- **API**: `POST /orders/consolidados` (crea desde las órdenes seleccionadas y devuelve el reporte),
+  `GET /orders/consolidados` (lista con filtros fecha/estado/usuario), `GET /orders/consolidados/{id}`
+  (el mismo reporte de la fase 1 recalculado contra la existencia actual), `PATCH
+  /orders/consolidados/{id}/estado`. `POST` rechaza con 422 y el número del consolidado si alguna
+  orden ya está en uno **Abierto** (regla `verificarExistenciaEnRuta` del Swing); al pasar a
+  Comprado/Cerrado la orden se libera.
+- **POS**: en Órdenes, «Consolidar N órdenes» pasa a **crear** el consolidado y abrir su reporte;
+  pantalla nueva **Consolidados** (fecha, estado, nº órdenes, faltante, usuario; reimprimir PDF/CSV,
+  cambiar estado); en la fila de cada orden, chip «en consolidado #N».
+
+#### 2b. «Generar compra» (~1,5 SP)
+
+- Botón en el consolidado que **precarga el formulario de Compras** del POS (`POST /purchases`, ya
+  existe) con los productos con faltante y sus cantidades; el usuario elige proveedor y confirma. El
+  consolidado pasa a *Comprado* y guarda `numero_compra`.
+- Si el maestro trae proveedor por producto, se agrupa (una compra por proveedor); si no, una sola
+  compra con proveedor a elegir.
+
+#### Decisiones pendientes para arrancar la fase 2
+
+| # | Decisión | Propuesta |
+|---|---|---|
+| 1 | ¿Bloquear la orden repetida solo mientras el consolidado esté *Abierto*, o siempre? | Solo *Abierto* (se libera al comprar/cerrar). |
+| 2 | ¿Las órdenes cambian de estado al consolidar o cerrar? | No: el consolidado guarda la relación; el estado de la orden sigue su ciclo de venta. |
+| 3 | ¿«Generar compra» entra en esta fase? | Sí si el flujo real es consolidar → comprar en el POS; si registran la compra al recibir, puede ir después. |
+| 4 | ¿Cantidad a comprar = faltante tal cual, o redondeada a múltiplo de compra? | Tal cual (el maestro no tiene unidad de compra); el redondeo se hace a mano en el formulario. |
 
 ## 4. Decisiones pendientes del usuario
 
