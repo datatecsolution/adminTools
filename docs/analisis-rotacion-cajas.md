@@ -44,7 +44,7 @@ Caja:      B  A  A | B  A  A | B       → A 2/3 (≈67 %), B 1/3 (≈33 %)
 Sobre el total de facturas del cajero, B recibe menos: 33 % × (fracción de
 sus ventas que son CF de mostrador).
 
-## 4. US-191 — bug de paridad en la API (corregido)
+## 4. US-191 — bug de paridad en la API (Terminada)
 
 El port de US-102 (`RotacionCajasService`) guardaba un **puntero round-robin
 en memoria** entre rotaciones. Con 2 cajas la segunda rotación "daba la
@@ -58,7 +58,7 @@ API vieja: B  A  A | A  A  A | B       → A 5/6 (≈83 %), B 1/6 (≈17 %)
 Además la bandera avanzaba al **decidir**, antes de guardar: una venta que
 fallaba (409 por stock, error de BD) consumía el turno.
 
-Corrección (rama API `fix/us-191-rotacion-paridad-swing`):
+Corrección (api#74, mergeada en `main` `619e1d6`; desplegada 2026-09-22 en dulce y en producción de Samuel, La Fe y Mariposas Doradas):
 
 - `decideCaja` ya no guarda puntero: si la bandera vale 0 devuelve la caja
   siguiente a la default (espejo de `nextCaja()` tras la recarga).
@@ -91,8 +91,12 @@ y el acumulador se actualiza después de guardar, igual que la bandera hoy.)
 
 - Reparto exacto y parejo: 30 % → 3 de cada 10 intercaladas; 50 % → una sí,
   una no; 25 % → 1 de cada 4.
-- Con 33 % reproduce la cadencia actual (B/A/A), así que es el default y
-  quien no lo toque no nota cambio.
+- Ojo: 33 % **no** es exactamente la cadencia actual (1/3): con el
+  acumulador en 0 la primera rotación cae en la 4ª venta y reparte 33 de
+  cada 100. Para que quien no lo toque no note cambio, el default debe
+  conservar el algoritmo actual (bandera 1 de cada 3) o expresar el valor
+  como "1 de cada N" (N=3 exacto; 2 = 50 %, 4 = 25 %, 5 = 20 %…). Decidirlo
+  junto con el tipo de control (decisión 2).
 - Se mantienen las reglas de la sección 2 y la dirección "siempre desde la
   default hacia la segunda".
 
@@ -109,7 +113,7 @@ y el acumulador se actualiza después de guardar, igual que la bandera hoy.)
 
 1. Swing y API deben cambiar juntos (si no, el mismo cajero reparte distinto
    según la app). Recomendado: sí, juntos.
-2. Control: valor libre 1–99 o lista fija (10/20/25/30/33/40/50).
-   Recomendado: lista.
+2. Control: valor libre 1–99, lista fija (10/20/25/30/40/50 + "1/3 actual")
+   o "1 de cada N". Recomendado: lista, con "1/3 actual" como default.
 3. Tope en 50 % (más que eso invierte el papel de la default).
    Recomendado: sí.
