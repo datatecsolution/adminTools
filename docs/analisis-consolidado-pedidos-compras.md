@@ -87,14 +87,34 @@ factura no puede estar en dos rutas) y el enlace con la compra.
 - Si el maestro trae proveedor por producto, se agrupa (una compra por proveedor); si no, una sola
   compra con proveedor a elegir.
 
-#### Decisiones pendientes para arrancar la fase 2
+#### Decisiones de la fase 2 (tomadas por el usuario el 2026-09-23/24)
 
-| # | Decisión | Propuesta |
+| # | Decisión | Resultado |
 |---|---|---|
-| 1 | ¿Bloquear la orden repetida solo mientras el consolidado esté *Abierto*, o siempre? | Solo *Abierto* (se libera al comprar/cerrar). |
-| 2 | ¿Las órdenes cambian de estado al consolidar o cerrar? | No: el consolidado guarda la relación; el estado de la orden sigue su ciclo de venta. |
-| 3 | ¿«Generar compra» entra en esta fase? | Sí si el flujo real es consolidar → comprar en el POS; si registran la compra al recibir, puede ir después. |
-| 4 | ¿Cantidad a comprar = faltante tal cual, o redondeada a múltiplo de compra? | Tal cual (el maestro no tiene unidad de compra); el redondeo se hace a mano en el formulario. |
+| 1 | ¿Bloquear la orden repetida solo mientras el consolidado esté *Abierto*, o siempre? | **Solo *Abierto***: al pasar a Comprado/Cerrado la orden se libera (422 con el nº del consolidado si se repite). |
+| 2 | ¿Las órdenes cambian de estado al consolidar o cerrar? | **No**: el consolidado guarda la relación; la orden sigue su ciclo de venta (chip «consol. #N» en Órdenes). |
+| 3 | ¿«Generar compra» entra en esta fase? | **Sí**: precarga Compras y al guardar el consolidado queda *Comprado* con su nº de compra. Una sola compra (el maestro no tiene proveedor por producto). |
+| 4 | ¿Qué cantidad precarga «Generar compra»? | **Lo pedido completo, de todos los productos** (no descuenta la existencia). |
+| 5 | ¿Qué muestra el consolidado? (2026-09-24) | **Lo pedido**: producto, pedido, venta y —solo admin/inventario— el **costo de todo lo pedido** (costo unitario × pedido), ordenado por nombre, en pantalla, PDF y CSV. **Sin existencia ni faltante** en el frontend; la API los sigue calculando y enviando por si vuelven a hacer falta. |
+
+#### Líneas congeladas (V55, 2026-09-23)
+
+La V54 guardaba solo los números de orden y el reporte se recalculaba desde
+`encabezado/detalle_factura_temp`. Pero el Swing **borra físicamente** la orden al facturarla
+(`CtlFacturarFrame` → `eliminarOrden`) y al eliminarla de la lista: un consolidado quedaba vacío en
+cuanto sus órdenes se facturaban, y con la decisión 4 la compra se arma con lo pedido.
+
+- **V55** `consolidados_pedidos_lineas`: una fila por línea de orden (artículo, cantidad, precio,
+  total, cliente, fecha de la orden) congelada al consolidar; rellena los consolidados existentes.
+  La V54 no se tocó: ya está aplicada en producción de dulce (2026-09-23).
+- **API**: `OrderConsolidadoService` arma el reporte sobre una *fuente* intercambiable — órdenes
+  vivas (fase 1, `POST /orders/consolidado`) o líneas guardadas (`GET /orders/consolidados/{id}`);
+  existencia, faltante y costo unitario se calculan al consultar (el POS usa solo el costo). Un consolidado sin líneas guardadas cae al
+  cálculo sobre las órdenes vivas.
+- **Verificado en local**: con el detalle de una orden borrado (simulando la facturación en el
+  Swing), el consolidado conserva sus productos; el reporte al vuelo de la fase 1 ya los perdía.
+- **Orden de despliegue**: la V55 debe aplicarse **antes** de subir la API (al crear, la API escribe
+  en la tabla nueva).
 
 ## 4. Decisiones pendientes del usuario
 
