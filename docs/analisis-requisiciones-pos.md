@@ -1,6 +1,6 @@
 # US-196 — Requisiciones en el POS: traslados entre bodegas y mermas
 
-Fecha: 2026-09-25 · Estado: Backlog · Origen: handoff de diseño `design_handoff_requisiciones`
+Fecha: 2026-09-25 · Estado: Terminada (2026-09-25: en Samuel, Mariposas y La Fe — API 27d16f4, POS af7d87e) · Origen: handoff de diseño `design_handoff_requisiciones`
 (prototipo `Requisiciones.html` + `README.md`, alta fidelidad)
 
 ## 1. Problema
