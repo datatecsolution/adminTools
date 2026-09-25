@@ -1,6 +1,6 @@
 # US-194 — Detector de versión nueva en el POS y la app de pedidos
 
-Fecha: 2026-09-24 · Estado: Backlog
+Fecha: 2026-09-24 · Estado: Terminada (2026-09-25: POS b485098 en Samuel, Mariposas y La Fe; app de pedidos fe9579f en Samuel y Mariposas)
 
 ## 1. Problema
 
