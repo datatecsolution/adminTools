@@ -1,6 +1,6 @@
 # US-198 — Reporte de comisiones por vendedor en el POS
 
-Fecha: 2026-09-27 · Estado: Backlog · Origen: réplica del reporte «Ventas usuarios» del Swing
+Fecha: 2026-09-27 · Estado: Terminada (2026-09-27: en Samuel, Mariposas, La Fe y dulce — API a5110e1, POS 5415a76) · Origen: réplica del reporte «Ventas usuarios» del Swing
 
 ## 1. Qué hace hoy el Swing
 
