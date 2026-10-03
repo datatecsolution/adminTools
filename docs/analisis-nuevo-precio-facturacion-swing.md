@@ -79,7 +79,7 @@ En un cliente que usa **solo el POS** (Samuel, Mariposas, La Fe), el 5° precio 
 |---|---|---|---|
 | A | Cambiar `codigo_precio<4` por `codigo_precio<>4` y agregar `ORDER BY codigo_precio` | `PrecioArticuloDao.java:238` (y el `ORDER BY` comentado en `:29`) | 15 min |
 | B | Al cargar órdenes, usar la misma lista sin costo, para que las flechas no lleguen al costo y el comportamiento sea igual al de un artículo escaneado | `DetalleFacturaOrdenDao.java:150` | 15 min |
-| C | `setPrecio()`: si la línea no tiene ese precio, **avisar** («Este artículo no tiene precio X»). Alternativa: que «Seleccionar precio» muestre solo los precios que tiene el artículo | `Articulo.java:67-79`, `CtlFacturarFrame.java:621-669`, `CtlOrdenVenta.java:1479-1550` | 1-2 h |
+| C | «Seleccionar precio» muestra **solo los precios que tiene el artículo** (decisión 2026-10-03, ver §7). `CtlSelectPrecio` recibe la lista en vez de leer `SELECT * FROM precios` | `CtlSelectPrecio.java:38-50`, `Articulo.java:67-79`, `CtlFacturarFrame.java:621-669`, `CtlOrdenVenta.java:1479-1550` | 2 h |
 | D | Compras: buscar cada código por su valor (no por `size()>=3`) y crear la fila si falta | `DmtFacturaProveedores` columnas 8-10 (`:305-365`) | 1 h |
 | E | (Opcional) Compras: columna para actualizar el precio 5 al ingresar mercadería | `DmtFacturaProveedores`, `FacturaCompraDao.java:133-177` | 2-3 h |
 | F | Datos: cargar los valores del precio 5 por artículo (importador del POS o un `INSERT` calculado, por ejemplo % sobre el precio 1) | — | según el cliente |
@@ -94,7 +94,31 @@ Sin la opción E: **unas 5-6 horas** de desarrollo y pruebas. Los cambios A, B y
 - **Si el 5° precio fuera otro costo** (no de venta), aplica lo del análisis anterior: hay que pasar a un indicador `precios.es_costo` antes, porque el 4 está fijo como costo en DAOs, funciones SQL y reportes.
 
 ## 6. Preguntas abiertas
-1. ¿Qué cliente lo necesita y usa Swing, POS o los dos?
-2. ¿El precio 5 es de venta? ¿Cómo se calculan sus valores iniciales?
-3. En «Seleccionar precio», ¿mostrar solo los precios que tiene el artículo, o todos con aviso?
-4. ¿Se actualiza desde Compras (opción E)?
+Respondidas el 2026-10-03; ver §7.
+
+## 7. Decisiones (2026-10-03)
+
+| # | Pregunta | Decisión |
+|---|---|---|
+| 1 | Cliente | **Solo para el Swing.** El POS y la API ya lo soportan (§3.1); no se tocan |
+| 2 | Tipo y valores | **Precio de venta.** Los valores se cargan **a mano** (editor de artículos) o con el **importador del POS** (misma base). No hay carga calculada (F queda en manos del cliente) |
+| 3 | «Seleccionar precio» | **Solo los precios que tiene el artículo** |
+| 4 | Compras | **No** se agrega la columna del precio 5 (E queda fuera). Sí se corrige la NullPointerException (D) |
+
+### 7.1 Cómo queda el cambio C
+- **Una línea:** el combo lista los precios de venta de esa línea (los de `obtenerPreciosSinCosto`, ya sin el filtro `<4`) en orden de código.
+- **El costo se mantiene como opción** cuando el artículo lo tiene. Hoy vender a costo es una función a propósito: pide la clave de administrador y tiene su rama en `CtlFacturarFrame.java:641-669`. Quitarlo del combo sería un cambio de comportamiento que nadie pidió.
+- **«Aplicar a toda la factura»:** el combo muestra la **unión** de los precios de las líneas. Las líneas que no tienen el precio elegido **conservan el suyo**, y al final un aviso dice cuántas quedaron sin cambiar («3 líneas no tienen precio Ruta»). Así ya no hay fallo silencioso.
+- Lo mismo en órdenes (`CtlOrdenVenta`, Ctrl+D).
+
+### 7.2 Alcance final
+**A + B + C + D + G**, unas **6 horas**. Sin migración de esquema.
+
+Orden de despliegue:
+1. Mergear y armar el jar desde `master`.
+2. Instalarlo en **todas** las terminales Swing del cliente.
+3. Crear el precio 5. Puede ser desde el POS (Precios → tipos) o con un `INSERT` en `precios`.
+4. El cliente carga los valores, a mano o con el importador.
+5. Si algún vendedor de la app o del POS debe usarlo, se asigna en `usuarios_precios` desde Usuarios.
+
+Falta saber **qué cliente con Swing** lo pide y **el nombre del precio**. Hacen falta para coordinar el paso 2 y crear la fila en el paso 3.
