@@ -235,6 +235,8 @@ public class ViewCrearArticulo extends JDialog {
 		tblPrecios.setBounds(2, 18, 643, 0);
 		getContentPane().add(tblPrecios);
 		tblPrecios.setModel(modeloPrecio);
+		// el precio queda puesto al salir de la celda, sin tener que dar Enter
+		tblPrecios.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		tblPrecios.setDefaultRenderer(String.class, renderizador);
 		
 		scrollPane_1 = new JScrollPane(tblPrecios);
