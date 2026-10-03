@@ -100,5 +100,8 @@ El restore completo es el último recurso. Las migraciones solo agregan, y ni la
 | 14:40:08–14:40:29 | Migración (Mac → túnel → runner `ae9cc82`) | **9 migraciones en 6,2 s**, rc=0, cajas «up to date», **sin esperas por bloqueo** |
 | 14:40:36 | Verificación | Común **V57**, 0 fallidas; **ninguna tabla existente cambió de conteo**; 6 tablas nuevas; alerta 2.265 filas `INVOKER`; API sin errores; dominio 200 |
 | 14:41 | Vigilancia (`vigilar.sh 20:40`) | App de pedidos: 14 búsquedas de producto, todas 200; 0 errores en la API |
+| ~15:00 | Jar `ae9cc82` en las 4 terminales (lo copió el usuario) | Las 4 conectadas; `schema_version` sin cambios (57, 0 fallidas): el jar nuevo vio la BD al día |
+| ~15:10 | 5° precio | Creado por el usuario con un gestor de BD: `precios` código **5 «VIP»**, confirmado y sin transacciones abiertas. 0 artículos con valor VIP todavía |
+| 17:27 | Vigilancia a las +2 h 47 min | Proxy: todas las respuestas 200/201 (154 búsquedas, 2 pedidos guardados, clientes y pedidos de hoy); **0 errores en la API** (sin reinicios); BD estable (57, 0 fallidas, 0 transacciones abiertas). Operación normal: 102 pedidos de la app hoy (último 16:29), facturas caja 2 = 58 (último 17:01), caja 4 = 24, caja 7 = 4. Un `GET /.env` = 200 era un bot: devuelve el `index.html` de la SPA (860 bytes), sin secretos |
 
-Pendiente: jar en las 4 terminales (guardando el anterior) → Ctrl+↑ → crear el 5° precio. Vigilancia a las +2 h (`bash ~/deploy-sharon/v57/vigilar.sh 20:40`).
+Pendiente: probar Ctrl+↑ en una terminal Windows; cargar los valores VIP; si algún vendedor de la app debe usar VIP, asignarlo en `usuarios_precios`.
