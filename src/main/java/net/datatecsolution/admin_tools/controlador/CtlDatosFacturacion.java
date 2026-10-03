@@ -185,12 +185,11 @@ public class CtlDatosFacturacion implements ActionListener {
 		view.getBtnGuardar().setVisible(false);
 		view.getBtnActualizar().setVisible(true);
 		cargarDatosView();
-		//al modificar solo se editan CAI, codigo de facturacion y cantidad otorgada;
-		//la caja, el rango y la fecha limite quedan como se crearon
+		//al modificar solo se editan CAI, codigo de facturacion, cantidad otorgada y
+		//fecha limite; la caja y el rango quedan como se crearon
 		view.getCbCaja().setEnabled(false);
 		view.getTxtFacturaInicial().setEditable(false);
 		view.getTxtFacturaFinal().setEditable(false);
-		view.getFechaLimite().setEnabled(false);
 		view.setVisible(true);
 		return this.resultaOperacion;
 	}

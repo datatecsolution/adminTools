@@ -184,15 +184,16 @@ public class DatosFacturacionDao extends ModeloDaoBasic {
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			// Al modificar solo se cambian CAI, codigo de facturacion y cantidad otorgada.
-			// El rango (inicial/final), la fecha limite y la caja quedan como se crearon,
+			// Al modificar solo se cambian CAI, codigo de facturacion, cantidad otorgada y
+			// fecha limite. El rango (inicial/final) y la caja quedan como se crearon,
 			// y no se toca el AUTO_INCREMENT de encabezado_factura: antes cada
 			// "Actualizar" movia el proximo numero de factura al inicio del rango.
-			super.psConsultas=conn.prepareStatement("UPDATE "+datosF.getCaja().getNombreBd()+".datos_factura SET CAI=?,codigo_tipo_facturacion=?,cantida_solicitada=? WHERE datos_factura.codigo_rango=?;");
+			super.psConsultas=conn.prepareStatement("UPDATE "+datosF.getCaja().getNombreBd()+".datos_factura SET CAI=?,codigo_tipo_facturacion=?,cantida_solicitada=?,fecha_limite_emision=? WHERE datos_factura.codigo_rango=?;");
 			super.psConsultas.setString(1,datosF.getCAI());
 			super.psConsultas.setString(2,datosF.getCodigoFacturas());
 			super.psConsultas.setInt(3, datosF.getCantOtorgada());
-			super.psConsultas.setInt(4,datosF.getCodigo());
+			super.psConsultas.setString(4,datosF.getFechaLimite());
+			super.psConsultas.setInt(5,datosF.getCodigo());
 			psConsultas.executeUpdate();
 			return true;
 			
