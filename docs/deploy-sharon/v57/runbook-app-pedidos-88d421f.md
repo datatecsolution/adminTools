@@ -33,7 +33,7 @@
   - el descuento se abre como hoy;
   - **pedido guardado** (201, #111896 con 1 línea) → aparece en la lista de pedidos → eliminado (200).
 - **0 errores en la API.** Todos los 404 son de foto o galería, los esperados.
-- Nota: al aceptar el diálogo de descuento sin tocarlo se aplica la opción preseleccionada (168 → 166). Ya pasaba antes; no es de esta versión.
+- Nota: al aceptar el diálogo de descuento sin tocarlo se aplica la opción preseleccionada (168 → 166). Ya pasaba antes; no es de esta versión. Medición con datos reales: `medicion-descuentos-app-pedidos.md`.
 
 ## 3. Despliegue
 
