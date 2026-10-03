@@ -803,7 +803,8 @@ public void calcularTotales(){
 		//Recoger qu� fila se ha pulsadao en la tabla
 		filaPulsada = this.view.getTableDetalle().getSelectedRow();
 		
-			switch(e.getKeyCode()){
+			// Ctrl+numero = tecla F (alternativa para macOS, ver AtajosTeclado)
+			switch(AtajosTeclado.teclaEquivalente(e)){
 					
 					case KeyEvent.VK_F1:
 						//se verfica si esta activo la busqueda de articulo por descripcion
@@ -1590,7 +1591,8 @@ public void calcularTotales(){
 	        }
 		}
 		
-		if(caracter=='+'){
+		// sin Ctrl: Ctrl+- / Ctrl++ son alternativas de F11 / F12 (AtajosTeclado)
+		if(caracter=='+' && !e.isControlDown()){
 			if(filaPulsada>=0){
 				if(ConexionStatic.getUsuarioLogin().getConfig().isFacturarSinInventario()){
 
@@ -1701,7 +1703,7 @@ public void calcularTotales(){
 
 			}
 		}
-		if(caracter=='-'){
+		if(caracter=='-' && !e.isControlDown()){
 			if(filaPulsada>=0){
 				//JOptionPane.showMessageDialog(view,e.getKeyChar()+" FIla:"+filaPulsada);
 				this.view.getModeloTabla().restarCantidad(filaPulsada);

@@ -1085,7 +1085,8 @@ public class CtlFacturarFrame
 
 		filaPulsada = this.view.getFilaSeleccionada();
 
-		switch (e.getKeyCode()) {
+		// Ctrl+numero = tecla F (alternativa para macOS, ver AtajosTeclado)
+		switch (AtajosTeclado.teclaEquivalente(e)) {
 
 			case KeyEvent.VK_F1:
 				if (config.isActivarBusquedaFacturacion()) {
@@ -1403,10 +1404,11 @@ public class CtlFacturarFrame
 				view.setTextoBusqueda(texto);
 			}
 		}
-		if (caracter == '+') {
+		// sin Ctrl: Ctrl+- / Ctrl++ son alternativas de F11 / F12 (AtajosTeclado)
+		if (caracter == '+' && !e.isControlDown()) {
 			incrementarCantidad();
 		}
-		if (caracter == '-') {
+		if (caracter == '-' && !e.isControlDown()) {
 			if (filaPulsada >= 0) {
 				this.view.restarCantidad(filaPulsada);
 				this.calcularTotales();

@@ -27,6 +27,7 @@ Marcar con `[x]` cada caso a medida que se valida. Si algo falla, anotar el comm
 - [x] Editar cantidad con `F7` (entrada manual)
 - [x] Aplicar descuento por ítem
 - [x] Cambiar precio del artículo (Ctrl+↑ y diálogo)
+- [ ] Atajos alternativos para macOS (Facturar y Órdenes): Ctrl+D = Ctrl+↑; Ctrl+1…Ctrl+9 = F1…F9, Ctrl+0 = F10, Ctrl+− = F11, Ctrl+= o Ctrl++ = F12; las teclas F originales siguen igual y `+`/`−` sin Ctrl siguen sumando/restando cantidad
 - [X] Eliminar línea del detalle
 - [x] Click en cualquier celda de una fila → toda la fila queda resaltada (selección por fila, no por celda)
 - [x] Agregar nueva fila → queda seleccionada por defecto
