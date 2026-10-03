@@ -218,8 +218,9 @@ public class CtlDatosFacturacion implements ActionListener {
 		
 		view.getTxtCodigoFacturacion().setText(myDatosF.getCodigoFacturas());
 		
-		//se crear el formato para la fecha
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		//la fecha llega como texto "dd-MM-yyyy" (asi la arma DatosFacturacionDao);
+		//con "dd/MM/yyyy" el parse fallaba en silencio y el campo quedaba vacio
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = null;
 		try {
 			date = sdf.parse(myDatosF.getFechaLimite());
