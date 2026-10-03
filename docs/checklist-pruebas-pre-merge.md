@@ -26,7 +26,7 @@ Marcar con `[x]` cada caso a medida que se valida. Si algo falla, anotar el comm
 - [x] Editar cantidad con `+` / `-` — la selección debe quedarse en la fila editada (no saltar a la última)
 - [x] Editar cantidad con `F7` (entrada manual)
 - [x] Aplicar descuento por ítem
-- [x] Cambiar precio del artículo (Ctrl+↑ y diálogo)
+- [x] Cambiar precio del artículo (Ctrl+D y diálogo; antes Ctrl+↑)
 - [X] Eliminar línea del detalle
 - [x] Click en cualquier celda de una fila → toda la fila queda resaltada (selección por fila, no por celda)
 - [x] Agregar nueva fila → queda seleccionada por defecto

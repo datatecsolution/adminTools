@@ -1349,8 +1349,9 @@ public class CtlFacturarFrame
 
 		}
 
-		// Ctrl+D es la alternativa (la misma de órdenes): en macOS Ctrl+↑ lo toma Mission Control.
-		if (e.isControlDown() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_D)) {
+		// Seleccionar precio: Ctrl+D, igual que en órdenes. Antes era Ctrl+↑, que en
+		// macOS lo toma Mission Control y nunca llega a la aplicación.
+		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_D) {
 			seleccionarPrecioEspecifico();
 		}
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
