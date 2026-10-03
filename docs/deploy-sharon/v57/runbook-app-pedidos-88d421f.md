@@ -77,3 +77,23 @@ docker compose up -d --no-deps --force-recreate at-ordenes-ventas-v2
 ```
 
 Toma segundos y no toca datos. Los celulares toman la versión anterior al recargar.
+
+## 6. Registro de la ejecución (2026-10-03, orden explícita del usuario)
+
+| Hora (local) | Paso | Resultado |
+|---|---|---|
+| 17:50 | Comprobaciones | Clon en `88d421f` = `origin/main`; `docker-compose.yml` con sus cambios locales (respetados); bundle servido `main.3ac2837e.js` |
+| 17:50 | Vuelta atrás | `at-ordenes-ventas:respaldo-47a62e5` → imagen `f415b7764627` (la que corría desde el 5-sep) |
+| 17:50 | Build | `docker compose build at-ordenes-ventas-v2`: 13 s, imagen `e1b3b6fb5543`. El bundle `main.e76e9770.js` contiene US-202 (`permiteDescuento`), US-057 (`size=thumb`) y US-194 (sondeo de `index.html`) |
+| 17:51:10–17:51:14 | Recreación | Vigilante en pausa → `up -d --no-deps` → contenedor `running` → tag `at-ordenes-ventas:sharon-88d421f` → pausa retirada |
+| 17:51 | Verificación por el dominio | `/` 200 con `main.e76e9770.js`; `Cache-Control: no-store`; `X-Frame-Options`/`nosniff` presentes; JS 200 (213 KB); `/admin_tools/api/orders/today` 401 sin sesión; rutas SPA 200 |
+| 17:52 | Vigilancia inmediata | 0 errores en la API. Poco tráfico (sábado por la tarde): los celulares toman la versión nueva al recargar |
+
+Pendiente: vigilancia con tráfico real (`bash ~/deploy-sharon/v57/vigilar.sh 23:51`) cuando los vendedores vuelvan a usar la app. Esperados: 404 de `/image?size=thumb` y `/gallery`.
+
+**Vuelta atrás, si hiciera falta:**
+
+```bash
+docker tag at-ordenes-ventas:respaldo-47a62e5 at-ordenes-ventas-v2-at-ordenes-ventas-v2
+cd ~/at-ordenes-ventas-v2 && docker compose up -d --no-deps --force-recreate at-ordenes-ventas-v2
+```
