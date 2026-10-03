@@ -1,5 +1,7 @@
 # Análisis de impacto: agregar un 5° precio al sistema
 
+> **Actualizado 2026-09-30:** el análisis específico y vigente de la facturación del Swing está en [`analisis-nuevo-precio-facturacion-swing.md`](analisis-nuevo-precio-facturacion-swing.md). Varias líneas citadas acá se movieron; además se detectaron fallas que este documento no cubría («Seleccionar precio» sin efecto, órdenes cargadas con costo, NullPointerException en Compras).
+
 ## Contexto
 
 La aplicación maneja actualmente 4 precios por artículo. Este documento analiza qué tan preparado está el código para soportar un 5° precio en el módulo de facturación y cuál sería el impacto de la modificación.
