@@ -150,19 +150,12 @@ public class CtlDatosFacturacion implements ActionListener {
 					
 					setModeloFromView();//se cargan los datos de la view
 					
-					//se verifica que no se estableca un numero de factura que ya esta en la base de datos
-					if(myDatosFdao.verificarFacturacionFactInicial(myDatosF)){
-						
-						if(myDatosFdao.actualizar(myDatosF)){
-							JOptionPane.showMessageDialog(view, "Los datos de la facturacion se actualizaron correctamente.","Exito",JOptionPane.INFORMATION_MESSAGE);
-							this.resultaOperacion=true;
-							view.setVisible(false);
-						}
-						
-					}else{
-						JOptionPane.showMessageDialog(view, "El numero de factura inicial ya existe.","Error en la base de datos",JOptionPane.ERROR_MESSAGE);
-						view.getTxtFacturaInicial().selectAll();
-						view.getTxtFacturaInicial().requestFocusInWindow();
+					//el rango no se modifica, asi que no se revisa contra la ultima factura
+					//(eso impedia corregir el CAI de un rango ya en uso)
+					if(myDatosFdao.actualizar(myDatosF)){
+						JOptionPane.showMessageDialog(view, "Los datos de la facturacion se actualizaron correctamente.","Exito",JOptionPane.INFORMATION_MESSAGE);
+						this.resultaOperacion=true;
+						view.setVisible(false);
 					}
 				}
 					
@@ -192,6 +185,12 @@ public class CtlDatosFacturacion implements ActionListener {
 		view.getBtnGuardar().setVisible(false);
 		view.getBtnActualizar().setVisible(true);
 		cargarDatosView();
+		//al modificar solo se editan CAI, codigo de facturacion y cantidad otorgada;
+		//la caja, el rango y la fecha limite quedan como se crearon
+		view.getCbCaja().setEnabled(false);
+		view.getTxtFacturaInicial().setEditable(false);
+		view.getTxtFacturaFinal().setEditable(false);
+		view.getFechaLimite().setEnabled(false);
 		view.setVisible(true);
 		return this.resultaOperacion;
 	}
