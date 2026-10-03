@@ -100,6 +100,13 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 				}
 				break;
 			case "GUARDARCOMPRA":
+				// la celda que quedo escrita sin Enter se aplica antes de validar y guardar;
+				// si no, su valor se perdia sin aviso
+				JTable tablaCompra=view.getTablaArticulos();
+				if(tablaCompra.isEditing() && !tablaCompra.getCellEditor().stopCellEditing()){
+					JOptionPane.showMessageDialog(view,"Revise el valor que esta escribiendo en la tabla","Error",JOptionPane.ERROR_MESSAGE);
+					break;
+				}
 				int indexDep=view.getCbxDepart().getSelectedIndex();
 				//se valida la compra
 				// getDate() es la fecha elegida. isValid() es del layout de Swing (dice si
