@@ -73,7 +73,8 @@ public class CtlDatosFacturacion implements ActionListener {
 					JOptionPane.showMessageDialog(view, "Debe ingresar la cantidad de facturas otorganas correctamente.","Error de validacion",JOptionPane.ERROR_MESSAGE);
 					view.getTxtCantidadOtorgada().requestFocusInWindow();
 					
-				}else if(view.getFechaLimite().isValid()==true){
+				// getDate(), no isValid() (que es del layout de Swing; ver CtlCompras)
+				}else if(view.getFechaLimite().getDate()==null){
 					JOptionPane.showMessageDialog(view, "Ingrese la fecha limite de emision.","Error de validacion",JOptionPane.ERROR_MESSAGE);
 					view.getFechaLimite().requestFocusInWindow();
 					

@@ -102,7 +102,10 @@ public class CtlCompras implements ActionListener,MouseListener,TableModelListen
 			case "GUARDARCOMPRA":
 				int indexDep=view.getCbxDepart().getSelectedIndex();
 				//se valida la compra
-				if(this.view.getDateCompra().isValid()==true){
+				// getDate() es la fecha elegida. isValid() es del layout de Swing (dice si
+				// el componente esta acomodado en pantalla): con la fecha de hoy recien
+				// cargada daba "Ingrese la fecha" hasta que se tocaba el campo.
+				if(this.view.getDateCompra().getDate()==null){
 					JOptionPane.showMessageDialog(view,"Ingrese la fecha de la compra","Error",JOptionPane.ERROR_MESSAGE);
 					view.getDateCompra().requestFocusInWindow();
 					break;
