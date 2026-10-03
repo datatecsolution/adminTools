@@ -11,6 +11,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CtlOrdenVenta  implements ActionListener, MouseListener, TableModelListener, WindowListener, KeyListener  {
@@ -1447,6 +1448,20 @@ public void calcularTotales(){
 		
 		
 	}
+	/**
+	 * Aplica el precio elegido a una linea de la orden (ver CtlFacturarFrame).
+	 * Devuelve false si el articulo no tiene ese precio: la linea conserva el suyo.
+	 */
+	private boolean aplicarPrecioALinea(Articulo articulo, PrecioArticulo elegido){
+		articulo.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(articulo.getId()));
+		if(elegido.getCodigoPrecio()==4){
+			PrecioArticulo costo=this.preciosDao.getPrecioArticulo(articulo.getId(),4);
+			if(costo==null) return false;
+			articulo.getPreciosVenta().add(costo);
+		}
+		return articulo.setPrecio(elegido);
+	}
+
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -1489,80 +1504,39 @@ public void calcularTotales(){
 				//comprabacion del permiso administrativo
 				if(myUsuarioDao.comprobarAdmin(pwd)){
 
-					ViewSelectPrecio viewSelectPrecio=new ViewSelectPrecio(null);
-					CtlSelectPrecio ctlSelectPrecio=new CtlSelectPrecio(viewSelectPrecio);
+					//precios que existen: los de la linea seleccionada y los de toda la orden
+					//(incluyen el costo si el articulo lo tiene)
+					List<PrecioArticulo> preciosLinea=new ArrayList<PrecioArticulo>();
+					List<List<PrecioArticulo>> preciosLineas=new ArrayList<List<PrecioArticulo>>();
+					for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+						int idArticulo=view.getModeloTabla().getDetalle(xx).getArticulo().getId();
+						if(idArticulo==-1) continue;
+						List<PrecioArticulo> precios=this.preciosDao.getPreciosArticulo(idArticulo);
+						preciosLineas.add(precios);
+						if(xx==filaPulsada) preciosLinea=precios;
+					}
 
-					boolean resultado=ctlSelectPrecio.agregar();
-					if(resultado){
-						//JOptionPane.showMessageDialog(view,ctlSelectPrecio.isAplicarTodo()+" | " +ctlSelectPrecio.getPrecioSelect());
+					if(!preciosLineas.isEmpty()){
+						ViewSelectPrecio viewSelectPrecio=new ViewSelectPrecio(null);
+						CtlSelectPrecio ctlSelectPrecio=new CtlSelectPrecio(viewSelectPrecio,preciosLinea,CtlSelectPrecio.unir(preciosLineas));
 
-						//si se aplicara el precio a toda la factura
-						if(ctlSelectPrecio.isAplicarTodo()){
-
-							//se recorren los item de la factura aplicando el descuento
-			    			for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
-			    				DetalleFactura detalle=this.view.getModeloTabla().getDetalle(xx);
-			    				//se los precio sin el costo de la base de datos
-								detalle.getArticulo().setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(detalle.getArticulo().getId()));
-			    				//se verifica que el item no sea nullo
-			    				if(detalle.getArticulo().getId()!=-1){
-
-									//se verifica que seleccion el precio costo
-									if(ctlSelectPrecio.getPrecioSelect().getCodigoPrecio()==4){
-
-										//se busca el precio de costo del articulo
-										PrecioArticulo unPrecio =this.preciosDao.getPrecioArticulo(detalle.getArticulo().getId(),4);
-										//si el articulo tiene precio de costo se agrega a la el
-										if(unPrecio!=null){
-											detalle.getArticulo().getPreciosVenta().add(unPrecio);
-											detalle.getArticulo().setPrecio(unPrecio);
-										}else{
-											detalle.getArticulo().lastPrecio();
-											detalle.getArticulo().netPrecio();
-										}
-
-									}else{
-										detalle.getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
-									}
+						if(ctlSelectPrecio.agregar()){
+							PrecioArticulo elegido=ctlSelectPrecio.getPrecioSelect();
+							int sinCambio=0;
+							if(ctlSelectPrecio.isAplicarTodo()){
+								for(int xx=0;xx<view.getModeloTabla().getDetalles().size();xx++){
+									Articulo articulo=view.getModeloTabla().getDetalle(xx).getArticulo();
+									if(articulo.getId()==-1) continue;
+									if(!aplicarPrecioALinea(articulo,elegido)) sinCambio++;
 								}
-
-
-			    			}
-
-						}else{
-							//fdsf
-							if(filaPulsada>=0){
-								//se los precio sin el costo de la base de datos
-								view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId()));
-
-								//se verifica que seleccion el precio costo
-								if(ctlSelectPrecio.getPrecioSelect().getCodigoPrecio()==4){
-
-									//se busca el precio de costo del articulo
-									PrecioArticulo unPrecio =this.preciosDao.getPrecioArticulo(view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getId(),4);
-									//si el articulo tiene precio de costo se agrega a la el
-									if(unPrecio!=null){
-										//se agrega el precio de costo al item
-										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().getPreciosVenta().add(unPrecio);
-										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(unPrecio);
-										this.selectRowInset(filaPulsada);
-									}else{
-										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().lastPrecio();
-										this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().netPrecio();
-										this.selectRowInset(filaPulsada);
-									}
-								}else{
-									this.view.getModeloTabla().getDetalle(filaPulsada).getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
-
-								}
-
-
+							}else if(filaPulsada>=0){
+								if(!aplicarPrecioALinea(view.getModeloTabla().getDetalle(filaPulsada).getArticulo(),elegido)) sinCambio++;
+								this.selectRowInset(filaPulsada);
 							}
+							CtlSelectPrecio.avisarSinCambio(view,sinCambio,elegido);
+
+							this.calcularTotales();
 						}
-
-						this.calcularTotales();
-
-						////
 					}
 				}
 			}

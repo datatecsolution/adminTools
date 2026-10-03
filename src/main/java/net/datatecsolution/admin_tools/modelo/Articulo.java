@@ -64,7 +64,11 @@ public class Articulo {
 				precioVenta=preciosVenta.get(posicionPrecio).getPrecio().setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
 		}
 	}
-	public void setPrecio(PrecioArticulo pr){
+	/**
+	 * Aplica a la linea el precio con ese codigo. Devuelve false si el articulo no
+	 * tiene ese precio (la linea queda como estaba), para que quien llama avise.
+	 */
+	public boolean setPrecio(PrecioArticulo pr){
 		int index=-1;
 		
 		for(int c=0;c<preciosVenta.size();c++){
@@ -74,8 +78,12 @@ public class Articulo {
 				index=c;
 			}
 		}
-		if(index!=-1)
-			precioVenta=preciosVenta.get(index).getPrecio().setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		if(index==-1)
+			return false;
+		precioVenta=preciosVenta.get(index).getPrecio().setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		//las flechas siguen desde el precio elegido
+		posicionPrecio=index;
+		return true;
 	}
 	public void lastPrecio(){
 		posicionPrecio--;

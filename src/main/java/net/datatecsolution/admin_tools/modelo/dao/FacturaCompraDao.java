@@ -149,7 +149,7 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 					if(fac.getDetalles().get(x).getArticulo().getPreciosVenta()!=null && precioVenta2!=null){
 						//el en la tabla el codigo tres es la base de datos
 						//PrecioArticulo preciocosto=precioCosto
-						this.preciosDao.actualizar(precioVenta2);//se actualiza el precio
+						this.preciosDao.actualizarOCrear(precioVenta2);//se actualiza el precio
 					}
 
 
@@ -167,7 +167,7 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 					if(fac.getDetalles().get(x).getArticulo().getPreciosVenta()!=null && precioVenta3!=null){
 						//el en la tabla el codigo tres es la base de datos
 						//PrecioArticulo preciocosto=precioCosto
-						this.preciosDao.actualizar(precioVenta3);//se actualiza el precio
+						this.preciosDao.actualizarOCrear(precioVenta3);//se actualiza el precio
 					}
 
 					////================================
@@ -183,7 +183,7 @@ public class FacturaCompraDao extends ModeloDaoBasic{
 					if(fac.getDetalles().get(x).getArticulo().getPreciosVenta()!=null && precioCosto!=null){
 						//el en la tabla el codigo tres es la base de datos
 						//PrecioArticulo preciocosto=precioCosto
-						this.preciosDao.actualizar(precioCosto);//se actualiza el precio
+						this.preciosDao.actualizarOCrear(precioCosto);//se actualiza el precio
 					}
 				}
 	

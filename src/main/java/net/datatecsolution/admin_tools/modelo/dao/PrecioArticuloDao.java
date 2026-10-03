@@ -5,6 +5,7 @@ import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 
 import javax.swing.*;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -109,7 +110,7 @@ public class PrecioArticuloDao extends ModeloDaoBasic {
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 			
-			psConsultas = con.prepareStatement(super.getQuerySelect()+" WHERE precios_articulos.codigo_articulo = ?;");
+			psConsultas = con.prepareStatement(super.getQuerySelect()+" WHERE precios_articulos.codigo_articulo = ? ORDER BY precios_articulos.codigo_precio;");
 			psConsultas.setInt(1,id);
 			//System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
@@ -235,7 +236,7 @@ public class PrecioArticuloDao extends ModeloDaoBasic {
 		try {
 			con = ConexionStatic.getPoolConexion().getConnection();
 
-			psConsultas = con.prepareStatement(super.getQuerySelect()+" WHERE precios_articulos.codigo_articulo = ? and precios_articulos.codigo_precio<4;");
+			psConsultas = con.prepareStatement(super.getQuerySelect()+" WHERE precios_articulos.codigo_articulo = ? and precios_articulos.codigo_precio<>4 ORDER BY precios_articulos.codigo_precio;");
 			psConsultas.setInt(1,id);
 			//System.out.println(psConsultas);
 			res = psConsultas.executeQuery();
@@ -355,6 +356,43 @@ public class PrecioArticuloDao extends ModeloDaoBasic {
 		} // fin de finally
 	}
 	
+	/**
+	 * Actualiza el precio del articulo y, si el articulo todavia no tenia fila
+	 * para ese codigo de precio, la crea. actualizar() solo hace UPDATE, asi que
+	 * un precio nuevo cargado desde Compras se perdia sin aviso.
+	 */
+	public boolean actualizarOCrear(PrecioArticulo precio){
+		Connection conn=null;
+		PreparedStatement ps=null;
+		int filas=0;
+		try {
+			conn=ConexionStatic.getPoolConexion().getConnection();
+			ps=conn.prepareStatement(super.getQueryUpdate()+" set precio_articulo=?  WHERE codigo_articulo = ? and codigo_precio= ?");
+			ps.setFloat(1, precio.getPrecio().floatValue());
+			ps.setInt(2, precio.getCodigoArticulo());
+			ps.setInt(3, precio.getCodigoPrecio());
+			filas=ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage(),"Error en la base de datos",JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		finally
+		{
+			try{
+				if(ps != null)ps.close();
+				if(conn != null) conn.close();
+			}
+			catch ( SQLException excepcionSql )
+			{
+				excepcionSql.printStackTrace();
+			}
+		}
+		if(filas==0)
+			return this.registrar(precio);
+		return true;
+	}
+
 	/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Metodo para agreagar Articulo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 	@Override
 	public boolean registrar(Object c)
