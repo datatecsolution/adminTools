@@ -3,6 +3,7 @@ package net.datatecsolution.admin_tools.view.tablemodel;
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
 
 import javax.swing.table.AbstractTableModel;
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,15 +71,25 @@ public class TmPrecios extends AbstractTableModel {
 	 @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		PrecioArticulo precio = precios.get(rowIndex);
-		String v=(String) value;
+		String v=value==null ? "" : value.toString().trim();
         switch (columnIndex) {
             case 0:
             	precio.setDecripcion(v);// .setId((Integer) value);
+            	break;
             case 1:
-            	precio.setPrecio(new BigDecimal(v)); //.get(rowIndex).setCantidad(new BigDecimal(v));// Double.parseDouble(v));
-    			fireTableCellUpdated(rowIndex, columnIndex);
-           
-    
+            	// vacio = sin precio; se aceptan separadores de miles ("1,250.50")
+            	if(v.isEmpty()){
+            		precio.setPrecio(BigDecimal.ZERO);
+            	}else{
+            		try{
+            			precio.setPrecio(new BigDecimal(v.replace(",", "")));
+            		}catch(NumberFormatException e){
+            			JOptionPane.showMessageDialog(null, "\""+v+"\" no es un precio válido para "+precio.getDescripcion()+".",
+            					"Precio no válido", JOptionPane.ERROR_MESSAGE);
+            			return;
+            		}
+            	}
+            	break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);
     }

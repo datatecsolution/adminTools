@@ -1,31 +1,75 @@
 package net.datatecsolution.admin_tools.controlador;
 
 import net.datatecsolution.admin_tools.modelo.PrecioArticulo;
-import net.datatecsolution.admin_tools.modelo.dao.PrecioArticuloDao;
 import net.datatecsolution.admin_tools.view.ViewSelectPrecio;
+import net.datatecsolution.admin_tools.view.tablemodel.CbxTmPrecios;
+
+import javax.swing.*;
+import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class CtlSelectPrecio implements ActionListener, KeyListener {
 	
 	private final ViewSelectPrecio view;
-	private PrecioArticuloDao preciosDao=null;
+	private final List<PrecioArticulo> preciosLinea;
+	private final List<PrecioArticulo> preciosFactura;
 	private PrecioArticulo myPrecio=new PrecioArticulo();
 	
 	private boolean resultaOperacion=false;
 	private boolean aplicarTodo=false;
 	
-	public CtlSelectPrecio(ViewSelectPrecio v){
+	/**
+	 * El combo ofrece solo precios que existen: los del articulo de la linea o,
+	 * con "Aplicar a toda la factura", los de todas las lineas (ver {@link #unir}).
+	 * Antes listaba todos los tipos de precio y setPrecio() ignoraba en silencio
+	 * los que el articulo no tenia.
+	 */
+	public CtlSelectPrecio(ViewSelectPrecio v, List<PrecioArticulo> preciosLinea, List<PrecioArticulo> preciosFactura){
 		view=v;
-		preciosDao=new PrecioArticuloDao();
+		this.preciosLinea=preciosLinea;
+		this.preciosFactura=preciosFactura;
 		
-		//modeloPrecioCb.setLista();
 		view.conectarControlador(this);
+		view.getChckbxAplicarAToda().setActionCommand("APLICAR_TODO");
+		view.getChckbxAplicarAToda().addActionListener(this);
+		
+		//sin linea seleccionada solo tiene sentido aplicar a toda la factura
+		if(preciosLinea==null || preciosLinea.isEmpty()){
+			view.getChckbxAplicarAToda().setSelected(true);
+			view.getChckbxAplicarAToda().setEnabled(false);
+		}
 		cargarComboBox();
 		
+	}
+	
+	/** Precios distintos (por codigo) de varias lineas, ordenados por codigo. */
+	public static List<PrecioArticulo> unir(List<List<PrecioArticulo>> listas){
+		Map<Integer,PrecioArticulo> porCodigo=new TreeMap<Integer,PrecioArticulo>();
+		for(List<PrecioArticulo> lista:listas){
+			if(lista==null) continue;
+			for(PrecioArticulo p:lista){
+				if(!porCodigo.containsKey(p.getCodigoPrecio()))
+					porCodigo.put(p.getCodigoPrecio(),p);
+			}
+		}
+		return new ArrayList<PrecioArticulo>(porCodigo.values());
+	}
+	
+	/** Aviso para las lineas que se quedaron con su precio porque no tienen el elegido. */
+	public static void avisarSinCambio(Component padre, int lineas, PrecioArticulo precio){
+		if(lineas<=0) return;
+		String quien = lineas==1 ? "1 línea no tiene" : lineas+" líneas no tienen";
+		JOptionPane.showMessageDialog(padre,
+				quien+" el precio \""+precio.getDescripcion()+"\" y conserva su precio anterior.",
+				"Precio no aplicado", JOptionPane.WARNING_MESSAGE);
 	}
 	
 	public boolean agregar(){
@@ -36,17 +80,17 @@ public class CtlSelectPrecio implements ActionListener, KeyListener {
 	
 
 	private void cargarComboBox(){
-		//se crea el objeto para obtener de la bd los impuestos
-		//myImpuestoDao=new ImpuestoDao(conexion);
-	
-		//se obtiene la lista de los impuesto y se le pasa al modelo de la lista
-		view.getModeloPrecioCb().setLista(preciosDao.getTipoPrecios());
+		List<PrecioArticulo> lista = view.getChckbxAplicarAToda().isSelected() ? preciosFactura : preciosLinea;
 		
+		CbxTmPrecios modelo=new CbxTmPrecios();
+		modelo.setLista(lista);
+		view.setModeloPrecioCb(modelo);
+		view.getCbPrecios().setModel(modelo);
 		
-		//se remueve la lista por defecto
-		//this.view.getCbxDepart().removeAllItems();
-	
-		this.view.getCbPrecios().setSelectedIndex(0);
+		boolean hay = modelo.getSize()>0;
+		view.getBtnGuardar().setEnabled(hay);
+		if(hay)
+			this.view.getCbPrecios().setSelectedIndex(0);
 	}
 
 	@Override
@@ -56,6 +100,9 @@ public class CtlSelectPrecio implements ActionListener, KeyListener {
 		String comando=e.getActionCommand();
 		
 		switch(comando){
+		case "APLICAR_TODO":
+			cargarComboBox();
+			break;
 		case "GUARDAR":
 			//Se establece el departamento seleccionado desde la view
 			this.setMyPrecio(view.getModeloPrecioCb().getElementAt( view.getCbPrecios().getSelectedIndex()));
