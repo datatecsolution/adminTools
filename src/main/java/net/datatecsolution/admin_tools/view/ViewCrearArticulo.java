@@ -218,7 +218,8 @@ public class ViewCrearArticulo extends JDialog {
 		txtCodigo.setColumns(10);
 		
 		panel_3 = new JPanel();
-		panel_3.setBounds(10, 368, 529, 109);
+		// alto para ~6 precios sin scroll (con 109 el 5° precio quedaba cortado)
+		panel_3.setBounds(10, 368, 529, 140);
 		panel.add(panel_3);
 		panel_3.setLayout(new BorderLayout(0, 0));
 		
