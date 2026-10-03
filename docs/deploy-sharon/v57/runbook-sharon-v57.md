@@ -22,6 +22,8 @@
 
 Las cajas 1–7 ya están en V9, la última, así que no tienen migraciones pendientes.
 
+> La API y la app de pedidos de Sharon están en la versión del 5-sep (US-150). Este despliegue **no las actualiza** (opción A). Actualizarlas, la API sobre todo (83 commits atrás), es una ventana aparte con su propio ensayo.
+
 **No se tocan la API ni la app de pedidos.** La app de pedidos tiene restricción de despliegue. La API (`sharon-481b4b0`) se probó contra el esquema V57 en el ensayo.
 
 ## 2. Estado de partida (2026-10-03 14:20, lectura)
@@ -46,6 +48,11 @@ Las cajas 1–7 ya están en V9, la última, así que no tienen migraciones pend
    - 6 tablas nuevas, vacías;
    - `v_existencia_alert` devuelve 2.265 filas y es `INVOKER`.
 6. **API de producción `481b4b0`**, construida en el commit exacto y con perfil `pdn` (`ddl-auto=validate`), contra la copia en V57: **Started en 4,4 s**, sin errores de validación. `/inventory` → 401 (pide sesión).
+7. **Contrato de la app de pedidos.** Se repitieron las rutas que la app usa en producción, sacadas de los logs del proxy host 3 (~3 semanas): `products/description` (47.167 llamadas), `customers` (4.241), `orders/save` (1.504), `orders/today` (722), `auth/refresh` y `auth/login`, `orders/delete` (12).
+   - Se corrieron contra la API `481b4b0` sobre una copia en **V48** y otra en **V57**, con un vendedor real (clave de prueba solo en las copias).
+   - Se buscaron 10 términos, se listaron clientes y pedidos de hoy, se clonó, guardó y borró un pedido real.
+   - Resultado: **19/19 pasos idénticos** (status y contenido).
+   - La app es un front estático (nginx) que solo habla con `admin-tools-api-v2`; no se conecta a la BD.
 
 ## 4. Ventana
 
@@ -84,4 +91,14 @@ El restore completo es el último recurso. Las migraciones solo agregan, y ni la
 
 ## 7. Registro de la ejecución
 
-_(completar en la ventana: hora, resultado de cada paso, ruta del respaldo y observaciones)_
+### Ejecución del 2026-10-03 (BD: hecha · jar: pendiente)
+
+| Hora (local) | Paso | Resultado |
+|---|---|---|
+| 14:39:31 | Preflight | V48 / cajas V9, 0 fallidas, **0 transacciones abiertas**; 3 terminales y la API conectadas (las terminales operando) |
+| 14:39:36–14:40:00 | Respaldo | `~/deploy-sharon/backup/sharon_pre_v57_20261003_143936.sql.gz`: 76 MB, gzip íntegro, «Dump completed», 8 BDs, sha256 guardado. Huella: 99 tablas, 6.271.254 filas |
+| 14:40:08–14:40:29 | Migración (Mac → túnel → runner `ae9cc82`) | **9 migraciones en 6,2 s**, rc=0, cajas «up to date», **sin esperas por bloqueo** |
+| 14:40:36 | Verificación | Común **V57**, 0 fallidas; **ninguna tabla existente cambió de conteo**; 6 tablas nuevas; alerta 2.265 filas `INVOKER`; API sin errores; dominio 200 |
+| 14:41 | Vigilancia (`vigilar.sh 20:40`) | App de pedidos: 14 búsquedas de producto, todas 200; 0 errores en la API |
+
+Pendiente: jar en las 4 terminales (guardando el anterior) → Ctrl+↑ → crear el 5° precio. Vigilancia a las +2 h (`bash ~/deploy-sharon/v57/vigilar.sh 20:40`).
