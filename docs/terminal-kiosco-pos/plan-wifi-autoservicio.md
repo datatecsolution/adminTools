@@ -85,6 +85,9 @@
 | No se encontró la red | «No se encontró la red; acérquese o búsquela de nuevo» | Igual |
 
 4. **Reinicios posteriores:** NetworkManager lee `/home/pos-red` y se conecta solo a la red de la tienda (prioridad 40). Si no está disponible, usa las de base: el cable y la wifi de instalación.
+5. **Si el operador no logra configurarla:** no hace falta que haga nada técnico.
+   - NetworkManager **sigue intentando** las redes conocidas en segundo plano. La página de espera y la de wifi consultan el estado cada pocos segundos: **cuando vuelve la red de siempre** (por ejemplo, al prender de nuevo el router), muestran «La red volvió» y **regresan solas al punto de venta**.
+   - La página de wifi tiene además un botón **[ Reiniciar la caja ]**, sin PIN porque reiniciar no cambia nada. Al arrancar, la caja se conecta sola a la red conocida que esté disponible.
 
 ### 1.3 Escribir la clave según la terminal
 
@@ -271,7 +274,80 @@ caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, G
 - la VPN no vuelve con el hotspot;
 - la ventana se pasa de 75 minutos.
 
-## 6. Resumen de esfuerzo
+## 7. Plan de desarrollo con margen alto de éxito
+
+La idea: **que nada se pruebe por primera vez en la farmacia**. Cada etapa tiene una puerta (criterio de salida) y no se pasa a la siguiente sin cumplirla.
+
+### 7.1 Laboratorio: una «caja1-lafe virtual» en la Mac
+- **Máquina virtual Debian 13** (UTM o QEMU, gratis) montada **con los mismos scripts de la plantilla**: fases 1 a 4 (cage + Chromium en kiosco, NetworkManager, overlayroot, consola cerrada, `esperando.html`) y la misma `POS_URL`. Es una copia de caja1-lafe salvo el hardware.
+- **Wifi simulada de verdad con `mac80211_hwsim`.** Es un módulo del kernel de Linux (incluido en Debian) que crea radios wifi virtuales. En una radio corre `hostapd` como **router**; la caja virtual usa otra como su placa wifi. NetworkManager escanea, se asocia y pide la clave **igual que con una placa real**. Con eso se arman:
+
+| Red simulada | Para qué |
+|---|---|
+| `ALPHANET-LAB`: WPA/WPA2 mixto TKIP+CCMP, canal 9, con salida a internet | La red de la farmacia, con la misma configuración del router real |
+| `PRUEBA-LAFE`: WPA2 | El hotspot del celular del operador |
+| `LAFE-SOPORTE` | El hotspot de emergencia |
+| `SIN-INTERNET` | Red que asocia pero no tiene salida |
+| `ABIERTA` | Red sin clave |
+
+  - «Apagar el router» = detener su `hostapd`.
+  - «Cambiar la clave» = reiniciarlo con otra.
+  - «Servidor caído» = bloquear el dominio del POS en la VM.
+- **Lo que el laboratorio no cubre:** el driver `8821cu` del adaptador Realtek. Se compensa en §7.4.
+
+### 7.2 Etapas y puertas
+
+| Etapa | Qué | Puerta para pasar a la siguiente |
+|---|---|---|
+| A | `pos-red.py` + modo simulado + **pruebas unitarias** (parseo de `nmcli` con muestras reales, validaciones, protección de redes de base, `Host`/`Origin`, PIN) | 100 % de las pruebas en verde |
+| B | Página de wifi en la Mac contra el modo simulado, recorrida en el navegador con **teclado físico** y simulando pantalla táctil | Todos los resultados de §1.2 vistos y capturados |
+| C | Montar el laboratorio (§7.1) | La VM arranca como caja1-lafe: kiosco, overlayroot y `ALPHANET-LAB` conectada |
+| D | `fase5-wifi-autoservicio.sh` + redes de seguridad (rescate, `LAFE-SOPORTE`) instalados en la VM | `--ensayo`, `--aplicar` y `--quitar` limpios; reinicio con overlayroot OK |
+| E | **Batería automática** en la VM: un script que recorre los escenarios de §7.3 controlando los `hostapd`, reiniciando la VM y comprobando el estado por la API y por `nmcli` | **3 corridas seguidas sin fallas** |
+| F | **Ensayo general:** el guion completo de §5.5 en la VM, cronometrado, tú haciendo de operador frente a la pantalla y yo de soporte por SSH. Incluye **practicar abortar**: el rescate actuando y `--quitar` | Guion completo dentro de los 75 minutos; vuelta atrás practicada |
+| G | Lectura de caja1-lafe (solo lectura) + preparación remota del día anterior (§5.3) | Muestras reales de `nmcli` iguales en formato a las del laboratorio; redes de seguridad instaladas y verificadas |
+| H | Ventana en la farmacia (§5.5) | Criterios de §5.5; si alguno falla, se aborta |
+
+### 7.3 Escenarios de la batería (etapa E)
+
+| # | Escenario | Esperado |
+|---|---|---|
+| 1 | Arranque normal con `ALPHANET-LAB` | POS directo; `pos-red` arriba |
+| 2 | **Router apagado** al arrancar | Página de espera → «Configurar wifi» a los 15 s |
+| 3 | Router apagado, el operador **no hace nada** y el router vuelve | La caja se reconecta sola y vuelve al POS sin intervención |
+| 4 | Router apagado, el operador **pulsa «Reiniciar la caja»** con el router ya prendido | Arranca conectada a `ALPHANET-LAB` |
+| 5 | Router apagado → hotspot `PRUEBA-LAFE` con clave correcta (teclado físico + Enter) | Conecta, vuelve al POS; la VPN de la VM vuelve |
+| 6 | Igual, con clave incorrecta | Mensaje claro; vuelve al campo de clave |
+| 7 | Reinicio con el hotspot encendido | Sigue en `PRUEBA-LAFE` (persistencia en `/home`) |
+| 8 | **Misma red, clave nueva** (cambiar la clave de `ALPHANET-LAB`) | La pide de nuevo; crea «ALPHANET-LAB (tienda)» y conecta |
+| 9 | `SIN-INTERNET` | «Esa red no tiene internet»; se deshace |
+| 10 | **Servidor caído** con la wifi bien | «El servidor no responde»; **no** deshace la red |
+| 11 | Olvidar la red de la tienda | Vuelve a la de base |
+| 12 | Intentar borrar o modificar una red de base por la API | Rechazado |
+| 13 | PIN incorrecto ×3 | Bloqueo de 1 minuto |
+| 14 | **Rescate:** romper a propósito el `conf.d` y reiniciar sin redes | A los 5 min el rescate deshace la fase 5 y la caja vuelve a conectar |
+| 15 | `LAFE-SOPORTE` como salvavidas | Con todo lo demás apagado, el hotspot de emergencia devuelve la red y la VPN |
+| 16 | `--quitar` y reiniciar | La caja queda como antes de la fase 5 |
+| 17 | Caída **con el POS abierto** | El POS muestra el error; con «apague y encienda» aparece la página de wifi (o actúa el vigía, si se decide) |
+
+### 7.4 Lo que solo se puede comprobar en la caja real: el driver Realtek
+- **Antes de la ventana**, solo lectura: `nmcli -t dev wifi list` y `iw dev` en caja1-lafe, con la farmacia abierta. Confirmar que el escaneo funciona con el driver `8821cu` y que el formato es el que entiende el parseo.
+- **Mismo camino que ya funcionó:** la conexión se crea desde el escaneo con `nmcli dev wifi connect`, como se conectó la ALPHANET el 2026-09-19.
+- **En la ventana:** si el escaneo o la conexión fallan por el driver, se aborta con las redes de seguridad. La red de la farmacia nunca se toca: solo se apaga su autoconectar, y eso se deshace.
+
+### 7.5 Tiempo
+| | |
+|---|---|
+| A + B (servicio, página, pruebas) | 1,5 días |
+| C (laboratorio) | ½–1 día |
+| D + E (instalador y batería) | 1 día |
+| F (ensayo general) | 2 h (con el usuario) |
+| G + H (preparación y ventana) | 30 min + 75 min |
+| **Total** | **~4–4,5 días**, más la ventana |
+
+Es más que los ~2,5 días sin laboratorio. A cambio, **cada paso de la ventana ya se habrá hecho varias veces** en una copia de la caja, incluidas la vuelta atrás y la falla del operador.
+
+## 8. Resumen de esfuerzo (sin laboratorio, referencia)
 
 | Etapa | Tiempo |
 |---|---|
