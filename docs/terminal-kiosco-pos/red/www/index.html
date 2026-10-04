@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red de esta caja</title>
+<style>
+  :root{--fondo:#0f172a;--panel:#1e293b;--borde:#334155;--texto:#e2e8f0;--suave:#94a3b8;--ok:#22c55e;--mal:#ef4444;--aviso:#f59e0b;--acento:#3b82f6}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:var(--fondo);color:var(--texto);font-family:system-ui,sans-serif;font-size:18px}
+  main{max-width:46rem;margin:0 auto;padding:1.25rem 1rem 2rem}
+  h1{font-size:1.5rem;margin:0 0 .75rem}
+  h2{font-size:1.1rem;margin:1.25rem 0 .5rem;color:var(--suave);font-weight:600}
+  .estado{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;padding:.75rem 1rem;background:var(--panel);border:1px solid var(--borde);border-radius:.75rem}
+  .estado span{white-space:nowrap}
+  .si{color:var(--ok)} .no{color:var(--mal)}
+  .aviso{margin:1rem 0;padding:1rem;border-radius:.75rem;background:#172554;border:1px solid var(--acento)}
+  .aviso.mal{background:#450a0a;border-color:var(--mal)}
+  .aviso.ok{background:#052e16;border-color:var(--ok)}
+  .lista{list-style:none;margin:0;padding:0;border:1px solid var(--borde);border-radius:.75rem;overflow:hidden}
+  .lista li+li{border-top:1px solid var(--borde)}
+  .lista button.red{all:unset;display:flex;align-items:center;gap:.9rem;width:100%;min-height:56px;padding:.6rem 1rem;cursor:pointer;box-sizing:border-box}
+  .lista button.red:hover,.lista button.red:focus-visible{background:#273449;outline:none}
+  .lista .nombre{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lista .meta{color:var(--suave);font-size:.9rem}
+  .barras{display:inline-flex;align-items:flex-end;gap:2px;height:18px;width:26px}
+  .barras i{display:block;width:5px;background:var(--borde);border-radius:1px}
+  .barras i.on{background:var(--texto)}
+  .fila{display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;min-height:56px}
+  .fila .nombre{flex:1}
+  .btn{min-height:48px;min-width:48px;padding:.6rem 1.1rem;border-radius:.6rem;border:1px solid var(--borde);background:var(--panel);color:var(--texto);font-size:1rem;cursor:pointer}
+  .btn:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+  .btn.primario{background:var(--acento);border-color:var(--acento);color:#fff;font-weight:600}
+  .btn.peligro{border-color:var(--mal);color:#fecaca}
+  .btn[disabled]{opacity:.5;cursor:default}
+  .acciones{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
+  .campo{display:flex;gap:.5rem;margin:.75rem 0}
+  .campo input{flex:1;min-height:52px;padding:.5rem .9rem;font-size:1.2rem;border-radius:.6rem;border:1px solid var(--borde);background:#020617;color:var(--texto)}
+  .campo input:focus{outline:3px solid var(--acento);outline-offset:1px}
+  /* Enmascarado con CSS y no type=password: así ningún gestor de contraseñas
+     (ni el «¿Guardar contraseña?» de Chromium) se activa en la caja. */
+  .secreto{-webkit-text-security:disc}
+  .ayuda{color:var(--suave);font-size:.95rem;margin:.25rem 0}
+  .giro{width:2.5rem;height:2.5rem;border:4px solid var(--borde);border-top-color:var(--acento);border-radius:50%;animation:g 1s linear infinite;margin:1.5rem auto}
+  @keyframes g{to{transform:rotate(360deg)}}
+  .centro{text-align:center}
+  /* teclado en pantalla (solo cajas táctiles) */
+  .osk{margin-top:1rem;display:grid;gap:.4rem;user-select:none}
+  .osk .r{display:flex;gap:.4rem;justify-content:center}
+  .osk button{flex:1;max-width:4rem;min-height:52px;border-radius:.5rem;border:1px solid var(--borde);background:#273449;color:var(--texto);font-size:1.15rem;cursor:pointer}
+  .osk button.ancho{max-width:none;flex:2}
+  .osk button:active{background:var(--acento)}
+  .oculto{display:none!important}
+</style>
+<main>
+  <h1>Red de esta caja</h1>
+  <div class="estado" id="estado" aria-live="polite"><span>Consultando…</span></div>
+  <div id="vista"></div>
+  <div class="acciones" id="pie"></div>
+</main>
+<script>
+"use strict";
+// Página de wifi en autoservicio (docs/terminal-kiosco-pos/red). La sirve pos-red
+// en http://127.0.0.1:8090. OJO: los nombres de red los elige cualquiera que
+// tenga un router cerca → TODO se arma con textContent / createElement, nunca
+// con innerHTML.
+const P = new URLSearchParams(location.search);
+let volver = P.get("volver") || "";
+let estado = null, token = null, vista = "inicio", ocupado = false, redVolvio = false;
+let tecladoPantalla = false;
+
+const $ = (id) => document.getElementById(id);
+function el(tag, props, ...hijos) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === "onclick") e.addEventListener("click", v);
+    else if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else e.setAttribute(k, v);
+  }
+  for (const h of hijos) if (h != null) e.append(h);
+  return e;
+}
+async function api(ruta, datos) {
+  const op = datos === undefined ? { cache: "no-store" } : {
+    method: "POST", cache: "no-store",
+    headers: Object.assign({ "Content-Type": "application/json" }, token ? { "X-Sesion": token } : {}),
+    body: JSON.stringify(datos),
+  };
+  const r = await fetch(ruta, op);
+  let d = {};
+  try { d = await r.json(); } catch (e) { /* sin cuerpo */ }
+  d._status = r.status;
+  return d;
+}
+
+// --- estado (arriba) y vuelta automática ------------------------------------
+function pintarEstado() {
+  const c = $("estado"); c.replaceChildren();
+  if (!estado) { c.append(el("span", { text: "Consultando…" })); return; }
+  const marca = (ok) => el("b", { class: ok ? "si" : "no", text: ok ? "✔" : "✘" });
+  c.append(
+    el("span", {}, "Conectado a: ", el("b", { text: estado.conectado_a || "—" })),
+    el("span", {}, "Internet ", marca(estado.internet)),
+    el("span", {}, "Punto de venta ", marca(estado.pos)),
+    el("span", {}, "Soporte remoto ", marca(estado.soporte)),
+  );
+}
+async function refrescarEstado() {
+  try { estado = await api("/api/estado"); } catch (e) { estado = null; }
+  if (estado) {
+    if (!volver && estado.pos_url) volver = estado.pos_url;
+    const modo = estado.teclado || "auto";
+    tecladoPantalla = modo === "pantalla" || (modo === "auto" && matchMedia("(any-pointer: coarse)").matches);
+  }
+  pintarEstado();
+  // La red de siempre volvió sola (router prendido de nuevo): regresa al POS
+  // si nadie está a mitad de una conexión.
+  if (estado && estado.pos && !ocupado && vista !== "resultado" && !redVolvio && volver) {
+    redVolvio = true;
+    mostrarAviso("La red volvió. Volviendo al punto de venta…", "ok");
+    setTimeout(() => location.replace(volver), 3000);
+  }
+}
+
+// --- vistas ------------------------------------------------------------------
+function mostrar(nodo) { $("vista").replaceChildren(nodo); }
+function mostrarAviso(texto, tipo) {
+  const v = $("vista");
+  v.prepend(el("div", { class: "aviso " + (tipo || ""), role: "status", text: texto }));
+}
+function pie() {
+  const p = $("pie"); p.replaceChildren();
+  if (volver) p.append(el("button", { class: "btn", onclick: () => location.replace(volver), text: "Volver al punto de venta" }));
+  p.append(el("button", { class: "btn", onclick: confirmarReinicio, text: "Reiniciar la caja" }));
+}
+
+function vistaPin(error, espera) {
+  vista = "pin";
+  const entrada = el("input", { type: "text", class: "secreto", inputmode: "numeric", autocomplete: "off", "data-lpignore": "true", "data-1p-ignore": "true", maxlength: "6", "aria-label": "PIN de la tienda" });
+  const entrar = async () => {
+    const r = await api("/api/entrar", { pin: entrada.value });
+    if (r.ok) { token = r.token; vistaLista(); return; }
+    vistaPin(r.codigo === "bloqueado" ? "Demasiados intentos. Espere " + r.espera + " segundos." : "PIN incorrecto.", r.espera);
+  };
+  entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") entrar(); });
+  const caja = el("div", {},
+    el("h2", { text: "PIN de la tienda" }),
+    el("p", { class: "ayuda", text: "Lo sabe el encargado." }),
+    error ? el("div", { class: "aviso mal", role: "alert", text: error }) : null,
+    el("div", { class: "campo" }, entrada, el("button", { class: "btn primario", onclick: entrar, text: "Entrar" })),
+    tecladoPantalla ? teclado(entrada, entrar, true) : null,
+  );
+  mostrar(caja);
+  entrada.focus();
+  if (espera) { entrada.disabled = true; setTimeout(() => vistaPin(), espera * 1000); }
+}
+
+async function vistaLista(aviso, tipoAviso) {
+  vista = "lista";
+  mostrar(el("div", { class: "centro" }, el("div", { class: "giro" }), el("p", { class: "ayuda", text: "Buscando redes…" })));
+  let d;
+  try { d = await api("/api/redes"); } catch (e) { d = { wifi: true, redes: [], guardadas: [] }; }
+  if (vista !== "lista") return;
+  const caja = el("div", {});
+  if (aviso) caja.append(el("div", { class: "aviso " + (tipoAviso || ""), role: "status", text: aviso }));
+  if (!d.wifi) {
+    caja.append(el("div", { class: "aviso mal", text: "Esta caja no tiene red inalámbrica. Revise que el cable esté conectado." }));
+    mostrar(caja); return;
+  }
+  const cab = el("div", { class: "acciones" }, el("button", { class: "btn", onclick: () => vistaLista(), text: "Buscar de nuevo" }));
+  caja.append(el("h2", { text: "Redes disponibles" }), cab);
+  const ul = el("ul", { class: "lista" });
+  if (!d.redes.length) ul.append(el("li", {}, el("div", { class: "fila", text: "No se ve ninguna red. Acérquese al router o busque de nuevo." })));
+  for (const r of d.redes) {
+    const barras = el("span", { class: "barras", "aria-hidden": "true" });
+    [20, 45, 65, 85].forEach((umbral, i) => barras.append(el("i", { class: r.senal >= umbral ? "on" : "", style: "height:" + (6 + i * 4) + "px" })));
+    const b = el("button", { type: "button", class: "red", onclick: () => vistaClave(r) },
+      barras,
+      el("span", { class: "nombre", text: r.ssid }),
+      el("span", { class: "meta", text: (r.conectada ? "Conectada · " : "") + (r.abierta ? "abierta" : "🔒") }));
+    b.setAttribute("aria-label", r.ssid + (r.abierta ? ", abierta" : ", con clave") + (r.conectada ? ", conectada" : ""));
+    // Enter/Espacio explícitos: no depender de cómo cada teclado o navegador activa un botón.
+    b.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); vistaClave(r); } });
+    // ↑/↓ para moverse entre redes con el teclado físico
+    b.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+      e.preventDefault();
+      const todos = [...document.querySelectorAll(".lista button.red")];
+      const i = todos.indexOf(b) + (e.key === "ArrowDown" ? 1 : -1);
+      if (todos[i]) todos[i].focus();
+    });
+    ul.append(el("li", {}, b));
+  }
+  caja.append(ul);
+  if (d.guardadas.length) {
+    caja.append(el("h2", { text: "Redes guardadas por la tienda" }));
+    const ug = el("ul", { class: "lista" });
+    for (const g of d.guardadas) {
+      ug.append(el("li", { class: "guardada" }, el("div", { class: "fila" },
+        el("span", { class: "nombre", text: g.nombre }),
+        el("button", { class: "btn peligro", onclick: () => confirmarOlvidar(g), text: "Olvidar" }))));
+    }
+    caja.append(ug);
+  }
+  mostrar(caja);
+  const primero = caja.querySelector(".lista button.red");
+  if (primero && !tecladoPantalla) primero.focus();
+}
+
+function vistaClave(red, error) {
+  vista = "clave";
+  if (red.abierta) { conectar(red, ""); return; }
+  const entrada = el("input", { type: "text", class: "secreto", autocomplete: "off", autocapitalize: "off", spellcheck: "false", "data-lpignore": "true", "data-1p-ignore": "true", "aria-label": "Clave de " + red.ssid });
+  const ver = el("button", { class: "btn", type: "button", text: "Mostrar" });
+  ver.addEventListener("click", () => { const oc = entrada.classList.toggle("secreto"); ver.textContent = oc ? "Mostrar" : "Ocultar"; entrada.focus(); });
+  const ir = () => conectar(red, entrada.value);
+  entrada.addEventListener("keydown", (e) => { if (e.key === "Enter") ir(); if (e.key === "Escape") vistaLista(); });
+  mostrar(el("div", {},
+    el("h2", {}, "Clave de ", el("b", { text: red.ssid })),
+    error ? el("div", { class: "aviso mal", role: "alert", text: error }) : null,
+    el("div", { class: "campo" }, entrada, ver),
+    el("p", { class: "ayuda", text: tecladoPantalla ? "Escriba la clave con el teclado de abajo." : "Escriba la clave y presione Enter. Esc para volver." }),
+    el("div", { class: "acciones" },
+      el("button", { class: "btn", onclick: () => vistaLista(), text: "Cancelar" }),
+      el("button", { class: "btn primario", onclick: ir, text: "Conectar" })),
+    tecladoPantalla ? teclado(entrada, ir, false) : null,
+  ));
+  entrada.focus();
+}
+
+async function conectar(red, clave) {
+  if (ocupado) return;
+  ocupado = true; vista = "conectando";
+  mostrar(el("div", { class: "centro" }, el("div", { class: "giro" }),
+    el("p", {}, "Conectando a ", el("b", { text: red.ssid }), "…"),
+    el("p", { class: "ayuda", text: "Puede tardar hasta 30 segundos." })));
+  let r;
+  try { r = await api("/api/conectar", { ssid: red.ssid, clave }); } catch (e) { r = { ok: false, mensaje: "Se perdió la comunicación con el servicio de red." }; }
+  ocupado = false;
+  if (r._status === 401) { token = null; vistaPin("La sesión venció. Escriba el PIN otra vez."); return; }
+  await refrescarEstado();
+  if (r.ok) {
+    vista = "resultado";
+    const vuelve = r.pos && volver;
+    mostrar(el("div", {},
+      el("div", { class: "aviso " + (r.pos ? "ok" : ""), role: "status", text: r.mensaje }),
+      vuelve ? el("p", { class: "ayuda", text: "Volviendo al punto de venta…" }) : null,
+      el("div", { class: "acciones" }, el("button", { class: "btn", onclick: () => vistaLista(), text: "Ver redes" }))));
+    if (vuelve) { redVolvio = true; setTimeout(() => location.replace(volver), 3000); }
+    return;
+  }
+  if (r.codigo === "clave" || r.codigo === "clave_formato") vistaClave(red, r.mensaje);
+  else vistaLista(r.mensaje || "No se pudo conectar.", "mal");
+}
+
+function confirmarOlvidar(g) {
+  vista = "confirmar";
+  mostrar(el("div", {},
+    el("div", { class: "aviso" }, "¿Olvidar la red ", el("b", { text: g.nombre }), "? La caja dejará de conectarse sola a ella."),
+    el("div", { class: "acciones" },
+      el("button", { class: "btn", onclick: () => vistaLista(), text: "Cancelar" }),
+      el("button", { class: "btn peligro", onclick: async () => {
+        const r = await api("/api/olvidar", { uuid: g.uuid });
+        if (r._status === 401) { token = null; vistaPin("La sesión venció. Escriba el PIN otra vez."); return; }
+        await refrescarEstado();
+        vistaLista(r.mensaje, r.ok ? "ok" : "mal");
+      }, text: "Olvidar" }))));
+}
+
+function confirmarReinicio() {
+  const anterior = vista;
+  vista = "confirmar";
+  mostrar(el("div", {},
+    el("div", { class: "aviso" }, "¿Reiniciar la caja? Al arrancar se conecta sola a la red conocida que esté disponible."),
+    el("div", { class: "acciones" },
+      el("button", { class: "btn", onclick: () => (anterior === "pin" || !token ? inicio() : vistaLista()), text: "Cancelar" }),
+      el("button", { class: "btn primario", onclick: async () => {
+        await api("/api/reiniciar", {});
+        mostrar(el("div", { class: "centro" }, el("div", { class: "giro" }), el("p", { text: "Reiniciando la caja…" })));
+      }, text: "Reiniciar" }))));
+}
+
+// --- teclado en pantalla (solo cajas táctiles) ----------------------------------
+function teclado(entrada, enviar, numerico) {
+  const filas = numerico
+    ? [["1","2","3"],["4","5","6"],["7","8","9"],["⌫","0","OK"]]
+    : null;
+  const caja = el("div", { class: "osk", "aria-hidden": "true" });
+  let mayus = false, simbolos = false;
+  const escribir = (t) => { entrada.value += t; entrada.dispatchEvent(new Event("input")); };
+  const borrar = () => { entrada.value = entrada.value.slice(0, -1); };
+  function dibujar() {
+    caja.replaceChildren();
+    const letras = simbolos
+      ? [["1","2","3","4","5","6","7","8","9","0"],["!","@","#","$","%","&","*","(",")","-"],["_","=","+",".",",",":",";","?","/"]]
+      : [["1","2","3","4","5","6","7","8","9","0"],["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],["z","x","c","v","b","n","m"]];
+    for (const fila of (filas || letras)) {
+      const r = el("div", { class: "r" });
+      for (const t of fila) {
+        const txt = (!numerico && !simbolos && mayus && t.length === 1) ? t.toUpperCase() : t;
+        r.append(el("button", { type: "button", onclick: () => {
+          if (t === "⌫") borrar(); else if (t === "OK") enviar(); else escribir(txt);
+        }, text: txt }));
+      }
+      caja.append(r);
+    }
+    if (!numerico) {
+      caja.append(el("div", { class: "r" },
+        el("button", { type: "button", class: "ancho", onclick: () => { mayus = !mayus; dibujar(); }, text: mayus ? "ABC ▲" : "abc" }),
+        el("button", { type: "button", class: "ancho", onclick: () => { simbolos = !simbolos; dibujar(); }, text: simbolos ? "Letras" : "#+=" }),
+        el("button", { type: "button", class: "ancho", onclick: () => escribir(" "), text: "espacio" }),
+        el("button", { type: "button", class: "ancho", onclick: borrar, text: "⌫" }),
+        el("button", { type: "button", class: "ancho", onclick: enviar, text: "Conectar" })));
+    }
+  }
+  dibujar();
+  return caja;
+}
+
+// --- arranque ------------------------------------------------------------------
+async function inicio() {
+  await refrescarEstado();
+  pie();
+  if (redVolvio) return;
+  if (estado && !estado.wifi) { vista = "sinwifi"; mostrar(el("div", { class: "aviso mal", text: "Esta caja no tiene red inalámbrica. Revise que el cable esté conectado." })); return; }
+  if (estado && estado.pin && !token) vistaPin(); else { token = token || (await api("/api/entrar", {})).token; vistaLista(); }
+}
+inicio();
+setInterval(refrescarEstado, 5000);
+</script>
+</html>

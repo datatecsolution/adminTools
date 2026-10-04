@@ -13,12 +13,18 @@
   @keyframes p{0%,100%{opacity:.25}50%{opacity:1}}
   #n{font-variant-numeric:tabular-nums}
   small{display:block;margin-top:1.5rem;color:#64748b}
+  /* wifi en autoservicio (fase 5): solo aparece si pos-red está instalado */
+  #wifi{margin-top:1.5rem}
+  .grande{display:inline-block;min-height:56px;padding:.9rem 1.6rem;border-radius:.75rem;background:#3b82f6;color:#fff;font-size:1.2rem;font-weight:600;text-decoration:none}
+  .chico{color:#93c5fd;font-size:1rem}
+  .aviso{color:#fbbf24}
 </style>
 <div class="c">
   <h1><span class="dot"></span>Conectando con el sistema…</h1>
   <p id="m">Esperando la red de la tienda.</p>
   <p id="n"></p>
   <small>La caja abrirá el punto de venta sola en cuanto haya conexión. No hace falta tocar nada.</small>
+  <div id="wifi"></div>
 </div>
 <script>
 // Página de espera del kiosco (docs/terminal-kiosco-pos). Chromium en modo
@@ -43,7 +49,37 @@ async function sondear() {
   } catch (e) {
     m.textContent = seg < 90 ? 'Esperando la red de la tienda.' : 'Sin conexión con el servidor. Revisá el cable o la wifi; se reintenta solo.';
   }
+  if (seg >= 15) revisarRed();
   setTimeout(sondear, 3000);
+}
+
+// Fase 5 (wifi en autoservicio, docs/terminal-kiosco-pos/red): si pos-red está
+// instalado, a los 15 s sin POS se le pregunta qué pasa y se ofrece lo que sirve.
+// Sin pos-red (cajas sin fase 5) el fetch falla y la página sigue como siempre.
+const RED = 'http://127.0.0.1:8090';
+const w = document.getElementById('wifi');
+function enlace(texto, clase) {
+  const a = document.createElement('a');
+  a.href = RED + '/?volver=' + encodeURIComponent(url);
+  a.className = clase; a.textContent = texto;
+  return a;
+}
+async function revisarRed() {
+  let e;
+  try { e = await (await fetch(RED + '/api/estado', { cache: 'no-store', signal: AbortSignal.timeout(3000) })).json(); }
+  catch (err) { return; }                       // sin fase 5: como antes
+  w.replaceChildren();
+  if (!e.wifi) {
+    m.textContent = 'Sin red. Revise que el cable esté bien conectado.';
+  } else if (!e.internet) {
+    m.textContent = 'La caja no tiene internet.';
+    w.append(enlace('Configurar wifi', 'grande'));
+  } else if (!e.pos) {
+    const p = document.createElement('p');
+    p.className = 'aviso';
+    p.textContent = 'La red de esta caja funciona, pero el servidor no responde. Llame a soporte.';
+    w.append(p, enlace('Configurar wifi', 'chico'));
+  }
 }
 sondear();
 </script>

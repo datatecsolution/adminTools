@@ -1,0 +1,10 @@
+[Unit]
+Description=LABORATORIO - expone la depuración de Chromium del kiosco en mgmt0:9222
+After=pos-kiosk.service
+
+[Service]
+ExecStart=/usr/bin/socat TCP-LISTEN:9222,bind=10.0.2.15,fork,reuseaddr TCP:127.0.0.1:9222
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=POS - rescate de red de la fase 5, 5 minutos después de arrancar
+
+[Timer]
+OnBootSec=5min
+Unit=pos-red-rescate.service
+
+[Install]
+WantedBy=timers.target
