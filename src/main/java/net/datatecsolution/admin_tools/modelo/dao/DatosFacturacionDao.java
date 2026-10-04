@@ -184,28 +184,17 @@ public class DatosFacturacionDao extends ModeloDaoBasic {
 		
 		try {
 			conn=ConexionStatic.getPoolConexion().getConnection();
-			super.psConsultas=conn.prepareStatement("UPDATE "+datosF.getCaja().getNombreBd()+".datos_factura SET CAI=?,factura_inicial=?,factura_final=?,codigo_tipo_facturacion=?,cantida_solicitada=?,fecha_limite_emision=? WHERE datos_factura.codigo_rango=?;",java.sql.Statement.RETURN_GENERATED_KEYS);
+			// Al modificar solo se cambian CAI, codigo de facturacion, cantidad otorgada y
+			// fecha limite. El rango (inicial/final) y la caja quedan como se crearon,
+			// y no se toca el AUTO_INCREMENT de encabezado_factura: antes cada
+			// "Actualizar" movia el proximo numero de factura al inicio del rango.
+			super.psConsultas=conn.prepareStatement("UPDATE "+datosF.getCaja().getNombreBd()+".datos_factura SET CAI=?,codigo_tipo_facturacion=?,cantida_solicitada=?,fecha_limite_emision=? WHERE datos_factura.codigo_rango=?;");
 			super.psConsultas.setString(1,datosF.getCAI());
-			super.psConsultas.setInt( 2, datosF.getFacturaInicial());
-			super.psConsultas.setInt(3, datosF.getFacturaFinal());
-			super.psConsultas.setString(4,datosF.getCodigoFacturas());
-			super.psConsultas.setInt(5, datosF.getCantOtorgada());
-			super.psConsultas.setString(6,datosF.getFechaLimite());
-			super.psConsultas.setInt(7,datosF.getCodigo());
+			super.psConsultas.setString(2,datosF.getCodigoFacturas());
+			super.psConsultas.setInt(3, datosF.getCantOtorgada());
+			super.psConsultas.setString(4,datosF.getFechaLimite());
+			super.psConsultas.setInt(5,datosF.getCodigo());
 			psConsultas.executeUpdate();
-			
-			
-			rs=psConsultas.getGeneratedKeys(); //obtengo las ultimas llaves generadas
-			while(rs.next()){
-				datosF.setCodigo(rs.getInt(1));
-					
-					
-				}
-			
-			//se estable el nuevo numeracion de la facturacion
-			this.setNumeroFact(datosF);
-			
-			
 			return true;
 			
 		} catch (SQLException e) {

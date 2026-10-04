@@ -126,6 +126,11 @@ public class FacturacionService {
 		return detallesOrdenDao.detallesFacturaPendiente(idOrden);
 	}
 
+	/** Todos los precios del articulo, costo incluido, ordenados por codigo. */
+	public List<PrecioArticulo> obtenerPreciosArticulo(int idArticulo) {
+		return preciosDao.getPreciosArticulo(idArticulo);
+	}
+
 	public List<PrecioArticulo> obtenerPreciosSinCosto(int idArticulo) {
 		return preciosDao.getPreciosArticuloSinCosto(idArticulo);
 	}

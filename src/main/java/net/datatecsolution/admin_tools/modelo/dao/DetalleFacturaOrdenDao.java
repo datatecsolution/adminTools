@@ -146,8 +146,9 @@ public class DetalleFacturaOrdenDao extends ModeloDaoBasic {
 				articuloDetalle.getImpuestoObj().setPorcentaje(res.getString("impuesto"));
 				articuloDetalle.getImpuestoObj().setId(res.getInt("codigo_impuesto"));
 				
-				//conseguir los precios del producto
-				articuloDetalle.setPreciosVenta(this.preciosDao.getPreciosArticulo(articuloDetalle.getId()));
+				//conseguir los precios de venta del producto (sin el costo), igual que al
+				//escanear un articulo; con getPreciosArticulo las flechas llegaban al costo
+				articuloDetalle.setPreciosVenta(this.preciosDao.getPreciosArticuloSinCosto(articuloDetalle.getId()));
 				
 				unDetalle.setListArticulos(articuloDetalle);//se agrega el articulo al 
 				unDetalle.setCantidad(res.getBigDecimal("cantidad"));

@@ -133,6 +133,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 				}
 			break;
 		case "GUARDAR":
+			confirmarEdicionPrecios();
 			//filtrar los codigos de barra del articulo
 			if(this.view.getModeloCodBarra().getSize()==0){
 				int resul=JOptionPane.showConfirmDialog(view, "Desea guardar un articulos sin condigos de barra?");
@@ -181,6 +182,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 				
 			break;
 		case "ACTUALIZAR":
+			confirmarEdicionPrecios();
 			cargarDatosArticuloView();
 
 			if(validar())
@@ -232,7 +234,7 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 			JOptionPane.showMessageDialog(view, "Debe agregar una categoria","Error validacion",JOptionPane.ERROR_MESSAGE);
 			view.getTxtMarca().requestFocusInWindow();
 		}else if(!validarPrecio()){
-			JOptionPane.showMessageDialog(view, "Debe agregar por lo menos un precio","Error validacion",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(view, "Debe ingresar el precio "+descripcionPrecioPublico()+" (mayor que 0)","Error validacion",JOptionPane.ERROR_MESSAGE);
 		} else{
 			resul=true;
 			}
@@ -240,15 +242,28 @@ public class CtlArticulo extends MouseAdapter implements ActionListener,KeyListe
 		return resul;
 	}
 
+	/** El precio 1 (Publico General) es obligatorio: sin el, el articulo no aparece al facturar. */
 	private boolean validarPrecio() {
-		boolean resul=false;
-		for (int x=0;x<view.getModeloPrecio().getPrecios().size();x++){
-			if(view.getModeloPrecio().getPrecios().get(x).getPrecio().doubleValue()>0){
-				resul=true;
-				break;
-			}
+		for (PrecioArticulo precio:view.getModeloPrecio().getPrecios()){
+			if(precio.getCodigoPrecio()==1)
+				return precio.getPrecio()!=null && precio.getPrecio().doubleValue()>0;
 		}
-		return resul;
+		return false;
+	}
+
+	private String descripcionPrecioPublico() {
+		for (PrecioArticulo precio:view.getModeloPrecio().getPrecios()){
+			if(precio.getCodigoPrecio()==1)
+				return precio.getDescripcion();
+		}
+		return "Publico General";
+	}
+
+	/** Si quedo una celda de precio en edicion (sin Enter), su valor se aplica antes de guardar. */
+	private void confirmarEdicionPrecios() {
+		JTable tabla=view.getTablaPrecios();
+		if(tabla.isEditing() && !tabla.getCellEditor().stopCellEditing())
+			tabla.getCellEditor().cancelCellEditing();
 	}
 
 	private void calcularTotalInsumo() {

@@ -218,7 +218,8 @@ public class ViewCrearArticulo extends JDialog {
 		txtCodigo.setColumns(10);
 		
 		panel_3 = new JPanel();
-		panel_3.setBounds(10, 368, 529, 109);
+		// alto para ~6 precios sin scroll (con 109 el 5° precio quedaba cortado)
+		panel_3.setBounds(10, 368, 529, 140);
 		panel.add(panel_3);
 		panel_3.setLayout(new BorderLayout(0, 0));
 		
@@ -234,6 +235,8 @@ public class ViewCrearArticulo extends JDialog {
 		tblPrecios.setBounds(2, 18, 643, 0);
 		getContentPane().add(tblPrecios);
 		tblPrecios.setModel(modeloPrecio);
+		// el precio queda puesto al salir de la celda, sin tener que dar Enter
+		tblPrecios.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		tblPrecios.setDefaultRenderer(String.class, renderizador);
 		
 		scrollPane_1 = new JScrollPane(tblPrecios);

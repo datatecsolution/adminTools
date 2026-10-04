@@ -626,60 +626,54 @@ public class CtlFacturarFrame
 			return;
 		}
 
+		// Precios que existen: los de la linea seleccionada y los de toda la factura
+		// (incluyen el costo si el articulo lo tiene; venderlo a costo pide la clave).
+		List<PrecioArticulo> preciosLinea = new ArrayList<PrecioArticulo>();
+		List<List<PrecioArticulo>> preciosLineas = new ArrayList<List<PrecioArticulo>>();
+		for (int xx = 0; xx < view.getDetalles().size(); xx++) {
+			int idArticulo = view.getDetalle(xx).getArticulo().getId();
+			if (idArticulo == -1) continue;
+			List<PrecioArticulo> precios = this.facturacionService.obtenerPreciosArticulo(idArticulo);
+			preciosLineas.add(precios);
+			if (xx == filaPulsada) preciosLinea = precios;
+		}
+		if (preciosLineas.isEmpty()) return;
+
 		ViewSelectPrecio viewSelectPrecio = new ViewSelectPrecio(null);
-		CtlSelectPrecio ctlSelectPrecio = new CtlSelectPrecio(viewSelectPrecio);
+		CtlSelectPrecio ctlSelectPrecio = new CtlSelectPrecio(viewSelectPrecio, preciosLinea,
+				CtlSelectPrecio.unir(preciosLineas));
 
 		boolean resultado = ctlSelectPrecio.agregar();
 		if (!resultado) return;
 
+		PrecioArticulo elegido = ctlSelectPrecio.getPrecioSelect();
+		int sinCambio = 0;
 		if (ctlSelectPrecio.isAplicarTodo()) {
 			for (int xx = 0; xx < view.getDetalles().size(); xx++) {
-				DetalleFactura detalle = this.view.getDetalle(xx);
-				detalle.getArticulo().setPreciosVenta(
-						this.facturacionService.obtenerPreciosSinCosto(detalle.getArticulo().getId()));
-				if (detalle.getArticulo().getId() != -1) {
-					if (ctlSelectPrecio.getPrecioSelect().getCodigoPrecio() == 4) {
-						PrecioArticulo unPrecio = this.facturacionService
-								.obtenerPrecioArticulo(detalle.getArticulo().getId(), 4);
-						if (unPrecio != null) {
-							detalle.getArticulo().getPreciosVenta().add(unPrecio);
-							detalle.getArticulo().setPrecio(unPrecio);
-						} else {
-							detalle.getArticulo().lastPrecio();
-							detalle.getArticulo().netPrecio();
-						}
-					} else {
-						detalle.getArticulo().setPrecio(ctlSelectPrecio.getPrecioSelect());
-					}
-				}
+				if (view.getDetalle(xx).getArticulo().getId() == -1) continue;
+				if (!aplicarPrecioALinea(view.getDetalle(xx).getArticulo(), elegido)) sinCambio++;
 			}
-		} else {
-			if (filaPulsada >= 0) {
-				view.getDetalle(filaPulsada).getArticulo()
-						.setPreciosVenta(this.facturacionService.obtenerPreciosSinCosto(
-								view.getDetalle(filaPulsada).getArticulo().getId()));
-
-				if (ctlSelectPrecio.getPrecioSelect().getCodigoPrecio() == 4) {
-					PrecioArticulo unPrecio = this.facturacionService.obtenerPrecioArticulo(
-							view.getDetalle(filaPulsada).getArticulo().getId(), 4);
-					if (unPrecio != null) {
-						this.view.getDetalle(filaPulsada).getArticulo()
-								.getPreciosVenta().add(unPrecio);
-						this.view.getDetalle(filaPulsada).getArticulo()
-								.setPrecio(unPrecio);
-						this.selectRowInset(filaPulsada);
-					} else {
-						this.view.getDetalle(filaPulsada).getArticulo().lastPrecio();
-						this.view.getDetalle(filaPulsada).getArticulo().netPrecio();
-						this.selectRowInset(filaPulsada);
-					}
-				} else {
-					this.view.getDetalle(filaPulsada).getArticulo()
-							.setPrecio(ctlSelectPrecio.getPrecioSelect());
-				}
-			}
+		} else if (filaPulsada >= 0) {
+			if (!aplicarPrecioALinea(view.getDetalle(filaPulsada).getArticulo(), elegido)) sinCambio++;
+			this.selectRowInset(filaPulsada);
 		}
+		CtlSelectPrecio.avisarSinCambio(view.asComponent(), sinCambio, elegido);
 		this.calcularTotales();
+	}
+
+	/**
+	 * Aplica el precio elegido a una linea. Recarga los precios de venta del
+	 * articulo y, si se eligio el costo (4), lo agrega a la lista. Devuelve false
+	 * si el articulo no tiene ese precio: la linea conserva el que tenia.
+	 */
+	private boolean aplicarPrecioALinea(Articulo articulo, PrecioArticulo elegido) {
+		articulo.setPreciosVenta(this.facturacionService.obtenerPreciosSinCosto(articulo.getId()));
+		if (elegido.getCodigoPrecio() == 4) {
+			PrecioArticulo costo = this.facturacionService.obtenerPrecioArticulo(articulo.getId(), 4);
+			if (costo == null) return false;
+			articulo.getPreciosVenta().add(costo);
+		}
+		return articulo.setPrecio(elegido);
 	}
 
 	private void incrementarCantidad() {
@@ -1091,7 +1085,8 @@ public class CtlFacturarFrame
 
 		filaPulsada = this.view.getFilaSeleccionada();
 
-		switch (e.getKeyCode()) {
+		// Ctrl+numero = tecla F (alternativa para macOS, ver AtajosTeclado)
+		switch (AtajosTeclado.teclaEquivalente(e)) {
 
 			case KeyEvent.VK_F1:
 				if (config.isActivarBusquedaFacturacion()) {
@@ -1355,7 +1350,8 @@ public class CtlFacturarFrame
 
 		}
 
-		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_UP) {
+		// Ctrl+D es la alternativa (la misma de órdenes): en macOS Ctrl+↑ lo toma Mission Control.
+		if (e.isControlDown() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_D)) {
 			seleccionarPrecioEspecifico();
 		}
 		if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
@@ -1408,10 +1404,11 @@ public class CtlFacturarFrame
 				view.setTextoBusqueda(texto);
 			}
 		}
-		if (caracter == '+') {
+		// sin Ctrl: Ctrl+- / Ctrl++ son alternativas de F11 / F12 (AtajosTeclado)
+		if (caracter == '+' && !e.isControlDown()) {
 			incrementarCantidad();
 		}
-		if (caracter == '-') {
+		if (caracter == '-' && !e.isControlDown()) {
 			if (filaPulsada >= 0) {
 				this.view.restarCantidad(filaPulsada);
 				this.calcularTotales();

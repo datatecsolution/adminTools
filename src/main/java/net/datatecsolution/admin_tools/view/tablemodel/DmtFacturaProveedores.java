@@ -83,6 +83,31 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 		return columnNames.length;
 	}
 
+	/**
+	 * Cambia el precio con ese codigo (2, 3 o 4) del articulo de la fila, o lo
+	 * agrega si el articulo no lo tiene. Antes se decidia por la cantidad de
+	 * precios (size()>=3): un articulo con {1,4,5} o {1,3,4} daba NullPointerException.
+	 */
+	private void setPrecioPorCodigo(int rowIndex, int columnIndex, int codigoPrecio, String v){
+		Articulo articulo=detallesFactura.get(rowIndex).getArticulo();
+		if(articulo.getPreciosVenta()==null)
+			articulo.setPreciosVenta(new ArrayList<PrecioArticulo>());
+
+		for(PrecioArticulo precio:articulo.getPreciosVenta()){
+			if(precio.getCodigoPrecio()==codigoPrecio){
+				precio.setPrecio(new BigDecimal(v));
+				fireTableCellUpdated(rowIndex, columnIndex);
+				return;
+			}
+		}
+		PrecioArticulo nuevo=new PrecioArticulo();
+		nuevo.setCodigoArticulo(articulo.getId());
+		nuevo.setCodigoPrecio(codigoPrecio);
+		nuevo.setPrecio(new BigDecimal(v));
+		articulo.getPreciosVenta().add(nuevo);
+		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
@@ -303,70 +328,13 @@ public class DmtFacturaProveedores extends AbstractTableModel {
 				break;
 
 			case 8:
-				PrecioArticulo precioVenta2=null;
-
-				for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
-					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==2){
-						precioVenta2=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
-					}
-				}
-				if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size()>=3){
-
-					precioVenta2.setPrecio(new BigDecimal(v));
-					fireTableCellUpdated(rowIndex, columnIndex);
-
-				}else{
-					PrecioArticulo precioVent2=new PrecioArticulo();
-					precioVent2.setCodigoArticulo(detallesFactura.get(rowIndex).getArticulo().getId());
-					precioVent2.setCodigoPrecio(2);
-					precioVent2.setPrecio(new BigDecimal(v));
-					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent2);
-				}
-
+				setPrecioPorCodigo(rowIndex, columnIndex, 2, v);
 				break;
 			case 9:
-				PrecioArticulo precioVenta3=null;
-
-				for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
-					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==3){
-						precioVenta3=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
-					}
-				}
-				if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size()>=3){
-
-					precioVenta3.setPrecio(new BigDecimal(v));
-					fireTableCellUpdated(rowIndex, columnIndex);
-
-				}else{
-					PrecioArticulo precioVent3=new PrecioArticulo();
-					precioVent3.setCodigoArticulo(detallesFactura.get(rowIndex).getArticulo().getId());
-					precioVent3.setCodigoPrecio(3);
-					precioVent3.setPrecio(new BigDecimal(v));
-					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioVent3);
-				}
-
+				setPrecioPorCodigo(rowIndex, columnIndex, 3, v);
 				break;
 			case 10:
-				PrecioArticulo precioCosto=null;
-
-				for(int aa=0;aa<detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size();aa++){
-					if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa).getCodigoPrecio()==4){
-						precioCosto=detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().get(aa);
-					}
-				}
-				if(detallesFactura.get(rowIndex).getArticulo().getPreciosVenta()!=null && detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().size()>=3){
-
-					precioCosto.setPrecio(new BigDecimal(v));
-					fireTableCellUpdated(rowIndex, columnIndex);
-
-				}else{
-					PrecioArticulo precioCosto2=new PrecioArticulo();
-					precioCosto2.setCodigoArticulo(detallesFactura.get(rowIndex).getArticulo().getId());
-					precioCosto2.setCodigoPrecio(4);
-					precioCosto2.setPrecio(new BigDecimal(v));
-					detallesFactura.get(rowIndex).getArticulo().getPreciosVenta().add(precioCosto2);
-				}
-
+				setPrecioPorCodigo(rowIndex, columnIndex, 4, v);
 				break;
 			case 11:
 
