@@ -1,5 +1,7 @@
 # Análisis: que el cliente conecte la terminal a una red wifi sin nosotros
 
+> Flujo y plan de implementación: [`plan-wifi-autoservicio.md`](plan-wifi-autoservicio.md).
+>
 > 2026-10-03. Terminales kiosco Debian 13 (cage + Chromium) de esta plantilla: caja1-samuel, caja2-samuel y caja1-lafe. La Landi Android no entra: Android ya trae su pantalla de wifi.
 >
 > **Revisado el 2026-10-03.** Correcciones en §2.3, §2.4, §4 y §5, más §8 nuevo: permisos de `/home/pos-red`, protección real de las conexiones de base, el caso «misma red, clave nueva», separar «hay internet» de «responde el servidor», VPN sin root, ataque de *DNS rebinding* y registro de cambios.
@@ -164,7 +166,11 @@ Es una decisión pendiente (ver §7). Opciones:
 
 **Total: unos 2,5 días** de desarrollo y pruebas, más el despliegue.
 
-## 7. Decisiones pendientes
+## 7. Decisiones
+
+> **Confirmadas el 2026-10-03** (detalle en [`plan-wifi-autoservicio.md`](plan-wifi-autoservicio.md) §0): PIN de la tienda; teclado en pantalla automático según sea táctil o no, con ajuste por caja; olvidar solo las redes de la tienda; **solo caja1-lafe** por ahora; **el POS no se toca**, así que el punto 2 de §4.5 (botón en el POS) queda fuera de alcance.
+
+Las preguntas originales:
 1. **¿Quién puede cambiar la wifi?** Libre o con PIN de la tienda.
 2. **¿Botón en el POS** además de la página de espera, o solo la página de espera?
 3. **¿Se permite «olvidar» redes** desde la pantalla? Siempre solo las agregadas por el cliente.
