@@ -177,8 +177,14 @@ class Servicio:
         dev = self.b.dispositivo_wifi()
         if dev is None:
             return self._resultado(False, "sin_wifi", ssid)
-        visibles = {r["ssid"]: r for r in self.b.escanear(dev["dispositivo"])}
-        red = visibles.get(ssid)
+        # Un router recién encendido puede no estar aún en el escaneo: dos reintentos.
+        red = None
+        for intento in range(3):
+            red = {r["ssid"]: r for r in self.b.escanear(dev["dispositivo"])}.get(ssid)
+            if red is not None:
+                break
+            if intento < 2:
+                self.dormir(3)
         if not validar_ssid(ssid):
             return self._resultado(False, "fallo", ssid)
         if red is None:
@@ -272,9 +278,12 @@ def crear_handler(servicio, www, simulado=None):
         def log_message(self, fmt, *args):
             pass
 
-        def _json(self, codigo, datos):
+        def _json(self, codigo, datos, cors_null=False):
             cuerpo = json.dumps(datos, ensure_ascii=False).encode()
             self.send_response(codigo)
+            if cors_null:
+                # esperando.html corre desde file:// (origen «null») y solo LEE el estado
+                self.send_header("Access-Control-Allow-Origin", "null")
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(cuerpo)))
@@ -293,7 +302,7 @@ def crear_handler(servicio, www, simulado=None):
                 return self._json(403, {"error": "host"})
             ruta = self.path.split("?")[0]
             if ruta == "/api/estado":
-                return self._json(200, servicio.estado())
+                return self._json(200, servicio.estado(), cors_null=self.headers.get("Origin") == "null")
             if ruta == "/api/redes":
                 return self._json(200, servicio.redes())
             if ruta in ("/", "/index.html"):
@@ -361,10 +370,14 @@ def cargar_config(ruta):
 
 def fijar_pin(ruta):
     cfg = cargar_config(ruta)
-    pin = getpass.getpass("PIN de la tienda (4 a 6 dígitos): ")
+    if sys.stdin.isatty():
+        pin = getpass.getpass("PIN de la tienda (4 a 6 dígitos): ")
+        repetido = getpass.getpass("Repita el PIN: ")
+    else:  # desde el instalador: dos líneas por la entrada estándar
+        pin, repetido = (sys.stdin.readline().strip(), sys.stdin.readline().strip())
     if not pin_valido_formato(pin):
         sys.exit("El PIN debe tener de 4 a 6 dígitos.")
-    if getpass.getpass("Repita el PIN: ") != pin:
+    if repetido != pin:
         sys.exit("Los PIN no coinciden.")
     sal = secrets.token_hex(16)
     guardar = {}

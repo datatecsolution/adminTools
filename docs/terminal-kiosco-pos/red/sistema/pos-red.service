@@ -1,0 +1,28 @@
+[Unit]
+Description=POS - wifi en autoservicio (pos-red, 127.0.0.1:8090)
+Documentation=file:///home/adminpos/pos-terminal/red/README.md
+After=NetworkManager.service
+Wants=NetworkManager.service
+RequiresMountsFor=/home
+
+[Service]
+User=posred
+Group=posred
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /opt/pos/red/pos_red.py --config /home/pos-red/config.json
+Restart=always
+RestartSec=3
+# Endurecido: escribe SOLO su registro; el resto lo hace NetworkManager vía polkit.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/pos-red/cambios.log
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

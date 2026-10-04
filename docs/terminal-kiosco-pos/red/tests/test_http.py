@@ -55,6 +55,15 @@ class TestHTTP(unittest.TestCase):
         self.assertEqual(st, 200)
         self.assertTrue(d["pin"])
 
+    def test_estado_cors_solo_para_file(self):
+        c = http.client.HTTPConnection("127.0.0.1", self.puerto, timeout=10)
+        c.request("GET", "/api/estado", headers={"Host": "127.0.0.1:%d" % self.puerto, "Origin": "null"})
+        r = c.getresponse(); r.read()
+        self.assertEqual(r.getheader("Access-Control-Allow-Origin"), "null")
+        c.request("GET", "/api/estado", headers={"Host": "127.0.0.1:%d" % self.puerto, "Origin": "https://malo.example"})
+        r = c.getresponse(); r.read()
+        self.assertIsNone(r.getheader("Access-Control-Allow-Origin"))
+
     def test_host_ajeno_rechazado(self):
         st, _ = self.pedir("GET", "/api/estado", host="malo.example:%d" % self.puerto)
         self.assertEqual(st, 403)

@@ -1,0 +1,20 @@
+// Fase 5 (wifi en autoservicio): el usuario posred SOLO puede escanear, conectar y
+// guardar redes de sistema en NetworkManager, y reiniciar la caja. Nada más.
+polkit.addRule(function (action, subject) {
+    if (subject.user !== "posred") {
+        return polkit.Result.NOT_HANDLED;
+    }
+    var permitidas = [
+        "org.freedesktop.NetworkManager.network-control",
+        "org.freedesktop.NetworkManager.settings.modify.system",
+        "org.freedesktop.NetworkManager.wifi.scan",
+        "org.freedesktop.NetworkManager.enable-disable-wifi",
+        "org.freedesktop.login1.reboot",
+        "org.freedesktop.login1.reboot-multiple-sessions",
+        "org.freedesktop.login1.reboot-ignore-inhibit"
+    ];
+    if (permitidas.indexOf(action.id) >= 0) {
+        return polkit.Result.YES;
+    }
+    return polkit.Result.NOT_HANDLED;
+});

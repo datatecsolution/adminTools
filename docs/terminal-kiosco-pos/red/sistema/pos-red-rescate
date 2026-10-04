@@ -1,0 +1,32 @@
+#!/bin/bash
+# Red de seguridad 1 de la fase 5 (SOLO durante la ventana de instalación; la retira
+# `fase5-wifi-autoservicio.sh --cerrar`). Si la caja arrancó y no tiene NINGUNA conexión,
+# deshace la parte de red de la fase 5 (vuelve a guardar las redes en /etc) para que
+# vuelvan a valer las conexiones de siempre.
+# Espera 5 minutos tras el arranque (lección 2026-09-19: no actuar antes de tiempo) o
+# 25 si existe la marca /home/pos-red/ensayo-caida (caída simulada A PROPÓSITO).
+LOG=/home/pos-red/rescate.log
+MARCA=/home/pos-red/ensayo-caida
+log() { echo "$(date -Is) $*" >> "$LOG"; }
+if [ -f "$MARCA" ]; then
+  while [ "$(cut -d. -f1 /proc/uptime)" -lt 1500 ]; do sleep 30; done
+fi
+estado=$(nmcli -t -f STATE general 2>/dev/null)
+case "$estado" in
+  connected*) log "rescate: hay conexión ($estado), nada que hacer"; exit 0 ;;
+esac
+log "rescate: SIN conexión ($estado) — deshaciendo la parte de red de la fase 5"
+deshacer='rm -f /etc/NetworkManager/conf.d/50-pos-red.conf /etc/systemd/system/NetworkManager.service.d/50-pos-red.conf
+  mkdir -p /etc/NetworkManager/system-connections
+  for f in /usr/lib/NetworkManager/system-connections/*.nmconnection; do
+    [ -e "$f" ] && mv "$f" /etc/NetworkManager/system-connections/
+  done'
+if [ "$(findmnt -no FSTYPE /)" = overlay ]; then
+  overlayroot-chroot sh -c "$deshacer" >> "$LOG" 2>&1
+  mount -o remount,ro /media/root-ro 2>/dev/null
+else
+  sh -c "$deshacer" >> "$LOG" 2>&1
+fi
+systemctl daemon-reload
+systemctl restart NetworkManager
+log "rescate: hecho; NetworkManager reiniciado"

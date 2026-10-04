@@ -104,6 +104,19 @@ class TestConectar(unittest.TestCase):
         s.conectar("Farmacia la Fe ALPHANET", "otraclave99")
         self.assertEqual([c["nombre"] for c in b.conexiones()].count("Farmacia la Fe ALPHANET (tienda)"), 1)
 
+    def test_red_que_aparece_en_el_segundo_escaneo(self):
+        s, b, _, _ = nuevo()
+        b.controlar("router_apagar", "Farmacia la Fe ALPHANET")
+        original = b.escanear
+        llamadas = []
+        def escanear(dev):
+            llamadas.append(1)
+            if len(llamadas) == 2:             # el router «termina de encender» recién ahora
+                b.controlar("router_prender", "PRUEBA-LAFE")
+            return original(dev)
+        b.escanear = escanear
+        self.assertTrue(s.conectar("PRUEBA-LAFE", "prueba123")["ok"])
+
     def test_red_no_visible(self):
         s, _, _, _ = nuevo()
         self.assertEqual(s.conectar("PRUEBA-LAFE", "prueba123")["codigo"], "no_encontrada")
