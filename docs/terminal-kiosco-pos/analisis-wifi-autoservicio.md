@@ -1,6 +1,8 @@
 # Análisis: que el cliente conecte la terminal a una red wifi sin nosotros
 
 > 2026-10-03. Terminales kiosco Debian 13 (cage + Chromium) de esta plantilla: caja1-samuel, caja2-samuel y caja1-lafe. La Landi Android no entra: Android ya trae su pantalla de wifi.
+>
+> **Revisado el 2026-10-03.** Correcciones en §2.3, §2.4, §4 y §5, más §8 nuevo: permisos de `/home/pos-red`, protección real de las conexiones de base, el caso «misma red, clave nueva», separar «hay internet» de «responde el servidor», VPN sin root, ataque de *DNS rebinding* y registro de cambios.
 
 ## 1. El problema hoy
 
@@ -30,12 +32,15 @@ NetworkManager guarda las conexiones en `/etc/NetworkManager/system-connections/
 path=/home/pos-red/system-connections
 ```
 
-Las conexiones de base se dejan **congeladas en la raíz**, en `/usr/lib/NetworkManager/system-connections/`. Son el cable y la wifi que dejamos al instalar. El plugin keyfile lee esa carpeta además de `path`, pero no la modifica. Así:
+Las conexiones de base se dejan **congeladas en la raíz**, en `/usr/lib/NetworkManager/system-connections/`. Son el cable y la wifi que dejamos al instalar. El plugin keyfile también lee esa carpeta. Así:
 - las redes que agrega el cliente persisten en `/home`;
-- las nuestras no se pueden borrar desde la pantalla;
 - si `/home` falla, la caja sigue arrancando con el cable y con la wifi original.
 
-> A verificar en el ensayo: que la versión de NetworkManager de Debian 13 lea ambas rutas como se espera, y que NetworkManager arranque después de que `/home` esté montado. `NetworkManager.service` va después de `local-fs.target`, pero hay que confirmarlo en la caja.
+> **Ojo (revisión):** `/usr/lib` **no protege** las conexiones de base contra la API de NetworkManager. Si se modifica o se borra una conexión de `/usr/lib`, NetworkManager guarda una copia modificada o una marca de borrado (`.nmmeta`) en `path`, o sea en `/home/pos-red`, y la de base queda tapada. La protección la tiene que dar **el intermediario**: rechaza modificar o borrar cualquier conexión cuyo archivo (`nmcli -f UUID,FILENAME con`) no esté en `/home/pos-red`. Y si alguna vez quedara tapada, borrar ese `.nmmeta` en `/home/pos-red` la restaura.
+
+> A verificar en el ensayo: que la versión de NetworkManager de Debian 13 lea ambas rutas como se espera, y que NetworkManager arranque después de que `/home` esté montado. Por las dependencias por defecto de systemd (`sysinit.target` → `local-fs.target`), `NetworkManager.service` arranca después de los montajes de `fstab`, pero hay que confirmarlo en la caja.
+>
+> **Permisos:** los archivos de `/home/pos-red/system-connections` los escribe **NetworkManager, que corre como root**, no `posred`. La carpeta debe ser `root:root 700`: NetworkManager ignora los keyfiles que no son de root o que otros pueden leer, y las claves wifi quedan ahí en texto plano.
 
 ### 2.4 DNS
 Después del fix de La Fe (`fix-dns-resolv-nm.sh`), cada conexión lleva sus DNS a mano. Una red nueva traerá los del DHCP, y en la farmacia el DHCP daba 8.8.8.8, que no respondía.
@@ -43,6 +48,8 @@ Después del fix de La Fe (`fix-dns-resolv-nm.sh`), cada conexión lleva sus DNS
 **Propuesta:** el intermediario crea la conexión con `ipv4.dns 1.1.1.1` **sin** `ignore-auto-dns`. Se suma al DNS del router, no lo reemplaza.
 
 Requisito previo: el enlace `resolv.conf → /run/NetworkManager/resolv.conf` tiene que estar aplicado en **todas** las cajas. caja1-samuel lo tiene pendiente.
+
+`fix-dns-resolv-nm.sh` recorre solo `/etc/NetworkManager/system-connections/`. Después de la fase 5 las conexiones de base viven en `/usr/lib/...`, así que el fix de DNS va **antes** de la fase 5 (ya está así en el orden de §5). Si se vuelve a correr después, hay que ampliarlo a la carpeta nueva.
 
 ### 2.5 Teclado
 - Las CX20 de Samuel son **táctiles** y no tienen teclado físico.
@@ -84,7 +91,7 @@ Lección que sí se aplica: **crear la conexión desde el escaneo** (`nmcli dev 
 ### 4.2 API del intermediario (mínima)
 | Método | Ruta | Qué hace |
 |---|---|---|
-| GET | `/api/estado` | Si hay wifi, red actual, IP, si hay internet (sondea `/healthz` del POS) y si hay VPN |
+| GET | `/api/estado` | Si hay wifi, red actual, IP y tres señales **por separado**: hay internet (resolver un nombre y conectar a un sitio público), responde el POS (`/healthz`) y hay soporte remoto (ping al hub `10.10.0.1` por la VPN; `wg show` necesita root y el intermediario no lo es) |
 | GET | `/api/redes` | Redes visibles (`nmcli -t dev wifi list --rescan yes`): SSID, señal, seguridad, cuál está conectada |
 | POST | `/api/conectar` | `{ssid, clave}` → conecta desde el escaneo y prueba (ver 4.3) |
 | POST | `/api/olvidar` | Borra **solo** redes agregadas por el cliente (las de `/home/pos-red`) |
@@ -92,18 +99,20 @@ Lección que sí se aplica: **crear la conexión desde el escaneo** (`nmcli dev 
 **Reglas de seguridad:**
 - Escucha solo en `127.0.0.1`.
 - Rechaza cualquier `Origin` que no sea el suyo. Así una página remota no puede llamarlo, ni siquiera el propio POS.
+- Rechaza cualquier `Host` distinto de `127.0.0.1:8090`. Eso frena el *DNS rebinding*: un dominio que resuelve a 127.0.0.1 haría que el navegador lo trate como «mismo origen».
 - Valida el SSID (1–32 bytes) y la clave (8–63 caracteres, o vacía si la red es abierta).
 - `subprocess` con lista de argumentos, nunca con shell.
-- No expone comandos genéricos ni toca el cable, la VPN ni las conexiones de base.
+- No expone comandos genéricos ni toca el cable, la VPN ni las conexiones de base (ver la nota de §2.3: lo verifica por el archivo de cada conexión).
+- Deja registro de cada cambio en `/home/pos-red/cambios.log`: fecha, red, resultado y conexión anterior. Así soporte ve por SSH qué se tocó.
 - Se ejecuta como un usuario dedicado, `posred`, y no como root. polkit le permite solo `org.freedesktop.NetworkManager.settings.modify.system`, `network-control`, `wifi.scan` y `enable-disable-wifi`.
 
 ### 4.3 Conectar sin dejar la caja peor que antes
 1. Recordar la conexión activa.
-2. `nmcli dev wifi connect "<ssid>" password "<clave>" name "<ssid>"`. La conexión nueva lleva prioridad 40, por encima de las de base (10–30), y `ipv4.dns 1.1.1.1`.
-3. Esperar hasta 30 s a que haya IP **y** responda el `/healthz` del POS.
-4. Si conecta: listo. La red queda guardada en `/home` y se mostrará «Conectado — volviendo al punto de venta».
-5. Si falla: se borra la conexión nueva, se reactiva la anterior y se muestra el motivo. Para que el mensaje sea útil se distinguen «clave incorrecta» (`secrets were required`), «sin internet en esa red» y «no se encontró la red».
-6. La VPN (`wg-quick@wg0`) no se toca. WireGuard retoma solo al cambiar la ruta, gracias al `PersistentKeepalive`. Si el `Endpoint` es un nombre DNS resuelto al arranque, se mantiene la IP resuelta.
+2. `nmcli dev wifi connect "<ssid>" password "<clave>" name "<ssid> (tienda)"`. El **nombre distinto** importa: el caso más común es **la misma red con clave nueva**, porque el cliente cambió la clave del router. Si el nombre coincide con el de una conexión de base, `nmcli` podría reutilizar esa conexión en vez de crear una nueva. Con un nombre propio, la nueva queda en `/home/pos-red` con prioridad 40, por encima de las de base (10–30), y con `ipv4.dns 1.1.1.1`. La de base, con la clave vieja, queda debajo y no estorba.
+3. Esperar hasta 30 s a que haya IP **y salida a internet**. Eso decide si la wifi funcionó. El `/healthz` del POS se informa aparte y **no** decide. Si el servidor estuviera caído, como en el incidente del 2026-09-20, una red buena se daría por mala y se desharía.
+4. Si conecta: listo. La red queda guardada en `/home`. Si el POS responde, «Conectado — volviendo al punto de venta». Si no responde, «La wifi funciona pero el servidor no responde: llame a soporte».
+5. Si falla: se borra la conexión nueva, se intenta reactivar la anterior y se muestra el motivo. Se distinguen «clave incorrecta» (`secrets were required`), «sin internet en esa red» y «no se encontró la red». Si la anterior ya no existe, que suele ser justo el motivo del cambio, la caja queda en la página de wifi para otro intento.
+6. La VPN (`wg-quick@wg0`) no se toca. WireGuard retoma solo al cambiar la ruta, gracias al `PersistentKeepalive = 25`. El `Endpoint` del hub es una IP fija (`201.190.38.238:51820` en `extras/wg-caja1-setup.sh`), así que no depende del DNS.
 
 ### 4.4 Página de wifi
 - Lista de redes con barras de señal, candado y cuál está conectada. Botón «Buscar de nuevo».
@@ -114,7 +123,11 @@ Lección que sí se aplica: **crear la conexión desde el escaneo** (`nmcli dev 
 - Botones grandes, de al menos 44×44 (misma regla `.toque-min` del POS).
 
 ### 4.5 Cómo llega el cajero a la pantalla
-1. **Sin red (el caso principal):** `esperando.html` ya sondea `/healthz` cada 3 s. A los ~15 s sin respuesta mostrará un botón grande **«Configurar wifi»** que navega a `http://127.0.0.1:8090/?volver=<POS_URL>`. Navegar de `file://` a `127.0.0.1` es local → local y Chromium no lo restringe.
+1. **Sin red (el caso principal):** `esperando.html` ya sondea `/healthz` cada 3 s. A los ~15 s sin respuesta pregunta al intermediario por `/api/estado`:
+   - **sin internet** → botón grande **«Configurar wifi»**, que navega a `http://127.0.0.1:8090/?volver=<POS_URL>`;
+   - **con internet pero sin POS** → «El servidor no responde; la red de esta caja funciona. Llame a soporte». El botón de wifi queda chico, para no invitar a tocar la red cuando el problema no es la red.
+
+   Navegar de `file://` a `127.0.0.1` es local → local y Chromium no lo restringe.
 2. **Con red, para cambiar a otra:** botón «Red wifi de esta terminal» en el menú del POS. Solo aparece si la terminal tiene una marca en su `localStorage` (`admintools-pos.terminal = {wifi: true}`), que se escribe al instalar, igual que la impresora. Así no hace falta sondear `127.0.0.1` desde la página pública. El botón hace una **navegación de nivel superior**, no un `fetch`, y Local Network Access no debería aplicarse. *A confirmar en la versión de Chromium de las cajas*; si lo bloqueara, se autoriza el origen del POS por política en `chromium-pos.json`.
 
 ### 4.6 ¿Quién puede cambiar la wifi?
@@ -127,7 +140,7 @@ Es una decisión pendiente (ver §7). Opciones:
 - Script nuevo en la plantilla: **`bin/fase5-wifi-autoservicio.sh`**, idempotente, con `--ensayo`, `--aplicar` y `--quitar`.
   - Si overlayroot está activo, escribe en el disco real con `overlayroot-chroot` y también en vivo.
   - Mueve las conexiones de base a `/usr/lib/NetworkManager/system-connections/`.
-  - Crea `/home/pos-red` con permisos 700 para `posred`.
+  - Crea `/home/pos-red/system-connections` como `root:root 700`, porque la escribe NetworkManager (§2.3). `posred` no escribe ahí: todo pasa por NetworkManager vía D-Bus.
 - **Ensayo antes de dejarlo fijo**, siguiendo la regla de la fase 4: cambiar dónde guarda NetworkManager las redes puede dejar la caja sin red al arrancar.
   - Primero en una caja del banco de pruebas.
   - En cada caja del cliente, aplicarlo **con alguien al lado** y reiniciar para validar: cable o wifi de base conectados, VPN arriba y kiosco arriba.
@@ -142,14 +155,14 @@ Es una decisión pendiente (ver §7). Opciones:
 ## 6. Esfuerzo estimado
 | Pieza | Tiempo |
 |---|---|
-| Intermediario `pos-red.py` + unidad + regla polkit | 4 h |
+| Intermediario `pos-red.py` + unidad + regla polkit (con la protección de las conexiones de base, el chequeo de `Host` y el registro de cambios) | 5 h |
 | Página de wifi con teclado propio | 4 h |
-| Botón en `esperando.html` + botón en el POS (marca en `localStorage`) | 1-2 h |
+| Botón en `esperando.html` (distinguiendo «sin red» de «servidor caído») + botón en el POS (marca en `localStorage`) | 2 h |
 | `fase5-wifi-autoservicio.sh` + `fase4-verificar.sh` ampliado | 2 h |
-| Ensayo en banco: overlayroot, reinicios, clave mala, red sin internet, sin adaptador | 3 h |
+| Ensayo en banco: overlayroot, reinicios, clave mala, **misma red con clave nueva**, red sin internet, **servidor caído**, sin adaptador | 4 h |
 | Despliegue por terminal, con el usuario | ~30 min c/u |
 
-**Total: unos 2 días** de desarrollo y pruebas, más el despliegue.
+**Total: unos 2,5 días** de desarrollo y pruebas, más el despliegue.
 
 ## 7. Decisiones pendientes
 1. **¿Quién puede cambiar la wifi?** Libre o con PIN de la tienda.
@@ -157,7 +170,12 @@ Es una decisión pendiente (ver §7). Opciones:
 3. **¿Se permite «olvidar» redes** desde la pantalla? Siempre solo las agregadas por el cliente.
 4. **¿En qué terminales?** caja1-samuel, caja2-samuel y caja1-lafe, y las que se monten de aquí en adelante (la fase 5 entra en la plantilla).
 
-## 8. Por confirmar en las cajas (solo lectura, antes de programar)
+## 8. Fuera de alcance (primera versión)
+- **Redes ocultas** (sin SSID visible). Si hace falta, se agrega un «Red oculta: escribir el nombre».
+- **Redes empresariales** (WPA-Enterprise, usuario y clave) y **portales cautivos** (hoteles, redes con página de aceptación).
+- **Arreglar drivers** o adaptadores que no asocian (§2.6).
+
+## 9. Por confirmar en las cajas (solo lectura, antes de programar)
 No pude leerlo yo en esta sesión. Lo puede correr el usuario:
 ```
 ! for h in caja1-samuel caja2-samuel caja1-lafe-vpn; do echo "== $h"; ssh $h 'nmcli -t -f DEVICE,TYPE,STATE dev; ls /etc/NetworkManager/system-connections/; chromium --version; dpkg -l polkitd network-manager | grep ^ii'; done
