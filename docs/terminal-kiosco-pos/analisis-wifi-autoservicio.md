@@ -1,5 +1,7 @@
 # Análisis: que el cliente conecte la terminal a una red wifi sin nosotros
 
+> Flujo y plan de implementación: [`plan-wifi-autoservicio.md`](plan-wifi-autoservicio.md).
+>
 > 2026-10-03. Terminales kiosco Debian 13 (cage + Chromium) de esta plantilla: caja1-samuel, caja2-samuel y caja1-lafe. La Landi Android no entra: Android ya trae su pantalla de wifi.
 >
 > **Revisado el 2026-10-03.** Correcciones en §2.3, §2.4, §4 y §5, más §8 nuevo: permisos de `/home/pos-red`, protección real de las conexiones de base, el caso «misma red, clave nueva», separar «hay internet» de «responde el servidor», VPN sin root, ataque de *DNS rebinding* y registro de cambios.
