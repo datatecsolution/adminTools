@@ -64,7 +64,7 @@ El proxy resuelve la app por nombre (`set $server`), así que no hay caché de I
 
 ## 4. Vigilancia
 
-`bash ~/deploy-sharon/v57/vigilar.sh <HH:MM UTC del despliegue>` a los 15 minutos y a las 2 horas:
+`bash ~/deploy-sharon/v57/vigilar.sh "AAAA-MM-DD HH:MM"` (UTC) a los 15 minutos y a las 2 horas:
 - **404 esperados:** `/products/{id}/image?size=thumb`, `/products/{id}/image` y `/products/{id}/gallery`.
 - **Investigar** cualquier otro 4xx o 5xx.
 - **Confirmar** que siguen entrando `orders/save` 201.
@@ -89,7 +89,7 @@ Toma segundos y no toca datos. Los celulares toman la versión anterior al recar
 | 17:51 | Verificación por el dominio | `/` 200 con `main.e76e9770.js`; `Cache-Control: no-store`; `X-Frame-Options`/`nosniff` presentes; JS 200 (213 KB); `/admin_tools/api/orders/today` 401 sin sesión; rutas SPA 200 |
 | 17:52 | Vigilancia inmediata | 0 errores en la API. Poco tráfico (sábado por la tarde): los celulares toman la versión nueva al recargar |
 
-Pendiente: vigilancia con tráfico real (`bash ~/deploy-sharon/v57/vigilar.sh 23:51`) cuando los vendedores vuelvan a usar la app. Esperados: 404 de `/image?size=thumb` y `/gallery`.
+Pendiente: vigilancia con tráfico real (`bash ~/deploy-sharon/v57/vigilar.sh "2026-10-03 23:51"`) cuando los vendedores vuelvan a usar la app. Esperados: 404 de `/image?size=thumb` y `/gallery`.
 
 **Vuelta atrás, si hiciera falta:**
 
