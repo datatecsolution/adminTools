@@ -96,11 +96,18 @@
 
 La regla automática se puede forzar por caja al instalar (`--teclado pantalla|fisico`) y queda en `/opt/pos/red/config.json`.
 
-### 1.4 Limitación: cambiar de red con la caja funcionando
+### 1.4 Si la wifi se cae con la caja funcionando
+
+La página de espera aparece **al arrancar el kiosco**. Si la red se cae con el POS ya abierto, el POS sigue en pantalla mostrando errores y **la página de wifi no aparece sola**.
+
+- **Primera versión:** la guía del encargado dice «**Si la caja dice que no hay conexión: apáguela y enciéndala**». Al arrancar sin red aparece la página de espera y, a los 15 s, «Configurar wifi».
+- **Opcional, decisión pendiente:** un vigía en la terminal (timer de systemd) que, tras **2 minutos sin salida a internet** (no basta con que el POS no responda), reinicia el kiosco para que aparezca la página de espera. Sin internet no se puede vender igual. Con solo el servidor caído no actúa, para no cortar una venta.
+
+### 1.5 Limitación: cambiar de red con la caja funcionando
 
 Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no llega al POS**. Ese es el caso que se quiere resolver: la red se cayó o cambió la clave. Si la tienda quiere pasar a otra red **mientras la actual funciona**, lo hace soporte por SSH. Un botón dentro del POS queda para el futuro, si se decide tocarlo.
 
-### 1.5 Soporte
+### 1.6 Soporte
 
 - `ssh <caja>` → `cat /home/pos-red/cambios.log`: fecha, red, resultado y red anterior de cada cambio.
 - `nmcli -f NAME,UUID,FILENAME,AUTOCONNECT-PRIORITY con`: redes de base (`/usr/lib/...`) y de la tienda (`/home/pos-red/...`).
@@ -146,7 +153,8 @@ Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no ll
 ### Etapa 0 — Prerrequisitos (½ día, casi todo del usuario)
 - [x] Decisiones de §0 (confirmadas).
 - [ ] Datos de **caja1-lafe** (§9 del análisis, solo lectura, con `!`): versiones de NetworkManager, polkit y Chromium, conexiones actuales y salida real de `nmcli -t dev wifi list` con el driver `8821cu` (para las pruebas del parseo).
-- [ ] **Equipo de banco** con Debian 13 mínimo, wifi y overlayroot, para ensayar sin tocar cajas en producción. Lo ideal es **sin pantalla táctil y con un adaptador USB Realtek como el de caja1-lafe**. Opciones: una PC de repuesto, o una VM Debian 13 en la Mac con un adaptador USB wifi conectado a la VM.
+- [x] **Equipo de banco: no hay.** El ensayo real se hace en caja1-lafe, con una ventana coordinada con la farmacia (§5).
+- [ ] **Recomendado (gratis): VM Debian 13 en la Mac** (UTM), sin wifi. No prueba el escaneo ni la conexión wifi, pero sí **lo más riesgoso**: mover las conexiones a `/usr/lib`, el `path` en `/home`, polkit, el servicio, overlayroot, el reinicio y la red de rescate (§5.2), usando perfiles de cable. Así, en la farmacia solo queda por probar la parte wifi.
 
 ### Etapa 1 — Intermediario `pos-red` (5 h) · repo adminTools, `docs/terminal-kiosco-pos/red/`
 - `pos-red.py` (Python 3 stdlib):
@@ -181,7 +189,9 @@ Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no ll
 - **Lección de la fase 4:** verificar cada paso antes del siguiente; nada de cadenas largas con `&&` bajo `set -e` que puedan dejar la caja sin red.
 - `fase4-verificar.sh` ampliado con el bloque de la fase 5.
 
-### Etapa 5 — Ensayo en banco (4 h)
+### Etapa 5 — Ensayo (4 h): VM en la Mac + escenarios wifi en caja1-lafe
+
+Los escenarios 1, 8, 10 y 11 (y la red de rescate de §5.2) se prueban en la **VM**. Los de wifi y teclado se prueban en **caja1-lafe** durante la ventana (§5).
 
 | # | Escenario | Esperado |
 |---|---|---|
@@ -199,24 +209,77 @@ Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no ll
 | 12 | **Solo teclado físico** (sin táctil) | No aparece el teclado en pantalla; foco en la clave; Enter conecta y Esc cancela |
 | 13 | Adaptador **Realtek USB (`8821cu`)**: escaneo y conexión | Lista de redes completa; conecta desde el escaneo (lección de la ALPHANET) |
 
-### Etapa 6 — Despliegue en caja1-lafe (~45 min, con el usuario)
-- La caja tiene fase 4 completa: `sudo` pide clave, así que el usuario corre los pasos con `! ssh caja1-lafe-vpn 'sudo bash …'` y yo reviso cada salida.
-- **Opera solo por wifi**: si la fase 5 la dejara sin red, no hay cable de respaldo. Por eso el reinicio de validación se hace **con alguien en la farmacia** y con el hotspot del celular a mano, que es la vuelta atrás de emergencia.
-- §2 completo: ensayo → aplicar → reinicio → prueba real con hotspot → olvidar la red de prueba.
-- El resto de las cajas (caja2-samuel, caja1-samuel) queda para después, con la misma plantilla.
+### Etapa 6 — Ventana en caja1-lafe (~60–75 min, coordinada con la farmacia)
+Ver §5: preparación remota el día anterior, redes de seguridad, guion con el personal y criterios para abortar.
 
 ### Etapa 7 — Documentación y entrega (2 h)
 - Guía de una página para el encargado, con capturas: «Si la caja no tiene red».
 - Plantilla `docs/terminal-kiosco-pos/` actualizada (fase 5 en el README, scripts versionados) y registro por caja.
 
-## 4. Resumen de esfuerzo
+## 5. Ensayo y despliegue en caja1-lafe sin banco de pruebas
+
+### 5.1 Qué cambia sin banco
+caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, GRUB con clave). Si la fase 5 la dejara sin red, **no hay SSH ni cable** para arreglarla. Por eso, antes de tocarla, se arman redes de seguridad y la prueba se hace con el personal en la tienda.
+
+### 5.2 Redes de seguridad (se instalan ANTES de la fase 5)
+
+| # | Red de seguridad | Cómo funciona | Quién la usa |
+|---|---|---|---|
+| 1 | **Rescate automático** (`pos-red-rescate.service` + timer) | Si **5 minutos después de arrancar** no hay ninguna conexión activa, deshace solo la parte de NetworkManager de la fase 5: quita el `conf.d`, devuelve las conexiones de base a `/etc` y reinicia NetworkManager. **Espera 5 minutos** (lección del 2026-09-19: el `net-fallback` actuó antes de tiempo). Mientras exista la marca `/home/pos-red/ensayo-caida` (pasos +15 a +45 del guion, cuando la caja arranca sin red **a propósito**), espera **25 minutos** en vez de 5, para no deshacer la fase 5 en plena prueba. Se retira al cerrar la ventana | Solo, sin intervención |
+| 2 | **Red de soporte de emergencia** | Conexión de base nueva con un nombre y una clave conocidos, por ejemplo `LAFE-SOPORTE`, prioridad 5. Cualquier celular de la tienda que cree un hotspot con ese nombre y esa clave le devuelve la red a la caja, y con ella la VPN | El encargado, con su celular |
+| 3 | **pc-lafe vende** | Durante la ventana, las ventas siguen en pc-lafe (POS en Chromium + ticketera, por cable) | Personal |
+| 4 | **Vuelta atrás manual** | `fase5-wifi-autoservicio.sh --quitar` por SSH, en cuanto vuelva la red | Soporte |
+| 5 | **Último recurso** | Teclado + clave de GRUB (la tiene el usuario) para arrancar sin overlayroot y deshacer a mano | El usuario, en la tienda |
+
+### 5.3 Preparación remota (el día anterior, con la caja en la tienda y operando)
+1. Leer el estado de la caja (solo lectura): conexiones, versiones y `nmcli dev wifi list` real.
+2. Respaldar `/etc/NetworkManager`, la unidad del kiosco y `esperando.html` en `/home` de la caja.
+3. Subir los archivos de la fase 5 y correr `--ensayo` (no cambia nada).
+4. Instalar **solo** las redes de seguridad 1 y 2 y verificarlas sin reiniciar.
+5. Acordar con el encargado: fecha y hora, quién estará, qué celular hará de hotspot y el PIN de la tienda.
+
+### 5.4 Coordinación con la farmacia
+
+**Cuándo:** 60–75 minutos fuera de la hora de más venta: antes de abrir o en el día más tranquilo.
+
+**Quién:** el encargado frente a caja1-lafe, con un celular que pueda compartir datos. Al otro lado, el usuario y soporte por teléfono o WhatsApp.
+
+**Qué hace el personal** (guion para entregarle):
+1. Seguir vendiendo en **pc-lafe** mientras dure la prueba.
+2. Cuando se lo pidan: **activar el hotspot del celular** con el nombre y la clave que se le indiquen.
+3. Cuando se lo pidan: **apagar y encender caja1-lafe** con el botón.
+4. Contar qué ve en la pantalla y seguir las indicaciones: «Configurar wifi», PIN, elegir la red, escribir la clave, Enter.
+5. Si la caja queda sin red más de 10 minutos: activar el hotspot **`LAFE-SOPORTE`** (red de seguridad 2).
+
+### 5.5 Guion de la ventana
+
+| T | Paso | Cómo se verifica |
+|---|---|---|
+| 0 | Por SSH: `--aplicar` (redes de seguridad ya puestas) | `fase4-verificar.sh` con el bloque de la fase 5 |
+| +5 | **Reinicio 1** (lo pide soporte por SSH) → la caja vuelve con la red de la farmacia | Vuelve por VPN en menos de 2 min; ALPHANET conectada desde `/usr/lib`; kiosco y `pos-red` arriba |
+| +15 | **Simular la caída:** se crea la marca `ensayo-caida`, se apaga el autoconectar de ALPHANET (`nmcli con mod … connection.autoconnect no`; como ALPHANET está en `/usr/lib`, NetworkManager guarda ese cambio en `/home/pos-red`) y se reinicia. La caja arranca sin ninguna red conocida | El encargado ve la página de espera y, a los 15 s, «Configurar wifi» |
+| +20 | El encargado activa el hotspot `PRUEBA-LAFE`; en la caja: PIN → elegir la red → **clave incorrecta** a propósito | «La clave no es correcta» y vuelve al campo de clave |
+| +25 | Clave correcta, escrita con el **teclado físico** + Enter | «Conectado ✔», vuelve al POS; **la VPN vuelve sola** por el hotspot y soporte entra por SSH |
+| +30 | **Reinicio 2** con el hotspot encendido | Sigue conectada a `PRUEBA-LAFE` (persistencia en `/home`) |
+| +35 | **Misma red, clave nueva:** el encargado cambia la clave del hotspot → reinicio 3 → la página la pide de nuevo | Conecta con la clave nueva |
+| +45 | Volver a la normalidad: autoconectar de ALPHANET encendido (o borrar su copia modificada en `/home/pos-red`), «Olvidar» `PRUEBA-LAFE` desde la pantalla, apagar el hotspot, quitar la marca `ensayo-caida` → reinicio 4 | Vuelve con ALPHANET; `cambios.log` registra todo |
+| +55 | Cierre: retirar la red de rescate 1 (y la 2, si se decide) y verificar | Caja operando; registro en el runbook de la caja |
+
+**Abortar** (y correr `--quitar`) si:
+- en el reinicio 1 la caja no vuelve con ALPHANET en 5 minutos (actúa la red de rescate 1);
+- `pos-red` no arranca o la página no aparece;
+- la VPN no vuelve con el hotspot;
+- la ventana se pasa de 75 minutos.
+
+## 6. Resumen de esfuerzo
 
 | Etapa | Tiempo |
 |---|---|
 | 0 Prerrequisitos | ½ día (usuario) |
 | 1–5 Desarrollo y ensayo | ~2 días |
-| 6 Despliegue en caja1-lafe | ~45 min |
+| (opcional) VM Debian 13 en la Mac para ensayar lo riesgoso | ½ día |
+| 6 Preparación remota + ventana en caja1-lafe | ~30 min el día anterior + 60–75 min de ventana |
 | 7 Documentación | 2 h |
-| **Total** | **~2,5 días** de trabajo, más la sesión con la caja |
+| **Total** | **~2,5–3 días** de trabajo, más la ventana coordinada |
 
 Riesgo principal: cambiar dónde guarda NetworkManager las redes podría dejar una caja sin red al arrancar, y **caja1-lafe opera solo por wifi**. Mitigación: ensayo en banco con un adaptador igual, `--ensayo` antes de `--aplicar`, reinicio con alguien en la farmacia y el hotspot a mano, y `--quitar` como vuelta atrás.
