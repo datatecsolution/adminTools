@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""Controla el laboratorio (SOLO la VM de laboratorio). Desde la Mac: bash vm.sh lab <args>.
+
+  lab-ctl estado
+  lab-ctl router <SSID> prender|apagar
+  lab-ctl clave <SSID> <clave nueva>
+  lab-ctl servidor prender|apagar          # POS falso (simula «servidor caído»)
+  lab-ctl inicial                          # vuelve al estado inicial del laboratorio
+"""
+import json
+import subprocess
+import sys
+
+ESTADO = "/home/lab/estado.json"
+INICIAL = {
+    "aps": {
+        "ALPHANET-LAB": {"encendido": True, "clave": "alphanet1"},
+        "PRUEBA-LAFE": {"encendido": False, "clave": "prueba123"},
+        "LAFE-SOPORTE": {"encendido": False, "clave": "soporte123"},
+        "SIN-INTERNET": {"encendido": True, "clave": "sinred123"},
+        "ABIERTA": {"encendido": True, "clave": ""},
+    },
+    "servidor": True,
+}
+
+
+def cargar():
+    try:
+        with open(ESTADO) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return json.loads(json.dumps(INICIAL))
+
+
+def guardar(e):
+    with open(ESTADO, "w") as f:
+        json.dump(e, f, indent=1, ensure_ascii=False)
+
+
+def aplicar(e):
+    guardar(e)
+    subprocess.run(["/usr/local/sbin/lab-router", "aplicar"], check=False)
+    accion = "start" if e["servidor"] else "stop"
+    subprocess.run(["systemctl", accion, "lab-pos-falso.service"], check=False)
+
+
+def main(a):
+    e = cargar()
+    if not a or a[0] == "estado":
+        print(json.dumps(e, indent=1, ensure_ascii=False))
+        return
+    if a[0] == "router" and len(a) == 3 and a[1] in e["aps"]:
+        e["aps"][a[1]]["encendido"] = a[2] == "prender"
+    elif a[0] == "clave" and len(a) == 3 and a[1] in e["aps"]:
+        e["aps"][a[1]]["clave"] = a[2]
+    elif a[0] == "servidor" and len(a) == 2:
+        e["servidor"] = a[1] == "prender"
+    elif a[0] == "inicial":
+        e = json.loads(json.dumps(INICIAL))
+    else:
+        sys.exit(__doc__)
+    aplicar(e)
+    print("ok:", " ".join(a))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

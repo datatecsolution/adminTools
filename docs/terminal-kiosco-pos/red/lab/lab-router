@@ -1,0 +1,120 @@
+#!/bin/bash
+# Routers simulados del laboratorio (SOLO en la VM de laboratorio, nunca en una caja).
+#
+# Crea las radios wifi virtuales (mac80211_hwsim) y deja la del cliente (wlan0) para
+# NetworkManager. Las otras cinco pasan al espacio de red «router», donde cada una es
+# un punto de acceso (hostapd) con su subred, DHCP y DNS (dnsmasq), y salida a internet
+# por NAT a uplink0, salvo SIN-INTERNET. En «router» viven también el POS falso
+# (10.99.0.1:8080) y el «hub» de la VPN (10.10.0.1, solo para el ping de soporte).
+#
+#   lab-router iniciar     # al arrancar, antes de NetworkManager (lab-router.service)
+#   lab-router aplicar     # rehace los puntos de acceso según /home/lab/estado.json
+set -u
+ESTADO=/home/lab/estado.json
+NS=router
+RUN=/run/lab
+mkdir -p "$RUN"
+
+# nombre, SSID, MAC de su radio, subred, canal, tipo de seguridad, ¿internet?
+APS="alphanet|ALPHANET-LAB|02:00:00:00:01:00|192.168.1|9|wpa-mixto|si
+prueba|PRUEBA-LAFE|02:00:00:00:02:00|192.168.43|1|wpa2|si
+soporte|LAFE-SOPORTE|02:00:00:00:03:00|192.168.44|6|wpa2|si
+sinred|SIN-INTERNET|02:00:00:00:04:00|192.168.45|11|wpa2|no
+abierta|ABIERTA|02:00:00:00:05:00|192.168.46|3|abierta|si"
+
+nsx() { ip netns exec "$NS" "$@"; }
+phy_por_mac() {  # imprime phyN de la radio con esa MAC (en el espacio de red actual)
+  for p in /sys/class/ieee80211/*; do
+    [ "$(cat "$p/macaddress")" = "$1" ] && { basename "$p"; return; }
+  done
+}
+estado_ap() {  # estado_ap SSID campo
+  python3 -c "import json,sys;e=json.load(open('$ESTADO'));print(e['aps'][sys.argv[1]][sys.argv[2]])" "$1" "$2"
+}
+
+iniciar() {
+  /usr/sbin/modprobe mac80211_hwsim radios=6
+  sleep 1
+  ip netns add "$NS" 2>/dev/null || true
+  nsx ip link set lo up
+  nsx sysctl -qw net.ipv4.ip_forward=1
+  # salida a internet del «router» (red user de QEMU nº 2: 10.0.3.0/24, puerta .2, DNS .3)
+  if ip link show uplink0 >/dev/null 2>&1; then ip link set uplink0 netns "$NS"; fi
+  nsx ip link set uplink0 up
+  nsx ip addr replace 10.0.3.15/24 dev uplink0
+  nsx ip route replace default via 10.0.3.2
+  # POS falso y hub
+  nsx ip link add dummy0 type dummy 2>/dev/null || true
+  nsx ip link set dummy0 up
+  nsx ip addr replace 10.99.0.1/32 dev dummy0
+  nsx ip addr replace 10.10.0.1/32 dev dummy0
+  # radios de los puntos de acceso → espacio de red «router», con nombre fijo
+  while IFS='|' read -r nombre ssid mac red canal seg inet; do
+    phy=$(phy_por_mac "$mac")
+    if [ -n "$phy" ]; then
+      dev=$(ls "/sys/class/ieee80211/$phy/device/net/" 2>/dev/null | head -1)
+      [ -n "$dev" ] && ip link set "$dev" down && ip link set "$dev" name "ap-$nombre"
+      iw phy "$phy" set netns name "$NS"
+    fi
+    nsx ip addr replace "$red.1/24" dev "ap-$nombre"
+  done <<< "$APS"
+  # NAT y la red sin salida
+  nsx nft -f - <<'EOF'
+flush ruleset
+table inet lab {
+  chain forward { type filter hook forward priority 0; policy accept;
+    iifname "ap-sinred" drop
+  }
+  chain postrouting { type nat hook postrouting priority 100;
+    oifname "uplink0" masquerade
+  }
+}
+EOF
+  # DHCP + DNS para todas las subredes (dnsmasq solo binario, en el espacio «router»)
+  cat > "$RUN/dnsmasq.conf" <<EOF
+bind-dynamic
+except-interface=uplink0
+except-interface=lo
+except-interface=dummy0
+server=10.0.3.3
+no-resolv
+dhcp-authoritative
+# la raíz está congelada (y todavía en solo lectura al arrancar): concesiones en /run
+dhcp-leasefile=$RUN/dnsmasq.leases
+log-dhcp
+$(while IFS='|' read -r nombre ssid mac red canal seg inet; do
+    echo "dhcp-range=set:$nombre,$red.100,$red.199,255.255.255.0,1h"
+    echo "dhcp-option=tag:$nombre,option:router,$red.1"
+    echo "dhcp-option=tag:$nombre,option:dns-server,$red.1"
+  done <<< "$APS")
+EOF
+  [ -f "$RUN/dnsmasq.pid" ] && kill "$(cat "$RUN/dnsmasq.pid")" 2>/dev/null
+  nsx /usr/sbin/dnsmasq -C "$RUN/dnsmasq.conf" -x "$RUN/dnsmasq.pid" --log-facility="$RUN/dnsmasq.log"
+  aplicar
+}
+
+aplicar() {
+  while IFS='|' read -r nombre ssid mac red canal seg inet; do
+    pid="$RUN/hostapd-$nombre.pid"
+    [ -f "$pid" ] && kill "$(cat "$pid")" 2>/dev/null && rm -f "$pid"
+    if [ "$(estado_ap "$ssid" encendido)" = "True" ]; then
+      clave=$(estado_ap "$ssid" clave)
+      {
+        echo "interface=ap-$nombre"; echo "driver=nl80211"; echo "ssid=$ssid"
+        echo "hw_mode=g"; echo "channel=$canal"
+        case "$seg" in
+          wpa-mixto) echo "wpa=3"; echo "wpa_key_mgmt=WPA-PSK"; echo "wpa_pairwise=TKIP CCMP"; echo "rsn_pairwise=CCMP"; echo "wpa_passphrase=$clave" ;;
+          wpa2) echo "wpa=2"; echo "wpa_key_mgmt=WPA-PSK"; echo "rsn_pairwise=CCMP"; echo "wpa_passphrase=$clave" ;;
+          abierta) : ;;
+        esac
+      } > "$RUN/hostapd-$nombre.conf"
+      nsx /usr/sbin/hostapd -B -P "$pid" -f "$RUN/hostapd-$nombre.log" "$RUN/hostapd-$nombre.conf" >/dev/null
+    fi
+  done <<< "$APS"
+}
+
+case "${1:-}" in
+  iniciar) iniciar ;;
+  aplicar) aplicar ;;
+  *) echo "uso: lab-router iniciar|aplicar"; exit 1 ;;
+esac
