@@ -156,8 +156,8 @@ Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no ll
 ### Etapa 0 — Prerrequisitos (½ día, casi todo del usuario)
 - [x] Decisiones de §0 (confirmadas).
 - [ ] Datos de **caja1-lafe** (§9 del análisis, solo lectura, con `!`): versiones de NetworkManager, polkit y Chromium, conexiones actuales y salida real de `nmcli -t dev wifi list` con el driver `8821cu` (para las pruebas del parseo).
-- [x] **Equipo de banco: no hay.** El ensayo real se hace en caja1-lafe, con una ventana coordinada con la farmacia (§5).
-- [ ] **Recomendado (gratis): VM Debian 13 en la Mac** (UTM), sin wifi. No prueba el escaneo ni la conexión wifi, pero sí **lo más riesgoso**: mover las conexiones a `/usr/lib`, el `path` en `/home`, polkit, el servicio, overlayroot, el reinicio y la red de rescate (§5.2), usando perfiles de cable. Así, en la farmacia solo queda por probar la parte wifi.
+- [x] **Equipo de banco: no hay.** El ensayo real se hace en caja1-lafe, con una ventana coordinada con la farmacia (§4).
+- [ ] **Recomendado (gratis): VM Debian 13 en la Mac** (UTM), sin wifi. No prueba el escaneo ni la conexión wifi, pero sí **lo más riesgoso**: mover las conexiones a `/usr/lib`, el `path` en `/home`, polkit, el servicio, overlayroot, el reinicio y la red de rescate (§4.2), usando perfiles de cable. Así, en la farmacia solo queda por probar la parte wifi.
 
 ### Etapa 1 — Intermediario `pos-red` (5 h) · repo adminTools, `docs/terminal-kiosco-pos/red/`
 - `pos-red.py` (Python 3 stdlib):
@@ -194,7 +194,7 @@ Como el POS no se toca, **la página de wifi solo se ofrece cuando la caja no ll
 
 ### Etapa 5 — Ensayo (4 h): VM en la Mac + escenarios wifi en caja1-lafe
 
-Los escenarios 1, 8, 10 y 11 (y la red de rescate de §5.2) se prueban en la **VM**. Los de wifi y teclado se prueban en **caja1-lafe** durante la ventana (§5).
+Los escenarios 1, 8, 10 y 11 (y la red de rescate de §4.2) se prueban en la **VM**. Los de wifi y teclado se prueban en **caja1-lafe** durante la ventana (§4).
 
 | # | Escenario | Esperado |
 |---|---|---|
@@ -213,18 +213,18 @@ Los escenarios 1, 8, 10 y 11 (y la red de rescate de §5.2) se prueban en la **V
 | 13 | Adaptador **Realtek USB (`8821cu`)**: escaneo y conexión | Lista de redes completa; conecta desde el escaneo (lección de la ALPHANET) |
 
 ### Etapa 6 — Ventana en caja1-lafe (~60–75 min, coordinada con la farmacia)
-Ver §5: preparación remota el día anterior, redes de seguridad, guion con el personal y criterios para abortar.
+Ver §4: preparación remota el día anterior, redes de seguridad, guion con el personal y criterios para abortar.
 
 ### Etapa 7 — Documentación y entrega (2 h)
 - Guía de una página para el encargado, con capturas: «Si la caja no tiene red».
 - Plantilla `docs/terminal-kiosco-pos/` actualizada (fase 5 en el README, scripts versionados) y registro por caja.
 
-## 5. Ensayo y despliegue en caja1-lafe sin banco de pruebas
+## 4. Ensayo y despliegue en caja1-lafe sin banco de pruebas
 
-### 5.1 Qué cambia sin banco
+### 4.1 Qué cambia sin banco
 caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, GRUB con clave). Si la fase 5 la dejara sin red, **no hay SSH ni cable** para arreglarla. Por eso, antes de tocarla, se arman redes de seguridad y la prueba se hace con el personal en la tienda.
 
-### 5.2 Redes de seguridad (se instalan ANTES de la fase 5)
+### 4.2 Redes de seguridad (se instalan ANTES de la fase 5)
 
 | # | Red de seguridad | Cómo funciona | Quién la usa |
 |---|---|---|---|
@@ -234,14 +234,14 @@ caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, G
 | 4 | **Vuelta atrás manual** | `fase5-wifi-autoservicio.sh --quitar` por SSH, en cuanto vuelva la red | Soporte |
 | 5 | **Último recurso** | Teclado + clave de GRUB (la tiene el usuario) para arrancar sin overlayroot y deshacer a mano | El usuario, en la tienda |
 
-### 5.3 Preparación remota (el día anterior, con la caja en la tienda y operando)
+### 4.3 Preparación remota (el día anterior, con la caja en la tienda y operando)
 1. Leer el estado de la caja (solo lectura): conexiones, versiones y `nmcli dev wifi list` real.
 2. Respaldar `/etc/NetworkManager`, la unidad del kiosco y `esperando.html` en `/home` de la caja.
 3. Subir los archivos de la fase 5 y correr `--ensayo` (no cambia nada).
 4. Instalar **solo** las redes de seguridad 1 y 2 y verificarlas sin reiniciar.
 5. Acordar con el encargado: fecha y hora, quién estará, qué celular hará de hotspot y el PIN de la tienda.
 
-### 5.4 Coordinación con la farmacia
+### 4.4 Coordinación con la farmacia
 
 **Cuándo:** 60–75 minutos fuera de la hora de más venta: antes de abrir o en el día más tranquilo.
 
@@ -254,7 +254,7 @@ caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, G
 4. Contar qué ve en la pantalla y seguir las indicaciones: «Configurar wifi», PIN, elegir la red, escribir la clave, Enter.
 5. Si la caja queda sin red más de 10 minutos: activar el hotspot **`LAFE-SOPORTE`** (red de seguridad 2).
 
-### 5.5 Guion de la ventana
+### 4.5 Guion de la ventana
 
 | T | Paso | Cómo se verifica |
 |---|---|---|
@@ -274,11 +274,11 @@ caja1-lafe opera **solo por wifi** y con la fase 4 cerrada (consola bloqueada, G
 - la VPN no vuelve con el hotspot;
 - la ventana se pasa de 75 minutos.
 
-## 7. Plan de desarrollo con margen alto de éxito
+## 5. Plan de desarrollo con margen alto de éxito
 
 La idea: **que nada se pruebe por primera vez en la farmacia**. Cada etapa tiene una puerta (criterio de salida) y no se pasa a la siguiente sin cumplirla.
 
-### 7.1 Laboratorio: una «caja1-lafe virtual» en la Mac
+### 5.1 Laboratorio: una «caja1-lafe virtual» en la Mac
 - **Máquina virtual Debian 13** (UTM o QEMU, gratis) montada **con los mismos scripts de la plantilla**: fases 1 a 4 (cage + Chromium en kiosco, NetworkManager, overlayroot, consola cerrada, `esperando.html`) y la misma `POS_URL`. Es una copia de caja1-lafe salvo el hardware.
 - **Wifi simulada de verdad con `mac80211_hwsim`.** Es un módulo del kernel de Linux (incluido en Debian) que crea radios wifi virtuales. En una radio corre `hostapd` como **router**; la caja virtual usa otra como su placa wifi. NetworkManager escanea, se asocia y pide la clave **igual que con una placa real**. Con eso se arman:
 
@@ -293,22 +293,22 @@ La idea: **que nada se pruebe por primera vez en la farmacia**. Cada etapa tiene
   - «Apagar el router» = detener su `hostapd`.
   - «Cambiar la clave» = reiniciarlo con otra.
   - «Servidor caído» = bloquear el dominio del POS en la VM.
-- **Lo que el laboratorio no cubre:** el driver `8821cu` del adaptador Realtek. Se compensa en §7.4.
+- **Lo que el laboratorio no cubre:** el driver `8821cu` del adaptador Realtek. Se compensa en §5.4.
 
-### 7.2 Etapas y puertas
+### 5.2 Etapas y puertas
 
 | Etapa | Qué | Puerta para pasar a la siguiente |
 |---|---|---|
 | A | `pos-red.py` + modo simulado + **pruebas unitarias** (parseo de `nmcli` con muestras reales, validaciones, protección de redes de base, `Host`/`Origin`, PIN) | 100 % de las pruebas en verde |
 | B | Página de wifi en la Mac contra el modo simulado, recorrida en el navegador con **teclado físico** y simulando pantalla táctil | Todos los resultados de §1.2 vistos y capturados |
-| C | Montar el laboratorio (§7.1) | La VM arranca como caja1-lafe: kiosco, overlayroot y `ALPHANET-LAB` conectada |
+| C | Montar el laboratorio (§5.1) | La VM arranca como caja1-lafe: kiosco, overlayroot y `ALPHANET-LAB` conectada |
 | D | `fase5-wifi-autoservicio.sh` + redes de seguridad (rescate, `LAFE-SOPORTE`) instalados en la VM | `--ensayo`, `--aplicar` y `--quitar` limpios; reinicio con overlayroot OK |
-| E | **Batería automática** en la VM: un script que recorre los escenarios de §7.3 controlando los `hostapd`, reiniciando la VM y comprobando el estado por la API y por `nmcli` | **3 corridas seguidas sin fallas** |
-| F | **Ensayo general:** el guion completo de §5.5 en la VM, cronometrado, tú haciendo de operador frente a la pantalla y yo de soporte por SSH. Incluye **practicar abortar**: el rescate actuando y `--quitar` | Guion completo dentro de los 75 minutos; vuelta atrás practicada |
-| G | Lectura de caja1-lafe (solo lectura) + preparación remota del día anterior (§5.3) | Muestras reales de `nmcli` iguales en formato a las del laboratorio; redes de seguridad instaladas y verificadas |
-| H | Ventana en la farmacia (§5.5) | Criterios de §5.5; si alguno falla, se aborta |
+| E | **Batería automática** en la VM: un script que recorre los escenarios de §5.3 controlando los `hostapd`, reiniciando la VM y comprobando el estado por la API y por `nmcli` | **3 corridas seguidas sin fallas** |
+| F | **Ensayo general:** el guion completo de §4.5 en la VM, cronometrado, tú haciendo de operador frente a la pantalla y yo de soporte por SSH. Incluye **practicar abortar**: el rescate actuando y `--quitar` | Guion completo dentro de los 75 minutos; vuelta atrás practicada |
+| G | Lectura de caja1-lafe (solo lectura) + preparación remota del día anterior (§4.3) | Muestras reales de `nmcli` iguales en formato a las del laboratorio; redes de seguridad instaladas y verificadas |
+| H | Ventana en la farmacia (§4.5) | Criterios de §4.5; si alguno falla, se aborta |
 
-### 7.3 Escenarios de la batería (etapa E)
+### 5.3 Escenarios de la batería (etapa E)
 
 | # | Escenario | Esperado |
 |---|---|---|
@@ -330,12 +330,12 @@ La idea: **que nada se pruebe por primera vez en la farmacia**. Cada etapa tiene
 | 16 | `--quitar` y reiniciar | La caja queda como antes de la fase 5 |
 | 17 | Caída **con el POS abierto** | El POS muestra el error; con «apague y encienda» aparece la página de wifi (o actúa el vigía, si se decide) |
 
-### 7.4 Lo que solo se puede comprobar en la caja real: el driver Realtek
+### 5.4 Lo que solo se puede comprobar en la caja real: el driver Realtek
 - **Antes de la ventana**, solo lectura: `nmcli -t dev wifi list` y `iw dev` en caja1-lafe, con la farmacia abierta. Confirmar que el escaneo funciona con el driver `8821cu` y que el formato es el que entiende el parseo.
 - **Mismo camino que ya funcionó:** la conexión se crea desde el escaneo con `nmcli dev wifi connect`, como se conectó la ALPHANET el 2026-09-19.
 - **En la ventana:** si el escaneo o la conexión fallan por el driver, se aborta con las redes de seguridad. La red de la farmacia nunca se toca: solo se apaga su autoconectar, y eso se deshace.
 
-### 7.5 Tiempo
+### 5.5 Tiempo
 | | |
 |---|---|
 | A + B (servicio, página, pruebas) | 1,5 días |
@@ -347,7 +347,7 @@ La idea: **que nada se pruebe por primera vez en la farmacia**. Cada etapa tiene
 
 Es más que los ~2,5 días sin laboratorio. A cambio, **cada paso de la ventana ya se habrá hecho varias veces** en una copia de la caja, incluidas la vuelta atrás y la falla del operador.
 
-## 8. Resumen de esfuerzo (sin laboratorio, referencia)
+## 6. Resumen de esfuerzo (sin laboratorio, referencia)
 
 | Etapa | Tiempo |
 |---|---|
