@@ -31,7 +31,7 @@ Funciona así desde la primera versión (2024-11). La actualización `47a62e5 �
 - **Límites:**
   - Si un precio de lista cambió en el período, la línea cae en «otro».
   - En productos baratos, el −1 % redondeado puede dar el mismo precio de lista y no se detecta.
-- SQL en el scratchpad del ensayo (`medir_descuento.sql`, `medir_por_vendedor.sql`).
+- SQL en `ensayo/medir_descuento.sql` y `ensayo/medir_por_vendedor.sql`. Se corren sobre una copia de la BD, nunca sobre producción, porque crean una tabla temporal.
 
 ## 3. Resultados (2026-09-05 → 2026-10-03: 3.757 pedidos, 21.502 líneas)
 
