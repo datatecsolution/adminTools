@@ -166,7 +166,11 @@ Es una decisión pendiente (ver §7). Opciones:
 
 **Total: unos 2,5 días** de desarrollo y pruebas, más el despliegue.
 
-## 7. Decisiones pendientes
+## 7. Decisiones
+
+> **Confirmadas el 2026-10-03** (detalle en [`plan-wifi-autoservicio.md`](plan-wifi-autoservicio.md) §0): PIN de la tienda; teclado en pantalla automático según sea táctil o no, con ajuste por caja; olvidar solo las redes de la tienda; **solo caja1-lafe** por ahora; **el POS no se toca**, así que el punto 2 de §4.5 (botón en el POS) queda fuera de alcance.
+
+Las preguntas originales:
 1. **¿Quién puede cambiar la wifi?** Libre o con PIN de la tienda.
 2. **¿Botón en el POS** además de la página de espera, o solo la página de espera?
 3. **¿Se permite «olvidar» redes** desde la pantalla? Siempre solo las agregadas por el cliente.
